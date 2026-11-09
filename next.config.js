@@ -29,12 +29,12 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://*.googletagmanager.com https://va.vercel-scripts.com https://pagead2.googlesyndication.com https://*.google.com",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://*.googletagmanager.com https://va.vercel-scripts.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.google.com https://*.doubleclick.net",
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https: blob: https://play.google.com https://*.googleusercontent.com",
+      "img-src 'self' data: https: blob: https://play.google.com https://*.googleusercontent.com https://pagead2.googlesyndication.com https://*.doubleclick.net",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://vitals.vercel-insights.com",
-      "frame-src 'self' https://googleads.g.doubleclick.net",
+      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://vitals.vercel-insights.com https://pagead2.googlesyndication.com https://*.doubleclick.net",
+      "frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://*.google.com",
     ].join('; '),
   },
 ];

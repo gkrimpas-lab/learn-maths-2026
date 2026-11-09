@@ -1,13 +1,104 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Α')/g);
+  return parts
+    .map((part) => {
+      if (part === "Α'") return "Α'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+const translations = {
+  el: {
+    metaTitle: "Πρόσθεση Ακεραίων Αριθμών | Α' Γυμνασίου",
+    metaDescription: "Θεωρία και διαδραστική κατανόηση της πρόσθεσης ακεραίων στον άξονα (κίνηση δεξιά/αριστερά).",
+    backText: "Α' Γυμνασίου",
+    exercisesBtn: "ΑΣΚΗΣΕΙΣ",
+    gradeBadge: "Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ",
+    mainTitle: "Πρόσθεση Ακέραιων Αριθμών",
+    heroDesc: "Κατανοούμε την πρόσθεση ως κίνηση στον άξονα: το ＋ σημαίνει μετακίνηση προς τα δεξιά, ενώ το － σημαίνει μετακίνηση προς τα αριστερά!",
+    sec1Title: "Κανόνες Πρόσθεσης & Κίνηση στον Άξονα",
+    sameSignBadge: "ΟΜΟΣΗΜΟΙ ΑΡΙΘΜΟΙ",
+    sameSignTitle: "Ίδιο Πρόσημο",
+    sameSignDesc: "Κινούμαστε προς την ίδια κατεύθυνση. Κρατάμε το κοινό πρόσημο και προσθέτουμε τις απόλυτες τιμές:",
+    diffSignBadge: "ΕΤΕΡΟΣΗΜΟΙ ΑΡΙΘΜΟΙ",
+    diffSignTitle: "Αντίθετα Πρόσημα",
+    diffSignDesc: "Οι κινήσεις είναι αντίθετες. Κερδίζει η κατεύθυνση με τη μεγαλύτερη απόλυτη τιμή και αφαιρούμε τις αποστάσεις:",
+    sec2Title: "Διαδραστικό Εργαστήριο: Η Φυσική Σημασία των Προσήμων",
+    numAControl: "1ος ΑΡΙΘΜΟΣ (ΑΡΧΙΚΗ ΘΕΣΗ ΑΠΟ ΤΟ 0)",
+    numBControl: "2ος ΑΡΙΘΜΟΣ (ΜΕΤΑΤΟΠΙΣΗ)",
+    moveRight: "➡️ ΜΕΤΑΚΙΝΗΣΗ ΔΕΞΙΑ ΚΑΤΑ",
+    moveLeft: "⬅️ ΜΕΤΑΚΙΝΗΣΗ ΑΡΙΣΤΕΡΑ ΚΑΤΑ",
+    positionsLabel: "ΘΕΣΕΙΣ",
+    noMove: "⏹️ ΚΑΜΙΑ ΜΕΤΑΚΙΝΗΣΗ (ΒΗΜΑ 0)",
+    operationResultTitle: "ΠΡΑΞΗ & ΑΠΟΤΕΛΕΣΜΑ",
+    step1Label: "1ο:",
+    step2Right: "➡️ δεξιά",
+    step2Left: "⬅️ αριστερά",
+    endLabel: "ΤΕΛΟΣ",
+    explanationNeg: "σημαίνει ότι από το",
+    explanationNeg2: "κινούμαστε",
+    explanationNeg3: "προς τα ΑΡΙΣΤΕΡΑ ⬅️.",
+    explanationPos: "σημαίνει ότι από το",
+    explanationPos2: "κινούμαστε",
+    explanationPos3: "προς τα ΔΕΞΙΑ ➡️.",
+    explanationZero: "Το δεύτερο βήμα είναι 0, παραμένουμε στο σημείο",
+    signWord: "Το πρόσημο",
+    atNum: "στο",
+  },
+  en: {
+    metaTitle: "Adding Integers | 7th Grade Mathematics",
+    metaDescription: "Theory and interactive conceptualization of integer addition on the number line (movement right/left).",
+    backText: "7th Grade",
+    exercisesBtn: "EXERCISES",
+    gradeBadge: "GRADE 7 • THEORY & LAB",
+    mainTitle: "Addition of Integers",
+    heroDesc: "Understand addition as movement along the number line: ＋ means moving to the right, while － means moving to the left!",
+    sec1Title: "Addition Rules & Movement on the Number Line",
+    sameSignBadge: "NUMBERS WITH SAME SIGN",
+    sameSignTitle: "Same Sign",
+    sameSignDesc: "We move in the exact same direction. We keep the common sign and add their absolute values:",
+    diffSignBadge: "NUMBERS WITH DIFFERENT SIGNS",
+    diffSignTitle: "Opposite Signs",
+    diffSignDesc: "The movements oppose each other. The direction with the greater absolute value prevails and we subtract the distances:",
+    sec2Title: "Interactive Lab: The Physical Meaning of Signs",
+    numAControl: "1st NUMBER (INITIAL POSITION FROM 0)",
+    numBControl: "2nd NUMBER (DISPLACEMENT)",
+    moveRight: "➡️ MOVE RIGHT BY",
+    moveLeft: "⬅️ MOVE LEFT BY",
+    positionsLabel: "UNITS",
+    noMove: "⏹️ NO MOVEMENT (STEP 0)",
+    operationResultTitle: "OPERATION & RESULT",
+    step1Label: "1st:",
+    step2Right: "➡️ right",
+    step2Left: "⬅️ left",
+    endLabel: "END",
+    explanationNeg: "means starting from",
+    explanationNeg2: "and moving",
+    explanationNeg3: "to the LEFT ⬅️.",
+    explanationPos: "means starting from",
+    explanationPos2: "and moving",
+    explanationPos3: "to the RIGHT ➡️.",
+    explanationZero: "The second step is 0, so we stay at point",
+    signWord: "The sign",
+    atNum: "on",
+  }
+};
+
 export default function ProsthesiAkeraionTheoria() {
-  // State για τους δύο προσθετέους
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
   const [numA, setNumA] = useState(3);
   const [numB, setNumB] = useState(-7);
 
-  // Stepper handlers
   const handleStep = (setter, val, min, max, e) => {
     if (e) {
       e.preventDefault();
@@ -16,134 +107,164 @@ export default function ProsthesiAkeraionTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  // Υπολογισμοί
   const sum = useMemo(() => numA + numB, [numA, numB]);
   const absA = useMemo(() => Math.abs(numA), [numA]);
   const absB = useMemo(() => Math.abs(numB), [numB]);
 
-  // Μετατροπή τιμής [-18, 18] σε συντεταγμένη X στο SVG (viewBox 0 έως 860)
-  // Κέντρο (0) στο x = 430, κάθε μονάδα = 21px
+  const formatSigned = (val) => {
+    if (val > 0) return `＋${val}`;
+    if (val < 0) return `－${Math.abs(val)}`;
+    return '0';
+  };
+
+  const formatSignedParen = (val) => {
+    if (val > 0) return `(＋${val})`;
+    if (val < 0) return `(－${Math.abs(val)})`;
+    return '0';
+  };
+
   const getSvgX = (val) => 430 + val * 21;
 
-  // Κατεύθυνση κίνησης 2ου αριθμού
   const directionB = useMemo(() => {
-    if (numB > 0) return { text: `➡️ ΜΕΤΑΚΙΝΗΣΗ ΔΕΞΙΑ ΚΑΤΑ ${absB} ΘΕΣΕΙΣ`, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-400/30' };
-    if (numB < 0) return { text: `⬅️ ΜΕΤΑΚΙΝΗΣΗ ΑΡΙΣΤΕΡΑ ΚΑΤΑ ${absB} ΘΕΣΕΙΣ`, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-400/30' };
-    return { text: '⏹️ ΚΑΜΙΑ ΜΕΤΑΚΙΝΗΣΗ (ΒΗΜΑ 0)', color: 'text-slate-400', bg: 'bg-slate-800 border-slate-700' };
-  }, [numB, absB]);
+    if (numB > 0) {
+      return {
+        text: `${t.moveRight} ${absB} ${t.positionsLabel}`,
+        color: 'text-sky-400',
+        bg: 'bg-sky-500/10 border-sky-400/30'
+      };
+    }
+    if (numB < 0) {
+      return {
+        text: `${t.moveLeft} ${absB} ${t.positionsLabel}`,
+        color: 'text-rose-400',
+        bg: 'bg-rose-500/10 border-rose-400/30'
+      };
+    }
+    return {
+      text: t.noMove,
+      color: 'text-slate-400',
+      bg: 'bg-slate-800 border-slate-700'
+    };
+  }, [numB, absB, t]);
 
   return (
     <Layout
-      title="Πρόσθεση Ακεραίων Αριθμών | Α' Γυμνασίου"
-      description="Θεωρία και διαδραστική κατανόηση της πρόσθεσης ακεραίων στον άξονα (κίνηση δεξιά/αριστερά)."
+      title={t.metaTitle}
+      description={t.metaDescription}
       backUrl="/a-gymnasiou"
-      backText="Α' Γυμνασίου"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/a-gymnasiou/06-prosthesi-akeraion-ask"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs sm:text-sm md:text-base transition-all shadow-md shrink-0 touch-manipulation"
         >
           <span>🎯</span>
-          <span>ΑΣΚΗΣΕΙΣ</span>
+          <span>{toCleanUppercase(t.exercisesBtn)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden box-border space-y-8 sm:space-y-12">
         {/* Banner Header */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
-          <div className="max-w-4xl space-y-4">
-            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-5 sm:p-8 lg:p-12 shadow-xl border border-indigo-700/50">
+          <div className="max-w-4xl space-y-3 sm:space-y-4">
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] sm:text-xs md:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(t.gradeBadge)}
             </span>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Πρόσθεση Ακέραιων Αριθμών
+            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white break-words [overflow-wrap:anywhere]">
+              {t.mainTitle}
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Κατανοούμε την πρόσθεση ως κίνηση στον άξονα: το <strong>＋</strong> σημαίνει μετακίνηση προς τα <strong>δεξιά</strong>, ενώ το <strong>－</strong> σημαίνει μετακίνηση προς τα <strong>αριστερά</strong>!
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-indigo-100/90 leading-relaxed break-words [overflow-wrap:anywhere]">
+              {t.heroDesc}
             </p>
           </div>
         </section>
 
         {/* 1. ΘΕΩΡΗΤΙΚΟΙ ΚΑΝΟΝΕΣ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <section className="bg-white rounded-3xl p-4 sm:p-7 lg:p-10 shadow-sm border border-slate-200/80 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-sm sm:text-lg shrink-0">
                 1
               </span>
-              Κανόνες Πρόσθεσης & Κίνηση στον Άξονα
+              <span>{t.sec1Title}</span>
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-700 text-sm sm:text-base leading-relaxed">
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="text-xs font-bold text-indigo-600 uppercase">
-                ΟΜΟΣΗΜΟΙ ΑΡΙΘΜΟΙ
-              </div>
-              <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                Ίδιο Πρόσημο
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600">
-                Κινούμαστε προς την ίδια κατεύθυνση. Κρατάμε το κοινό πρόσημο και προσθέτουμε τις απόλυτες τιμές:
-              </p>
-              <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
-                <div>(＋3) ＋ (＋5) ＝ ＋(3 ＋ 5) ＝ <strong>＋8</strong></div>
-                <div>(－4) ＋ (－6) ＝ －(4 ＋ 6) ＝ <strong>－10</strong></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-slate-700 text-xs sm:text-sm md:text-base leading-relaxed">
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="text-[11px] sm:text-xs font-bold text-indigo-600 uppercase tracking-wider">
+                  {toCleanUppercase(t.sameSignBadge)}
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm sm:text-lg md:text-xl">
+                  {t.sameSignTitle}
+                </h3>
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.sameSignDesc}
+                </p>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1.5">
+                  <div className="break-words [overflow-wrap:anywhere]">(＋3) ＋ (＋5) ＝ ＋(3 ＋ 5) ＝ <strong>＋8</strong></div>
+                  <div className="break-words [overflow-wrap:anywhere]">(－4) ＋ (－6) ＝ －(4 ＋ 6) ＝ <strong>－10</strong></div>
+                </div>
               </div>
             </div>
 
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-              <div className="text-xs font-bold text-indigo-600 uppercase">
-                ΕΤΕΡΟΣΗΜΟΙ ΑΡΙΘΜΟΙ
-              </div>
-              <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                Αντίθετα Πρόσημα
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600">
-                Οι κινήσεις είναι αντίθετες. Κερδίζει η κατεύθυνση με τη μεγαλύτερη απόλυτη τιμή και αφαιρούμε τις αποστάσεις:
-              </p>
-              <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
-                <div>(＋8) ＋ (－3) ＝ ＋(8 － 3) ＝ <strong>＋5</strong></div>
-                <div>(－9) ＋ (＋4) ＝ －(9 － 4) ＝ <strong>－5</strong></div>
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="text-[11px] sm:text-xs font-bold text-indigo-600 uppercase tracking-wider">
+                  {toCleanUppercase(t.diffSignBadge)}
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm sm:text-lg md:text-xl">
+                  {t.diffSignTitle}
+                </h3>
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.diffSignDesc}
+                </p>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1.5">
+                  <div className="break-words [overflow-wrap:anywhere]">(＋8) ＋ (－3) ＝ ＋(8 － 3) ＝ <strong>＋5</strong></div>
+                  <div className="break-words [overflow-wrap:anywhere]">(－9) ＋ (＋4) ＝ －(9 － 4) ＝ <strong>－5</strong></div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* 2. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΜΕ ΒΕΛΗ ΚΑΙ ΕΝΔΕΙΞΗ ΚΑΤΕΥΘΥΝΣΗΣ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <section className="bg-white rounded-3xl p-4 sm:p-7 lg:p-10 shadow-sm border border-slate-200/80 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-sm sm:text-lg shrink-0">
                 2
               </span>
-              Διαδραστικό Εργαστήριο: Η Φυσική Σημασία των Προσήμων
+              <span>{t.sec2Title}</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Χειριστήρια Steppers */}
-            <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <div className="space-y-4 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 w-full min-w-0">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
-                  1ος Αριθμός (Αρχική Θέση από το 0)
+                <label className="block text-[11px] sm:text-xs font-bold text-slate-600 uppercase mb-1.5 break-words [overflow-wrap:anywhere]">
+                  {toCleanUppercase(t.numAControl)}
                 </label>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[38px_1fr_38px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumA, -1, -8, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Decrease numA"
                   >
                     －
                   </button>
-                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-indigo-900 font-black text-lg font-mono whitespace-nowrap px-2">
-                    α ＝ {numA > 0 ? `＋${numA}` : numA}
+                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-indigo-900 font-black text-sm sm:text-base font-mono whitespace-nowrap px-1 overflow-hidden">
+                    α ＝ {formatSigned(numA)}
                   </div>
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumA, 1, -8, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Increase numA"
                   >
                     ＋
                   </button>
@@ -151,24 +272,26 @@ export default function ProsthesiAkeraionTheoria() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
-                  2ος Αριθμός (Μετατόπιση)
+                <label className="block text-[11px] sm:text-xs font-bold text-slate-600 uppercase mb-1.5 break-words [overflow-wrap:anywhere]">
+                  {toCleanUppercase(t.numBControl)}
                 </label>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[38px_1fr_38px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumB, -1, -8, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Decrease numB"
                   >
                     －
                   </button>
-                  <div className={`h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-black text-lg font-mono whitespace-nowrap px-2 ${numB < 0 ? 'text-rose-600' : 'text-sky-600'}`}>
-                    β ＝ {numB > 0 ? `＋${numB}` : numB}
+                  <div className={`h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 font-black text-sm sm:text-base font-mono whitespace-nowrap px-1 overflow-hidden ${numB < 0 ? 'text-rose-600' : 'text-sky-600'}`}>
+                    β ＝ {formatSigned(numB)}
                   </div>
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumB, 1, -8, 8, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Increase numB"
                   >
                     ＋
                   </button>
@@ -176,27 +299,32 @@ export default function ProsthesiAkeraionTheoria() {
               </div>
 
               {/* Callout Κατεύθυνσης 2ου Αριθμού */}
-              <div className={`p-3.5 rounded-xl border text-xs font-black text-center ${directionB.bg} ${directionB.color}`}>
-                {directionB.text}
+              <div className={`p-3 rounded-xl border text-xs font-black text-center break-words [overflow-wrap:anywhere] ${directionB.bg} ${directionB.color}`}>
+                {toCleanUppercase(directionB.text)}
               </div>
 
               {/* Τελικό Αποτέλεσμα */}
-              <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-center space-y-1 font-mono">
-                <div className="text-[11px] text-indigo-700 font-sans font-bold uppercase">ΠΡΑΞΗ & ΑΠΟΤΕΛΕΣΜΑ</div>
-                <div className="text-xl sm:text-2xl font-black text-indigo-950">
-                  {numA > 0 ? `(＋${numA})` : numA < 0 ? `(－${absA})` : '0'} ＋{' '}
-                  {numB > 0 ? `(＋${numB})` : numB < 0 ? `(－${absB})` : '0'} ＝{' '}
-                  <span className="text-emerald-700">{sum > 0 ? `＋${sum}` : sum}</span>
+              <div className="p-3.5 sm:p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-center space-y-1 font-mono">
+                <div className="text-[10px] sm:text-[11px] text-indigo-700 font-sans font-bold uppercase tracking-wider">
+                  {toCleanUppercase(t.operationResultTitle)}
+                </div>
+                <div className="text-lg sm:text-xl md:text-2xl font-black text-indigo-950 inline-flex flex-wrap items-center justify-center max-w-full gap-1">
+                  <span>{formatSignedParen(numA)}</span>
+                  <span>＋</span>
+                  <span>{formatSignedParen(numB)}</span>
+                  <span>＝</span>
+                  <span className="text-emerald-700">{formatSigned(sum)}</span>
                 </div>
               </div>
             </div>
-{/* Αναπαράσταση στον Άξονα (SVG Responsive) */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center">
+
+            {/* Αναπαράσταση στον Άξονα (SVG Responsive) */}
+            <div className="lg:col-span-2 space-y-4 w-full min-w-0">
+              <div className="bg-slate-900 p-3 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center w-full min-w-0 overflow-x-hidden">
                 <div className="w-full max-w-[860px]">
                   <svg
                     viewBox="0 0 860 200"
-                    className="w-full h-auto"
+                    className="w-full h-auto max-w-full block"
                     preserveAspectRatio="xMidYMid meet"
                   >
                     <defs>
@@ -221,7 +349,7 @@ export default function ProsthesiAkeraionTheoria() {
                     <polygon points="852,125 832,117 832,133" fill="#64748b" />
                     <polygon points="8,125 28,117 28,133" fill="#64748b" />
 
-                    {/* Υποδιαιρέσεις και Μεγάλοι Αριθμοί από -18 έως +18 */}
+                    {/* Υποδιαιρέσεις και Αριθμοί από -18 έως +18 */}
                     {Array.from({ length: 37 }, (_, i) => i - 18).map((val) => {
                       const x = getSvgX(val);
                       const isZero = val === 0;
@@ -237,7 +365,6 @@ export default function ProsthesiAkeraionTheoria() {
                             stroke={isZero ? '#38bdf8' : isEven ? '#cbd5e1' : '#64748b'}
                             strokeWidth={isZero ? '3.5' : isEven ? '2' : '1'}
                           />
-                          {/* Εμφάνιση αριθμών: έντονοι ζυγοί και 0 για απόλυτη καθαρότητα */}
                           {(isEven || isZero) && (
                             <text
                               x={x}
@@ -273,7 +400,7 @@ export default function ProsthesiAkeraionTheoria() {
                           fontSize="13"
                           fontWeight="bold"
                         >
-                          1ο: {numA > 0 ? `＋${numA}` : numA}
+                          {t.step1Label} {formatSigned(numA)}
                         </text>
                       </g>
                     )}
@@ -296,7 +423,7 @@ export default function ProsthesiAkeraionTheoria() {
                           fontSize="14"
                           fontWeight="900"
                         >
-                          {numB > 0 ? `＋${numB} (➡️ δεξιά)` : `${numB} (⬅️ αριστερά)`}
+                          {numB > 0 ? `＋${numB} (${t.step2Right})` : `－${absB} (${t.step2Left})`}
                         </text>
                       </g>
                     )}
@@ -319,22 +446,22 @@ export default function ProsthesiAkeraionTheoria() {
                       fontWeight="900"
                       fill="#34d399"
                     >
-                      ΤΕΛΟΣ ({sum > 0 ? `＋${sum}` : sum})
+                      {toCleanUppercase(t.endLabel)} ({formatSigned(sum)})
                     </text>
                   </svg>
                 </div>
 
-                <div className="text-slate-300 text-xs sm:text-sm mt-3 text-center">
+                <div className="text-slate-300 text-xs sm:text-sm mt-3 text-center break-words [overflow-wrap:anywhere]">
                   {numB < 0 ? (
                     <span>
-                      Το πρόσημο <strong className="text-rose-400">－</strong> στο {numB} σημαίνει ότι από το <strong>{numA}</strong> κινούμαστε <strong className="text-rose-400">{absB} θέσεις προς τα ΑΡΙΣΤΕΡΑ ⬅️</strong>.
+                      {t.signWord} <strong className="text-rose-400">－</strong> {t.atNum} －{absB} {t.explanationNeg} <strong>{formatSigned(numA)}</strong> {t.explanationNeg2} <strong className="text-rose-400">{absB} {t.positionsLabel} {t.explanationNeg3}</strong>
                     </span>
                   ) : numB > 0 ? (
                     <span>
-                      Το πρόσημο <strong className="text-sky-400">＋</strong> στο ＋{numB} σημαίνει ότι από το <strong>{numA}</strong> κινούμαστε <strong className="text-sky-400">{absB} θέσεις προς τα ΔΕΞΙΑ ➡️</strong>.
+                      {t.signWord} <strong className="text-sky-400">＋</strong> {t.atNum} ＋{numB} {t.explanationPos} <strong>{formatSigned(numA)}</strong> {t.explanationPos2} <strong className="text-sky-400">{absB} {t.positionsLabel} {t.explanationPos3}</strong>
                     </span>
                   ) : (
-                    <span>Το δεύτερο βήμα είναι 0, παραμένουμε στο σημείο <strong>{numA}</strong>.</span>
+                    <span>{t.explanationZero} <strong>{formatSigned(numA)}</strong>.</span>
                   )}
                 </div>
               </div>

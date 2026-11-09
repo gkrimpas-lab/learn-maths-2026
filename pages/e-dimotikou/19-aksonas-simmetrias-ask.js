@@ -1,9 +1,21 @@
 // pages/e-dimotikou/19-aksonas-simmetrias-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Ε')/g);
+  return parts
+    .map((part) => {
+      if (part === "Ε'") return "Ε'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -19,169 +31,365 @@ function shuffleArray(array) {
 }
 
 // 1. ΖΕΥΓΟΣ 1 (q1, q2): Πλήθος Αξόνων Συμμετρίας σε Γεωμετρικά Σχήματα (Input)
-function makeAxesCountQuestion(isEquilateralOrSquare = false) {
+function makeAxesCountQuestion(isEquilateralOrSquare = false, locale = 'el') {
+  const isEn = locale === 'en';
+
   if (!isEquilateralOrSquare) {
-    // q1: Ορθογώνιο παραλληλόγραμμο (2) ή Ρόμβος (2) ή Ισοσκελές τρίγωνο (1)
-    const shapes = [
-      { name: 'ορθογώνιο παραλληλόγραμμο (που δεν είναι τετράγωνο)', count: 2, expl: 'έχει 2 άξονες συμμετρίας (τις μεσοκαθέτους των απέναντι πλευρών του, οι διαγώνιοί του δεν είναι άξονες)' },
-      { name: 'ρόμβος (που δεν είναι τετράγωνο)', count: 2, expl: 'έχει 2 άξονες συμμετρίας (τις δύο διαγωνίους του)' },
-      { name: 'ισοσκελές τρίγωνο (μη ισόπλευρο)', count: 1, expl: 'έχει μόνο 1 άξονα συμμετρίας (το ύψος/διχοτόμο προς τη βάση του)' },
-      { name: 'ισοσκελές τραπέζιο', count: 1, expl: 'έχει ακριβώς 1 άξονα συμμετρίας (τη μεσοκάθετο των δύο παράλληλων βάσεων)' }
-    ];
+    // q1: Ορθογώνιο παραλληλόγραμμο (2), Ρόμβος (2), Ισοσκελές τρίγωνο (1), Ισοσκελές τραπέζιο (1)
+    const shapes = isEn
+      ? [
+          {
+            name: 'rectangle (not a square)',
+            count: 2,
+            expl: 'has 2 lines of symmetry (the perpendicular bisectors of its opposite sides; its diagonals are not axes of symmetry)'
+          },
+          {
+            name: 'rhombus (not a square)',
+            count: 2,
+            expl: 'has 2 lines of symmetry (its two diagonals)'
+          },
+          {
+            name: 'isosceles triangle (non-equilateral)',
+            count: 1,
+            expl: 'has only 1 line of symmetry (the altitude/angle bisector to its base)'
+          },
+          {
+            name: 'isosceles trapezoid',
+            count: 1,
+            expl: 'has exactly 1 line of symmetry (the perpendicular bisector of its two parallel bases)'
+          }
+        ]
+      : [
+          {
+            name: 'ορθογώνιο παραλληλόγραμμο (που δεν είναι τετράγωνο)',
+            count: 2,
+            expl: 'έχει 2 άξονες συμμετρίας (τις μεσοκαθέτους των απέναντι πλευρών του, οι διαγώνιοί του δεν είναι άξονες)'
+          },
+          {
+            name: 'ρόμβος (που δεν είναι τετράγωνο)',
+            count: 2,
+            expl: 'έχει 2 άξονες συμμετρίας (τις δύο διαγωνίους του)'
+          },
+          {
+            name: 'ισοσκελές τρίγωνο (μη ισόπλευρο)',
+            count: 1,
+            expl: 'έχει μόνο 1 άξονα συμμετρίας (το ύψος/διχοτόμο προς τη βάση του)'
+          },
+          {
+            name: 'ισοσκελές τραπέζιο',
+            count: 1,
+            expl: 'έχει ακριβώς 1 άξονα συμμετρίας (τη μεσοκάθετο των δύο παράλληλων βάσεων)'
+          }
+        ];
     const s = shapes[getRandomInt(0, shapes.length - 1)];
 
     return {
       type: 'input',
       correct: s.count,
-      unit: 'άξονες συμμετρίας',
-      prompt: `Πόσους άξονες συμμετρίας έχει ένα ${s.name};`,
-      explanation: `Ένα ${s.name} ${s.expl}.`
+      unit: isEn ? 'axes of symmetry' : 'άξονες συμμετρίας',
+      prompt: isEn
+        ? `How many lines of symmetry does a ${s.name} have?`
+        : `Πόσους άξονες συμμετρίας έχει ένα ${s.name};`,
+      explanation: isEn
+        ? `A ${s.name} ${s.expl}.`
+        : `Ένα ${s.name} ${s.expl}.`
     };
   } else {
     // q2: Τετράγωνο (4) ή Ισόπλευρο τρίγωνο (3)
-    const regularShapes = [
-      { name: 'τετράγωνο', count: 4, expl: 'έχει 4 άξονες συμμετρίας (2 μεσοκαθέτους πλευρών και 2 διαγωνίους)' },
-      { name: 'ισόπλευρο τρίγωνο', count: 3, expl: 'έχει 3 άξονες συμμετρίας (τα 3 ύψη/διχοτόμους των κορυφών του)' }
-    ];
+    const regularShapes = isEn
+      ? [
+          {
+            name: 'square',
+            count: 4,
+            expl: 'has 4 lines of symmetry (2 perpendicular bisectors of sides and 2 diagonals)'
+          },
+          {
+            name: 'equilateral triangle',
+            count: 3,
+            expl: 'has 3 lines of symmetry (the 3 altitudes/angle bisectors through its vertices)'
+          }
+        ]
+      : [
+          {
+            name: 'τετράγωνο',
+            count: 4,
+            expl: 'έχει 4 άξονες συμμετρίας (2 μεσοκαθέτους πλευρών και 2 διαγωνίους)'
+          },
+          {
+            name: 'ισόπλευρο τρίγωνο',
+            count: 3,
+            expl: 'έχει 3 άξονες συμμετρίας (τα 3 ύψη/διχοτόμους των κορυφών του)'
+          }
+        ];
     const r = regularShapes[getRandomInt(0, regularShapes.length - 1)];
 
     return {
       type: 'input',
       correct: r.count,
-      unit: 'άξονες συμμετρίας',
-      prompt: `Πόσους άξονες συμμετρίας έχει συνολικά ένα ${r.name};`,
-      explanation: `Ένα ${r.name} ${r.expl}.`
+      unit: isEn ? 'axes of symmetry' : 'άξονες συμμετρίας',
+      prompt: isEn
+        ? `How many lines of symmetry does a ${r.name} have in total?`
+        : `Πόσους άξονες συμμετρίας έχει συνολικά ένα ${r.name};`,
+      explanation: isEn
+        ? `A ${r.name} ${r.expl}.`
+        : `Ένα ${r.name} ${r.expl}.`
     };
   }
 }
 
 // 2. ΖΕΥΓΟΣ 2 (q3, q4): Σχήματα & Γράμματα χωρίς Άξονα ή με Άπειρους (MCQ)
-function makeSpecialShapesQuestion(isLetters = false) {
+function makeSpecialShapesQuestion(isLetters = false, locale = 'el') {
+  const isEn = locale === 'en';
+
   if (!isLetters) {
     // q3: Σχήματα χωρίς κανέναν άξονα συμμετρίας (0)
-    const noAxisShapes = [
-      'Σκαληνό τρίγωνο',
-      'Πλάγιο παραλληλόγραμμο',
-      'Σκαληνό τραπέζιο'
-    ];
+    const noAxisShapes = isEn
+      ? ['Scalene triangle', 'General parallelogram', 'Scalene trapezoid']
+      : ['Σκαληνό τρίγωνο', 'Πλάγιο παραλληλόγραμμο', 'Σκαληνό τραπέζιο'];
     const chosen = noAxisShapes[getRandomInt(0, noAxisShapes.length - 1)];
-    const symmetricDistractors = [
-      'Ισοσκελές τρίγωνο',
-      'Ορθογώνιο παραλληλόγραμμο',
-      'Τετράγωνο',
-      'Ρόμβος'
-    ];
-    const options = shuffleArray([chosen, ...shuffleArray(symmetricDistractors).slice(0, 3)]);
+
+    const symmetricDistractors = isEn
+      ? ['Isosceles triangle', 'Rectangle', 'Square', 'Rhombus']
+      : ['Ισοσκελές τρίγωνο', 'Ορθογώνιο παραλληλόγραμμο', 'Τετράγωνο', 'Ρόμβος'];
+
+    const rawOptions = [chosen, ...shuffleArray(symmetricDistractors).slice(0, 3)];
 
     return {
       type: 'mcq',
       correct: chosen,
-      options,
-      prompt: `Ποιο από τα παρακάτω γεωμετρικά σχήματα ΔΕΝ έχει κανέναν άξονα συμμετρίας (έχει 0 άξονες);`,
-      explanation: `Το ${chosen} δεν έχει κανέναν άξονα συμμετρίας, διότι αν το διπλώσουμε κατά μήκος οποιασδήποτε ευθείας, τα μέρη του δεν συμπίπτουν ποτέ.`
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt: isEn
+        ? 'Which of the following geometric shapes does NOT have any axis of symmetry (has 0 axes)?'
+        : 'Ποιο από τα παρακάτω γεωμετρικά σχήματα ΔΕΝ έχει κανέναν άξονα συμμετρίας (έχει 0 άξονες);',
+      explanation: isEn
+        ? `The ${chosen} has 0 axes of symmetry, because folding it across any line never makes its halves coincide.`
+        : `Το ${chosen} δεν έχει κανέναν άξονα συμμετρίας, διότι αν το διπλώσουμε κατά μήκος οποιασδήποτε ευθείας, τα μέρη του δεν συμπίπτουν ποτέ.`
     };
   } else {
-    // q4: Γράμματα της αλφαβήτου με άξονες συμμετρίας
-    const letterCases = [
-      { letter: 'Η', desc: 'έχει 2 άξονες συμμετρίας (έναν κατακόρυφο και έναν οριζόντιο)', distractors: ['Γ', 'Ρ', 'Λ'] },
-      { letter: 'Χ', desc: 'έχει 2 άξονες συμμετρίας', distractors: ['Σ', 'Ψ', 'Π'] },
-      { letter: 'Α', desc: 'έχει ακριβώς 1 κατακόρυφο άξονα συμμετρίας', distractors: ['Γ', 'Ζ', 'Ρ'] }
-    ];
+    // q4: Γράμματα με άξονες συμμετρίας
+    const letterCases = isEn
+      ? [
+          {
+            letter: 'H',
+            desc: 'has 2 lines of symmetry (one vertical and one horizontal)',
+            distractors: ['F', 'R', 'L']
+          },
+          {
+            letter: 'X',
+            desc: 'has 2 lines of symmetry',
+            distractors: ['S', 'P', 'J']
+          },
+          {
+            letter: 'A',
+            desc: 'has exactly 1 vertical line of symmetry',
+            distractors: ['G', 'Z', 'R']
+          }
+        ]
+      : [
+          {
+            letter: 'Η',
+            desc: 'έχει 2 άξονες συμμετρίας (έναν κατακόρυφο και έναν οριζόντιο)',
+            distractors: ['Γ', 'Ρ', 'Λ']
+          },
+          {
+            letter: 'Χ',
+            desc: 'έχει 2 άξονες συμμετρίας',
+            distractors: ['Σ', 'Ψ', 'Π']
+          },
+          {
+            letter: 'Α',
+            desc: 'έχει ακριβώς 1 κατακόρυφο άξονα συμμετρίας',
+            distractors: ['Γ', 'Ζ', 'Ρ']
+          }
+        ];
     const c = letterCases[getRandomInt(0, letterCases.length - 1)];
-    const options = shuffleArray([c.letter, ...c.distractors]);
+    const rawOptions = [c.letter, ...c.distractors];
 
     return {
       type: 'mcq',
       correct: c.letter,
-      options,
-      prompt: `Ποιο από τα παρακάτω κεφαλαία γράμματα παρουσιάζει αξονική συμμετρία (${c.desc});`,
-      explanation: `Το γράμμα ${c.letter} ${c.desc}. Τα υπόλοιπα γράμματα των επιλογών δεν έχουν άξονα συμμετρίας.`
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt: isEn
+        ? `Which of the following capital letters exhibits axial symmetry (${c.desc})?`
+        : `Ποιο από τα παρακάτω κεφαλαία γράμματα παρουσιάζει αξονική συμμετρία (${c.desc});`,
+      explanation: isEn
+        ? `The letter ${c.letter} ${c.desc}. The remaining choice letters do not possess an axis of symmetry.`
+        : `Το γράμμα ${c.letter} ${c.desc}. Τα υπόλοιπα γράμματα των επιλογών δεν έχουν άξονα συμμετρίας.`
     };
   }
 }
 
 // 3. ΖΕΥΓΟΣ 3 (q5, q6): Απόσταση Συμμετρικών Σημείων (Input & MCQ)
-function makeSymmetricPointsDistanceQuestion(isTotalDistance = false) {
+function makeSymmetricPointsDistanceQuestion(isTotalDistance = false, locale = 'el') {
+  const isEn = locale === 'en';
+  const format = (n) => n.toLocaleString(isEn ? 'en-US' : 'el-GR');
+
   if (!isTotalDistance) {
-    // q5: Απόσταση συμμετρικού σημείου από τον άξονα (είναι ίση με την αρχική)
+    // q5: Απόσταση συμμετρικού σημείου από τον άξονα
     const dist = [4, 6, 8, 11, 14, 17][getRandomInt(0, 5)];
 
     return {
       type: 'input',
       correct: dist,
       unit: 'cm',
-      prompt: `Ένα σημείο Α απέχει κάθετα από τον άξονα συμμετρίας s απόσταση ${dist} cm. Πόσα cm απέχει το συμμετρικό του σημείο Α' από τον ίδιο άξονα s;`,
-      explanation: `Τα συμμετρικά σημεία Α και Α' απέχουν ΠΑΝΤΑ απολύτως ίση απόσταση από τον άξονα συμμετρίας. Άρα και το Α' απέχει ακριβώς ${dist} cm.`
+      prompt: isEn
+        ? `A point A lies at a perpendicular distance of ${format(dist)} cm from the axis of symmetry s. How many cm is its symmetric point A' from the same axis s?`
+        : `Ένα σημείο Α απέχει κάθετα από τον άξονα συμμετρίας s απόσταση ${format(dist)} cm. Πόσα cm απέχει το συμμετρικό του σημείο Α' από τον ίδιο άξονα s;`,
+      explanation: isEn
+        ? `Symmetric points A and A' are ALWAYS equidistant from the axis of symmetry. Therefore, point A' is also exactly ${format(dist)} cm away.`
+        : `Τα συμμετρικά σημεία Α και Α' απέχουν ΠΑΝΤΑ απολύτως ίση απόσταση από τον άξονα συμμετρίας. Άρα και το Α' απέχει ακριβώς ${format(dist)} cm.`
     };
   } else {
     // q6: Συνολικό μήκος του τμήματος ΑΑ' (MCQ)
     const d = [5, 7, 9, 12, 15][getRandomInt(0, 4)];
     const totalDist = d * 2;
     const distractors = [d, totalDist + 2, totalDist - 3, d * 4].filter((v) => v !== totalDist);
-    const options = shuffleArray([`${totalDist} cm`, ...distractors.slice(0, 3).map((v) => `${v} cm`)]);
+    const rawOptions = [`${format(totalDist)} cm`, ...distractors.slice(0, 3).map((v) => `${format(v)} cm`)];
 
     return {
       type: 'mcq',
-      correct: `${totalDist} cm`,
-      options,
-      prompt: `Αν ένα σημείο Α απέχει ${d} cm από τον άξονα συμμετρίας, πόσο είναι το συνολικό μήκος του ευθύγραμμου τμήματος ΑΑ' που το ενώνει με το συμμετρικό του σημείο Α';`,
-      explanation: `Το τμήμα ΑΑ' χωρίζεται από τον άξονα σε δύο ίσα τμήματα των ${d} cm: ${d} ＋ ${d} ＝ 2 · ${d} ＝ ${totalDist} cm.`
+      correct: `${format(totalDist)} cm`,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt: isEn
+        ? `If a point A is ${format(d)} cm away from the axis of symmetry, what is the total length of the segment AA' connecting it to its symmetric point A'?`
+        : `Αν ένα σημείο Α απέχει ${format(d)} cm από τον άξονα συμμετρίας, πόσο είναι το συνολικό μήκος του ευθύγραμμου τμήματος ΑΑ' που το ενώνει με το συμμετρικό του σημείο Α';`,
+      explanation: isEn
+        ? `Segment AA' is bisected perpendicularly by the axis into two equal parts of ${format(d)} cm: ${format(d)} ＋ ${format(d)} ＝ 2 · ${format(d)} ＝ ${format(totalDist)} cm.`
+        : `Το τμήμα ΑΑ' χωρίζεται από τον άξονα σε δύο ίσα τμήματα των ${format(d)} cm: ${format(d)} ＋ ${format(d)} ＝ 2 · ${format(d)} ＝ ${format(totalDist)} cm.`
     };
   }
 }
 
 // 4. ΖΕΥΓΟΣ 4 (q7, q8): Κανονικά Πολύγωνα & Κύκλος (Input & MCQ)
-function makeRegularPolygonsAndCircleQuestion(isCircle = false) {
+function makeRegularPolygonsAndCircleQuestion(isCircle = false, locale = 'el') {
+  const isEn = locale === 'en';
+
   if (!isCircle) {
-    // q7: Κανονικό εξάγωνο ή πεντάγωνο (Input)
-    // Σε κάθε κανονικό πολύγωνο με ν πλευρές, το πλήθος των αξόνων συμμετρίας ισούται ακριβώς με ν
-    const polygons = [
-      { name: 'κανονικό πεντάγωνο (5 ίσες πλευρές)', sides: 5 },
-      { name: 'κανονικό εξάγωνο (6 ίσες πλευρές)', sides: 6 },
-      { name: 'κανονικό οκτάγωνο (8 ίσες πλευρές)', sides: 8 }
-    ];
+    // q7: Κανονικό εξάγωνο, πεντάγωνο ή οκτάγωνο (Input)
+    const polygons = isEn
+      ? [
+          { name: 'regular pentagon (5 equal sides)', sides: 5 },
+          { name: 'regular hexagon (6 equal sides)', sides: 6 },
+          { name: 'regular octagon (8 equal sides)', sides: 8 }
+        ]
+      : [
+          { name: 'κανονικό πεντάγωνο (5 ίσες πλευρές)', sides: 5 },
+          { name: 'κανονικό εξάγωνο (6 ίσες πλευρές)', sides: 6 },
+          { name: 'κανονικό οκτάγωνο (8 ίσες πλευρές)', sides: 8 }
+        ];
     const poly = polygons[getRandomInt(0, polygons.length - 1)];
 
     return {
       type: 'input',
       correct: poly.sides,
-      unit: 'άξονες συμμετρίας',
-      prompt: `Σε κάθε κανονικό πολύγωνο, οι άξονες συμμετρίας ισούνται με τον αριθμό των πλευρών του. Πόσους άξονες συμμετρίας έχει ένα ${poly.name};`,
-      explanation: `Επειδή έχει ${poly.sides} ίσες πλευρές και ίσες γωνίες, το ${poly.name} διαθέτει ακριβώς ${poly.sides} άξονες συμμετρίας.`
+      unit: isEn ? 'axes of symmetry' : 'άξονες συμμετρίας',
+      prompt: isEn
+        ? `In every regular polygon, the lines of symmetry equal the number of its sides. How many lines of symmetry does a ${poly.name} have?`
+        : `Σε κάθε κανονικό πολύγωνο, οι άξονες συμμετρίας ισούνται με τον αριθμό των πλευρών του. Πόσους άξονες συμμετρίας έχει ένα ${poly.name};`,
+      explanation: isEn
+        ? `Because it has ${poly.sides} equal sides and equal angles, the ${poly.name} has exactly ${poly.sides} lines of symmetry.`
+        : `Επειδή έχει ${poly.sides} ίσες πλευρές και ίσες γωνίες, το ${poly.name} διαθέτει ακριβώς ${poly.sides} άξονες συμμετρίας.`
     };
   } else {
     // q8: Άξονες συμμετρίας κύκλου (MCQ)
-    const options = shuffleArray([
-      'Άπειρους (κάθε ευθεία που περνά από το κέντρο του)',
-      'Ακριβώς 4 άξονες (όπως το τετράγωνο)',
-      'Μόνο 2 άξονες (έναν κατακόρυφο και έναν οριζόντιο)',
-      'Μόνο 1 άξονα'
-    ]);
+    const correct = isEn
+      ? 'Infinitely many (any line passing through its center)'
+      : 'Άπειρους (κάθε ευθεία που περνά από το κέντρο του)';
+    const rawOptions = isEn
+      ? [
+          'Infinitely many (any line passing through its center)',
+          'Exactly 4 axes (like a square)',
+          'Only 2 axes (one vertical and one horizontal)',
+          'Only 1 axis'
+        ]
+      : [
+          'Άπειρους (κάθε ευθεία που περνά από το κέντρο του)',
+          'Ακριβώς 4 άξονες (όπως το τετράγωνο)',
+          'Μόνο 2 άξονες (έναν κατακόρυφο και έναν οριζόντιο)',
+          'Μόνο 1 άξονα'
+        ];
 
     return {
       type: 'mcq',
-      correct: 'Άπειρους (κάθε ευθεία που περνά από το κέντρο του)',
-      options,
-      prompt: `Πόσους άξονες συμμετρίας έχει ένας τέλειος κύκλος;`,
-      explanation: `Κάθε ευθεία που διέρχεται από το κέντρο του κύκλου (κάθε διάμετρος) αποτελεί άξονα συμμετρίας. Επομένως, ο κύκλος έχει ΑΠΕΙΡΟΥΣ άξονες συμμετρίας!`
+      correct,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt: isEn
+        ? 'How many lines of symmetry does a perfect circle have?'
+        : 'Πόσους άξονες συμμετρίας έχει ένας τέλειος κύκλος;',
+      explanation: isEn
+        ? 'Every straight line passing through the center of a circle (every diameter) is an axis of symmetry. Therefore, a circle has INFINITELY MANY lines of symmetry!'
+        : 'Κάθε ευθεία που διέρχεται από το κέντρο του κύκλου (κάθε διάμετρος) αποτελεί άξονα συμμετρίας. Επομένως, ο κύκλος έχει ΑΠΕΙΡΟΥΣ άξονες συμμετρίας!'
     };
   }
 }
 
-function generateQuestions() {
+function generateQuestions(locale) {
   return {
-    q1: makeAxesCountQuestion(false),
-    q2: makeAxesCountQuestion(true),
-    q3: makeSpecialShapesQuestion(false),
-    q4: makeSpecialShapesQuestion(true),
-    q5: makeSymmetricPointsDistanceQuestion(false),
-    q6: makeSymmetricPointsDistanceQuestion(true),
-    q7: makeRegularPolygonsAndCircleQuestion(false),
-    q8: makeRegularPolygonsAndCircleQuestion(true)
+    q1: makeAxesCountQuestion(false, locale),
+    q2: makeAxesCountQuestion(true, locale),
+    q3: makeSpecialShapesQuestion(false, locale),
+    q4: makeSpecialShapesQuestion(true, locale),
+    q5: makeSymmetricPointsDistanceQuestion(false, locale),
+    q6: makeSymmetricPointsDistanceQuestion(true, locale),
+    q7: makeRegularPolygonsAndCircleQuestion(false, locale),
+    q8: makeRegularPolygonsAndCircleQuestion(true, locale)
   };
 }
 
+const translations = {
+  el: {
+    pageTitle: "Ασκήσεις: Ο Άξονας Συμμετρίας - Ε' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Απαιτητικές ασκήσεις μαθηματικών Ε' Δημοτικού στον άξονα συμμετρίας: πλήθος αξόνων γεωμετρικών σχημάτων, συμμετρικά σημεία, γράμματα και κανονικά πολύγωνα.",
+    backText: "Ε' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    badgeChapter: "Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    mainHeading: "📝 Ασκήσεις: Ο Άξονας Συμμετρίας",
+    mainSubheading: "Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!",
+    newExercisesBtn: "🔄 Νέες Ασκήσεις",
+    checkAnswersBtn: "🎯 Έλεγχος Απαντήσεων",
+    scoreLabel: "🏆 Σκορ:",
+    successRate: "Επιτυχία:",
+    scorePrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    correctAnswerIs: "Η σωστή απάντηση είναι:",
+    q1Badge: "ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΟΡΘΟΓΩΝΙΟΥ & ΡΟΜΒΟΥ",
+    q2Badge: "ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΤΕΤΡΑΓΩΝΟΥ & ΙΣΟΠΛΕΥΡΟΥ",
+    q3Badge: "ΣΧΗΜΑΤΑ ΧΩΡΙΣ ΑΞΟΝΑ ΣΥΜΜΕΤΡΙΑΣ",
+    q4Badge: "ΣΥΜΜΕΤΡΙΑ ΣΕ ΚΕΦΑΛΑΙΑ ΓΡΑΜΜΑΤΑ",
+    q5Badge: "ΑΠΟΣΤΑΣΗ ΣΥΜΜΕΤΡΙΚΟΥ ΣΗΜΕΙΟΥ ΑΠΟ ΤΟΝ ΑΞΟΝΑ",
+    q6Badge: "ΜΗΚΟΣ ΤΜΗΜΑΤΟΣ ΣΥΜΜΕΤΡΙΚΩΝ ΣΗΜΕΙΩΝ",
+    q7Badge: "ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΚΑΝΟΝΙΚΩΝ ΠΟΛΥΓΩΝΩΝ",
+    q8Badge: "ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΚΥΚΛΟΥ",
+  },
+  en: {
+    pageTitle: "Exercises: Axis of Symmetry - 5th Grade | LearnMaths.gr",
+    pageDesc: "Challenging 5th Grade math exercises on symmetry: count of symmetry lines, symmetric points, letters, and regular polygons.",
+    backText: "5th Grade",
+    theoryBtn: "Theory",
+    badgeChapter: "5TH GRADE • PRACTICE",
+    mainHeading: "📝 Exercises: The Axis of Symmetry",
+    mainSubheading: "Every time you click \"New Exercises\", fresh examples are generated from the pool!",
+    newExercisesBtn: "🔄 New Exercises",
+    checkAnswersBtn: "🎯 Check Answers",
+    scoreLabel: "🏆 Score:",
+    successRate: "Success:",
+    scorePrompt: "Complete all questions and click \"Check Answers\"!",
+    correctAnswerIs: "The correct answer is:",
+    q1Badge: "SYMMETRY LINES IN RECTANGLE & RHOMBUS",
+    q2Badge: "SYMMETRY LINES IN SQUARE & EQUILATERAL",
+    q3Badge: "SHAPES WITH NO LINE OF SYMMETRY",
+    q4Badge: "SYMMETRY IN CAPITAL LETTERS",
+    q5Badge: "DISTANCE OF SYMMETRIC POINT FROM AXIS",
+    q6Badge: "SEGMENT LENGTH BETWEEN SYMMETRIC POINTS",
+    q7Badge: "SYMMETRY LINES IN REGULAR POLYGONS",
+    q8Badge: "SYMMETRY LINES IN CIRCLE",
+  }
+};
+
 export default function AksonasSimmetriasAskPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -190,7 +398,7 @@ export default function AksonasSimmetriasAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(locale));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -198,7 +406,7 @@ export default function AksonasSimmetriasAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [locale]);
 
   if (!questions) return null;
 
@@ -209,7 +417,7 @@ export default function AksonasSimmetriasAskPage() {
 
   const handleNumericInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace(/\D/g, '');
+    const clean = rawVal.replace(/[^0-9]/g, '');
     setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
@@ -253,7 +461,7 @@ export default function AksonasSimmetriasAskPage() {
           </span>
           <div className="space-y-1">
             <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
-              {badgeTitle}
+              {toCleanUppercase(badgeTitle)}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
               {qData.prompt}
@@ -283,7 +491,9 @@ export default function AksonasSimmetriasAskPage() {
                   disabled={submitted}
                   className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 shrink-0"
                 />
-                <span>{opt}</span>
+                <span className="break-words whitespace-normal leading-snug flex-1">
+                  {opt}
+                </span>
               </label>
             );
           })}
@@ -297,7 +507,7 @@ export default function AksonasSimmetriasAskPage() {
               </p>
             ) : (
               <p className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
-                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-950">{qData.correct}</strong>. {qData.explanation}
+                {t.correctAnswerIs} <strong className="font-bold text-rose-950">{qData.correct}</strong>. {qData.explanation}
               </p>
             )}
           </div>
@@ -309,6 +519,8 @@ export default function AksonasSimmetriasAskPage() {
   // Render Component για Ερωτήσεις Input
   const renderInput = (qKey, qData, numLabel, badgeTitle, accentColor) => {
     const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
+    const format = (n) => n.toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
+
     return (
       <div
         className={`bg-white p-5 sm:p-7 2xl:p-9 rounded-3xl shadow-sm border transition-all ${
@@ -327,7 +539,7 @@ export default function AksonasSimmetriasAskPage() {
           </span>
           <div className="space-y-1">
             <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
-              {badgeTitle}
+              {toCleanUppercase(badgeTitle)}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
               {qData.prompt}
@@ -344,6 +556,7 @@ export default function AksonasSimmetriasAskPage() {
               id={`input-${qKey}`}
               name={`input-${qKey}`}
               placeholder="?"
+              maxLength={10}
               value={answers[qKey]}
               onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
@@ -363,7 +576,7 @@ export default function AksonasSimmetriasAskPage() {
               </p>
             ) : (
               <p className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
-                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-950">{qData.correct} {qData.unit}</strong>. {qData.explanation}
+                {t.correctAnswerIs} <strong className="font-bold text-rose-950">{format(qData.correct)} {qData.unit}</strong>. {qData.explanation}
               </p>
             )}
           </div>
@@ -374,68 +587,67 @@ export default function AksonasSimmetriasAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Ο Άξονας Συμμετρίας - Ε' Δημοτικού | LearnMaths.gr"
-      description="Απαιτητικές ασκήσεις μαθηματικών Ε' Δημοτικού στον άξονα συμμετρίας: πλήθος αξόνων γεωμετρικών σχημάτων, συμμετρικά σημεία, γράμματα και κανονικά πολύγωνα."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/e-dimotikou"
-      backText="Ε' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/e-dimotikou/19-aksonas-simmetrias"
           className="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl text-sm 2xl:text-base transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      {/* Container πλήρους εύρους για 2K / 4K και responsive για κινητά */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 overflow-x-hidden">
         
-        {/* HEADER BANNER - Ίδια χρωματική παλέτα με τη θεωρία */}
+        {/* HEADER BANNER */}
         <div className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1.5 max-w-4xl">
             <span className="bg-white/10 border border-white/20 text-sky-200 text-xs 2xl:text-sm font-black px-3 py-1 rounded-full tracking-wider inline-block">
-              Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badgeChapter)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl 2xl:text-5xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Ο Άξονας Συμμετρίας
+              {t.mainHeading}
             </h1>
             <p className="text-sky-100 text-xs sm:text-sm md:text-base 2xl:text-lg">
-              Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!
+              {t.mainSubheading}
             </p>
           </div>
 
           <button
             type="button"
             onClick={loadNewQuestions}
-            className="bg-amber-400 text-slate-950 font-black px-4 py-2.5 sm:px-5 sm:py-3 2xl:px-7 2xl:py-4 rounded-2xl shadow-lg hover:bg-amber-300 transition active:scale-95 text-xs sm:text-sm 2xl:text-base whitespace-nowrap self-stretch sm:self-auto text-center"
+            className="bg-amber-400 text-slate-950 font-black px-4 py-2.5 sm:px-5 sm:py-3 2xl:px-7 2xl:py-4 rounded-2xl shadow-lg hover:bg-amber-300 transition active:scale-95 text-xs sm:text-sm 2xl:text-base whitespace-nowrap self-stretch sm:self-auto text-center cursor-pointer"
           >
-            🔄 Νέες Ασκήσεις
+            {t.newExercisesBtn}
           </button>
         </div>
 
         {/* ΦΟΡΜΑ ΑΣΚΗΣΕΩΝ & PB SAFE AREA */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
-          {renderInput('q1', questions.q1, 1, 'ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΟΡΘΟΓΩΝΙΟΥ & ΡΟΜΒΟΥ', 'bg-blue-600')}
-          {renderInput('q2', questions.q2, 2, 'ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΤΕΤΡΑΓΩΝΟΥ & ΙΣΟΠΛΕΥΡΟΥ', 'bg-blue-600')}
+        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-36">
+          {renderInput('q1', questions.q1, 1, t.q1Badge, 'bg-blue-600')}
+          {renderInput('q2', questions.q2, 2, t.q2Badge, 'bg-blue-600')}
 
-          {renderMCQ('q3', questions.q3, 3, 'ΣΧΗΜΑΤΑ ΧΩΡΙΣ ΑΞΟΝΑ ΣΥΜΜΕΤΡΙΑΣ', 'bg-indigo-600')}
-          {renderMCQ('q4', questions.q4, 4, 'ΣΥΜΜΕΤΡΙΑ ΣΕ ΚΕΦΑΛΑΙΑ ΓΡΑΜΜΑΤΑ', 'bg-indigo-600')}
+          {renderMCQ('q3', questions.q3, 3, t.q3Badge, 'bg-indigo-600')}
+          {renderMCQ('q4', questions.q4, 4, t.q4Badge, 'bg-indigo-600')}
 
-          {renderInput('q5', questions.q5, 5, 'ΑΠΟΣΤΑΣΗ ΣΥΜΜΕΤΡΙΚΟΥ ΣΗΜΕΙΟΥ ΑΠΟ ΤΟΝ ΑΞΟΝΑ', 'bg-teal-600')}
-          {renderMCQ('q6', questions.q6, 6, 'ΜΗΚΟΣ ΤΜΗΜΑΤΟΣ ΣΥΜΜΕΤΡΙΚΩΝ ΣΗΜΕΙΩΝ', 'bg-teal-600')}
+          {renderInput('q5', questions.q5, 5, t.q5Badge, 'bg-teal-600')}
+          {renderMCQ('q6', questions.q6, 6, t.q6Badge, 'bg-teal-600')}
 
-          {renderInput('q7', questions.q7, 7, 'ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΚΑΝΟΝΙΚΩΝ ΠΟΛΥΓΩΝΩΝ', 'bg-purple-600')}
-          {renderMCQ('q8', questions.q8, 8, 'ΑΞΟΝΕΣ ΣΥΜΜΕΤΡΙΑΣ ΚΥΚΛΟΥ', 'bg-purple-600')}
+          {renderInput('q7', questions.q7, 7, t.q7Badge, 'bg-purple-600')}
+          {renderMCQ('q8', questions.q8, 8, t.q8Badge, 'bg-purple-600')}
 
           {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
             <div className="text-center pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg 2xl:text-xl font-black px-10 py-4 2xl:px-14 2xl:py-5 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg 2xl:text-xl font-black px-10 py-4 2xl:px-14 2xl:py-5 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 cursor-pointer"
               >
-                🎯 Έλεγχος Απαντήσεων
+                {t.checkAnswersBtn}
               </button>
             </div>
           )}
@@ -443,16 +655,16 @@ export default function AksonasSimmetriasAskPage() {
       </div>
 
       {/* FIXED BOTTOM SCORE BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 2xl:py-5 z-50">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-6 2xl:py-5 shadow-2xl">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 2xl:px-5 2xl:py-2 rounded-xl text-base sm:text-lg 2xl:text-xl flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
+              <span>{t.scoreLabel}</span>
               <span className="text-xl sm:text-2xl 2xl:text-3xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm 2xl:text-base font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -462,18 +674,18 @@ export default function AksonasSimmetriasAskPage() {
               <button
                 type="button"
                 onClick={loadNewQuestions}
-                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 2xl:px-7 2xl:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm 2xl:text-base flex items-center gap-2 active:scale-95"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 2xl:px-7 2xl:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm 2xl:text-base flex items-center gap-2 active:scale-95 cursor-pointer"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                {t.newExercisesBtn}
               </button>
             ) : (
               <p className="text-xs 2xl:text-sm text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.scorePrompt}
               </p>
             )}
           </div>
         </div>
-      </div>
+      </footer>
     </Layout>
   );
 }

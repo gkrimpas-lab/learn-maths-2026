@@ -1,25 +1,29 @@
 // pages/st-dimotikou/38-gnostos-dia-agnostos.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
 // Όριο για τον μέγιστο διαιρετέο a
 const MAX_TOTAL_A = 36;
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αυστηρή συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNum(num) {
+// Μορφοποίηση αριθμών βάσει locale
+function formatNum(num, locale = 'el') {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  return Number(num).toLocaleString(loc);
 }
 
 const PRESETS = [
@@ -40,7 +44,148 @@ const PORTION_COLORS = [
   { fill: 'url(#ballCyan)', stroke: '#0e7490', tag: '#06b6d4', bg: 'rgba(6, 182, 212, 0.2)' }
 ];
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Εξισώσεις: Άγνωστος Διαιρέτης - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Διαδραστική θεωρία με 3D ζυγαριά, ομαδοποίηση και διαίρεση για την επίλυση εξισώσεων όπου ο άγνωστος είναι διαιρέτης (α : x = β) για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    navExercises: "🎯 Ασκήσεις",
+    heroBadge: "ΚΕΦΑΛΑΙΟ 38 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "38. Εξισώσεις: Ο Άγνωστος είναι Διαιρέτης (α : x ＝ β)",
+    heroDesc: "Μάθε πώς βρίσκουμε τον άγνωστο διαιρέτη (x): Αν μοιράσουμε το αρχικό σύνολο α σε x ίσα μέρη και κάθε μέρος περιέχει β μπάλες, για να βρούμε σε πόσα μέρη μοιράστηκε, κάνουμε διαίρεση: x ＝ α : β!",
+    heroFeature: "Διαδραστική Ζυγαριά σε Ισορροπία & Ομαδοποίηση Μπαλών",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Βασικές Έννοιες: Ο Διαιρέτης & Επίλυση Εξισώσεων Διαίρεσης",
+    theorySubtitle: "Πώς υπολογίζουμε το πλήθος των μεριδίων x όταν γνωρίζουμε το ολικό ποσό και το μέγεθος κάθε μεριδίου.",
+    card1Badge: "Ο ΔΙΑΙΡΕΤΗΣ",
+    card1Sub: "α : x ＝ β",
+    card1Title: "1. Ποιος είναι ο Διαιρέτης;",
+    card1Text: "Στη διαίρεση α : x ＝ β, το x είναι ο διαιρέτης (το πλήθος των ίσων μεριδίων στα οποία μοιράζεται το ολικό ποσό α).",
+    card1Example: "12 : x ＝ 4 (Μοιράζουμε σε x μερίδια)",
+    card1Tip: "💡 Ο διαιρέτης x δείχνει σε πόσα ίσα μέρη ή ομάδες μοιράστηκε το αρχικό μέγεθος α!",
+    card2Badge: "ΜΕΘΟΔΟΣ",
+    card2Sub: "x ＝ α : β",
+    card2Title: "2. Ο Κανόνας Επίλυσης",
+    card2Text: "Για να βρούμε τον άγνωστο διαιρέτη, διαιρούμε τον διαιρετέο (α) με το πηλίκο (β):",
+    card2Example: (
+      <span>
+        x ＝ 12 : 4 ＝ <strong className="text-indigo-700">3</strong>
+      </span>
+    ),
+    card2Tip: "⚡ Χρυσός Κανόνας: Όταν ο άγνωστος είναι διαιρέτης (α : x ＝ β), λύνουμε πάντα με διαίρεση!",
+    card3Badge: "ΕΛΕΓΧΟΣ",
+    card3Sub: "Αντικατάσταση",
+    card3Title: "3. Επαλήθευση",
+    card3Text: "Αν μοιράσουμε τις 12 μπάλες σε 3 ίσα μέρη, κάθε μέρος παίρνει ακριβώς 4 μπάλες: 12 : 3 ＝ 4!",
+    card3Example: "12 : 3 ＝ 4 (Σωστό! ✔️)",
+    card3Tip: "🎯 Αν διαιρέσουμε τον διαιρετέο με το x που βρήκαμε και προκύψει το πηλίκο, η λύση είναι απόλυτα σωστή!",
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: (a) => `Σε πόσα κομμάτια x μοιράστηκε το ${a};`,
+    labSubtitle: "Ρύθμισε το ολικό ποσό α και το μέγεθος κάθε μεριδίου β και δες πώς η διαίρεση α : β αποκαλύπτει τον άγνωστο διαιρέτη x!",
+    step1Btn: (a, b) => `1️⃣ ${a} : x ＝ ${b}`,
+    step2Btn: (b) => `2️⃣ Ομαδοποίηση ανά ${b}`,
+    step3Btn: (res) => `3️⃣ Λύση: x ＝ ${res} Κομμάτια`,
+    equationSettings: "⚙️ ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: α : x ＝ β",
+    portionSizeLabel: "ΜΠΑΛΕΣ ΑΝΑ ΜΕΡΟΣ (β)",
+    portionsCountLabel: "ΠΛΗΘΟΣ ΜΕΡΩΝ (x)",
+    equationBadge: (a, b) => `Εξίσωση: ${a} : x ＝ ${b}`,
+    presetsTitle: "ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:",
+    tryCta: "Δοκιμή ➔",
+    stepExplainTitle: (s) => `📖 ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΒΗΜΑ ${s}:`,
+    step1Desc: (a, b) => `Στον αριστερό δίσκο έχουμε ${a} μπάλες συνολικά που μοιράζονται σε x ίσα κομμάτια. Στον δεξιό δίσκο βλέπουμε ότι κάθε κομμάτι περιέχει ${b} μπάλες: ${a} : x ＝ ${b}.`,
+    step2Desc: (a, b) => `Ομαδοποιούμε τις ${a} μπάλες σε πακέτα των ${b} μπαλών (κάθε πακέτο με δικό του χρώμα). Ψάχνουμε πόσα τέτοια πακέτα σχηματίζονται!`,
+    step3Desc: (a, b, res) => `Δημιουργήθηκαν ακριβώς ${a} : ${b} ＝ ${res} ίσα κομμάτια! Άρα ο άγνωστος διαιρέτης είναι: x ＝ ${a} : ${b} ＝ ${res}.`,
+    labTip: "💡 Κανόνας: Για να βρούμε τον άγνωστο διαιρέτη x, κάνουμε πάντα διαίρεση: x ＝ α : β!",
+    scaleTitle: (a, b) => `⚖️ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ: ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (${a} : x) VS ΔΕΞΙΟΣ ΔΙΣΚΟΣ (${b} ΜΠΑΛΕΣ ΑΝΑ ΜΕΡΙΔΙΟ)`,
+    perfectBalance: "✔️ Τέλεια Ισορροπία",
+    leftPanStep3: (res, b) => `x ＝ ${res} ίσα μέρη των ${b}`,
+    leftPanInit: (a) => `Αρχικό Σύνολο: ${a} μπάλες`,
+    rightPanLabel: (b) => `1 Μερίδιο: ${b} μπάλες`,
+    stepTitle1: (a, b) => `Βήμα 1: ${a} μπάλες σε x κομμάτια ＝ ${b} ανά κομμάτι`,
+    stepTitle2: (a, b) => `Βήμα 2: Ομαδοποίηση των ${a} μπαλών ανά ${b}`,
+    stepTitle3: (a, b, res) => `Βήμα 3: x ＝ ${a} : ${b} ＝ ${res}`,
+    btnPrev: "⬅️ Προηγούμενο",
+    btnNext: "Επόμενο ➡️",
+    stepOf: (cur, total) => `Βήμα ${cur} από ${total}`,
+    summaryTitle: (a, b, res) => `💡 ΣΥΜΠΕΡΑΣΜΑ: Στην εξίσωση ${a} : x ＝ ${b}, ο άγνωστος διαιρέτης ισούται με x ＝ ${a} : ${b} ＝ ${res} (σε ${res} ίσα μέρη μοιράστηκε το αρχικό ποσό)!`,
+    ctaTitle: "Ώρα για Εξάσκηση!",
+    ctaDesc: "Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο διαιρέτη; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "Equations: Unknown Divisor - 6th Grade | LearnMaths.gr",
+    pageDesc: "Interactive lesson with 3D scale, grouping, and division for solving equations where the unknown is a divisor (a : x = b) for 6th Grade.",
+    backText: "6th Grade",
+    navExercises: "🎯 Exercises",
+    heroBadge: "CHAPTER 38 • 6TH GRADE",
+    heroTitle: "38. Equations: The Unknown is a Divisor (a : x ＝ b)",
+    heroDesc: "Discover how to find the unknown divisor (x): If we divide an initial total a into x equal portions and each portion holds b balls, to find the number of portions we divide: x ＝ a : b!",
+    heroFeature: "Interactive Balanced Scale & Visual Ball Grouping",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Core Concepts: The Divisor & Solving Division Equations",
+    theorySubtitle: "How to calculate the number of portions x when knowing the total and the portion size.",
+    card1Badge: "THE DIVISOR",
+    card1Sub: "a : x ＝ b",
+    card1Title: "1. What is the Divisor?",
+    card1Text: "In division a : x ＝ b, x is the divisor (the number of equal parts into which total amount a is divided).",
+    card1Example: "12 : x ＝ 4 (Dividing into x shares)",
+    card1Tip: "💡 Divisor x represents into how many equal shares or groups the initial quantity a was split!",
+    card2Badge: "METHOD",
+    card2Sub: "x ＝ a : b",
+    card2Title: "2. The Solution Rule",
+    card2Text: "To find the unknown divisor, divide the dividend (a) by the quotient (b):",
+    card2Example: (
+      <span>
+        x ＝ 12 : 4 ＝ <strong className="text-indigo-700">3</strong>
+      </span>
+    ),
+    card2Tip: "⚡ Golden Rule: When the unknown is the divisor (a : x ＝ b), always solve by division!",
+    card3Badge: "CHECK",
+    card3Sub: "Substitution",
+    card3Title: "3. Verification",
+    card3Text: "If we share the 12 balls into 3 equal shares, each share receives exactly 4 balls: 12 : 3 ＝ 4!",
+    card3Example: "12 : 3 ＝ 4 (Correct! ✔️)",
+    card3Tip: "🎯 If dividing dividend a by found value x yields quotient b, our solution is verified!",
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: (a) => `Into how many pieces x was ${a} divided?`,
+    labSubtitle: "Adjust total a and portion size b to see how division a : b determines unknown divisor x!",
+    step1Btn: (a, b) => `1️⃣ ${a} : x ＝ ${b}`,
+    step2Btn: (b) => `2️⃣ Group by ${b}`,
+    step3Btn: (res) => `3️⃣ Solution: x ＝ ${res} Pieces`,
+    equationSettings: "⚙️ EQUATION SETUP: a : x ＝ b",
+    portionSizeLabel: "BALLS PER SHARE (b)",
+    portionsCountLabel: "NUMBER OF SHARES (x)",
+    equationBadge: (a, b) => `Equation: ${a} : x ＝ ${b}`,
+    presetsTitle: "PRESET EXAMPLES:",
+    tryCta: "Try ➔",
+    stepExplainTitle: (s) => `📖 WHAT HAPPENS IN STEP ${s}:`,
+    step1Desc: (a, b) => `On the left pan we have ${a} balls in total divided into x equal sections. On the right pan we see each section holds ${b} balls: ${a} : x ＝ ${b}.`,
+    step2Desc: (a, b) => `We group the ${a} balls into packets of ${b} balls (each with its distinct color). We look for how many such packets can be formed!`,
+    step3Desc: (a, b, res) => `Exactly ${a} : ${b} ＝ ${res} equal pieces are formed! Thus the unknown divisor is: x ＝ ${a} : ${b} ＝ ${res}.`,
+    labTip: "💡 Rule: To find unknown divisor x, always divide: x ＝ a : b!",
+    scaleTitle: (a, b) => `⚖️ VISUAL SCALE: LEFT PAN (${a} : x) VS RIGHT PAN (${b} BALLS PER SHARE)`,
+    perfectBalance: "✔️ Perfect Balance",
+    leftPanStep3: (res, b) => `x ＝ ${res} equal shares of ${b}`,
+    leftPanInit: (a) => `Initial Total: ${a} balls`,
+    rightPanLabel: (b) => `1 Share: ${b} balls`,
+    stepTitle1: (a, b) => `Step 1: ${a} balls in x sections ＝ ${b} per section`,
+    stepTitle2: (a, b) => `Step 2: Grouping the ${a} balls by ${b}`,
+    stepTitle3: (a, b, res) => `Step 3: x ＝ ${a} : ${b} ＝ ${res}`,
+    btnPrev: "⬅️ Previous",
+    btnNext: "Next ➡️",
+    stepOf: (cur, total) => `Step ${cur} of ${total}`,
+    summaryTitle: (a, b, res) => `💡 SUMMARY: In equation ${a} : x ＝ ${b}, the unknown divisor equals x ＝ ${a} : ${b} ＝ ${res} (the initial amount was shared into ${res} equal parts)!`,
+    ctaTitle: "Time to Practice!",
+    ctaDesc: "Understood how to solve equations with an unknown divisor? Test your skills with 10 interactive questions to consolidate your knowledge!",
+    ctaBtn: "Start Exercises"
+  }
+};
+
 export default function GnostosDiaAgnostosPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
   // Παράμετροι της εξίσωσης: a : x = b (x = a / b)
   const [paramA, setParamA] = useState(12);
   const [paramB, setParamB] = useState(4);
@@ -48,16 +193,13 @@ export default function GnostosDiaAgnostosPage() {
   // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Ομαδοποίηση σε πακέτα των β), 3 (Λύση x = α : β)
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Ασφαλείς αριθμητικές τιμές
   const rawA = Math.max(4, Math.min(MAX_TOTAL_A, Number(paramA) || 12));
   const rawB = Math.max(1, Math.min(8, Number(paramB) || 4));
 
-  // Εξασφάλιση ότι x = a / b είναι ακέραιος μεταξύ 2 και 6
   let activeX = Math.max(2, Math.min(6, Math.round(rawA / rawB)));
   let activeB = rawB;
   let activeA = activeX * activeB;
 
-  // Σωστή μαθηματική λύση: x = a / b (Διαιρέτης / Πλήθος ομάδων)
   const exactSolution = activeX;
 
   const setEquation = (a, b) => {
@@ -79,18 +221,15 @@ export default function GnostosDiaAgnostosPage() {
     setParamA(nextX * activeB);
   };
 
-  // Σταθερή γεωμετρία σφαιρών
   const BALL_RADIUS = 7.5;
   const BALL_SPACING_Y = 16;
   const BASE_Y = 248;
 
-  // 1. Γεωμετρία Κουτιού (Αριστερός Δίσκος)
   const TOTAL_BOX_WIDTH = exactSolution * 32 + 12;
   const TOTAL_BOX_HEIGHT = Math.max(68, activeB * BALL_SPACING_Y + 18);
   const boxStartX = 150 - TOTAL_BOX_WIDTH / 2;
   const boxStartY = BASE_Y - TOTAL_BOX_HEIGHT - 2;
 
-  // 2. Δεξιός Δίσκος: b μπάλες (το μέγεθος του ενός μεριδίου)
   const MAX_STACK_HEIGHT = 7;
   const rightBalls = [];
   const subColsRight = activeB > MAX_STACK_HEIGHT ? 2 : 1;
@@ -108,7 +247,6 @@ export default function GnostosDiaAgnostosPage() {
     });
   }
 
-  // 3. Θέσεις σφαιρών ΜΕΣΑ ΣΤΟ ΚΟΥΤΙ (Αριστερός Δίσκος)
   const insidePortionBalls = [];
   for (let g = 0; g < exactSolution; g++) {
     const pCenterX = boxStartX + 6 + g * 32 + 14;
@@ -124,46 +262,46 @@ export default function GnostosDiaAgnostosPage() {
 
   return (
     <Layout
-      title="Εξισώσεις: Άγνωστος Διαιρέτης - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστική θεωρία με 3D ζυγαριά, ομαδοποίηση και διαίρεση για την επίλυση εξισώσεων όπου ο άγνωστος είναι διαιρέτης (α : x = β) για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/38-gnostos-dia-agnostos-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.navExercises}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 38 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.heroBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              38. Εξισώσεις: Ο Άγνωστος είναι Διαιρέτης (α : x ＝ β)
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε πώς βρίσκουμε τον <strong>άγνωστο διαιρέτη (x)</strong>: Αν μοιράσουμε το αρχικό σύνολο α σε x ίσα μέρη και κάθε μέρος περιέχει β μπάλες, για να βρούμε σε πόσα μέρη μοιράστηκε, κάνουμε <strong>διαίρεση: x ＝ α : β</strong>!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Διαδραστική Ζυγαριά σε Ισορροπία &amp; Ομαδοποίηση Μπαλών</span>
+              <span>{t.heroFeature}</span>
             </div>
             <Link
               href="/st-dimotikou/38-gnostos-dia-agnostos-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -173,10 +311,10 @@ export default function GnostosDiaAgnostosPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες: Ο Διαιρέτης &amp; Επίλυση Εξισώσεων Διαίρεσης
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Πώς υπολογίζουμε το πλήθος των μεριδίων x όταν γνωρίζουμε το ολικό ποσό και το μέγεθος κάθε μεριδίου.
+              {t.theorySubtitle}
             </p>
           </div>
 
@@ -187,24 +325,24 @@ export default function GnostosDiaAgnostosPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    Ο ΔΙΑΙΡΕΤΗΣ
+                    {t.card1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">α : x ＝ β</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.card1Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  1. Ποιος είναι ο Διαιρέτης;
+                  {t.card1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Στη διαίρεση α : x ＝ β, το x είναι ο <strong>διαιρέτης</strong> (το πλήθος των ίσων μεριδίων στα οποία μοιράζεται το ολικό ποσό α).
+                  {t.card1Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>12 : x ＝ 4 (Μοιράζουμε σε x μερίδια)</p>
+                  <p>{t.card1Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Ο διαιρέτης x δείχνει σε πόσα ίσα μέρη ή ομάδες μοιράστηκε το αρχικό μέγεθος α!
+                {t.card1Tip}
               </div>
             </article>
 
@@ -213,24 +351,24 @@ export default function GnostosDiaAgnostosPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΜΕΘΟΔΟΣ
+                    {t.card2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">x ＝ α : β</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">{t.card2Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  2. Ο Κανόνας Επίλυσης
+                  {t.card2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Για να βρούμε τον άγνωστο διαιρέτη, <strong>διαιρούμε τον διαιρετέο (α) με το πηλίκο (β)</strong>:
+                  {t.card2Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>x ＝ 12 : 4 ＝ <strong className="text-indigo-700">3</strong></p>
+                  <p>{t.card2Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ <strong>Χρυσός Κανόνας:</strong> Όταν ο άγνωστος είναι διαιρέτης (α : x ＝ β), λύνουμε πάντα με <strong>διαίρεση</strong>!
+                {t.card2Tip}
               </div>
             </article>
 
@@ -239,24 +377,24 @@ export default function GnostosDiaAgnostosPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΕΛΕΓΧΟΣ
+                    {t.card3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Αντικατάσταση</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">{t.card3Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  3. Επαλήθευση
+                  {t.card3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν μοιράσουμε τις 12 μπάλες σε 3 ίσα μέρη, κάθε μέρος παίρνει ακριβώς 4 μπάλες: 12 : 3 ＝ 4!
+                  {t.card3Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>12 : 3 ＝ 4 (Σωστό! ✔️)</p>
+                  <p>{t.card3Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 Αν διαιρέσουμε τον διαιρετέο με το x που βρήκαμε και προκύψει το πηλίκο, η λύση είναι απόλυτα σωστή!
+                {t.card3Tip}
               </div>
             </article>
 
@@ -268,13 +406,13 @@ export default function GnostosDiaAgnostosPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>{t.labBadge}</span>
               </div>
               <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Σε πόσα κομμάτια x μοιράστηκε το {activeA};
+                {t.labTitle(activeA)}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
-                Ρύθμισε το ολικό ποσό α και το μέγεθος κάθε μεριδίου β και δες πώς η διαίρεση α : β αποκαλύπτει τον άγνωστο διαιρέτη x!
+                {t.labSubtitle}
               </p>
             </div>
 
@@ -289,7 +427,7 @@ export default function GnostosDiaAgnostosPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                1️⃣ {toCleanUppercase(`${activeA} : x ＝ ${activeB}`)}
+                {t.step1Btn(activeA, activeB)}
               </button>
               <button
                 type="button"
@@ -300,7 +438,7 @@ export default function GnostosDiaAgnostosPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                2️⃣ {toCleanUppercase(`Ομαδοποίηση ανά ${activeB}`)}
+                {t.step2Btn(activeB)}
               </button>
               <button
                 type="button"
@@ -311,7 +449,7 @@ export default function GnostosDiaAgnostosPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                3️⃣ {toCleanUppercase(`Λύση: x ＝ ${exactSolution} Κομμάτια`)}
+                {t.step3Btn(exactSolution)}
               </button>
             </div>
           </div>
@@ -319,21 +457,21 @@ export default function GnostosDiaAgnostosPage() {
           {/* MAIN INTERACTIVE GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            {/* LEFT: CONTROLS & PRESETS (4 COLS) */}
+            {/* LEFT: CONTROLS & PRESETS */}
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 
                 {/* ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ */}
                 <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                   <span className="text-xs font-black text-slate-800 tracking-wider block uppercase">
-                    ⚙️ ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: α : x ＝ β
+                    {t.equationSettings}
                   </span>
 
                   <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-center">
                     {/* ΜΕΓΕΘΟΣ ΜΕΡΙΔΙΟΥ (b) */}
                     <div className="flex flex-col justify-between space-y-1.5">
                       <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight uppercase">
-                        ΜΠΑΛΕΣ ΑΝΑ ΜΕΡΟΣ (β)
+                        {t.portionSizeLabel}
                       </span>
                       <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
@@ -359,7 +497,7 @@ export default function GnostosDiaAgnostosPage() {
                     {/* ΠΛΗΘΟΣ ΜΕΡΙΔΙΩΝ (x) */}
                     <div className="flex flex-col justify-between space-y-1.5">
                       <span className="text-[10px] font-bold text-slate-500 h-8 flex items-center justify-center text-center leading-tight uppercase">
-                        ΠΛΗΘΟΣ ΜΕΡΩΝ (x)
+                        {t.portionsCountLabel}
                       </span>
                       <div className="grid grid-cols-[36px_1fr_36px] items-center bg-slate-50 p-1 rounded-xl border border-slate-200 h-11">
                         <button 
@@ -384,14 +522,14 @@ export default function GnostosDiaAgnostosPage() {
                   </div>
 
                   <div className="text-center font-mono text-xs font-bold text-indigo-800 bg-indigo-50 p-2 rounded-xl border border-indigo-200">
-                    Εξίσωση: <strong>{activeA} : x ＝ {activeB}</strong>
+                    {t.equationBadge(activeA, activeB)}
                   </div>
                 </div>
 
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
+                    {t.presetsTitle}
                   </span>
                   <div className="grid grid-cols-1 gap-2">
                     {PRESETS.map((p, idx) => (
@@ -406,7 +544,7 @@ export default function GnostosDiaAgnostosPage() {
                         }`}
                       >
                         <span>{p.label}</span>
-                        <span className="text-[10px] opacity-75">Δοκιμή ➔</span>
+                        <span className="text-[10px] opacity-75">{t.tryCta}</span>
                       </button>
                     ))}
                   </div>
@@ -415,33 +553,27 @@ export default function GnostosDiaAgnostosPage() {
                 {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                   <span className="font-black text-slate-900 uppercase block text-[11px]">
-                    📖 ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΒΗΜΑ {currentStep}:
+                    {t.stepExplainTitle(currentStep)}
                   </span>
                   {currentStep === 1 && (
-                    <p>
-                      Στον αριστερό δίσκο έχουμε <strong>{activeA} μπάλες συνολικά</strong> που μοιράζονται σε x ίσα κομμάτια. Στον δεξιό δίσκο βλέπουμε ότι κάθε κομμάτι περιέχει <strong>{activeB} μπάλες</strong>: <strong>{activeA} : x ＝ {activeB}</strong>.
-                    </p>
+                    <p>{t.step1Desc(activeA, activeB)}</p>
                   )}
                   {currentStep === 2 && (
-                    <p className="text-amber-800">
-                      Ομαδοποιούμε τις {activeA} μπάλες σε <strong>πακέτα των {activeB} μπαλών</strong> (κάθε πακέτο με δικό του χρώμα). Ψάχνουμε πόσα τέτοια πακέτα σχηματίζονται!
-                    </p>
+                    <p className="text-amber-800">{t.step2Desc(activeA, activeB)}</p>
                   )}
                   {currentStep === 3 && (
-                    <p className="text-emerald-800 font-bold">
-                      Δημιουργήθηκαν ακριβώς {activeA} : {activeB} ＝ <strong>{exactSolution} ίσα κομμάτια</strong>! Άρα ο άγνωστος διαιρέτης είναι: <strong>x ＝ {activeA} : {activeB} ＝ {exactSolution}</strong>.
-                    </p>
+                    <p className="text-emerald-800 font-bold">{t.step3Desc(activeA, activeB, exactSolution)}</p>
                   )}
                 </div>
 
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
-                💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο διαιρέτη x, κάνουμε πάντα <strong>διαίρεση: x ＝ α : β</strong>!
+                {t.labTip}
               </div>
             </div>
 
-            {/* RIGHT: BIG 3D SCALE & SECTIONED BOX VISUALIZER (8 COLS) */}
+            {/* RIGHT: BIG 3D SCALE & SECTIONED BOX VISUALIZER */}
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -455,9 +587,9 @@ export default function GnostosDiaAgnostosPage() {
                 </div>
 
                 <div className="font-mono text-xs sm:text-sm md:text-base font-black text-indigo-700 bg-white px-3.5 py-2 rounded-2xl border border-indigo-200 shadow-xs">
-                  {currentStep === 1 && `Βήμα 1: ${activeA} μπάλες σε x κομμάτια ＝ ${activeB} ανά κομμάτι`}
-                  {currentStep === 2 && `Βήμα 2: Ομαδοποίηση των ${activeA} μπαλών ανά ${activeB}`}
-                  {currentStep === 3 && `Βήμα 3: x ＝ ${activeA} : ${activeB} ＝ ${exactSolution}`}
+                  {currentStep === 1 && t.stepTitle1(activeA, activeB)}
+                  {currentStep === 2 && t.stepTitle2(activeA, activeB)}
+                  {currentStep === 3 && t.stepTitle3(activeA, activeB, exactSolution)}
                 </div>
               </div>
 
@@ -465,10 +597,10 @@ export default function GnostosDiaAgnostosPage() {
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                    ⚖️ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ: ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ ({activeA} : x) VS ΔΕΞΙΟΣ ΔΙΣΚΟΣ ({activeB} ΜΠΑΛΕΣ ΑΝΑ ΜΕΡΙΔΙΟ)
+                    {t.scaleTitle(activeA, activeB)}
                   </span>
                   <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    ✔️ Τέλεια Ισορροπία
+                    {t.perfectBalance}
                   </span>
                 </div>
 
@@ -559,7 +691,6 @@ export default function GnostosDiaAgnostosPage() {
 
                     {/* 5. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΤΟ ΚΟΥΤΙ ΜΕ ΤΙΣ a ΜΠΑΛΕΣ */}
                     <g filter="url(#shadow3d)">
-                      {/* ΕΠΙΚΕΦΑΛΙΔΑ ΕΞΩ ΑΠΟ ΤΟ ΚΟΥΤΙ */}
                       <rect 
                         x={150 - Math.max(85, TOTAL_BOX_WIDTH / 2)} 
                         y={boxStartY - 24} 
@@ -569,10 +700,11 @@ export default function GnostosDiaAgnostosPage() {
                         fill={currentStep === 3 ? '#10b981' : '#3b82f6'} 
                       />
                       <text x="150" y={boxStartY - 10} fill="#ffffff" fontSize="10.5" fontWeight="900" textAnchor="middle" letterSpacing="0.5">
-                        {currentStep === 3 ? `x ＝ ${exactSolution} ΚΟΜΜΑΤΙΑ (${activeA} : ${activeB})` : `ΣΥΝΟΛΟ: ${activeA} ΜΠΑΛΕΣ ΣΕ x ΜΕΡΗ`}
+                        {currentStep === 3 
+                          ? (locale === 'en' ? `x ＝ ${exactSolution} PIECES (${activeA} : ${activeB})` : `x ＝ ${exactSolution} ΚΟΜΜΑΤΙΑ (${activeA} : ${activeB})`)
+                          : (locale === 'en' ? `TOTAL: ${activeA} BALLS IN x PARTS` : `ΣΥΝΟΛΟ: ${activeA} ΜΠΑΛΕΣ ΣΕ x ΜΕΡΗ`)}
                       </text>
 
-                      {/* Εξωτερικό περίβλημα όλου του κουτιού */}
                       <rect 
                         x={boxStartX} 
                         y={boxStartY} 
@@ -584,7 +716,6 @@ export default function GnostosDiaAgnostosPage() {
                         strokeWidth="2.5" 
                       />
 
-                      {/* Τα διαμερίσματα/κομμάτια */}
                       {Array.from({ length: exactSolution }).map((_, i) => {
                         const pX = boxStartX + 6 + i * 32;
                         const pY = boxStartY + 5;
@@ -607,7 +738,6 @@ export default function GnostosDiaAgnostosPage() {
                         );
                       })}
 
-                      {/* Οι μπάλες ΜΕΣΑ στο κουτί */}
                       {insidePortionBalls.map((pos) => {
                         const colTheme = currentStep === 1 
                           ? { fill: 'url(#ballBlue)', stroke: '#1d4ed8' } 
@@ -623,7 +753,7 @@ export default function GnostosDiaAgnostosPage() {
                       })}
                     </g>
 
-                    {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ b ΜΠΑΛΕΣ (ΤΟ 1 ΜΕΡΙΔΙΟ) */}
+                    {/* 6. ΔΕΞΙΟΣ ΔΙΣΚΟΣ: ΟΙ b ΜΠΑΛΕΣ */}
                     {rightBalls.map((ball) => (
                       <g key={ball.id} className="transition-all duration-500" filter="url(#shadow3d)">
                         <circle
@@ -643,11 +773,11 @@ export default function GnostosDiaAgnostosPage() {
 
                     {/* Ετικέτες κάτω από τους δίσκους */}
                     <text x="150" y="325" fill="#1e3a8a" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                      {currentStep === 3 ? `x ＝ ${exactSolution} ίσα μέρη των ${activeB}` : `Αρχικό Σύνολο: ${activeA} μπάλες`}
+                      {currentStep === 3 ? t.leftPanStep3(exactSolution, activeB) : t.leftPanInit(activeA)}
                     </text>
 
                     <text x="610" y="325" fill="#064e3b" fontSize="13.5" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                      1 Μερίδιο: {activeB} μπάλες
+                      {t.rightPanLabel(activeB)}
                     </text>
                   </svg>
                 </div>
@@ -660,11 +790,11 @@ export default function GnostosDiaAgnostosPage() {
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev - 1); }}
                     className="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition touch-manipulation active:scale-95"
                   >
-                    ⬅️ Προηγούμενο
+                    {t.btnPrev}
                   </button>
 
                   <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-3 sm:px-5 py-2 rounded-xl border border-indigo-200 shadow-xs">
-                    Βήμα {currentStep} από 3
+                    {t.stepOf(currentStep, 3)}
                   </div>
 
                   <button
@@ -673,14 +803,14 @@ export default function GnostosDiaAgnostosPage() {
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev + 1); }}
                     className="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95 touch-manipulation"
                   >
-                    Επόμενο ➡️
+                    {t.btnNext}
                   </button>
                 </div>
               </div>
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 ΣΥΜΠΕΡΑΣΜΑ: Στην εξίσωση <strong>{activeA} : x ＝ {activeB}</strong>, ο άγνωστος διαιρέτης ισούται με <strong>x ＝ {activeA} : {activeB} ＝ {exactSolution}</strong> (σε {exactSolution} ίσα μέρη μοιράστηκε το αρχικό ποσό)!
+                {t.summaryTitle(activeA, activeB, exactSolution)}
               </div>
 
             </div>
@@ -688,19 +818,22 @@ export default function GnostosDiaAgnostosPage() {
           </div>
         </section>
 
-        {/* 5. BOTTOM CALLOUT BANNER */}
-        <section className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-lg text-gray-900 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-gray-800 text-sm md:text-base">
-              Έμαθες πώς λύνουμε μια εξίσωση με άγνωστο διαιρέτη; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+        {/* 4. BOTTOM CALLOUT BANNER ΓΙΑ ΑΣΚΗΣΕΙΣ */}
+        <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
+            <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
+              {t.ctaTitle}
+            </h3>
+            <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
+              {t.ctaDesc}
             </p>
           </div>
+
           <Link
             href="/st-dimotikou/38-gnostos-dia-agnostos-ask"
-            className="bg-gray-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-xl transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(t.ctaBtn)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

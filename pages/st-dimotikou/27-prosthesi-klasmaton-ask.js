@@ -1,5 +1,6 @@
 // pages/st-dimotikou/27-prosthesi-klasmaton-ask.js
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
@@ -40,21 +41,111 @@ function findLCM(a, b) {
   return Math.abs(a * b) / findGCD(a, b);
 }
 
-// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+// Αυστηρή συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποίηση αριθμών με ελληνικό locale
-function formatNum(num) {
-  if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+// Εγγύηση 4 μοναδικών επιλογών στα MCQ
+function makeUniqueOptions(correctOption, wrongCandidates) {
+  const unique = new Map();
+  unique.set(String(correctOption.val), correctOption);
+  for (const opt of wrongCandidates) {
+    if (opt && opt.val !== undefined && opt.val !== null && opt.val !== '') {
+      const key = String(opt.val);
+      if (!unique.has(key)) {
+        unique.set(key, opt);
+      }
+    }
+    if (unique.size === 4) break;
+  }
+  return shuffle(Array.from(unique.values()));
 }
+
+// Component για κανονική κατακόρυφη μορφή κλάσματος
+export function Fraction({ num, den, size = 'md', className = '' }) {
+  const sizeClasses = {
+    sm: { numDen: 'text-xs sm:text-sm font-bold', line: 'w-full h-0.5' },
+    md: { numDen: 'text-sm sm:text-base font-black', line: 'w-full h-0.5' },
+    lg: { numDen: 'text-lg sm:text-xl font-black', line: 'w-full h-1' }
+  };
+
+  const selected = sizeClasses[size] || sizeClasses.md;
+
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle font-mono leading-none px-0.5 sm:px-1 shrink-0 max-w-full ${className}`}>
+      <span className={`${selected.numDen} pb-0.5 break-all text-center`}>{num}</span>
+      <span className={`${selected.line} bg-current rounded-full my-0.5 min-w-[12px] max-w-full`} />
+      <span className={`${selected.numDen} pt-0.5 break-all text-center`}>{den}</span>
+    </span>
+  );
+}
+
+// ---------------------------------------------------------
+// ΛΕΞΙΚΟ i18n
+// ---------------------------------------------------------
+
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Ασκήσεις: Πρόσθεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στην πρόσθεση ομώνυμων και ετερώνυμων κλασμάτων για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    theoryNav: "Θεωρία",
+    badge: "ΚΕΦΑΛΑΙΟ 27 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    title: "Διαδραστικές Ασκήσεις: Πρόσθεση Κλασμάτων",
+    desc: "Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στην πρόσθεση ομώνυμων και ετερώνυμων κλασμάτων, στην εύρεση Ε.Κ.Π. και στην απλοποίηση!",
+    newQuestions: "Νέες Ασκήσεις",
+    exercise: "Άσκηση",
+    trueBtn: "Σωστό",
+    falseBtn: "Λάθος",
+    inputPlaceholder: "π.χ. 3/4",
+    tableHeaderElement: "Στοιχείο",
+    tableHeaderFormula: "Πράξη / Μέθοδος",
+    tableHeaderValue: "Τιμή",
+    feedbackSuccess: "🎯 Εξαιρετικά!",
+    feedbackReview: "💡 Επεξήγηση:",
+    checkBtn: "Έλεγχος Απαντήσεων",
+    scoreBadge: "Σκορ",
+    answeredBadge: "Απαντήθηκαν",
+    percentage: "Ποσοστό",
+    bottomHint: "Απάντησε και στις 10 ερωτήσεις και πάτησε «Έλεγχος Απαντήσεων»!",
+    lcmLabel: "Ε.Κ.Π.",
+    gcdLabel: "Μ.Κ.Δ."
+  },
+  en: {
+    pageTitle: "Exercises: Adding Fractions - 6th Grade | LearnMaths.gr",
+    pageDesc: "Interactive 10-question practice test with automated scoring on adding like and unlike fractions for 6th Grade.",
+    backText: "6th Grade",
+    theoryNav: "Theory",
+    badge: "CHAPTER 27 • 6TH GRADE • PRACTICE",
+    title: "Interactive Exercises: Adding Fractions",
+    desc: "Solve the 10 dynamic problems to practice adding like and unlike fractions, computing LCM, and simplifying sums!",
+    newQuestions: "New Exercises",
+    exercise: "Exercise",
+    trueBtn: "True",
+    falseBtn: "False",
+    inputPlaceholder: "e.g. 3/4",
+    tableHeaderElement: "Element",
+    tableHeaderFormula: "Operation / Method",
+    tableHeaderValue: "Value",
+    feedbackSuccess: "🎯 Excellent!",
+    feedbackReview: "💡 Explanation:",
+    checkBtn: "Check Answers",
+    scoreBadge: "Score",
+    answeredBadge: "Answered",
+    percentage: "Percentage",
+    bottomHint: "Answer all 10 questions and press 'Check Answers'!",
+    lcmLabel: "LCM",
+    gcdLabel: "GCD"
+  }
+};
 
 // ---------------------------------------------------------
 // ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (Q9 & Q10) - "NO-GIVEAWAY" PEDAGOGY
@@ -63,171 +154,563 @@ function formatNum(num) {
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'sp1',
-    title: 'Κατανάλωση Πίτσας σε Πάρτι',
-    unit: 'της πίτσας',
-    generate: () => {
-      // 1/4 + 1/2 = 1/4 + 2/4 = 3/4
-      const p1 = 'Ο Νίκος';
-      const p2 = 'ο Πέτρος';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Nikos' : 'Ο Νίκος';
+      const p2 = locale === 'en' ? 'Petros' : 'ο Πέτρος';
       const n1 = 1;
       const d1 = 4;
       const n2 = 1;
       const d2 = 2;
       const resN = 3;
       const resD = 4;
+      const correctVal = `${resN}/${resD}`;
+      const correctOption = { val: correctVal, render: <Fraction num={resN} den={resD} size="md" /> };
+      const wrongList = [
+        { val: '2/6', render: <Fraction num="2" den="6" size="md" /> },
+        { val: '3/8', render: <Fraction num="3" den="8" size="md" /> },
+        { val: '2/4', render: <Fraction num="2" den="4" size="md" /> },
+        { val: '1/4', render: <Fraction num="1" den="4" size="md" /> }
+      ];
+
       return {
-        prompt: `${p1} έφαγε το ${n1}/${d1} μιας πίτσας και ${p2} έφαγε το ${n2}/${d2} της ίδιας πίτσας. Ποιο μέρος της πίτσας καταναλώθηκε συνολικά;`,
-        unit: '',
-        correctVal: `${resN}/${resD}`,
-        correctText: `${resN}/${resD}`,
+        title: locale === 'en' ? 'Pizza Consumption at a Party' : 'Κατανάλωση Πίτσας σε Πάρτι',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'ate' : 'έφαγε το'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of a pizza and' : 'μιας πίτσας και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'ate' : 'έφαγε το'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'of the same pizza. What fraction of the pizza was eaten in total?' : 'της ίδιας πίτσας. Ποιο μέρος της πίτσας καταναλώθηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Κομμάτι Νίκου', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Κομμάτι Πέτρου (Ομώνυμο)', formula: `(${n2} · 2) / (${d2} · 2)`, val: `2/${resD}` },
-          { item: 'Συνολικό Άθροισμα', formula: `${n1}/${resD} ＋ 2/${resD}`, val: `${resN}/${resD}` }
+          { item: locale === 'en' ? 'Slice of Nikos' : 'Κομμάτι Νίκου', formula: <Fraction num={n1} den={d1} size="sm" />, val: <Fraction num={n1} den={d1} size="sm" /> },
+          {
+            item: locale === 'en' ? 'Slice of Petros (Like)' : 'Κομμάτι Πέτρου (Ομώνυμο)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={`${n2} · 2`} den={`${d2} · 2`} size="sm" />
+              </span>
+            ),
+            val: <Fraction num="2" den={resD} size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Total Sum' : 'Συνολικό Άθροισμα',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={n1} den={resD} size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den={resD} size="sm" />
+              </span>
+            ),
+            val: <Fraction num={resN} den={resD} size="sm" />
+          }
         ],
-        explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(4, 2) ＝ 4. Το 1/2 γίνεται 2/4. Προσθέτουμε τους αριθμητές: 1/4 ＋ 2/4 ＝ ${resN}/${resD}.`,
-        distractors: ['2/6', '3/8', '2/4']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>Convert to common denominator with LCM(4, 2) ＝ 4.</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>becomes</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>. Add numerators:</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(4, 2) ＝ 4. Το</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>γίνεται</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>. Προσθέτουμε τους αριθμητές:</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'sp2',
-    title: 'Χυμός Πορτοκαλιού και Μήλου',
-    unit: 'του λίτρου',
-    generate: () => {
-      // 1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2
-      const p1 = 'Η Ελένη';
-      const p2 = 'η Μαρία';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Eleni' : 'Η Ελένη';
+      const p2 = locale === 'en' ? 'Maria' : 'η Μαρία';
       const n1 = 1;
       const d1 = 3;
       const n2 = 1;
       const d2 = 6;
+      const correctVal = '1/2';
+      const correctOption = {
+        val: correctVal,
+        render: (
+          <span className="inline-flex items-center gap-1 flex-wrap justify-center">
+            <Fraction num="1" den="2" size="md" />
+            <span className="text-xs text-slate-500 font-sans">({locale === 'en' ? 'or 3/6' : 'ή 3/6'})</span>
+          </span>
+        )
+      };
+      const wrongList = [
+        { val: '2/9', render: <Fraction num="2" den="9" size="md" /> },
+        { val: '2/6', render: <Fraction num="2" den="6" size="md" /> },
+        { val: '2/3', render: <Fraction num="2" den="3" size="md" /> },
+        { val: '5/6', render: <Fraction num="5" den="6" size="md" /> }
+      ];
+
       return {
-        prompt: `${p1} ήπιε το ${n1}/${d1} ενός λίτρου χυμού και ${p2} ήπιε το ${n2}/${d2} του ίδιου λίτρου. Ποιο μέρος του λίτρου καταναλώθηκε συνολικά;`,
-        unit: '',
-        correctVal: '1/2',
-        correctText: '1/2 (3/6)',
+        title: locale === 'en' ? 'Orange and Apple Juice' : 'Χυμός Πορτοκαλιού και Μήλου',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'drank' : 'ήπιε το'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of a liter of juice and' : 'ενός λίτρου χυμού και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'drank' : 'ήπιε το'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'of the same liter. What fraction was consumed in total?' : 'του ίδιου λίτρου. Ποιο μέρος του λίτρου καταναλώθηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: '1ο Μέρος (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: '2/6' },
-          { item: '2ο Μέρος', formula: `${n2}/${d2}`, val: '1/6' },
-          { item: 'Άθροισμα & Απλοποίηση', formula: '2/6 ＋ 1/6 ＝ 3/6 (: 3)', val: '1/2' }
+          {
+            item: locale === 'en' ? '1st Part (Like)' : '1ο Μέρος (Ομώνυμο)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={`${n1} · 2`} den={`${d1} · 2`} size="sm" />
+              </span>
+            ),
+            val: <Fraction num="2" den="6" size="sm" />
+          },
+          { item: locale === 'en' ? '2nd Part' : '2ο Μέρος', formula: <Fraction num={n2} den={d2} size="sm" />, val: <Fraction num="1" den="6" size="sm" /> },
+          {
+            item: locale === 'en' ? 'Sum & Simplify' : 'Άθροισμα & Απλοποίηση',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono flex-wrap">
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span className="text-xs">(: 3)</span>
+              </span>
+            ),
+            val: <Fraction num="1" den="2" size="sm" />
+          }
         ],
-        explain: `Ε.Κ.Π.(3, 6) ＝ 6. Το 1/3 γίνεται 2/6. Προσθέτουμε: 2/6 ＋ 1/6 ＝ 3/6. Απλοποιώντας με το 3 παίρνουμε 1/2 του λίτρου.`,
-        distractors: ['2/9', '2/6', '2/3']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(3, 6) ＝ 6.</span>
+                <Fraction num="1" den="3" size="sm" />
+                <span>becomes</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>. Add:</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>. Simplifying by 3 gives</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Ε.Κ.Π.(3, 6) ＝ 6. Το</span>
+                <Fraction num="1" den="3" size="sm" />
+                <span>γίνεται</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>. Προσθέτουμε:</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>. Απλοποιώντας με το 3 παίρνουμε</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'sp3',
-    title: 'Φύτευση Σχολικού Κήπου',
-    unit: 'του κήπου',
-    generate: () => {
-      // 2/5 + 3/10 = 4/10 + 3/10 = 7/10
-      const p1 = 'Ο Κώστας';
-      const p2 = 'ο Γιώργος';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Kostas' : 'Ο Κώστας';
+      const p2 = locale === 'en' ? 'George' : 'ο Γιώργος';
       const n1 = 2;
       const d1 = 5;
       const n2 = 3;
       const d2 = 10;
       const resN = 7;
       const resD = 10;
+      const correctVal = `${resN}/${resD}`;
+      const correctOption = { val: correctVal, render: <Fraction num={resN} den={resD} size="md" /> };
+      const wrongList = [
+        { val: '5/15', render: <Fraction num="5" den="15" size="md" /> },
+        { val: '5/10', render: <Fraction num="5" den="10" size="md" /> },
+        { val: '6/10', render: <Fraction num="6" den="10" size="md" /> },
+        { val: '8/10', render: <Fraction num="8" den="10" size="md" /> }
+      ];
+
       return {
-        prompt: `${p1} φύτεψε τα ${n1}/${d1} ενός σχολικού κήπου και ${p2} φύτεψε τα ${n2}/${d2} του κήπου. Ποιο μέρος του κήπου φυτεύτηκε συνολικά;`,
-        unit: '',
-        correctVal: `${resN}/${resD}`,
-        correctText: `${resN}/${resD}`,
+        title: locale === 'en' ? 'School Garden Planting' : 'Φύτευση Σχολικού Κήπου',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'planted' : 'φύτεψε τα'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of a school garden and' : 'ενός σχολικού κήπου και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'planted' : 'φύτεψε τα'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'of the garden. What portion was planted in total?' : 'του κήπου. Ποιο μέρος του κήπου φυτεύτηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Μέρος Κώστα (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: `4/${resD}` },
-          { item: 'Μέρος Γιώργου', formula: `${n2}/${d2}`, val: `3/${resD}` },
-          { item: 'Σύνολο', formula: `4/${resD} ＋ 3/${resD}`, val: `${resN}/${resD}` }
+          {
+            item: locale === 'en' ? 'Kostas (Like)' : 'Μέρος Κώστα (Ομώνυμο)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={`${n1} · 2`} den={`${d1} · 2`} size="sm" />
+              </span>
+            ),
+            val: <Fraction num="4" den={resD} size="sm" />
+          },
+          { item: locale === 'en' ? 'George' : 'Μέρος Γιώργου', formula: <Fraction num={n2} den={d2} size="sm" />, val: <Fraction num="3" den={resD} size="sm" /> },
+          {
+            item: locale === 'en' ? 'Total' : 'Σύνολο',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="4" den={resD} size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den={resD} size="sm" />
+              </span>
+            ),
+            val: <Fraction num={resN} den={resD} size="sm" />
+          }
         ],
-        explain: `Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 10) ＝ 10. Το 2/5 γίνεται 4/10. Προσθέτουμε: 4/10 ＋ 3/10 ＝ ${resN}/${resD}.`,
-        distractors: ['5/15', '5/10', '6/10']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(5, 10) ＝ 10.</span>
+                <Fraction num="2" den="5" size="sm" />
+                <span>becomes</span>
+                <Fraction num="4" den="10" size="sm" />
+                <span>. Add:</span>
+                <Fraction num="4" den="10" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="10" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Κάνουμε τα κλάσματα ομώνυμα με Ε.Κ.Π.(5, 10) ＝ 10. Το</span>
+                <Fraction num="2" den="5" size="sm" />
+                <span>γίνεται</span>
+                <Fraction num="4" den="10" size="sm" />
+                <span>. Προσθέτουμε:</span>
+                <Fraction num="4" den="10" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="10" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'sp4',
-    title: 'Ανάγνωση Κεφαλαίων Βιβλίου',
-    unit: 'του βιβλίου',
-    generate: () => {
-      // 1/8 + 3/8 = 4/8 = 1/2
-      const p1 = 'Η Άννα';
-      const p2 = 'η Σοφία';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Anna' : 'Η Άννα';
+      const p2 = locale === 'en' ? 'Sofia' : 'η Σοφία';
       const n1 = 1;
       const d1 = 8;
       const n2 = 3;
       const d2 = 8;
+      const correctVal = '1/2';
+      const correctOption = {
+        val: correctVal,
+        render: (
+          <span className="inline-flex items-center gap-1 flex-wrap justify-center">
+            <Fraction num="1" den="2" size="md" />
+            <span className="text-xs text-slate-500 font-sans">({locale === 'en' ? 'or 4/8' : 'ή 4/8'})</span>
+          </span>
+        )
+      };
+      const wrongList = [
+        { val: '4/16', render: <Fraction num="4" den="16" size="md" /> },
+        { val: '3/16', render: <Fraction num="3" den="16" size="md" /> },
+        { val: '2/8', render: <Fraction num="2" den="8" size="md" /> },
+        { val: '5/8', render: <Fraction num="5" den="8" size="md" /> }
+      ];
+
       return {
-        prompt: `${p1} διάβασε το ${n1}/${d1} ενός βιβλίου το πρωί και ${p2} διάβασε τα ${n2}/${d2} του βιβλίου το απόγευμα. Ποιο μέρος του βιβλίου διαβάστηκε συνολικά;`,
-        unit: '',
-        correctVal: '1/2',
-        correctText: '1/2 (4/8)',
+        title: locale === 'en' ? 'Reading Book Chapters' : 'Ανάγνωση Κεφαλαίων Βιβλίου',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'read' : 'διάβασε το'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of a book in the morning and' : 'ενός βιβλίου το πρωί και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'read' : 'διάβασε τα'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'in the afternoon. What part was read in total?' : 'του βιβλίου το απόγευμα. Ποιο μέρος του βιβλίου διαβάστηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Πρωινό διάβασμα', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Απογευματινό διάβασμα', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Άθροισμα (Ομώνυμα)', formula: `(${n1} ＋ ${n2})/${d1} ＝ 4/8 (: 4)`, val: '1/2' }
+          { item: locale === 'en' ? 'Morning read' : 'Πρωινό διάβασμα', formula: <Fraction num={n1} den={d1} size="sm" />, val: <Fraction num={n1} den={d1} size="sm" /> },
+          { item: locale === 'en' ? 'Afternoon read' : 'Απογευματινό διάβασμα', formula: <Fraction num={n2} den={d2} size="sm" />, val: <Fraction num={n2} den={d2} size="sm" /> },
+          {
+            item: locale === 'en' ? 'Sum (Like)' : 'Άθροισμα (Ομώνυμα)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono flex-wrap">
+                <Fraction num={`${n1} ＋ ${n2}`} den={d1} size="sm" />
+                <span>＝</span>
+                <Fraction num="4" den="8" size="sm" />
+                <span className="text-xs">(: 4)</span>
+              </span>
+            ),
+            val: <Fraction num="1" den="2" size="sm" />
+          }
         ],
-        explain: `Τα κλάσματα είναι ήδη ομώνυμα: 1/8 ＋ 3/8 ＝ 4/8. Απλοποιώντας διαιρώντας με το 4 παίρνουμε 1/2 του βιβλίου.`,
-        distractors: ['4/16', '3/16', '2/8']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>Fractions are already like:</span>
+                <Fraction num="1" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="4" den="8" size="sm" />
+                <span>. Simplifying by 4 yields</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Τα κλάσματα είναι ήδη ομώνυμα:</span>
+                <Fraction num="1" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="4" den="8" size="sm" />
+                <span>. Απλοποιώντας διαιρώντας με το 4 παίρνουμε</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'sp5',
-    title: 'Κάλυψη Αθλητικής Διαδρομής',
-    unit: 'της διαδρομής',
-    generate: () => {
-      // 1/4 + 3/8 = 2/8 + 3/8 = 5/8
-      const p1 = 'Ο Αλέξανδρος';
-      const p2 = 'ο Δημήτρης';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Alex' : 'Ο Αλέξανδρος';
+      const p2 = locale === 'en' ? 'Dimitris' : 'ο Δημήτρης';
       const n1 = 1;
       const d1 = 4;
       const n2 = 3;
       const d2 = 8;
       const resN = 5;
       const resD = 8;
+      const correctVal = `${resN}/${resD}`;
+      const correctOption = { val: correctVal, render: <Fraction num={resN} den={resD} size="md" /> };
+      const wrongList = [
+        { val: '4/12', render: <Fraction num="4" den="12" size="md" /> },
+        { val: '4/8', render: <Fraction num="4" den="8" size="md" /> },
+        { val: '6/8', render: <Fraction num="6" den="8" size="md" /> },
+        { val: '7/8', render: <Fraction num="7" den="8" size="md" /> }
+      ];
+
       return {
-        prompt: `Σε έναν αγώνα σκυταλοδρομίας, ${p1} κάλυψε το ${n1}/${d1} της διαδρομής και ${p2} κάλυψε τα ${n2}/${d2} της διαδρομής. Ποιο μέρος της διαδρομής καλύφθηκε συνολικά;`,
-        unit: '',
-        correctVal: `${resN}/${resD}`,
-        correctText: `${resN}/${resD}`,
+        title: locale === 'en' ? 'Relay Race Course' : 'Κάλυψη Αθλητικής Διαδρομής',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'In a relay race,' : 'Σε έναν αγώνα σκυταλοδρομίας,'}</span>
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'covered' : 'κάλυψε το'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of the course and' : 'της διαδρομής και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'covered' : 'κάλυψε τα'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'of the course. What fraction was covered in total?' : 'της διαδρομής. Ποιο μέρος της διαδρομής καλύφθηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: '1ο Τμήμα (Ομώνυμο)', formula: `(${n1} · 2) / (${d1} · 2)`, val: `2/${resD}` },
-          { item: '2ο Τμήμα', formula: `${n2}/${d2}`, val: `3/${resD}` },
-          { item: 'Συνολικό Μέρος', formula: `2/${resD} ＋ 3/${resD}`, val: `${resN}/${resD}` }
+          {
+            item: locale === 'en' ? '1st Leg (Like)' : '1ο Τμήμα (Ομώνυμο)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={`${n1} · 2`} den={`${d1} · 2`} size="sm" />
+              </span>
+            ),
+            val: <Fraction num="2" den={resD} size="sm" />
+          },
+          { item: locale === 'en' ? '2nd Leg' : '2ο Τμήμα', formula: <Fraction num={n2} den={d2} size="sm" />, val: <Fraction num="3" den={resD} size="sm" /> },
+          {
+            item: locale === 'en' ? 'Total Distance' : 'Συνολικό Μέρος',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="2" den={resD} size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den={resD} size="sm" />
+              </span>
+            ),
+            val: <Fraction num={resN} den={resD} size="sm" />
+          }
         ],
-        explain: `Ε.Κ.Π.(4, 8) ＝ 8. Το 1/4 γίνεται 2/8. Προσθέτουμε: 2/8 ＋ 3/8 ＝ ${resN}/${resD} της διαδρομής.`,
-        distractors: ['4/12', '4/8', '6/8']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(4, 8) ＝ 8.</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>becomes</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>. Add:</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Ε.Κ.Π.(4, 8) ＝ 8. Το</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>γίνεται</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>. Προσθέτουμε:</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'sp6',
-    title: 'Χρωμάτισμα Μεγάλου Σχεδίου',
-    unit: 'του σχεδίου',
-    generate: () => {
-      // 2/7 + 3/7 = 5/7
-      const p1 = 'Η Χριστίνα';
-      const p2 = 'η Κατερίνα';
+    generate: (locale) => {
+      const p1 = locale === 'en' ? 'Christina' : 'Η Χριστίνα';
+      const p2 = locale === 'en' ? 'Katerina' : 'η Κατερίνα';
       const n1 = 2;
       const d1 = 7;
       const n2 = 3;
       const d2 = 7;
       const resN = 5;
       const resD = 7;
+      const correctVal = `${resN}/${resD}`;
+      const correctOption = { val: correctVal, render: <Fraction num={resN} den={resD} size="md" /> };
+      const wrongList = [
+        { val: '5/14', render: <Fraction num="5" den="14" size="md" /> },
+        { val: '6/7', render: <Fraction num="6" den="7" size="md" /> },
+        { val: '4/7', render: <Fraction num="4" den="7" size="md" /> },
+        { val: '1/7', render: <Fraction num="1" den="7" size="md" /> }
+      ];
+
       return {
-        prompt: `Σε ένα μάθημα Εικαστικών, ${p1} χρωμάτισε τα ${n1}/${d1} ενός σχεδίου και ${p2} χρωμάτισε τα ${n2}/${d2} του σχεδίου. Ποιο μέρος του σχεδίου χρωματίστηκε συνολικά;`,
-        unit: '',
-        correctVal: `${resN}/${resD}`,
-        correctText: `${resN}/${resD}`,
+        title: locale === 'en' ? 'Coloring a Drawing' : 'Χρωμάτισμα Μεγάλου Σχεδίου',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'In art class,' : 'Σε ένα μάθημα Εικαστικών,'}</span>
+            <span>{p1}</span>
+            <span>{locale === 'en' ? 'colored' : 'χρωμάτισε τα'}</span>
+            <Fraction num={n1} den={d1} size="sm" />
+            <span>{locale === 'en' ? 'of a design and' : 'ενός σχεδίου και'}</span>
+            <span>{p2}</span>
+            <span>{locale === 'en' ? 'colored' : 'χρωμάτισε τα'}</span>
+            <Fraction num={n2} den={d2} size="sm" />
+            <span>{locale === 'en' ? 'of it. What fraction was colored in total?' : 'του σχεδίου. Ποιο μέρος του σχεδίου χρωματίστηκε συνολικά;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Μέρος Χριστίνας', formula: `${n1}/${d1}`, val: `${n1}/${d1}` },
-          { item: 'Μέρος Κατερίνας', formula: `${n2}/${d2}`, val: `${n2}/${d2}` },
-          { item: 'Σύνολο (Ομώνυμα)', formula: `(${n1} ＋ ${n2})/${d1}`, val: `${resN}/${resD}` }
+          { item: p1, formula: <Fraction num={n1} den={d1} size="sm" />, val: <Fraction num={n1} den={d1} size="sm" /> },
+          { item: p2, formula: <Fraction num={n2} den={d2} size="sm" />, val: <Fraction num={n2} den={d2} size="sm" /> },
+          {
+            item: locale === 'en' ? 'Sum (Like)' : 'Σύνολο (Ομώνυμα)',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num={`${n1} ＋ ${n2}`} den={d1} size="sm" />
+              </span>
+            ),
+            val: <Fraction num={resN} den={resD} size="sm" />
+          }
         ],
-        explain: `Προσθέτουμε κατευθείαν τους αριθμητές στα ομώνυμα: 2/7 ＋ 3/7 ＝ ${resN}/${resD}.`,
-        distractors: ['5/14', '6/7', '4/7']
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>Directly add numerators for like fractions:</span>
+                <Fraction num="2" den="7" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="7" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Προσθέτουμε κατευθείαν τους αριθμητές στα ομώνυμα:</span>
+                <Fraction num="2" den="7" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="7" size="sm" />
+                <span>＝</span>
+                <Fraction num={resN} den={resD} size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   }
@@ -236,152 +719,622 @@ const STANDARD_PROBLEMS_POOL = [
 const HARD_PROBLEMS_POOL = [
   {
     id: 'hp1',
-    title: 'Άθροισμα Μεγαλύτερο από τη Μονάδα (＞ 1)',
-    unit: '',
-    generate: () => {
-      // 1/2 + 2/3 = 3/6 + 4/6 = 7/6 (1 και 1/6)
+    generate: (locale) => {
+      const correctVal = '7/6';
+      const correctOption = {
+        val: correctVal,
+        render: (
+          <span className="break-words">
+            {locale === 'en' ? '7/6 (greater than 1)' : '7/6 (μεγαλύτερο από το 1)'}
+          </span>
+        )
+      };
+      const wrongList = locale === 'en'
+        ? [
+            { val: '3/5', render: <span className="break-words">3/5 (less than 1)</span> },
+            { val: '5/6', render: <span className="break-words">5/6 (less than 1)</span> },
+            { val: '6/6', render: <span className="break-words">6/6 (equal to 1)</span> }
+          ]
+        : [
+            { val: '3/5', render: <span className="break-words">3/5 (μικρότερο από το 1)</span> },
+            { val: '5/6', render: <span className="break-words">5/6 (μικρότερο από το 1)</span> },
+            { val: '6/6', render: <span className="break-words">6/6 (ίσο με τη μονάδα)</span> }
+          ];
+
       return {
-        prompt: 'Υπολόγισε το άθροισμα 1/2 ＋ 2/3. Τι παρατηρείς για το τελικό αποτέλεσμα σε σχέση με τη μονάδα;',
-        unit: '',
-        correctVal: '7/6 (μεγαλύτερο από το 1)',
-        correctText: '7/6 (μεγαλύτερο από το 1)',
+        title: locale === 'en' ? 'Sum Greater than 1 Whole (＞ 1)' : 'Άθροισμα Μεγαλύτερο από τη Μονάδα (＞ 1)',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'Calculate the sum' : 'Υπολόγισε το άθροισμα'}</span>
+            <Fraction num="1" den="2" size="sm" />
+            <span>＋</span>
+            <Fraction num="2" den="3" size="sm" />
+            <span>{locale === 'en' ? '. What do you observe about the result compared to 1?' : '. Τι παρατηρείς για το τελικό αποτέλεσμα σε σχέση με τη μονάδα;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: '1/2 σε έκτα', formula: '(1 · 3) / 6', val: '3/6' },
-          { item: '2/3 σε έκτα', formula: '(2 · 2) / 6', val: '4/6' },
-          { item: 'Άθροισμα', formula: '3/6 ＋ 4/6', val: '7/6 (＞ 1)' }
+          {
+            item: (
+              <span className="inline-flex items-center gap-1">
+                <Fraction num="1" den="2" size="sm" />
+              </span>
+            ),
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="1 · 3" den="6" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="3" den="6" size="sm" />
+          },
+          {
+            item: (
+              <span className="inline-flex items-center gap-1">
+                <Fraction num="2" den="3" size="sm" />
+              </span>
+            ),
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="2 · 2" den="6" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="4" den="6" size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Sum' : 'Άθροισμα',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="4" den="6" size="sm" />
+              </span>
+            ),
+            val: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="7" den="6" size="sm" />
+                <span>(＞ 1)</span>
+              </span>
+            )
+          }
         ],
-        explain: 'Ε.Κ.Π.(2, 3) ＝ 6. Μετατρέπουμε σε ομώνυμα: 3/6 ＋ 4/6 ＝ 7/6. Επειδή ο αριθμητής είναι μεγαλύτερος από τον παρονομαστή (7 ＞ 6), το άθροισμα είναι μεγαλύτερο από το 1 (καταχρηστικό κλάσμα ＝ 1 και 1/6).',
-        distractors: [
-          '3/5 (μικρότερο από το 1)',
-          '5/6 (μικρότερο από το 1)',
-          '6/6 (ίσο με τη μονάδα)'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(2, 3) ＝ 6:</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="4" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="7" den="6" size="sm" />
+                <span>. Since numerator ＞ denominator (7 ＞ 6), the sum is greater than 1 (improper fraction ＝ 1</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>).</span>
+              </>
+            ) : (
+              <>
+                <span>Ε.Κ.Π.(2, 3) ＝ 6:</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="4" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="7" den="6" size="sm" />
+                <span>. Επειδή 7 ＞ 6, το άθροισμα είναι μεγαλύτερο από το 1 (καταχρηστικό κλάσμα ＝ 1 και</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>).</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'hp2',
-    title: 'Πρόσθεση Τριών Κλασμάτων',
-    unit: '',
-    generate: () => {
-      // 1/2 + 1/3 + 1/6 = 3/6 + 2/6 + 1/6 = 6/6 = 1
+    generate: (locale) => {
+      const correctVal = '1';
+      const correctOption = {
+        val: correctVal,
+        render: <span className="break-words">1 ({locale === 'en' ? 'or 6/6' : 'ή 6/6'})</span>
+      };
+      const wrongList = [
+        { val: '3/11', render: <Fraction num="3" den="11" size="md" /> },
+        { val: '5/6', render: <Fraction num="5" den="6" size="md" /> },
+        { val: '7/6', render: <Fraction num="7" den="6" size="md" /> }
+      ];
+
       return {
-        prompt: 'Υπολόγισε το άθροισμα των τριών κλασμάτων: 1/2 ＋ 1/3 ＋ 1/6:',
-        unit: '',
-        correctVal: '1',
-        correctText: '1 (ή 6/6)',
+        title: locale === 'en' ? 'Adding Three Fractions' : 'Πρόσθεση Τριών Κλασμάτων',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'Compute the sum of the three fractions:' : 'Υπολόγισε το άθροισμα των τριών κλασμάτων:'}</span>
+            <Fraction num="1" den="2" size="sm" />
+            <span>＋</span>
+            <Fraction num="1" den="3" size="sm" />
+            <span>＋</span>
+            <Fraction num="1" den="6" size="sm" />
+            <span>:</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Ε.Κ.Π.(2, 3, 6)', formula: 'Κοινός παρονομαστής', val: '6' },
-          { item: 'Μετατροπή σε ομώνυμα', formula: '3/6 ＋ 2/6 ＋ 1/6', val: '(3 ＋ 2 ＋ 1)/6' },
-          { item: 'Τελικό Άθροισμα', formula: '6/6', val: '1 ακέραια μονάδα' }
+          { item: `${locale === 'en' ? 'LCM' : 'Ε.Κ.Π.'}(2, 3, 6)`, formula: locale === 'en' ? 'Common denominator' : 'Κοινός παρονομαστής', val: '6' },
+          {
+            item: locale === 'en' ? 'Convert to like' : 'Μετατροπή σε ομώνυμα',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="3 ＋ 2 ＋ 1" den="6" size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Final Sum' : 'Τελικό Άθροισμα',
+            formula: <Fraction num="6" den="6" size="sm" />,
+            val: '1'
+          }
         ],
-        explain: 'Ε.Κ.Π.(2, 3, 6) ＝ 6. Γράφουμε: 3/6 ＋ 2/6 ＋ 1/6 ＝ 6/6 ＝ 1 ολόκληρη μονάδα.',
-        distractors: [
-          '3/11',
-          '5/6',
-          '7/6'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(2, 3, 6) ＝ 6:</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="6" den="6" size="sm" />
+                <span>＝ 1 whole unit.</span>
+              </>
+            ) : (
+              <>
+                <span>Ε.Κ.Π.(2, 3, 6) ＝ 6:</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="6" den="6" size="sm" />
+                <span>＝ 1 ολόκληρη μονάδα.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'hp3',
-    title: 'Σύνθετη Πρόσθεση Ακέραιου με Κλάσματα',
-    unit: '',
-    generate: () => {
-      // 2 + 1/4 + 1/2 = 2 + 3/4 = 11/4
+    generate: (locale) => {
+      const kgLabel = locale === 'en' ? 'kg' : 'κιλά';
+      const correctVal = '11/4';
+      const correctOption = { val: correctVal, render: <Fraction num="11" den="4" size="md" /> };
+      const wrongList = [
+        { val: '7/4', render: <Fraction num="7" den="4" size="md" /> },
+        { val: '9/4', render: <Fraction num="9" den="4" size="md" /> },
+        { val: '2/6', render: <Fraction num="2" den="6" size="md" /> },
+        { val: '5/4', render: <Fraction num="5" den="4" size="md" /> }
+      ];
+
       return {
-        prompt: 'Ένας μάγειρας χρησιμοποίησε 2 ολόκληρα κιλά αλεύρι, επιπλέον 1/4 του κιλού και ακόμη 1/2 του κιλού. Πόσα κιλά αλεύρι χρησιμοποίησε συνολικά σε κλασματική μορφή;',
-        unit: 'κιλά',
-        correctVal: '11/4',
-        correctText: '11/4 κιλά (2 και 3/4)',
+        title: locale === 'en' ? 'Adding Whole Number with Fractions' : 'Σύνθετη Πρόσθεση Ακέραιου με Κλάσματα',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'A chef used 2 whole kg of flour, plus' : 'Ένας μάγειρας χρησιμοποίησε 2 ολόκληρα κιλά αλεύρι, επιπλέον'}</span>
+            <Fraction num="1" den="4" size="sm" />
+            <span>{locale === 'en' ? 'kg, and another' : 'του κιλού και ακόμη'}</span>
+            <Fraction num="1" den="2" size="sm" />
+            <span>{locale === 'en' ? 'kg. How many kg of flour did he use in total as a fraction?' : 'του κιλού. Πόσα κιλά αλεύρι χρησιμοποίησε συνολικά σε κλασματική μορφή;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Κλάσματα αλευριού', formula: '1/4 ＋ 1/2 ＝ 1/4 ＋ 2/4', val: '3/4 κιλά' },
-          { item: 'Ακέραιος σε τέταρτα', formula: '2 ＝ 8/4', val: '8/4 κιλά' },
-          { item: 'Συνολικό βάρος', formula: '8/4 ＋ 3/4', val: '11/4 κιλά' }
+          {
+            item: locale === 'en' ? 'Fractions' : 'Κλάσματα αλευριού',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>＝</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="4" size="sm" />
+              </span>
+            ),
+            val: (
+              <span className="inline-flex items-center gap-1">
+                <Fraction num="3" den="4" size="sm" />
+                <span>{kgLabel}</span>
+              </span>
+            )
+          },
+          {
+            item: locale === 'en' ? 'Whole number' : 'Ακέραιος σε τέταρτα',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <span>2 ＝</span>
+                <Fraction num="8" den="4" size="sm" />
+              </span>
+            ),
+            val: (
+              <span className="inline-flex items-center gap-1">
+                <Fraction num="8" den="4" size="sm" />
+                <span>{kgLabel}</span>
+              </span>
+            )
+          },
+          {
+            item: locale === 'en' ? 'Total weight' : 'Συνολικό βάρος',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="8" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="4" size="sm" />
+              </span>
+            ),
+            val: (
+              <span className="inline-flex items-center gap-1">
+                <Fraction num="11" den="4" size="sm" />
+                <span>{kgLabel}</span>
+              </span>
+            )
+          }
         ],
-        explain: 'Προσθέτουμε πρώτα τα κλάσματα: 1/4 ＋ 2/4 ＝ 3/4. Μαζί με τα 2 ακέραια κιλά (8/4) έχουμε 8/4 ＋ 3/4 ＝ 11/4 κιλά.',
-        distractors: [
-          '7/4 κιλά',
-          '9/4 κιλά',
-          '2/6 κιλά'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>Fractions:</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="4" size="sm" />
+                <span>. Adding whole number 2 (</span>
+                <Fraction num="8" den="4" size="sm" />
+                <span>):</span>
+                <Fraction num="8" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="11" den="4" size="sm" />
+                <span>kg.</span>
+              </>
+            ) : (
+              <>
+                <span>Προσθέτουμε πρώτα τα κλάσματα:</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="4" size="sm" />
+                <span>. Μαζί με τα 2 ακέραια κιλά (</span>
+                <Fraction num="8" den="4" size="sm" />
+                <span>) έχουμε</span>
+                <Fraction num="8" den="4" size="sm" />
+                <span>＋</span>
+                <Fraction num="3" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="11" den="4" size="sm" />
+                <span>κιλά.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'hp4',
-    title: 'Εύρεση Άγνωστου Κλάσματος',
-    unit: '',
-    generate: () => {
-      // 1/3 + [?] = 5/6 -> [?] = 5/6 - 2/6 = 3/6 = 1/2
+    generate: (locale) => {
+      const correctVal = '1/2';
+      const correctOption = {
+        val: correctVal,
+        render: (
+          <span className="inline-flex items-center gap-1 flex-wrap justify-center">
+            <Fraction num="1" den="2" size="md" />
+            <span className="text-xs text-slate-500 font-sans">({locale === 'en' ? 'or 3/6' : 'ή 3/6'})</span>
+          </span>
+        )
+      };
+      const wrongList = [
+        { val: '2/3', render: <Fraction num="2" den="3" size="md" /> },
+        { val: '1/3', render: <Fraction num="1" den="3" size="md" /> },
+        { val: '4/6', render: <Fraction num="4" den="6" size="md" /> },
+        { val: '1/6', render: <Fraction num="1" den="6" size="md" /> }
+      ];
+
       return {
-        prompt: 'Ποιο κλάσμα πρέπει να προστεθεί στο 1/3 για να προκύψει άθροισμα ίσο με 5/6;',
-        unit: '',
-        correctVal: '1/2',
-        correctText: '1/2 (ή 3/6)',
+        title: locale === 'en' ? 'Finding the Missing Addend Fraction' : 'Εύρεση Άγνωστου Κλάσματος',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'Which fraction must be added to' : 'Ποιο κλάσμα πρέπει να προστεθεί στο'}</span>
+            <Fraction num="1" den="3" size="sm" />
+            <span>{locale === 'en' ? 'to get a sum of' : 'για να προκύψει άθροισμα ίσο με'}</span>
+            <Fraction num="5" den="6" size="sm" />
+            <span>;</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: '1/3 σε έκτα', formula: '(1 · 2) / 6', val: '2/6' },
-          { item: 'Στόχος', formula: '5/6', val: '5/6' },
-          { item: 'Άγνωστο μέρος', formula: '5/6 － 2/6 ＝ 3/6 (: 3)', val: '1/2' }
+          {
+            item: <Fraction num="1" den="3" size="sm" />,
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="1 · 2" den="6" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="2" den="6" size="sm" />
+          },
+          { item: locale === 'en' ? 'Target' : 'Στόχος', formula: <Fraction num="5" den="6" size="sm" />, val: <Fraction num="5" den="6" size="sm" /> },
+          {
+            item: locale === 'en' ? 'Difference' : 'Άγνωστο μέρος',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono flex-wrap">
+                <Fraction num="5" den="6" size="sm" />
+                <span>－</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span className="text-xs">(: 3)</span>
+              </span>
+            ),
+            val: <Fraction num="1" den="2" size="sm" />
+          }
         ],
-        explain: 'Το 1/3 είναι ίσο με 2/6. Για να φτάσουμε στα 5/6, χρειαζόμαστε 5/6 － 2/6 ＝ 3/6, το οποίο απλοποιείται σε 1/2.',
-        distractors: [
-          '2/3',
-          '1/3',
-          '4/6'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <Fraction num="1" den="3" size="sm" />
+                <span>＝</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>. To reach</span>
+                <Fraction num="5" den="6" size="sm" />
+                <span>, we need</span>
+                <Fraction num="5" den="6" size="sm" />
+                <span>－</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>, which simplifies to</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Το</span>
+                <Fraction num="1" den="3" size="sm" />
+                <span>είναι ίσο με</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>. Για να φτάσουμε στα</span>
+                <Fraction num="5" den="6" size="sm" />
+                <span>, χρειαζόμαστε</span>
+                <Fraction num="5" den="6" size="sm" />
+                <span>－</span>
+                <Fraction num="2" den="6" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="6" size="sm" />
+                <span>, το οποίο απλοποιείται σε</span>
+                <Fraction num="1" den="2" size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'hp5',
-    title: 'Διπλή Απλοποίηση σε Άθροισμα',
-    unit: '',
-    generate: () => {
-      // 3/10 + 1/15 = 9/30 + 2/30 = 11/30
+    generate: (locale) => {
+      const correctVal = '11/30';
+      const correctOption = { val: correctVal, render: <Fraction num="11" den="30" size="md" /> };
+      const wrongList = [
+        { val: '4/25', render: <Fraction num="4" den="25" size="md" /> },
+        { val: '7/30', render: <Fraction num="7" den="30" size="md" /> },
+        { val: '13/30', render: <Fraction num="13" den="30" size="md" /> },
+        { val: '1/3', render: <Fraction num="1" den="3" size="md" /> }
+      ];
+
       return {
-        prompt: 'Υπολόγισε το άθροισμα των ετερώνυμων κλασμάτων: 3/10 ＋ 1/15:',
-        unit: '',
-        correctVal: '11/30',
-        correctText: '11/30',
+        title: locale === 'en' ? 'Sum with Unlike Denominators' : 'Διπλή Απλοποίηση σε Άθροισμα',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'Calculate the sum of unlike fractions:' : 'Υπολόγισε το άθροισμα των ετερώνυμων κλασμάτων:'}</span>
+            <Fraction num="3" den="10" size="sm" />
+            <span>＋</span>
+            <Fraction num="1" den="15" size="sm" />
+            <span>:</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Ε.Κ.Π.(10, 15)', formula: '30', val: '30' },
-          { item: '1ο Κλάσμα (· 3)', formula: '(3 · 3) / 30', val: '9/30' },
-          { item: '2ο Κλάσμα (· 2)', formula: '(1 · 2) / 30', val: '2/30' },
-          { item: 'Άθροισμα', formula: '9/30 ＋ 2/30', val: '11/30' }
+          { item: `${locale === 'en' ? 'LCM' : 'Ε.Κ.Π.'}(10, 15)`, formula: '30', val: '30' },
+          {
+            item: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="3" den="10" size="sm" />
+                <span>(· 3)</span>
+              </span>
+            ),
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="3 · 3" den="30" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="9" den="30" size="sm" />
+          },
+          {
+            item: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="1" den="15" size="sm" />
+                <span>(· 2)</span>
+              </span>
+            ),
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="1 · 2" den="30" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="2" den="30" size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Sum' : 'Άθροισμα',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="9" den="30" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="30" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="11" den="30" size="sm" />
+          }
         ],
-        explain: 'Ε.Κ.Π.(10, 15) ＝ 30. Μετατρέπουμε σε ομώνυμα: 9/30 ＋ 2/30 ＝ 11/30.',
-        distractors: [
-          '4/25',
-          '7/30',
-          '13/30'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>LCM(10, 15) ＝ 30:</span>
+                <Fraction num="9" den="30" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="30" size="sm" />
+                <span>＝</span>
+                <Fraction num="11" den="30" size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Ε.Κ.Π.(10, 15) ＝ 30:</span>
+                <Fraction num="9" den="30" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="30" size="sm" />
+                <span>＝</span>
+                <Fraction num="11" den="30" size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   },
   {
     id: 'hp6',
-    title: 'Συμπλήρωση ως την Ακέραια Μονάδα (1)',
-    unit: '',
-    generate: () => {
-      // 3/8 + 1/4 = 3/8 + 2/8 = 5/8 -> απομένει 3/8
+    generate: (locale) => {
+      const correctVal = '3/8';
+      const correctOption = { val: correctVal, render: <Fraction num="3" den="8" size="md" /> };
+      const wrongList = [
+        { val: '5/8', render: <Fraction num="5" den="8" size="md" /> },
+        { val: '1/8', render: <Fraction num="1" den="8" size="md" /> },
+        { val: '1/2', render: <Fraction num="1" den="2" size="md" /> },
+        { val: '7/8', render: <Fraction num="7" den="8" size="md" /> }
+      ];
+
       return {
-        prompt: 'Ένας μαθητής διάβασε τα 3/8 ενός βιβλίου τη Δευτέρα και το 1/4 την Τρίτη. Ποιο μέρος του βιβλίου του απομένει ακόμα να διαβάσει για να το τελειώσει ολόκληρο;',
-        unit: 'του βιβλίου',
-        correctVal: '3/8',
-        correctText: '3/8',
+        title: locale === 'en' ? 'Remaining Gap to 1 Whole' : 'Συμπλήρωση ως την Ακέραια Μονάδα (1)',
+        prompt: (
+          <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+            <span>{locale === 'en' ? 'A student read' : 'Ένας μαθητής διάβασε τα'}</span>
+            <Fraction num="3" den="8" size="sm" />
+            <span>{locale === 'en' ? 'of a book on Monday and' : 'ενός βιβλίου τη Δευτέρα και το'}</span>
+            <Fraction num="1" den="4" size="sm" />
+            <span>{locale === 'en' ? 'on Tuesday. What fraction of the book remains to be read?' : 'την Τρίτη. Ποιο μέρος του βιβλίου του απομένει ακόμα να διαβάσει για να το τελειώσει ολόκληρο;'}</span>
+          </span>
+        ),
+        correctText: correctVal,
+        options: makeUniqueOptions(correctOption, wrongList),
         tableData: [
-          { item: 'Διάβασμα Δευτέρας & Τρίτης', formula: '3/8 ＋ 2/8', val: '5/8' },
-          { item: 'Ολόκληρο το βιβλίο (Μονάδα)', formula: '8/8', val: '8/8' },
-          { item: 'Μέρος που απομένει', formula: '8/8 － 5/8', val: '3/8' }
+          {
+            item: locale === 'en' ? 'Read so far' : 'Διάβασμα Δευτέρας & Τρίτης',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="3" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="8" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="5" den="8" size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Whole book (1)' : 'Ολόκληρο το βιβλίο (Μονάδα)',
+            formula: <Fraction num="8" den="8" size="sm" />,
+            val: <Fraction num="8" den="8" size="sm" />
+          },
+          {
+            item: locale === 'en' ? 'Remaining' : 'Μέρος που απομένει',
+            formula: (
+              <span className="inline-flex items-center gap-1 font-mono">
+                <Fraction num="8" den="8" size="sm" />
+                <span>－</span>
+                <Fraction num="5" den="8" size="sm" />
+              </span>
+            ),
+            val: <Fraction num="3" den="8" size="sm" />
+          }
         ],
-        explain: 'Συνολικά διάβασε 3/8 ＋ 1/4 ＝ 3/8 ＋ 2/8 ＝ 5/8. Για να τελειώσει ολόκληρο το βιβλίο (8/8) απομένουν 8/8 － 5/8 ＝ 3/8.',
-        distractors: [
-          '5/8',
-          '1/8',
-          '1/2'
-        ]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+            {locale === 'en' ? (
+              <>
+                <span>Total read:</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="5" den="8" size="sm" />
+                <span>. Remaining to finish the whole book (</span>
+                <Fraction num="8" den="8" size="sm" />
+                <span>):</span>
+                <Fraction num="8" den="8" size="sm" />
+                <span>－</span>
+                <Fraction num="5" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>.</span>
+              </>
+            ) : (
+              <>
+                <span>Συνολικά διάβασε</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="1" den="4" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>＋</span>
+                <Fraction num="2" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="5" den="8" size="sm" />
+                <span>. Για να τελειώσει ολόκληρο το βιβλίο (</span>
+                <Fraction num="8" den="8" size="sm" />
+                <span>) απομένουν</span>
+                <Fraction num="8" den="8" size="sm" />
+                <span>－</span>
+                <Fraction num="5" den="8" size="sm" />
+                <span>＝</span>
+                <Fraction num="3" den="8" size="sm" />
+                <span>.</span>
+              </>
+            )}
+          </span>
+        )
       };
     }
   }
@@ -391,7 +1344,7 @@ const HARD_PROBLEMS_POOL = [
 // ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
 // ---------------------------------------------------------
 
-function generateQuestions() {
+function generateQuestions(locale = 'el') {
   // Q1: Input - Πρόσθεση Ομώνυμων Κλασμάτων
   const q1Den = randInt(5, 12);
   const q1Num1 = randInt(1, Math.floor((q1Den - 1) / 2));
@@ -424,8 +1377,12 @@ function generateQuestions() {
   let q3D2 = [3, 4, 5, 8, 9][randInt(0, 4)];
   while (q3D1 === q3D2) q3D2 += 2;
   const q3Lcm = findLCM(q3D1, q3D2);
-  const q3Wrongs = [q3D1 * q3D2 + 2, Math.max(2, q3Lcm - 2), q3Lcm + q3D1].filter(w => w !== q3Lcm);
-  const q3Options = shuffle([...new Set([String(q3Lcm), ...q3Wrongs.map(String)])]).slice(0, 4);
+  const q3CorrectStr = String(q3Lcm);
+  const q3CorrectOpt = { val: q3CorrectStr, render: <span>{q3CorrectStr}</span> };
+  const q3Wrongs = [q3D1 * q3D2 + 2, Math.max(2, q3Lcm - 2), q3Lcm + q3D1, q3D1 * q3D2]
+    .filter(w => w !== q3Lcm)
+    .map(w => ({ val: String(w), render: <span>{String(w)}</span> }));
+  const q3Options = makeUniqueOptions(q3CorrectOpt, q3Wrongs);
 
   // Q4: MCQ - Πρόσθεση Ακέραιου με Κλάσμα
   const q4Whole = randInt(1, 3);
@@ -433,24 +1390,37 @@ function generateQuestions() {
   const q4Num = randInt(1, q4Den - 1);
   const q4ResNum = q4Whole * q4Den + q4Num;
   const q4CorrectStr = `${q4ResNum}/${q4Den}`;
-  const q4WrongsList = [
-    `${q4ResNum + 1}/${q4Den}`,
-    `${q4Whole + q4Num}/${q4Den}`,
-    `${q4ResNum}/${q4Den + 1}`
-  ];
-  const q4Options = shuffle([...new Set([q4CorrectStr, ...q4WrongsList])]);
+  const q4CorrectOpt = { val: q4CorrectStr, render: <Fraction num={q4ResNum} den={q4Den} size="md" /> };
+  const q4Wrongs = [
+    { num: q4ResNum + 1, den: q4Den },
+    { num: q4Whole + q4Num, den: q4Den },
+    { num: q4ResNum, den: q4Den + 1 },
+    { num: q4ResNum + 2, den: q4Den }
+  ].map(o => ({
+    val: `${o.num}/${o.den}`,
+    render: <Fraction num={o.num} den={o.den} size="md" />
+  }));
+  const q4Options = makeUniqueOptions(q4CorrectOpt, q4Wrongs);
 
   // Q5: True/False - Κανόνας ομωνύμων
   const q5IsTrue = Math.random() > 0.5;
   const q5Text = q5IsTrue
-    ? 'Όταν προσθέτουμε ομώνυμα κλάσματα, προσθέτουμε μόνο τους αριθμητές και κρατάμε τον ίδιο παρονομαστή.'
-    : 'Όταν προσθέτουμε ομώνυμα κλάσματα, προσθέτουμε τους αριθμητές και προσθέτουμε και τους παρονομαστές.';
+    ? (locale === 'en'
+        ? 'When adding fractions with like denominators, we add only the numerators and keep the same denominator.'
+        : 'Όταν προσθέτουμε ομώνυμα κλάσματα, προσθέτουμε μόνο τους αριθμητές και κρατάμε τον ίδιο παρονομαστή.')
+    : (locale === 'en'
+        ? 'When adding fractions with like denominators, we add numerators together and also add denominators together.'
+        : 'Όταν προσθέτουμε ομώνυμα κλάσματα, προσθέτουμε τους αριθμητές και προσθέτουμε και τους παρονομαστές.');
 
   // Q6: True/False - Πρόσθεση ετερωνύμων
   const q6IsTrue = Math.random() > 0.5;
   const q6Text = q6IsTrue
-    ? 'Για να προσθέσουμε ετερώνυμα κλάσματα, πρέπει πρώτα οπωσδήποτε να τα μετατρέψουμε σε ομώνυμα με το Ε.Κ.Π.'
-    : 'Μπορούμε να προσθέσουμε απευθείας ετερώνυμα κλάσματα χωρίς να αλλάξουμε τους παρονομαστές τους.';
+    ? (locale === 'en'
+        ? 'To add fractions with unlike denominators, we must first convert them to like denominators using the LCM.'
+        : 'Για να προσθέσουμε ετερώνυμα κλάσματα, πρέπει πρώτα οπωσδήποτε να τα μετατρέψουμε σε ομώνυμα με το Ε.Κ.Π.')
+    : (locale === 'en'
+        ? 'We can directly add fractions with unlike denominators without changing their denominators.'
+        : 'Μπορούμε να προσθέσουμε απευθείας ετερώνυμα κλάσματα χωρίς να αλλάξουμε τους παρονομαστές τους.');
 
   // Q7: Input - Εύρεση άγνωστου αριθμητή σε πρόσθεση
   const q7Den = randInt(6, 12);
@@ -460,109 +1430,253 @@ function generateQuestions() {
 
   // Q8: MCQ - Απλοποίηση αθροίσματος
   const q8Pairs = [
-    { n1: 2, d: 8, n2: 2, simp: '1/2', raw: '4/8' },
-    { n1: 1, d: 9, n2: 2, simp: '1/3', raw: '3/9' },
-    { n1: 3, d: 10, n2: 2, simp: '1/2', raw: '5/10' },
-    { n1: 1, d: 6, n2: 3, simp: '2/3', raw: '4/6' }
+    { n1: 2, d: 8, n2: 2, simpN: 1, simpD: 2 },
+    { n1: 1, d: 9, n2: 2, simpN: 1, simpD: 3 },
+    { n1: 3, d: 10, n2: 2, simpN: 1, simpD: 2 },
+    { n1: 1, d: 6, n2: 3, simpN: 2, simpD: 3 }
   ];
   const q8Item = q8Pairs[randInt(0, q8Pairs.length - 1)];
-  const q8Wrongs = ['3/4', '1/4', '2/5'].filter(w => w !== q8Item.simp);
-  const q8Options = shuffle([...new Set([q8Item.simp, ...q8Wrongs])]);
+  const q8CorrectStr = `${q8Item.simpN}/${q8Item.simpD}`;
+  const q8CorrectOpt = {
+    val: q8CorrectStr,
+    render: <Fraction num={q8Item.simpN} den={q8Item.simpD} size="md" />
+  };
+  const q8Wrongs = [
+    { num: 3, den: 4 },
+    { num: 1, den: 4 },
+    { num: 2, den: 5 },
+    { num: 3, den: 5 }
+  ].map(o => ({
+    val: `${o.num}/${o.den}`,
+    render: <Fraction num={o.num} den={o.den} size="md" />
+  }));
+  const q8Options = makeUniqueOptions(q8CorrectOpt, q8Wrongs);
 
-  // Q9: Standard Problem (Pool of 6)
+  // Q9 & Q10: Problems from pools
   const spIndex = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate();
-  const q9Options = shuffle([
-    ...new Set([q9Raw.correctText, ...q9Raw.distractors])
-  ]);
+  const q9Raw = STANDARD_PROBLEMS_POOL[spIndex].generate(locale);
 
-  // Q10: Hard Problem (Pool of 6)
   const hpIndex = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate();
-  const q10Options = shuffle([
-    ...new Set([q10Raw.correctText, ...q10Raw.distractors])
-  ]);
+  const q10Raw = HARD_PROBLEMS_POOL[hpIndex].generate(locale);
 
   return [
     {
       id: 'q1',
       type: 'input',
-      title: 'Ομώνυμα Κλάσματα',
-      prompt: `Υπολόγισε το άθροισμα των ομώνυμων κλασμάτων: ${q1Num1}/${q1Den} ＋ ${q1Num2}/${q1Den} (π.χ. 3/7):`,
+      title: locale === 'en' ? 'Like Fractions Addition' : 'Ομώνυμα Κλάσματα',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'Calculate the sum of like fractions:' : 'Υπολόγισε το άθροισμα των ομώνυμων κλασμάτων:'}</span>
+          <Fraction num={q1Num1} den={q1Den} size="sm" />
+          <span>＋</span>
+          <Fraction num={q1Num2} den={q1Den} size="sm" />
+          <span>({locale === 'en' ? 'e.g. 3/7' : 'π.χ. 3/7'}):</span>
+        </span>
+      ),
       correct: q1CorrectRaw,
       altCorrect: q1CorrectSimp,
-      explain: `${q1Num1}/${q1Den} ＋ ${q1Num2}/${q1Den} ＝ (${q1Num1} ＋ ${q1Num2})/${q1Den} ＝ ${q1CorrectRaw}${q1Gcd > 1 ? ` (ή απλοποιημένο: ${q1CorrectSimp})` : ''}.`
+      explain: (
+        <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+          <Fraction num={q1Num1} den={q1Den} size="sm" />
+          <span>＋</span>
+          <Fraction num={q1Num2} den={q1Den} size="sm" />
+          <span>＝</span>
+          <Fraction num={`${q1Num1} ＋ ${q1Num2}`} den={q1Den} size="sm" />
+          <span>＝</span>
+          <Fraction num={q1SumNum} den={q1Den} size="sm" />
+          {q1Gcd > 1 && (
+            <>
+              <span>{locale === 'en' ? 'or simplified:' : 'ή απλοποιημένο:'}</span>
+              <Fraction num={q1SumNum / q1Gcd} den={q1Den / q1Gcd} size="sm" />
+            </>
+          )}
+          <span>.</span>
+        </span>
+      )
     },
     {
       id: 'q2',
       type: 'input',
-      title: 'Ετερώνυμα Κλάσματα',
-      prompt: `Υπολόγισε το άθροισμα: ${q2Item.n1}/${q2Item.d1} ＋ ${q2Item.n2}/${q2Item.d2} (π.χ. 3/4):`,
+      title: locale === 'en' ? 'Unlike Fractions Addition' : 'Ετερώνυμα Κλάσματα',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'Calculate the sum:' : 'Υπολόγισε το άθροισμα:'}</span>
+          <Fraction num={q2Item.n1} den={q2Item.d1} size="sm" />
+          <span>＋</span>
+          <Fraction num={q2Item.n2} den={q2Item.d2} size="sm" />
+          <span>({locale === 'en' ? 'e.g. 3/4' : 'π.χ. 3/4'}):</span>
+        </span>
+      ),
       correct: q2CorrectRaw,
       altCorrect: q2CorrectSimp,
-      explain: `Ε.Κ.Π.(${q2Item.d1}, ${q2Item.d2}) ＝ ${q2Lcm}. Μετατρέπουμε σε ομώνυμα: ${q2Equiv1}/${q2Lcm} ＋ ${q2Equiv2}/${q2Lcm} ＝ ${q2CorrectRaw}${q2G > 1 ? ` ＝ ${q2CorrectSimp}` : ''}.`
+      explain: (
+        <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+          <span>{locale === 'en' ? 'LCM' : 'Ε.Κ.Π.'}({q2Item.d1}, {q2Item.d2}) ＝ {q2Lcm}.</span>
+          <Fraction num={q2Equiv1} den={q2Lcm} size="sm" />
+          <span>＋</span>
+          <Fraction num={q2Equiv2} den={q2Lcm} size="sm" />
+          <span>＝</span>
+          <Fraction num={q2SumN} den={q2Lcm} size="sm" />
+          {q2G > 1 && (
+            <>
+              <span>＝</span>
+              <Fraction num={q2SumN / q2G} den={q2Lcm / q2G} size="sm" />
+            </>
+          )}
+          <span>.</span>
+        </span>
+      )
     },
     {
       id: 'q3',
       type: 'mcq',
-      title: 'Κοινός Παρονομαστής (Ε.Κ.Π.)',
-      prompt: `Ποιος είναι ο ελάχιστος κοινός παρονομαστής (Ε.Κ.Π.) για να προσθέσουμε τα κλάσματα 1/${q3D1} και 1/${q3D2};`,
+      title: locale === 'en' ? 'Common Denominator (LCM)' : 'Κοινός Παρονομαστής (Ε.Κ.Π.)',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'What is the least common denominator (LCM) to add' : 'Ποιος είναι ο ελάχιστος κοινός παρονομαστής (Ε.Κ.Π.) για να προσθέσουμε τα κλάσματα'}</span>
+          <Fraction num="1" den={q3D1} size="sm" />
+          <span>{locale === 'en' ? 'and' : 'και'}</span>
+          <Fraction num="1" den={q3D2} size="sm" />
+          <span>;</span>
+        </span>
+      ),
       options: q3Options,
-      correct: String(q3Lcm),
-      explain: `Το Ε.Κ.Π. των παρονομαστών ${q3D1} και ${q3D2} είναι το ${q3Lcm}.`
+      correct: q3CorrectStr,
+      explain: (
+        <span>
+          {locale === 'en' ? 'LCM' : 'Ε.Κ.Π.'}({q3D1}, {q3D2}) ＝ {q3Lcm}.
+        </span>
+      )
     },
     {
       id: 'q4',
       type: 'mcq',
-      title: 'Ακέραιος ＋ Κλάσμα',
-      prompt: `Ποιο είναι το αποτέλεσμα της πράξης ${q4Whole} ＋ ${q4Num}/${q4Den};`,
+      title: locale === 'en' ? 'Whole Number ＋ Fraction' : 'Ακέραιος ＋ Κλάσμα',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'What is the sum of' : 'Ποιο είναι το αποτέλεσμα της πράξης'}</span>
+          <span>{q4Whole} ＋</span>
+          <Fraction num={q4Num} den={q4Den} size="sm" />
+          <span>;</span>
+        </span>
+      ),
       options: q4Options,
       correct: q4CorrectStr,
-      explain: `Γράφουμε τον ακέραιο ως κλάσμα: ${q4Whole} ＝ ${q4Whole * q4Den}/${q4Den}. Επομένως: ${q4Whole * q4Den}/${q4Den} ＋ ${q4Num}/${q4Den} ＝ ${q4CorrectStr}.`
+      explain: (
+        <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+          {locale === 'en' ? (
+            <>
+              <span>Write whole number as fraction: {q4Whole} ＝</span>
+              <Fraction num={q4Whole * q4Den} den={q4Den} size="sm" />
+              <span>. Add:</span>
+            </>
+          ) : (
+            <>
+              <span>Γράφουμε τον ακέραιο ως κλάσμα: {q4Whole} ＝</span>
+              <Fraction num={q4Whole * q4Den} den={q4Den} size="sm" />
+              <span>. Επομένως:</span>
+            </>
+          )}
+          <Fraction num={q4Whole * q4Den} den={q4Den} size="sm" />
+          <span>＋</span>
+          <Fraction num={q4Num} den={q4Den} size="sm" />
+          <span>＝</span>
+          <Fraction num={q4ResNum} den={q4Den} size="sm" />
+          <span>.</span>
+        </span>
+      )
     },
     {
       id: 'q5',
       type: 'tf',
-      title: 'Κανόνας Ομωνύμων',
+      title: locale === 'en' ? 'Rule for Like Fractions' : 'Κανόνας Ομωνύμων',
       text: q5Text,
       correct: q5IsTrue,
-      explain: q5IsTrue
-        ? 'Σωστά! Στα ομώνυμα κλάσματα προσθέτουμε ΜΟΝΟ τους αριθμητές.'
-        : 'Λάθος! ΠΟΤΕ δεν προσθέτουμε τους παρονομαστές μεταξύ τους.'
+      explain: (
+        <span>
+          {q5IsTrue
+            ? (locale === 'en'
+                ? 'Correct! For like fractions we add ONLY the numerators and keep the common denominator.'
+                : 'Σωστά! Στα ομώνυμα κλάσματα προσθέτουμε ΜΟΝΟ τους αριθμητές.')
+            : (locale === 'en'
+                ? 'False! We NEVER add denominators together.'
+                : 'Λάθος! ΠΟΤΕ δεν προσθέτουμε τους παρονομαστές μεταξύ τους.')}
+        </span>
+      )
     },
     {
       id: 'q6',
       type: 'tf',
-      title: 'Κανόνας Ετερωνύμων',
+      title: locale === 'en' ? 'Rule for Unlike Fractions' : 'Κανόνας Ετερωνύμων',
       text: q6Text,
       correct: q6IsTrue,
-      explain: q6IsTrue
-        ? 'Σωστά! Για να προσθέσουμε ετερώνυμα κλάσματα πρέπει πρώτα οπωσδήποτε να τα κάνουμε ομώνυμα με το Ε.Κ.Π.'
-        : 'Λάθος! Δεν μπορούμε να προσθέσουμε ετερώνυμα κλάσματα χωρίς να τα μετατρέψουμε πρώτα σε ομώνυμα.'
+      explain: (
+        <span>
+          {q6IsTrue
+            ? (locale === 'en'
+                ? 'Correct! To add fractions with unlike denominators, we must first convert them to common denominators using LCM.'
+                : 'Σωστά! Για να προσθέσουμε ετερώνυμα κλάσματα πρέπει πρώτα οπωσδήποτε να τα κάνουμε ομώνυμα με το Ε.Κ.Π.')
+            : (locale === 'en'
+                ? 'False! We cannot directly add unlike fractions without converting to a common denominator.'
+                : 'Λάθος! Δεν μπορούμε να προσθέσουμε ετερώνυμα κλάσματα χωρίς να τα μετατρέψουμε πρώτα σε ομώνυμα.')}
+        </span>
+      )
     },
     {
       id: 'q7',
       type: 'input',
-      title: 'Εύρεση Άγνωστου Αριθμητή',
-      prompt: `Βρες τον αριθμητή x στην ισότητα: ${q7Known}/${q7Den} ＋ x/${q7Den} ＝ ${q7Target}/${q7Den}`,
+      title: locale === 'en' ? 'Finding Missing Numerator' : 'Εύρεση Άγνωστου Αριθμητή',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'Find numerator x in:' : 'Βρες τον αριθμητή x στην ισότητα:'}</span>
+          <Fraction num={q7Known} den={q7Den} size="sm" />
+          <span>＋</span>
+          <Fraction num="x" den={q7Den} size="sm" />
+          <span>＝</span>
+          <Fraction num={q7Target} den={q7Den} size="sm" />
+        </span>
+      ),
       correct: q7Correct,
-      explain: `Αφού τα κλάσματα είναι ομώνυμα, ισχύει ${q7Known} ＋ x ＝ ${q7Target} ➔ x ＝ ${q7Target} － ${q7Known} ＝ ${q7Correct}.`
+      explain: (
+        <span>
+          {q7Known} ＋ x ＝ {q7Target} ➔ x ＝ {q7Target} － {q7Known} ＝ {q7Correct}.
+        </span>
+      )
     },
     {
       id: 'q8',
       type: 'mcq',
-      title: 'Απλοποίηση Αθροίσματος',
-      prompt: `Ποιο είναι το απλούστερο ανάγωγο κλάσμα που προκύπτει από το άθροισμα ${q8Item.n1}/${q8Item.d} ＋ ${q8Item.n2}/${q8Item.d};`,
+      title: locale === 'en' ? 'Simplifying the Sum' : 'Απλοποίηση Αθροίσματος',
+      prompt: (
+        <span className="inline-flex flex-wrap items-center gap-1.5 max-w-full">
+          <span>{locale === 'en' ? 'What is the simplest irreducible fraction resulting from' : 'Ποιο είναι το απλούστερο ανάγωγο κλάσμα που προκύπτει από το άθροισμα'}</span>
+          <Fraction num={q8Item.n1} den={q8Item.d} size="sm" />
+          <span>＋</span>
+          <Fraction num={q8Item.n2} den={q8Item.d} size="sm" />
+          <span>;</span>
+        </span>
+      ),
       options: q8Options,
-      correct: q8Item.simp,
-      explain: `Προσθέτουμε: ${q8Item.n1}/${q8Item.d} ＋ ${q8Item.n2}/${q8Item.d} ＝ ${q8Item.raw}. Απλοποιώντας τους όρους παίρνουμε το ανάγωγο ${q8Item.simp}.`
+      correct: q8CorrectStr,
+      explain: (
+        <span className="inline-flex flex-wrap items-center gap-1 leading-relaxed">
+          <Fraction num={q8Item.n1} den={q8Item.d} size="sm" />
+          <span>＋</span>
+          <Fraction num={q8Item.n2} den={q8Item.d} size="sm" />
+          <span>＝</span>
+          <Fraction num={q8Item.n1 + q8Item.n2} den={q8Item.d} size="sm" />
+          <span>＝</span>
+          <Fraction num={q8Item.simpN} den={q8Item.simpD} size="sm" />
+          <span>.</span>
+        </span>
+      )
     },
     {
       id: 'q9',
       type: 'mcq',
-      title: `Πρόβλημα: ${STANDARD_PROBLEMS_POOL[spIndex].title}`,
+      title: `${locale === 'en' ? 'Problem' : 'Πρόβλημα'}: ${q9Raw.title}`,
       prompt: q9Raw.prompt,
-      options: q9Options,
+      options: q9Raw.options,
       correct: q9Raw.correctText,
       tableData: q9Raw.tableData,
       explain: q9Raw.explain
@@ -570,9 +1684,9 @@ function generateQuestions() {
     {
       id: 'q10',
       type: 'mcq',
-      title: `Σύνθετο Πρόβλημα: ${HARD_PROBLEMS_POOL[hpIndex].title}`,
+      title: `${locale === 'en' ? 'Challenge Problem' : 'Σύνθετο Πρόβλημα'}: ${q10Raw.title}`,
       prompt: q10Raw.prompt,
-      options: q10Options,
+      options: q10Raw.options,
       correct: q10Raw.correctText,
       tableData: q10Raw.tableData,
       explain: q10Raw.explain
@@ -585,13 +1699,17 @@ function generateQuestions() {
 // ---------------------------------------------------------
 
 export default function ProsthesiKlasmatonExercisesPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const qList = generateQuestions();
+    const qList = generateQuestions(locale);
     setQuestions(qList);
     const initialAnswers = {};
     qList.forEach(q => {
@@ -603,13 +1721,12 @@ export default function ProsthesiKlasmatonExercisesPage() {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq/tf
   const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
     if (type === 'input') {
@@ -665,14 +1782,16 @@ export default function ProsthesiKlasmatonExercisesPage() {
       : 'bg-rose-50/70 border-rose-400 shadow-md ring-1 ring-rose-400';
   };
 
-  const answeredCount = Object.values(answers).filter(val => val !== undefined && val !== null && String(val).trim() !== '').length;
+  const answeredCount = Object.values(answers).filter(
+    val => val !== undefined && val !== null && String(val).trim() !== ''
+  ).length;
 
   return (
     <Layout
-      title="Ασκήσεις: Πρόσθεση Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στην πρόσθεση ομώνυμων και ετερώνυμων κλασμάτων για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={false}
       hideFooter={true}
       actionButton={
@@ -681,24 +1800,24 @@ export default function ProsthesiKlasmatonExercisesPage() {
           className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
           <span>📖</span>
-          <span>{toCleanUppercase('Θεωρία')}</span>
+          <span>{toCleanUppercase(t.theoryNav)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
+      <div className="w-full min-w-0 max-w-full 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8 box-border">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
             <div className="space-y-2 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-                <span>ΚΕΦΑΛΑΙΟ 27 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+                <span>{t.badge}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
-                Διαδραστικές Ασκήσεις: Πρόσθεση Κλασμάτων
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+                {t.title}
               </h1>
-              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
-                Λύσε τα 10 δυναμικά θέματα για να εξασκηθείς στην πρόσθεση ομώνυμων και ετερώνυμων κλασμάτων, στην εύρεση Ε.Κ.Π. και στην απλοποίηση!
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed break-words [overflow-wrap:anywhere]">
+                {t.desc}
               </p>
             </div>
 
@@ -708,7 +1827,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
               className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
               <span>🔄</span>
-              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
+              <span>{toCleanUppercase(t.newQuestions)}</span>
             </button>
           </div>
         </section>
@@ -721,44 +1840,44 @@ export default function ProsthesiKlasmatonExercisesPage() {
               return (
                 <div
                   key={q.id}
-                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all min-w-0 ${getCardStyle(q)}`}
                 >
-                  <div>
+                  <div className="min-w-0">
                     {/* CARD HEADER */}
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
-                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                    <div className="flex justify-between items-center mb-3 gap-2">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider break-words [overflow-wrap:anywhere]">
+                        {toCleanUppercase(`${t.exercise} ${qNum}: ${q.title}`)}
                       </span>
                       {submitted && (
-                        <span className="text-xl">
+                        <span className="text-xl shrink-0">
                           {isQuestionCorrect(q) ? '✅' : '❌'}
                         </span>
                       )}
                     </div>
 
                     {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
-                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4">
+                    <div className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-4 break-words [overflow-wrap:anywhere]">
                       {q.type === 'tf' ? `«${q.text}»` : q.prompt}
-                    </p>
+                    </div>
 
                     {/* INPUTS / OPTIONS */}
                     {q.type === 'mcq' && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
                         {q.options.map((opt, oIdx) => {
-                          const isSelected = answers[q.id] === opt;
+                          const isSelected = answers[q.id] === opt.val;
                           return (
                             <button
                               key={oIdx}
                               type="button"
                               disabled={submitted}
-                              onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
-                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
+                              onClick={() => handleAnswerChange(q.id, opt.val, 'mcq')}
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-bold border text-center transition touch-manipulation active:scale-95 break-words [overflow-wrap:anywhere] whitespace-normal leading-snug flex items-center justify-center min-h-[52px] min-w-0 ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
                                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                               }`}
                             >
-                              {opt}
+                              {opt.render}
                             </button>
                           );
                         })}
@@ -776,7 +1895,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
-                          placeholder={q.id === 'q7' ? 'π.χ. 3' : 'π.χ. 3/4'}
+                          placeholder={q.id === 'q7' ? (locale === 'en' ? 'e.g. 3' : 'π.χ. 3') : t.inputPlaceholder}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -788,25 +1907,25 @@ export default function ProsthesiKlasmatonExercisesPage() {
                           type="button"
                           disabled={submitted}
                           onClick={() => handleAnswerChange(q.id, true, 'tf')}
-                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 break-words [overflow-wrap:anywhere] ${
                             answers[q.id] === true
                               ? 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-300'
                               : 'bg-white text-slate-700 border-slate-200 hover:bg-emerald-50'
                           }`}
                         >
-                          👍 {toCleanUppercase('Σωστό')}
+                          👍 {toCleanUppercase(t.trueBtn)}
                         </button>
                         <button
                           type="button"
                           disabled={submitted}
                           onClick={() => handleAnswerChange(q.id, false, 'tf')}
-                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 ${
+                          className={`py-3 rounded-2xl font-black text-xs sm:text-sm border transition touch-manipulation active:scale-95 break-words [overflow-wrap:anywhere] ${
                             answers[q.id] === false
                               ? 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-300'
                               : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'
                           }`}
                         >
-                          👎 {toCleanUppercase('Λάθος')}
+                          👎 {toCleanUppercase(t.falseBtn)}
                         </button>
                       </div>
                     )}
@@ -814,23 +1933,23 @@ export default function ProsthesiKlasmatonExercisesPage() {
 
                   {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
                   {submitted && (
-                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3 min-w-0">
                       {q.tableData && q.tableData.length > 0 && (
-                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                        <div className="w-full overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200 block">
                           <table className="w-full text-xs text-left text-slate-700">
                             <thead>
                               <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
-                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Πράξη / Μέθοδος')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                                <th className="p-1.5 whitespace-nowrap">{toCleanUppercase(t.tableHeaderElement)}</th>
+                                <th className="p-1.5 whitespace-nowrap">{toCleanUppercase(t.tableHeaderFormula)}</th>
+                                <th className="p-1.5 whitespace-nowrap">{toCleanUppercase(t.tableHeaderValue)}</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-mono">
+                            <tbody className="divide-y divide-slate-100">
                               {q.tableData.map((row, rIdx) => (
                                 <tr key={rIdx}>
-                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
-                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
-                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900 break-words">{row.item}</td>
+                                  <td className="p-1.5 text-indigo-700 break-words">{row.formula}</td>
+                                  <td className="p-1.5 font-black text-emerald-700 break-words">{row.val}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -839,16 +1958,16 @@ export default function ProsthesiKlasmatonExercisesPage() {
                       )}
 
                       <div
-                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed break-words [overflow-wrap:anywhere] ${
                           isQuestionCorrect(q)
                             ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
                             : 'bg-rose-100 text-rose-950 border border-rose-200'
                         }`}
                       >
                         <p className="font-bold mb-1">
-                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                          {isQuestionCorrect(q) ? t.feedbackSuccess : t.feedbackReview}
                         </p>
-                        <p>{q.explain}</p>
+                        <div className="break-words [overflow-wrap:anywhere]">{q.explain}</div>
                       </div>
                     </div>
                   )}
@@ -865,7 +1984,7 @@ export default function ProsthesiKlasmatonExercisesPage() {
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
                 <span className="text-xl">🎯</span>
-                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+                <span>{toCleanUppercase(t.checkBtn)}</span>
               </button>
             </div>
           )}
@@ -873,19 +1992,21 @@ export default function ProsthesiKlasmatonExercisesPage() {
       </div>
 
       {/* FIXED BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
           
           {/* SCORE & PERCENTAGE */}
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase(t.scoreBadge) : toCleanUppercase(t.answeredBadge)}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? `${score} / 10` : `${answeredCount} / 10`}
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                {toCleanUppercase('Ποσοστό')}:{' '}
+                {toCleanUppercase(t.percentage)}:{' '}
                 <span className="text-emerald-400 font-black text-sm sm:text-base">
                   {Math.round((score / 10) * 100)}%
                 </span>
@@ -902,11 +2023,11 @@ export default function ProsthesiKlasmatonExercisesPage() {
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
-                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
+                <span>{toCleanUppercase(t.newQuestions)}</span>
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+                {t.bottomHint}
               </p>
             )}
           </div>

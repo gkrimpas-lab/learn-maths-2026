@@ -1,19 +1,22 @@
 // pages/st-dimotikou/69-athroisma-gonion-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // -------------------------------------------------------------
-// DEFENSIVE UTILITY FUNCTIONS
+// DEFENSIVE UTILITY FUNCTIONS & TYPOGRAPHY
 // -------------------------------------------------------------
 
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 function randInt(min, max) {
@@ -24,14 +27,28 @@ function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [arr[j], arr[i]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
-function formatNum(val) {
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  return Number(val).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
+}
+
+// Component κανονικής μορφής κλάσματος (Mobile Responsive & Overflow-Safe)
+function Fraction({ n, d, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full ${className}`}>
+      <span className="border-b border-current px-1 pb-0.5 font-bold break-all">
+        {n}
+      </span>
+      <span className="pt-0.5 px-1 font-bold break-all">
+        {d}
+      </span>
+    </span>
+  );
 }
 
 // Διασφάλιση ακριβώς 4 μοναδικών επιλογών για ερωτήσεις MCQ
@@ -56,538 +73,414 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 }
 
 // -------------------------------------------------------------
-// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9, Q10, Q11, Q12
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q7, Q8, Q9, Q10
 // -------------------------------------------------------------
 
-// POOL ΓΙΑ Q9: Τρίγωνα - Εύρεση 3ης Γωνίας
-const PROBLEM_POOL_Q9 = [
-  // 1. Γενικό τρίγωνο με 2 γνωστές γωνίες
-  () => {
+// POOL ΓΙΑ Q7: Τρίγωνα - Εύρεση 3ης Γωνίας
+const PROBLEM_POOL_Q7 = [
+  (loc) => {
     const a = randInt(35, 75);
     const b = randInt(30, 65);
     const c = 180 - (a + b);
     const correct = `${c}°`;
     return {
-      title: 'ΤΡΙΤΗ ΓΩΝΙΑ ΤΡΙΓΩΝΟΥ',
-      prompt: `Σε ένα τρίγωνο ΑΒΓ γνωρίζουμε ότι η γωνία Â είναι ${a}° και η γωνία B̂ είναι ${b}°. Πόσες μοίρες είναι η τρίτη γωνία Γ̂;`,
-      options: ensureFourUniqueOptions(correct, () => [`${c + 10}°`, `${c - 10}°`, `${180 - a}°`, `${90 - b}°`]),
+      title: loc === 'el' ? 'ΤΡΙΤΗ ΓΩΝΙΑ ΤΡΙΓΩΝΟΥ' : 'THIRD ANGLE OF TRIANGLE',
+      prompt: loc === 'el'
+        ? `Σε ένα τρίγωνο γνωρίζουμε ότι η πρώτη γωνία είναι ${formatNum(a, loc)}° και η δεύτερη είναι ${formatNum(b, loc)}°. Πόσες μοίρες είναι η τρίτη γωνία;`
+        : `In a triangle, the first angle is ${formatNum(a, loc)}° and the second is ${formatNum(b, loc)}°. How many degrees is the third angle?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${c + 10}°`,
+        `${Math.max(5, c - 10)}°`,
+        `${180 - a}°`,
+        `${Math.abs(90 - b)}°`
+      ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Συνολικό άθροισμα', value: '180°' },
-        { label: 'Άθροισμα 2 γωνιών', value: `${a}° ＋ ${b}° ＝ ${a + b}°` },
-        { label: 'Πράξη', value: `180° － ${a + b}°` },
-        { label: 'Γωνία Γ̂', value: `${c}°` }
+        { label: 'Άθροισμα 2 γωνιών', value: `${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}° ＝ ${formatNum(a + b, loc)}°` },
+        { label: 'Πράξη', value: `180° － ${formatNum(a + b, loc)}°` },
+        { label: 'Τρίτη γωνία', value: `${formatNum(c, loc)}°` }
+      ] : [
+        { label: 'Total sum', value: '180°' },
+        { label: 'Sum of 2 angles', value: `${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}° ＝ ${formatNum(a + b, loc)}°` },
+        { label: 'Calculation', value: `180° － ${formatNum(a + b, loc)}°` },
+        { label: 'Third angle', value: `${formatNum(c, loc)}°` }
       ],
-      explanation: `Σε κάθε τρίγωνο το άθροισμα των γωνιών είναι 180°. Προσθέτουμε τις δύο γνωστές: ${a}° ＋ ${b}° ＝ ${a + b}°. Αφαιρούμε: 180° － ${a + b}° ＝ ${c}°.`
+      explanation: loc === 'el'
+        ? `Σε κάθε τρίγωνο το άθροισμα των γωνιών είναι 180°: 180° － (${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}°) ＝ ${formatNum(c, loc)}°.`
+        : `In every triangle the sum of angles is 180°: 180° － (${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}°) ＝ ${formatNum(c, loc)}°.`
     };
   },
-  // 2. Ορθογώνιο τρίγωνο
-  () => {
+  (loc) => {
     const a = randInt(25, 68);
     const b = 90 - a;
     const correct = `${b}°`;
     return {
-      title: 'ΟΞΕΙΑ ΓΩΝΙΑ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ',
-      prompt: `Ένα τρίγωνο είναι ορθογώνιο (έχει μία γωνία 90°). Αν η μία οξεία γωνία του μετράει ${a}°, πόσες μοίρες είναι η άλλη οξεία γωνία του;`,
-      options: ensureFourUniqueOptions(correct, () => [`${b + 12}°`, `${b - 10}°`, `${180 - a}°`, `${a + 15}°`]),
+      title: loc === 'el' ? 'ΟΞΕΙΑ ΓΩΝΙΑ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ' : 'ACUTE ANGLE OF RIGHT TRIANGLE',
+      prompt: loc === 'el'
+        ? `Ένα τρίγωνο είναι ορθογώνιο (έχει μία γωνία 90°). Αν η μία οξεία γωνία του μετράει ${formatNum(a, loc)}°, πόσες μοίρες είναι η άλλη οξεία γωνία του;`
+        : `A triangle is right-angled (one angle is 90°). If one acute angle measures ${formatNum(a, loc)}°, how many degrees is the other acute angle?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${b + 12}°`,
+        `${Math.max(5, b - 10)}°`,
+        `${180 - a}°`,
+        `${a + 15}°`
+      ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Είδος τριγώνου', value: 'Ορθογώνιο (μία γωνία 90°)' },
-        { label: 'Άθροισμα οξειών', value: '180° － 90° ＝ 90° (συμπληρωματικές)' },
-        { label: 'Πράξη', value: `90° － ${a}°` },
-        { label: 'Άλλη οξεία', value: `${b}°` }
+        { label: 'Άθροισμα οξειών', value: '180° － 90° ＝ 90°' },
+        { label: 'Πράξη', value: `90° － ${formatNum(a, loc)}°` },
+        { label: 'Άλλη οξεία', value: `${formatNum(b, loc)}°` }
+      ] : [
+        { label: 'Triangle type', value: 'Right-angled (one 90° angle)' },
+        { label: 'Acute sum', value: '180° － 90° ＝ 90°' },
+        { label: 'Calculation', value: `90° － ${formatNum(a, loc)}°` },
+        { label: 'Other acute angle', value: `${formatNum(b, loc)}°` }
       ],
-      explanation: `Στο ορθογώνιο τρίγωνο οι δύο οξείες γωνίες έχουν άθροισμα 90° (συμπληρωματικές). Υπολογίζουμε: 90° － ${a}° ＝ ${b}°.`
+      explanation: loc === 'el'
+        ? `Στο ορθογώνιο τρίγωνο οι δύο οξείες γωνίες είναι συμπληρωματικές (άθροισμα 90°): 90° － ${formatNum(a, loc)}° ＝ ${formatNum(b, loc)}°.`
+        : `In a right triangle the acute angles are complementary (sum 90°): 90° － ${formatNum(a, loc)}° ＝ ${formatNum(b, loc)}°.`
     };
   },
-  // 3. Τριγωνική πινακίδα
-  () => {
-    const a = randInt(45, 70);
-    const b = randInt(50, 75);
-    const c = 180 - (a + b);
-    const correct = `${c}°`;
-    return {
-      title: 'ΓΩΝΙΑ ΤΡΙΓΩΝΙΚΗΣ ΠΙΝΑΚΙΔΑΣ',
-      prompt: `Μια τριγωνική πινακίδα σήμανσης έχει δύο γωνίες με μέτρα ${a}° και ${b}°. Πόσο είναι το μέτρο της τρίτης γωνίας της πινακίδας;`,
-      options: ensureFourUniqueOptions(correct, () => [`${c + 15}°`, `${c - 15}°`, `${180 - b}°`, `${a + b}°`]),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Σχήμα', value: 'Τρίγωνο' },
-        { label: 'Άθροισμα γωνιών', value: '180°' },
-        { label: 'Πράξη', value: `180° － (${a}° ＋ ${b}°) ＝ 180° － ${a + b}°` },
-        { label: 'Τρίτη γωνία', value: `${c}°` }
-      ],
-      explanation: `180° － (${a}° ＋ ${b}°) ＝ 180° － ${a + b}° ＝ ${c}°.`
-    };
-  },
-  // 4. Αμβλυγώνιο τρίγωνο
-  () => {
+  (loc) => {
     const obtuse = randInt(100, 130);
     const acute1 = randInt(15, 35);
     const acute2 = 180 - (obtuse + acute1);
     const correct = `${acute2}°`;
     return {
-      title: 'ΑΜΒΛΥΓΩΝΙΟ ΤΡΙΓΩΝΟ',
-      prompt: `Ένα αμβλυγώνιο τρίγωνο έχει μια αμβλεία γωνία ${obtuse}° και μία οξεία γωνία ${acute1}°. Πόσες μοίρες είναι η άλλη οξεία γωνία;`,
-      options: ensureFourUniqueOptions(correct, () => [`${acute2 + 8}°`, `${acute2 - 8}°`, `${90 - acute1}°`, `${obtuse - acute1}°`]),
+      title: loc === 'el' ? 'ΑΜΒΛΥΓΩΝΙΟ ΤΡΙΓΩΝΟ' : 'OBTUSE TRIANGLE',
+      prompt: loc === 'el'
+        ? `Ένα αμβλυγώνιο τρίγωνο έχει μια αμβλεία γωνία ${formatNum(obtuse, loc)}° και μία οξεία γωνία ${formatNum(acute1, loc)}°. Πόσες μοίρες είναι η άλλη οξεία γωνία;`
+        : `An obtuse triangle has one obtuse angle of ${formatNum(obtuse, loc)}° and one acute angle of ${formatNum(acute1, loc)}°. How many degrees is the remaining acute angle?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${acute2 + 8}°`,
+        `${Math.max(5, acute2 - 8)}°`,
+        `${Math.abs(90 - acute1)}°`,
+        `${Math.abs(obtuse - acute1)}°`
+      ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
-        { label: 'Αμβλεία γωνία', value: `${obtuse}°` },
-        { label: 'Πρώτη οξεία', value: `${acute1}°` },
-        { label: 'Πράξη', value: `180° － (${obtuse}° ＋ ${acute1}°)` },
-        { label: 'Δεύτερη οξεία', value: `${acute2}°` }
+      tableData: loc === 'el' ? [
+        { label: 'Αμβλεία γωνία', value: `${formatNum(obtuse, loc)}°` },
+        { label: 'Πρώτη οξεία', value: `${formatNum(acute1, loc)}°` },
+        { label: 'Πράξη', value: `180° － (${formatNum(obtuse, loc)}° ＋ ${formatNum(acute1, loc)}°)` },
+        { label: 'Δεύτερη οξεία', value: `${formatNum(acute2, loc)}°` }
+      ] : [
+        { label: 'Obtuse angle', value: `${formatNum(obtuse, loc)}°` },
+        { label: 'First acute angle', value: `${formatNum(acute1, loc)}°` },
+        { label: 'Calculation', value: `180° － (${formatNum(obtuse, loc)}° ＋ ${formatNum(acute1, loc)}°)` },
+        { label: 'Second acute angle', value: `${formatNum(acute2, loc)}°` }
       ],
-      explanation: `180° － (${obtuse}° ＋ ${acute1}°) ＝ 180° － ${obtuse + acute1}° ＝ ${acute2}°.`
-    };
-  },
-  // 5. Ισοσκελές ορθογώνιο τρίγωνο
-  () => {
-    const correct = '45°';
-    return {
-      title: 'ΙΣΟΣΚΕΛΕΣ ΟΡΘΟΓΩΝΙΟ ΤΡΙΓΩΝΟ',
-      prompt: `Σε ένα ισοσκελές ορθογώνιο τρίγωνο, η ορθή γωνία είναι 90° και οι δύο άλλες γωνίες είναι ίσες μεταξύ τους. Πόσες μοίρες είναι καθεμία από αυτές;`,
-      options: ensureFourUniqueOptions(correct, () => ['30°', '60°', '50°', '40°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Ορθή γωνία', value: '90°' },
-        { label: 'Υπόλοιπο για τις 2 ίσες', value: '180° － 90° ＝ 90°' },
-        { label: 'Πράξη', value: '90° : 2' },
-        { label: 'Κάθε οξεία γωνία', value: '45°' }
-      ],
-      explanation: `Οι δύο οξείες γωνίες είναι ίσες και έχουν άθροισμα 90°: 90° : 2 ＝ 45°.`
-    };
-  },
-  // 6. Τριγωνικό ιστίο
-  () => {
-    const a = randInt(40, 60);
-    const b = randInt(45, 65);
-    const c = 180 - (a + b);
-    const correct = `${c}°`;
-    return {
-      title: 'ΓΩΝΙΑ ΤΡΙΓΩΝΙΚΟΥ ΙΣΤΙΟΥ',
-      prompt: `Το τριγωνικό πανί ενός ιστιοφόρου έχει δύο γωνίες ${a}° και ${b}°. Πόσο μετράει η γωνία στην κορυφή του καταρτιού;`,
-      options: ensureFourUniqueOptions(correct, () => [`${c + 12}°`, `${c - 10}°`, `${180 - a}°`, `${90 - b + 10}°`]),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Άθροισμα γωνιών', value: '180°' },
-        { label: 'Γνωστές γωνίες', value: `${a}° και ${b}°` },
-        { label: 'Πράξη', value: `180° － (${a}° ＋ ${b}°)` },
-        { label: 'Γωνία κορυφής', value: `${c}°` }
-      ],
-      explanation: `180° － (${a}° ＋ ${b}°) ＝ 180° － ${a + b}° ＝ ${c}°.`
+      explanation: loc === 'el'
+        ? `180° － (${formatNum(obtuse, loc)}° ＋ ${formatNum(acute1, loc)}°) ＝ 180° － ${formatNum(obtuse + acute1, loc)}° ＝ ${formatNum(acute2, loc)}°.`
+        : `180° － (${formatNum(obtuse, loc)}° ＋ ${formatNum(acute1, loc)}°) ＝ 180° － ${formatNum(obtuse + acute1, loc)}° ＝ ${formatNum(acute2, loc)}°.`
     };
   }
 ];
 
-// POOL ΓΙΑ Q10: Ισοσκελή & Ισόπλευρα Τρίγωνα
-const PROBLEM_POOL_Q10 = [
-  // 1. Ισοσκελές με δοσμένη γωνία κορυφής
-  () => {
-    const topA = randInt(40, 80);
+// POOL ΓΙΑ Q8: Ισοσκελή & Ισόπλευρα Τρίγωνα
+const PROBLEM_POOL_Q8 = [
+  (loc) => {
+    const rawTop = randInt(40, 80);
+    const topA = rawTop % 2 === 0 ? rawTop : rawTop + 1;
     const baseA = (180 - topA) / 2;
-    // Εξασφάλιση ακεραίου
-    const actualTop = topA % 2 === 0 ? topA : topA + 1;
-    const actualBase = (180 - actualTop) / 2;
-    const correct = `${actualBase}°`;
+    const correct = `${baseA}°`;
     return {
-      title: 'ΓΩΝΙΕΣ ΒΑΣΗΣ ΙΣΟΣΚΕΛΟΥΣ ΤΡΙΓΩΝΟΥ',
-      prompt: `Σε ένα ισοσκελές τρίγωνο η γωνία της κορυφής είναι ${actualTop}°. Πόσες μοίρες είναι καθεμία από τις δύο ίσες γωνίες της βάσης του;`,
+      title: loc === 'el' ? 'ΓΩΝΙΕΣ ΒΑΣΗΣ ΙΣΟΣΚΕΛΟΥΣ ΤΡΙΓΩΝΟΥ' : 'BASE ANGLES OF ISOSCELES TRIANGLE',
+      prompt: loc === 'el'
+        ? `Σε ένα ισοσκελές τρίγωνο η γωνία της κορυφής είναι ${formatNum(topA, loc)}°. Πόσες μοίρες είναι καθεμία από τις δύο ίσες γωνίες της βάσης του;`
+        : `In an isosceles triangle, the vertex angle measures ${formatNum(topA, loc)}°. How many degrees is each of the two equal base angles?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${actualBase + 10}°`,
-        `${actualBase - 10}°`,
-        `${180 - actualTop}°`,
-        `${actualBase + 15}°`
+        `${baseA + 10}°`,
+        `${Math.max(10, baseA - 10)}°`,
+        `${180 - topA}°`,
+        `${baseA + 15}°`
       ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
-        { label: 'Γωνία κορυφής', value: `${actualTop}°` },
-        { label: 'Άθροισμα 2 γωνιών βάσης', value: `180° － ${actualTop}° ＝ ${180 - actualTop}°` },
-        { label: 'Πράξη', value: `${180 - actualTop}° : 2` },
-        { label: 'Κάθε γωνία βάσης', value: `${actualBase}°` }
+      tableData: loc === 'el' ? [
+        { label: 'Γωνία κορυφής', value: `${formatNum(topA, loc)}°` },
+        { label: 'Άθροισμα 2 γωνιών βάσης', value: `180° － ${formatNum(topA, loc)}° ＝ ${formatNum(180 - topA, loc)}°` },
+        { label: 'Πράξη', value: `${formatNum(180 - topA, loc)}° : 2` },
+        { label: 'Κάθε γωνία βάσης', value: `${formatNum(baseA, loc)}°` }
+      ] : [
+        { label: 'Apex angle', value: `${formatNum(topA, loc)}°` },
+        { label: 'Sum of base angles', value: `180° － ${formatNum(topA, loc)}° ＝ ${formatNum(180 - topA, loc)}°` },
+        { label: 'Calculation', value: `${formatNum(180 - topA, loc)}° : 2` },
+        { label: 'Each base angle', value: `${formatNum(baseA, loc)}°` }
       ],
-      explanation: `Οι γωνίες της βάσης είναι ίσες: (180° － ${actualTop}°) : 2 ＝ ${180 - actualTop}° : 2 ＝ ${actualBase}°.`
+      fractionData: { n: `${formatNum(180 - topA, loc)}°`, d: '2', res: `${formatNum(baseA, loc)}°` },
+      explanation: loc === 'el'
+        ? `Οι γωνίες βάσης είναι ίσες: (180° － ${formatNum(topA, loc)}°) : 2 ＝ ${formatNum(180 - topA, loc)}° : 2 ＝ ${formatNum(baseA, loc)}°.`
+        : `Base angles are equal: (180° － ${formatNum(topA, loc)}°) : 2 ＝ ${formatNum(180 - topA, loc)}° : 2 ＝ ${formatNum(baseA, loc)}°.`
     };
   },
-  // 2. Ισοσκελές με δοσμένη γωνία βάσης
-  () => {
+  (loc) => {
     const baseA = randInt(35, 75);
     const topA = 180 - 2 * baseA;
     const correct = `${topA}°`;
     return {
-      title: 'ΓΩΝΙΑ ΚΟΡΥΦΗΣ ΙΣΟΣΚΕΛΟΥΣ ΤΡΙΓΩΝΟΥ',
-      prompt: `Σε ένα ισοσκελές τρίγωνο μία από τις γωνίες της βάσης του είναι ${baseA}°. Πόσες μοίρες είναι η γωνία της κορυφής του;`,
+      title: loc === 'el' ? 'ΓΩΝΙΑ ΚΟΡΥΦΗΣ ΙΣΟΣΚΕΛΟΥΣ ΤΡΙΓΩΝΟΥ' : 'VERTEX ANGLE OF ISOSCELES TRIANGLE',
+      prompt: loc === 'el'
+        ? `Σε ένα ισοσκελές τρίγωνο μία από τις γωνίες της βάσης του είναι ${formatNum(baseA, loc)}°. Πόσες μοίρες είναι η γωνία της κορυφής του;`
+        : `In an isosceles triangle, one of the base angles is ${formatNum(baseA, loc)}°. How many degrees is the vertex angle?`,
       options: ensureFourUniqueOptions(correct, () => [
         `${topA + 15}°`,
-        `${topA - 15}°`,
+        `${Math.max(10, topA - 15)}°`,
         `${180 - baseA}°`,
         `${2 * baseA}°`
       ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
-        { label: 'Γωνίες βάσης (ίσες)', value: `2 · ${baseA}° ＝ ${2 * baseA}°` },
+      tableData: loc === 'el' ? [
+        { label: 'Γωνίες βάσης (ίσες)', value: `2 · ${formatNum(baseA, loc)}° ＝ ${formatNum(2 * baseA, loc)}°` },
         { label: 'Συνολικό άθροισμα', value: '180°' },
-        { label: 'Πράξη', value: `180° － ${2 * baseA}°` },
-        { label: 'Γωνία κορυφής', value: `${topA}°` }
+        { label: 'Πράξη', value: `180° － ${formatNum(2 * baseA, loc)}°` },
+        { label: 'Γωνία κορυφής', value: `${formatNum(topA, loc)}°` }
+      ] : [
+        { label: 'Base angles (equal)', value: `2 · ${formatNum(baseA, loc)}° ＝ ${formatNum(2 * baseA, loc)}°` },
+        { label: 'Total sum', value: '180°' },
+        { label: 'Calculation', value: `180° － ${formatNum(2 * baseA, loc)}°` },
+        { label: 'Vertex angle', value: `${formatNum(topA, loc)}°` }
       ],
-      explanation: `Οι 2 γωνίες της βάσης είναι ίσες (2 · ${baseA}° ＝ ${2 * baseA}°). Αφαιρούμε από το 180°: 180° － ${2 * baseA}° ＝ ${topA}°.`
+      explanation: loc === 'el'
+        ? `Οι 2 γωνίες βάσης είναι ίσες (2 · ${formatNum(baseA, loc)}° ＝ ${formatNum(2 * baseA, loc)}°). Αφαιρούμε: 180° － ${formatNum(2 * baseA, loc)}° ＝ ${formatNum(topA, loc)}°.`
+        : `The 2 base angles are equal (2 · ${formatNum(baseA, loc)}° ＝ ${formatNum(2 * baseA, loc)}°). Subtract: 180° － ${formatNum(2 * baseA, loc)}° ＝ ${formatNum(topA, loc)}°.`
     };
   },
-  // 3. Ισόπλευρο τρίγωνο
-  () => {
-    const correct = '60°';
+  (loc) => {
+    const correct = '45°';
     return {
-      title: 'ΓΩΝΙΕΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ',
-      prompt: `Ένα τρίγωνο έχει και τις 3 πλευρές του ίσες (ισόπλευρο τρίγωνο). Πόσες μοίρες είναι καθεμία από τις γωνίες του;`,
-      options: ensureFourUniqueOptions(correct, () => ['45°', '90°', '50°', '75°']),
+      title: loc === 'el' ? 'ΙΣΟΣΚΕΛΕΣ ΟΡΘΟΓΩΝΙΟ ΤΡΙΓΩΝΟ' : 'ISOSCELES RIGHT TRIANGLE',
+      prompt: loc === 'el'
+        ? 'Σε ένα ισοσκελές ορθογώνιο τρίγωνο, η ορθή γωνία είναι 90° και οι δύο άλλες γωνίες είναι ίσες μεταξύ τους. Πόσες μοίρες είναι καθεμία από αυτές;'
+        : 'In an isosceles right triangle, the right angle is 90° and the other two angles are equal. How many degrees is each of them?',
+      options: ensureFourUniqueOptions(correct, () => ['30°', '60°', '50°', '40°']),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
-        { label: 'Σχήμα', value: 'Ισόπλευρο τρίγωνο (3 ίσες γωνίες)' },
-        { label: 'Άθροισμα γωνιών', value: '180°' },
-        { label: 'Πράξη', value: '180° : 3' },
-        { label: 'Κάθε γωνία', value: '60°' }
+      tableData: loc === 'el' ? [
+        { label: 'Ορθή γωνία', value: '90°' },
+        { label: 'Υπόλοιπο για τις 2 ίσες', value: '180° － 90° ＝ 90°' },
+        { label: 'Πράξη', value: '90° : 2' },
+        { label: 'Κάθε οξεία γωνία', value: '45°' }
+      ] : [
+        { label: 'Right angle', value: '90°' },
+        { label: 'Remaining for 2 angles', value: '180° － 90° ＝ 90°' },
+        { label: 'Calculation', value: '90° : 2' },
+        { label: 'Each acute angle', value: '45°' }
       ],
-      explanation: `Στο ισόπλευρο τρίγωνο όλες οι γωνίες είναι ίσες: 180° : 3 ＝ 60°.`
-    };
-  },
-  // 4. Σκεπή σπιτιού (ισοσκελές)
-  () => {
-    const baseA = randInt(30, 50);
-    const topA = 180 - 2 * baseA;
-    const correct = `${topA}°`;
-    return {
-      title: 'ΚΛΙΣΗ ΣΤΕΓΗΣ ΣΠΙΤΙΟΥ',
-      prompt: `Μια τριγωνική ισοσκελής στέγη έχει γωνία κλίσης ${baseA}° σε καθεμία από τις δύο πλευρές της βάσης της. Πόση είναι η γωνία που σχηματίζεται στον κορφιά (στην κορυφή);`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${topA + 10}°`,
-        `${topA - 10}°`,
-        `${baseA * 2}°`,
-        `${180 - baseA}°`
-      ]),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Γωνίες βάσης', value: `${baseA}° και ${baseA}°` },
-        { label: 'Άθροισμα βάσης', value: `${2 * baseA}°` },
-        { label: 'Πράξη', value: `180° － ${2 * baseA}°` },
-        { label: 'Γωνία κορυφής', value: `${topA}°` }
-      ],
-      explanation: `180° － (${baseA}° ＋ ${baseA}°) ＝ 180° － ${2 * baseA}° ＝ ${topA}°.`
-    };
-  },
-  // 5. Ισοσκελές με γωνία κορυφής 100° (αμβλυγώνιο)
-  () => {
-    const correct = '40°';
-    return {
-      title: 'ΑΜΒΛΥΓΩΝΙΟ ΙΣΟΣΚΕΛΕΣ ΤΡΙΓΩΝΟ',
-      prompt: `Σε ένα ισοσκελές τρίγωνο η γωνία της κορυφής είναι αμβλεία και μετράει 100°. Πόσες μοίρες είναι καθεμία από τις γωνίες της βάσης;`,
-      options: ensureFourUniqueOptions(correct, () => ['50°', '35°', '45°', '80°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Γωνία κορυφής', value: '100°' },
-        { label: 'Υπόλοιπο για τις 2 ίσες', value: '180° － 100° ＝ 80°' },
-        { label: 'Πράξη', value: '80° : 2' },
-        { label: 'Κάθε γωνία βάσης', value: '40°' }
-      ],
-      explanation: `(180° － 100°) : 2 ＝ 80° : 2 ＝ 40°.`
-    };
-  },
-  // 6. Ισοσκελές με γωνία κορυφής 40°
-  () => {
-    const correct = '70°';
-    return {
-      title: 'ΟΞΥΓΩΝΙΟ ΙΣΟΣΚΕΛΕΣ ΤΡΙΓΩΝΟ',
-      prompt: `Σε ένα ισοσκελές τρίγωνο η γωνία της κορυφής είναι 40°. Πόσες μοίρες είναι καθεμία από τις δύο γωνίες της βάσης;`,
-      options: ensureFourUniqueOptions(correct, () => ['60°', '80°', '75°', '65°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Γωνία κορυφής', value: '40°' },
-        { label: 'Υπόλοιπο βάσης', value: '180° － 40° ＝ 140°' },
-        { label: 'Πράξη', value: '140° : 2' },
-        { label: 'Κάθε γωνία βάσης', value: '70°' }
-      ],
-      explanation: `(180° － 40°) : 2 ＝ 140° : 2 ＝ 70°.`
+      fractionData: { n: '90°', d: '2', res: '45°' },
+      explanation: loc === 'el'
+        ? 'Οι δύο οξείες γωνίες είναι ίσες και συμπληρωματικές: 90° : 2 ＝ 45°.'
+        : 'The two acute angles are equal and complementary: 90° : 2 ＝ 45°.'
     };
   }
 ];
 
-// POOL ΓΙΑ Q11: Τετράπλευρα - Εύρεση 4ης Γωνίας (Άθροισμα 360°)
-const PROBLEM_POOL_Q11 = [
-  // 1. Γενικό τετράπλευρο με 3 γνωστές γωνίες
-  () => {
+// POOL ΓΙΑ Q9: Τετράπλευρα - Εύρεση 4ης Γωνίας (Άθροισμα 360°)
+const PROBLEM_POOL_Q9 = [
+  (loc) => {
     const a = randInt(70, 110);
     const b = randInt(75, 115);
     const c = randInt(65, 105);
     const d = 360 - (a + b + c);
     const correct = `${d}°`;
     return {
-      title: 'ΤΕΤΑΡΤΗ ΓΩΝΙΑ ΤΕΤΡΑΠΛΕΥΡΟΥ',
-      prompt: `Ένα τετράπλευρο έχει τρεις γωνίες ίσες με ${a}°, ${b}° και ${c}°. Πόσες μοίρες είναι η τέταρτη γωνία του;`,
-      options: ensureFourUniqueOptions(correct, () => [`${d + 12}°`, `${d - 10}°`, `${180 - a}°`, `${360 - a - b}°`]),
+      title: loc === 'el' ? 'ΤΕΤΑΡΤΗ ΓΩΝΙΑ ΤΕΤΡΑΠΛΕΥΡΟΥ' : 'FOURTH ANGLE OF QUADRILATERAL',
+      prompt: loc === 'el'
+        ? `Ένα τετράπλευρο έχει τρεις γωνίες ίσες με ${formatNum(a, loc)}°, ${formatNum(b, loc)}° και ${formatNum(c, loc)}°. Πόσες μοίρες είναι η τέταρτη γωνία του;`
+        : `A quadrilateral has three angles measuring ${formatNum(a, loc)}°, ${formatNum(b, loc)}°, and ${formatNum(c, loc)}°. How many degrees is the fourth angle?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${d + 12}°`,
+        `${Math.max(10, d - 10)}°`,
+        `${180 - a}°`,
+        `${d + 20}°`
+      ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Συνολικό άθροισμα', value: '360°' },
-        { label: 'Άθροισμα 3 γωνιών', value: `${a}° ＋ ${b}° ＋ ${c}° ＝ ${a + b + c}°` },
-        { label: 'Πράξη', value: `360° － ${a + b + c}°` },
-        { label: 'Τέταρτη γωνία', value: `${d}°` }
+        { label: 'Άθροισμα 3 γωνιών', value: `${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}° ＋ ${formatNum(c, loc)}° ＝ ${formatNum(a + b + c, loc)}°` },
+        { label: 'Πράξη', value: `360° － ${formatNum(a + b + c, loc)}°` },
+        { label: 'Τέταρτη γωνία', value: `${formatNum(d, loc)}°` }
+      ] : [
+        { label: 'Total sum', value: '360°' },
+        { label: 'Sum of 3 angles', value: `${formatNum(a, loc)}° ＋ ${formatNum(b, loc)}° ＋ ${formatNum(c, loc)}° ＝ ${formatNum(a + b + c, loc)}°` },
+        { label: 'Calculation', value: `360° － ${formatNum(a + b + c, loc)}°` },
+        { label: 'Fourth angle', value: `${formatNum(d, loc)}°` }
       ],
-      explanation: `Σε κάθε τετράπλευρο το άθροισμα είναι 360°. Προσθέτουμε τις τρεις γνωστές (${a + b + c}°) και αφαιρούμε: 360° － ${a + b + c}° ＝ ${d}°.`
+      explanation: loc === 'el'
+        ? `Σε κάθε τετράπλευρο το άθροισμα είναι 360°: 360° － ${formatNum(a + b + c, loc)}° ＝ ${formatNum(d, loc)}°.`
+        : `In every quadrilateral the angle sum is 360°: 360° － ${formatNum(a + b + c, loc)}° ＝ ${formatNum(d, loc)}°.`
     };
   },
-  // 2. Τετράπλευρο οικόπεδο με μία ορθή
-  () => {
-    const b = randInt(85, 125);
-    const c = randInt(70, 100);
-    const d = 360 - (90 + b + c);
-    const correct = `${d}°`;
-    return {
-      title: 'ΓΩΝΙΑ ΤΕΤΡΑΠΛΕΥΡΟΥ ΟΙΚΟΠΕΔΟΥ',
-      prompt: `Ένα οικόπεδο σχήματος τετραπλεύρου έχει μία ορθή γωνία (90°) και άλλες δύο γωνίες ${b}° και ${c}°. Πόσες μοίρες είναι η τέταρτη γωνία του οικοπέδου;`,
-      options: ensureFourUniqueOptions(correct, () => [`${d + 15}°`, `${d - 15}°`, `${180 - b}°`, `${d + 10}°`]),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Συνολικό άθροισμα', value: '360°' },
-        { label: 'Άθροισμα 3 γωνιών', value: `90° ＋ ${b}° ＋ ${c}° ＝ ${90 + b + c}°` },
-        { label: 'Πράξη', value: `360° － ${90 + b + c}°` },
-        { label: 'Τέταρτη γωνία', value: `${d}°` }
-      ],
-      explanation: `360° － (90° ＋ ${b}° ＋ ${c}°) ＝ 360° － ${90 + b + c}° ＝ ${d}°.`
-    };
-  },
-  // 3. Ορθογώνιο τραπέζιο (2 ορθές)
-  () => {
+  (loc) => {
     const acute = randInt(45, 80);
-    const obtuse = 180 - acute; // Σε ορθογώνιο τραπέζιο: 90 + 90 + acute + obtuse = 360 => acute + obtuse = 180
+    const obtuse = 180 - acute;
     const correct = `${obtuse}°`;
     return {
-      title: 'ΟΡΘΟΓΩΝΙΟ ΤΡΑΠΕΖΙΟ',
-      prompt: `Ένα ορθογώνιο τραπέζιο έχει δύο ορθές γωνίες (90° και 90°) και μία οξεία γωνία ${acute}°. Πόσες μοίρες είναι η τέταρτη (αμβλεία) γωνία του;`,
-      options: ensureFourUniqueOptions(correct, () => [`${obtuse + 10}°`, `${obtuse - 10}°`, `${acute + 45}°`, `${360 - acute}°`]),
+      title: loc === 'el' ? 'ΟΡΘΟΓΩΝΙΟ ΤΡΑΠΕΖΙΟ' : 'RIGHT TRAPEZOID',
+      prompt: loc === 'el'
+        ? `Ένα ορθογώνιο τραπέζιο έχει δύο ορθές γωνίες (90° και 90°) και μία οξεία γωνία ${formatNum(acute, loc)}°. Πόσες μοίρες είναι η τέταρτη (αμβλεία) γωνία του;`
+        : `A right trapezoid has two right angles (90° and 90°) and one acute angle of ${formatNum(acute, loc)}°. How many degrees is the fourth (obtuse) angle?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${obtuse + 10}°`,
+        `${Math.max(10, obtuse - 10)}°`,
+        `${acute + 45}°`,
+        `${obtuse + 20}°`
+      ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Δύο ορθές γωνίες', value: '90° ＋ 90° ＝ 180°' },
-        { label: 'Σύνολο τριών', value: `180° ＋ ${acute}° ＝ ${180 + acute}°` },
-        { label: 'Πράξη', value: `360° － ${180 + acute}°` },
-        { label: 'Τέταρτη γωνία', value: `${obtuse}°` }
+        { label: 'Σύνολο τριών', value: `180° ＋ ${formatNum(acute, loc)}° ＝ ${formatNum(180 + acute, loc)}°` },
+        { label: 'Πράξη', value: `360° － ${formatNum(180 + acute, loc)}°` },
+        { label: 'Τέταρτη γωνία', value: `${formatNum(obtuse, loc)}°` }
+      ] : [
+        { label: 'Two right angles', value: '90° ＋ 90° ＝ 180°' },
+        { label: 'Sum of three', value: `180° ＋ ${formatNum(acute, loc)}° ＝ ${formatNum(180 + acute, loc)}°` },
+        { label: 'Calculation', value: `360° － ${formatNum(180 + acute, loc)}°` },
+        { label: 'Fourth angle', value: `${formatNum(obtuse, loc)}°` }
       ],
-      explanation: `360° － (90° ＋ 90° ＋ ${acute}°) ＝ 360° － ${180 + acute}° ＝ ${obtuse}°.`
+      explanation: loc === 'el'
+        ? `360° － (90° ＋ 90° ＋ ${formatNum(acute, loc)}°) ＝ 360° － ${formatNum(180 + acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
+        : `360° － (90° ＋ 90° ＋ ${formatNum(acute, loc)}°) ＝ 360° － ${formatNum(180 + acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
     };
   },
-  // 4. Τετράπλευρο με 2 ίσες γωνίες
-  () => {
-    const a = 110;
-    const b = 70;
-    // 360 - 180 = 180 => οι άλλες 2 έχουν άθροισμα 180. Αν είναι ίσες: 90 καθεμία
+  (loc) => {
     const correct = '90°';
     return {
-      title: 'ΤΕΤΡΑΠΛΕΥΡΟ ΜΕ ΙΣΕΣ ΓΩΝΙΕΣ',
-      prompt: `Σε ένα τετράπλευρο οι δύο γωνίες είναι 110° και 70°, ενώ οι άλλες δύο γωνίες είναι ίσες μεταξύ τους. Πόσες μοίρες είναι καθεμία από τις δύο ίσες γωνίες;`,
-      options: ensureFourUniqueOptions(correct, () => ['80°', '85°', '95°', '100°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Άθροισμα 2 γνωστών', value: '110° ＋ 70° ＝ 180°' },
-        { label: 'Υπόλοιπο για τις άλλες 2', value: '360° － 180° ＝ 180°' },
-        { label: 'Πράξη', value: '180° : 2' },
-        { label: 'Κάθε ίση γωνία', value: '90°' }
-      ],
-      explanation: `Υπόλοιπο: 360° － 180° ＝ 180°. Αφού είναι ίσες: 180° : 2 ＝ 90°.`
-    };
-  },
-  // 5. Τραπέζιο με τρεις γνωστές γωνίες
-  () => {
-    const a = 120;
-    const b = 60;
-    const c = 130;
-    const d = 360 - (a + b + c); // 50
-    const correct = `${d}°`;
-    return {
-      title: 'ΓΩΝΙΑ ΣΕ ΤΡΑΠΕΖΙΟ',
-      prompt: `Σε ένα τραπέζιο οι τρεις γωνίες έχουν μέτρο 120°, 60° και 130°. Πόσο είναι το μέτρο της τέταρτης γωνίας του;`,
-      options: ensureFourUniqueOptions(correct, () => ['60°', '45°', '70°', '55°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Συνολικό άθροισμα', value: '360°' },
-        { label: 'Άθροισμα 3 γωνιών', value: '120° ＋ 60° ＋ 130° ＝ 310°' },
-        { label: 'Πράξη', value: '360° － 310°' },
-        { label: 'Τέταρτη γωνία', value: `${d}°` }
-      ],
-      explanation: `360° － 310° ＝ 50°.`
-    };
-  },
-  // 6. Τετράγωνο και ορθογώνιο (4 ίσες γωνίες)
-  () => {
-    const correct = '90°';
-    return {
-      title: 'ΤΕΤΡΑΠΛΕΥΡΟ ΜΕ 4 ΙΣΕΣ ΓΩΝΙΕΣ',
-      prompt: `Ένα τετράπλευρο έχει και τις 4 γωνίες του ίσες μεταξύ τους (όπως το τετράγωνο και το ορθογώνιο). Πόσες μοίρες είναι καθεμία από τις γωνίες του;`,
+      title: loc === 'el' ? 'ΤΕΤΡΑΠΛΕΥΡΟ ΜΕ 4 ΙΣΕΣ ΓΩΝΙΕΣ' : 'EQUIANGULAR QUADRILATERAL',
+      prompt: loc === 'el'
+        ? 'Ένα τετράπλευρο έχει και τις 4 γωνίες του ίσες μεταξύ τους (όπως το τετράγωνο και το ορθογώνιο). Πόσες μοίρες είναι καθεμία από τις γωνίες του;'
+        : 'A quadrilateral has all 4 angles equal (such as a square or rectangle). How many degrees does each angle measure?',
       options: ensureFourUniqueOptions(correct, () => ['60°', '80°', '100°', '120°']),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Άθροισμα τετραπλεύρου', value: '360°' },
         { label: 'Πλήθος ίσων γωνιών', value: '4' },
         { label: 'Πράξη', value: '360° : 4' },
         { label: 'Κάθε γωνία', value: '90° (Ορθή)' }
+      ] : [
+        { label: 'Quadrilateral sum', value: '360°' },
+        { label: 'Equal angle count', value: '4' },
+        { label: 'Calculation', value: '360° : 4' },
+        { label: 'Each angle', value: '90° (Right angle)' }
       ],
-      explanation: `360° : 4 ＝ 90°. Σε κάθε ισογώνιο τετράπλευρο όλες οι γωνίες είναι ορθές (90°).`
+      fractionData: { n: '360°', d: '4', res: '90°' },
+      explanation: loc === 'el'
+        ? '360° : 4 ＝ 90°. Σε κάθε ισογώνιο τετράπλευρο όλες οι γωνίες είναι ορθές (90°).'
+        : '360° : 4 ＝ 90°. In any equiangular quadrilateral all angles are right angles (90°).'
     };
   }
 ];
 
-// POOL ΓΙΑ Q12: Σύνθετα Προβλήματα Γεωμετρίας (Συνδυασμοί & Διαγώνιοι)
-const PROBLEM_POOL_Q12 = [
-  // 1. Παραλληλόγραμμο (απέναντι γωνίες ίσες)
-  () => {
+// POOL ΓΙΑ Q10: Σύνθετα Προβλήματα Γεωμετρίας (Παραλληλόγραμμα, Ρόμβοι, Πολύγωνα)
+const PROBLEM_POOL_Q10 = [
+  (loc) => {
     const acute = randInt(40, 75);
     const obtuse = 180 - acute;
     const correct = `${obtuse}°`;
     return {
-      title: 'ΓΩΝΙΕΣ ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟΥ',
-      prompt: `Σε ένα παραλληλόγραμμο οι δύο απέναντι οξείες γωνίες είναι ίσες με ${acute}° η καθεμία. Πόσες μοίρες είναι καθεμία από τις δύο απέναντι αμβλείες γωνίες του;`,
+      title: loc === 'el' ? 'ΓΩΝΙΕΣ ΠΑΡΑΛΛΗΛΟΓΡΑΜΜΟΥ' : 'PARALLELOGRAM ANGLES',
+      prompt: loc === 'el'
+        ? `Σε ένα παραλληλόγραμμο οι δύο απέναντι οξείες γωνίες είναι ίσες με ${formatNum(acute, loc)}° η καθεμία. Πόσες μοίρες είναι καθεμία από τις δύο απέναντι αμβλείες γωνίες του;`
+        : `In a parallelogram, the two opposite acute angles are ${formatNum(acute, loc)}° each. How many degrees is each of the two opposite obtuse angles?`,
       options: ensureFourUniqueOptions(correct, () => [
         `${obtuse + 10}°`,
-        `${obtuse - 10}°`,
-        `${360 - 2 * acute}°`,
-        `${acute + 60}°`
+        `${Math.max(10, obtuse - 10)}°`,
+        `${acute + 60}°`,
+        `${obtuse + 20}°`
       ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
-        { label: 'Άθροισμα 2 οξειών', value: `2 · ${acute}° ＝ ${2 * acute}°` },
-        { label: 'Υπόλοιπο για τις 2 αμβλείες', value: `360° － ${2 * acute}° ＝ ${360 - 2 * acute}°` },
-        { label: 'Πράξη', value: `${360 - 2 * acute}° : 2` },
-        { label: 'Κάθε αμβλεία γωνία', value: `${obtuse}°` }
+      tableData: loc === 'el' ? [
+        { label: 'Άθροισμα 2 οξειών', value: `2 · ${formatNum(acute, loc)}° ＝ ${formatNum(2 * acute, loc)}°` },
+        { label: 'Υπόλοιπο για τις 2 αμβλείες', value: `360° － ${formatNum(2 * acute, loc)}° ＝ ${formatNum(360 - 2 * acute, loc)}°` },
+        { label: 'Πράξη', value: `${formatNum(360 - 2 * acute, loc)}° : 2` },
+        { label: 'Κάθε αμβλεία γωνία', value: `${formatNum(obtuse, loc)}°` }
+      ] : [
+        { label: 'Sum of 2 acute', value: `2 · ${formatNum(acute, loc)}° ＝ ${formatNum(2 * acute, loc)}°` },
+        { label: 'Remaining for 2 obtuse', value: `360° － ${formatNum(2 * acute, loc)}° ＝ ${formatNum(360 - 2 * acute, loc)}°` },
+        { label: 'Calculation', value: `${formatNum(360 - 2 * acute, loc)}° : 2` },
+        { label: 'Each obtuse angle', value: `${formatNum(obtuse, loc)}°` }
       ],
-      explanation: `(360° － ${2 * acute}°) : 2 ＝ ${360 - 2 * acute}° : 2 ＝ ${obtuse}°. Επίσης, δύο διαδοχικές γωνίες παραλληλογράμμου έχουν άθροισμα 180°: 180° － ${acute}° ＝ ${obtuse}°.`
+      fractionData: { n: `${formatNum(360 - 2 * acute, loc)}°`, d: '2', res: `${formatNum(obtuse, loc)}°` },
+      explanation: loc === 'el'
+        ? `Δύο διαδοχικές γωνίες παραλληλογράμμου είναι παραπληρωματικές: 180° － ${formatNum(acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
+        : `Two consecutive angles in a parallelogram are supplementary: 180° － ${formatNum(acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
     };
   },
-  // 2. Ρόμβος με δοσμένη οξεία γωνία
-  () => {
+  (loc) => {
     const acute = randInt(45, 70);
     const obtuse = 180 - acute;
     const correct = `${obtuse}°`;
     return {
-      title: 'ΓΩΝΙΕΣ ΡΟΜΒΟΥ',
-      prompt: `Ένας ρόμβος έχει μία οξεία γωνία ${acute}°. Πόσες μοίρες είναι η διπλανή της (αμβλεία) γωνία;`,
+      title: loc === 'el' ? 'ΓΩΝΙΕΣ ΡΟΜΒΟΥ' : 'RHOMBUS ANGLES',
+      prompt: loc === 'el'
+        ? `Ένας ρόμβος έχει μία οξεία γωνία ${formatNum(acute, loc)}°. Πόσες μοίρες είναι η διπλανή της (αμβλεία) γωνία;`
+        : `A rhombus has an acute angle of ${formatNum(acute, loc)}°. How many degrees is the adjacent (obtuse) angle?`,
       options: ensureFourUniqueOptions(correct, () => [
         `${obtuse + 15}°`,
-        `${obtuse - 15}°`,
-        `${90 - acute}°`,
+        `${Math.max(10, obtuse - 15)}°`,
+        `${Math.abs(90 - acute)}°`,
         `${2 * acute}°`
       ]),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Σχήμα', value: 'Ρόμβος (παραλληλόγραμμο με 4 ίσες πλευρές)' },
         { label: 'Σχέση διαδοχικών', value: 'Παραπληρωματικές (άθροισμα 180°)' },
-        { label: 'Πράξη', value: `180° － ${acute}°` },
-        { label: 'Αμβλεία γωνία', value: `${obtuse}°` }
+        { label: 'Πράξη', value: `180° － ${formatNum(acute, loc)}°` },
+        { label: 'Αμβλεία γωνία', value: `${formatNum(obtuse, loc)}°` }
+      ] : [
+        { label: 'Shape', value: 'Rhombus (parallelogram with 4 equal sides)' },
+        { label: 'Adjacent relation', value: 'Supplementary (sum 180°)' },
+        { label: 'Calculation', value: `180° － ${formatNum(acute, loc)}°` },
+        { label: 'Obtuse angle', value: `${formatNum(obtuse, loc)}°` }
       ],
-      explanation: `Στον ρόμβο δύο διαδοχικές γωνίες έχουν άθροισμα 180°: 180° － ${acute}° ＝ ${obtuse}°.`
+      explanation: loc === 'el'
+        ? `Στον ρόμβο δύο διαδοχικές γωνίες έχουν άθροισμα 180°: 180° － ${formatNum(acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
+        : `In a rhombus consecutive angles sum to 180°: 180° － ${formatNum(acute, loc)}° ＝ ${formatNum(obtuse, loc)}°.`
     };
   },
-  // 3. Διαχωρισμός τετραπλεύρου σε 2 τρίγωνα
-  () => {
-    const correct = '360°';
-    return {
-      title: 'ΑΠΟΔΕΙΞΗ ΑΘΡΟΙΣΜΑΤΟΣ ΤΕΤΡΑΠΛΕΥΡΟΥ',
-      prompt: `Σχεδιάζουμε μία διαγώνιο σε ένα τυχαίο τετράπλευρο, χωρίζοντάς το σε δύο επιμέρους τρίγωνα. Πόσο είναι το συνολικό άθροισμα των γωνιών των δύο αυτών τριγώνων μαζί;`,
-      options: ensureFourUniqueOptions(correct, () => ['180°', '270°', '540°', '720°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Πλήθος τριγώνων', value: '2 τρίγωνα' },
-        { label: 'Άθροισμα ανά τρίγωνο', value: '180°' },
-        { label: 'Πράξη', value: '2 · 180°' },
-        { label: 'Συνολικό άθροισμα', value: '360°' }
-      ],
-      explanation: `Κάθε τρίγωνο έχει άθροισμα 180°. Τα δύο τρίγωνα μαζί έχουν: 2 · 180° ＝ 360°, που ισούται ακριβώς με το άθροισμα των γωνιών του τετραπλεύρου.`
-    };
-  },
-  // 4. Ισοσκελές τραπέζιο
-  () => {
-    const baseA = randInt(55, 75);
-    const topA = 180 - baseA;
-    const correct = `${topA}°`;
-    return {
-      title: 'ΙΣΟΣΚΕΛΕΣ ΤΡΑΠΕΖΙΟ',
-      prompt: `Σε ένα ισοσκελές τραπέζιο οι δύο γωνίες της κάτω βάσης είναι ίσες με ${baseA}° η καθεμία. Πόσες μοίρες είναι καθεμία από τις δύο γωνίες της επάνω βάσης;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${topA + 10}°`,
-        `${topA - 10}°`,
-        `${180 - 2 * baseA}°`,
-        `${baseA + 40}°`
-      ]),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Κάτω γωνίες', value: `2 · ${baseA}° ＝ ${2 * baseA}°` },
-        { label: 'Υπόλοιπο επάνω', value: `360° － ${2 * baseA}° ＝ ${360 - 2 * baseA}°` },
-        { label: 'Πράξη', value: `${360 - 2 * baseA}° : 2` },
-        { label: 'Κάθε επάνω γωνία', value: `${topA}°` }
-      ],
-      explanation: `Στο ισοσκελές τραπέζιο κάθε επάνω γωνία είναι παραπληρωματική της αντίστοιχης κάτω γωνίας: 180° － ${baseA}° ＝ ${topA}°.`
-    };
-  },
-  // 5. Τρίγωνο με σχέση διπλάσιας γωνίας
-  () => {
-    // A = 90, B + C = 90. Αν B = 2C => 3C = 90 => C = 30, B = 60
-    const correct = '60°';
-    return {
-      title: 'ΣΧΕΣΗ ΓΩΝΙΩΝ ΣΕ ΟΡΘΟΓΩΝΙΟ ΤΡΙΓΩΝΟ',
-      prompt: `Σε ένα ορθογώνιο τρίγωνο (μία γωνία 90°), η μία οξεία γωνία είναι διπλάσια από την άλλη. Πόσες μοίρες είναι η μεγαλύτερη οξεία γωνία;`,
-      options: ensureFourUniqueOptions(correct, () => ['30°', '45°', '70°', '50°']),
-      correctAnswer: correct,
-      unit: '°',
-      tableData: [
-        { label: 'Άθροισμα οξειών', value: '90°' },
-        { label: 'Σχέση μερών', value: '1 μέρος (μικρή) ＋ 2 μέρη (μεγάλη) ＝ 3 μέρη' },
-        { label: 'Υπολογισμός 1 μέρους', value: '90° : 3 ＝ 30° (μικρή γωνία)' },
-        { label: 'Μεγαλύτερη οξεία', value: '2 · 30° ＝ 60°' }
-      ],
-      explanation: `Οι δύο οξείες έχουν άθροισμα 90°. Χωρίζουμε σε 3 ίσα μέρη: 90° : 3 ＝ 30°. Η μεγαλύτερη είναι 2 · 30° ＝ 60°.`
-    };
-  },
-  // 6. Πεντάγωνο (χωρισμός σε 3 τρίγωνα)
-  () => {
+  (loc) => {
     const correct = '540°';
     return {
-      title: 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΠΕΝΤΑΓΩΝΟΥ',
-      prompt: `Αν ενώσουμε μία κορυφή ενός πενταγώνου με τις υπόλοιπες μη διαδοχικές κορυφές, το πεντάγωνο χωρίζεται σε 3 τρίγωνα. Πόσο είναι το συνολικό άθροισμα των γωνιών του πενταγώνου;`,
+      title: loc === 'el' ? 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΠΕΝΤΑΓΩΝΟΥ' : 'PENTAGON ANGLE SUM',
+      prompt: loc === 'el'
+        ? 'Αν ενώσουμε μία κορυφή ενός πενταγώνου με τις υπόλοιπες μη διαδοχικές κορυφές, το πεντάγωνο χωρίζεται σε 3 τρίγωνα. Πόσο είναι το συνολικό άθροισμα των γωνιών του πενταγώνου;'
+        : 'By connecting one vertex of a pentagon to the other non-adjacent vertices, it is divided into 3 triangles. What is the total sum of the interior angles of a pentagon?',
       options: ensureFourUniqueOptions(correct, () => ['360°', '450°', '720°', '600°']),
       correctAnswer: correct,
       unit: '°',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Πλήθος τριγώνων', value: '3 τρίγωνα' },
         { label: 'Άθροισμα ανά τρίγωνο', value: '180°' },
         { label: 'Πράξη', value: '3 · 180°' },
         { label: 'Σύνολο πενταγώνου', value: '540°' }
+      ] : [
+        { label: 'Number of triangles', value: '3 triangles' },
+        { label: 'Sum per triangle', value: '180°' },
+        { label: 'Calculation', value: '3 · 180°' },
+        { label: 'Pentagon sum', value: '540°' }
       ],
-      explanation: `Κάθε τρίγωνο έχει άθροισμα 180°. Για 3 τρίγωνα: 3 · 180° ＝ 540°. Επομένως το άθροισμα των γωνιών κάθε πενταγώνου είναι 540°.`
+      explanation: loc === 'el'
+        ? 'Κάθε τρίγωνο έχει άθροισμα 180°. Για 3 τρίγωνα: 3 · 180° ＝ 540°.'
+        : 'Each triangle has an angle sum of 180°. For 3 triangles: 3 · 180° ＝ 540°.'
     };
   }
 ];
 
 // -------------------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
+// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ ΑΚΡΙΒΩΣ 10 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
-function generateQuestionsSet() {
+function generateQuestionsSet(locale = 'el') {
   const qs = [];
 
   // Q1: Άθροισμα τριγώνου (True/False)
@@ -595,68 +488,106 @@ function generateQuestionsSet() {
   qs.push({
     id: 1,
     type: 'boolean',
-    title: 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΤΡΙΓΩΝΟΥ',
+    title: locale === 'el' ? 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΤΡΙΓΩΝΟΥ' : 'TRIANGLE ANGLE SUM',
     prompt: isQ1True
-      ? 'Το άθροισμα των τριών εσωτερικών γωνιών σε οποιοδήποτε τρίγωνο ισούται πάντοτε με 180°.'
-      : 'Σε ένα μεγάλο τρίγωνο το άθροισμα των γωνιών είναι μεγαλύτερο από 180° επειδή έχει μακρύτερες πλευρές.',
+      ? (locale === 'el'
+          ? 'Το άθροισμα των τριών εσωτερικών γωνιών σε οποιοδήποτε τρίγωνο ισούται πάντοτε με 180°.'
+          : 'The sum of the three interior angles in any triangle always equals 180°.')
+      : (locale === 'el'
+          ? 'Σε ένα μεγάλο τρίγωνο το άθροισμα των γωνιών είναι μεγαλύτερο από 180° επειδή έχει μακρύτερες πλευρές.'
+          : 'In a large triangle the sum of interior angles exceeds 180° because its sides are longer.'),
     correctAnswer: isQ1True,
-    tableData: [
+    tableData: locale === 'el' ? [
       { label: 'Κανόνας', value: 'Â ＋ B̂ ＋ Γ̂ ＝ 180°' },
       { label: 'Ισχύς', value: 'Για όλα ανεξαιρέτως τα τρίγωνα' },
       { label: 'Μήκος πλευρών', value: 'Δεν επηρεάζει το άθροισμα των γωνιών' }
+    ] : [
+      { label: 'Rule', value: 'Â ＋ B̂ ＋ Ĉ ＝ 180°' },
+      { label: 'Applicability', value: 'Applies to all triangles without exception' },
+      { label: 'Side length', value: 'Does not affect the angle sum' }
     ],
     explanation: isQ1True
-      ? 'ΣΩΣΤΟ: Σε οποιοδήποτε τρίγωνο (μικρό ή μεγάλο, οξυγώνιο, ορθογώνιο ή αμβλυγώνιο), το άθροισμα των γωνιών είναι πάντα αυστηρά 180°.'
-      : 'ΛΑΘΟΣ: Το άθροισμα των γωνιών κάθε τριγώνου είναι πάντοτε ακριβώς 180°, ανεξάρτητα από το μέγεθος των πλευρών του.'
+      ? (locale === 'el'
+          ? 'ΣΩΣΤΟ: Σε οποιοδήποτε τρίγωνο το άθροισμα των γωνιών είναι πάντα αυστηρά 180°.'
+          : 'CORRECT: In every triangle the sum of angles is always strictly 180°.')
+      : (locale === 'el'
+          ? 'ΛΑΘΟΣ: Το άθροισμα των γωνιών κάθε τριγώνου είναι πάντοτε ακριβώς 180°, ανεξάρτητα από το μέγεθος των πλευρών του.'
+          : 'FALSE: The angle sum of any triangle is always exactly 180°, regardless of arm length.')
   });
 
   // Q2: Άθροισμα τετραπλεύρου (MCQ)
   qs.push({
     id: 2,
     type: 'mcq',
-    title: 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΤΕΤΡΑΠΛΕΥΡΟΥ',
-    prompt: 'Πόσο είναι πάντοτε το άθροισμα των τεσσάρων γωνιών ενός τετραπλεύρου;',
+    title: locale === 'el' ? 'ΑΘΡΟΙΣΜΑ ΓΩΝΙΩΝ ΤΕΤΡΑΠΛΕΥΡΟΥ' : 'QUADRILATERAL ANGLE SUM',
+    prompt: locale === 'el'
+      ? 'Πόσο είναι πάντοτε το άθροισμα των τεσσάρων γωνιών ενός τετραπλεύρου;'
+      : 'What is always the sum of the four angles of a quadrilateral?',
     options: ensureFourUniqueOptions('360°', () => ['180°', '270°', '540°', '400°']),
     correctAnswer: '360°',
-    tableData: [
+    tableData: locale === 'el' ? [
       { label: 'Σχήμα', value: 'Τετράπλευρο' },
       { label: 'Διαχωρισμός', value: 'Χωρίζεται σε 2 τρίγωνα' },
       { label: 'Υπολογισμός', value: '2 · 180° ＝ 360°' }
+    ] : [
+      { label: 'Shape', value: 'Quadrilateral' },
+      { label: 'Division', value: 'Splits into 2 triangles' },
+      { label: 'Calculation', value: '2 · 180° ＝ 360°' }
     ],
-    explanation: 'Κάθε τετράπλευρο χωρίζεται από μία διαγώνιο σε δύο τρίγωνα, άρα το άθροισμα των γωνιών του είναι 2 · 180° ＝ 360°.'
+    explanation: locale === 'el'
+      ? 'Κάθε τετράπλευρο χωρίζεται από μία διαγώνιο σε δύο τρίγωνα, άρα το άθροισμα των γωνιών του είναι 2 · 180° ＝ 360°.'
+      : 'Any quadrilateral is divided by a diagonal into two triangles: 2 · 180° ＝ 360°.'
   });
 
   // Q3: Δύο ορθές γωνίες σε τρίγωνο (MCQ)
+  const q3Correct = locale === 'el'
+    ? 'Όχι, γιατί δύο ορθές δίνουν ήδη 180° και δεν μένουν μοίρες για την τρίτη γωνία'
+    : 'No, because two right angles already equal 180°, leaving 0° for the third angle';
   qs.push({
     id: 3,
     type: 'mcq',
-    title: 'ΟΡΘΕΣ ΓΩΝΙΕΣ ΣΕ ΤΡΙΓΩΝΟ',
-    prompt: 'Μπορεί ένα τρίγωνο να έχει δύο ορθές γωνίες (90° και 90°);',
-    options: ensureFourUniqueOptions(
-      'Όχι, γιατί δύο ορθές δίνουν ήδη 180° και δεν μένουν μοίρες για την τρίτη γωνία',
-      () => [
-        'Ναι, αν το τρίγωνο είναι πολύ μεγάλο',
-        'Ναι, σε κάθε ορθογώνιο τρίγωνο',
-        'Ναι, μόνο αν είναι ισοσκελές'
-      ]
+    title: locale === 'el' ? 'ΟΡΘΕΣ ΓΩΝΙΕΣ ΣΕ ΤΡΙΓΩΝΟ' : 'RIGHT ANGLES IN A TRIANGLE',
+    prompt: locale === 'el'
+      ? 'Μπορεί ένα τρίγωνο να έχει δύο ορθές γωνίες (90° και 90°);'
+      : 'Can a triangle have two right angles (90° and 90°)?',
+    options: ensureFourUniqueOptions(q3Correct, () => locale === 'el'
+      ? [
+          'Ναι, αν το τρίγωνο είναι πολύ μεγάλο',
+          'Ναι, σε κάθε ορθογώνιο τρίγωνο',
+          'Ναι, μόνο αν είναι ισοσκελές'
+        ]
+      : [
+          'Yes, if the triangle is very large',
+          'Yes, in every right-angled triangle',
+          'Yes, only if it is isosceles'
+        ]
     ),
-    correctAnswer: 'Όχι, γιατί δύο ορθές δίνουν ήδη 180° και δεν μένουν μοίρες για την τρίτη γωνία',
-    tableData: [
-      { label: 'Υπόθεση', value: '2 ορθές γωνίες ＝ 90° ＋ 90° ＝ 180°' },
+    correctAnswer: q3Correct,
+    tableData: locale === 'el' ? [
+      { label: 'Υπόθεση', value: '2 ορθές ＝ 90° ＋ 90° ＝ 180°' },
       { label: 'Τρίτη γωνία', value: '180° － 180° ＝ 0° (αδύνατο)' },
       { label: 'Συμπέρασμα', value: 'Ένα τρίγωνο έχει το πολύ μία ορθή γωνία' }
+    ] : [
+      { label: 'Hypothesis', value: '2 right angles ＝ 90° ＋ 90° ＝ 180°' },
+      { label: 'Third angle', value: '180° － 180° ＝ 0° (impossible)' },
+      { label: 'Conclusion', value: 'A triangle can have at most one right angle' }
     ],
-    explanation: 'Αν δύο γωνίες ήταν 90°, το άθροισμά τους θα ήταν 180°, οπότε η τρίτη γωνία θα έπρεπε να είναι 0°, πράγμα αδύνατο.'
+    explanation: locale === 'el'
+      ? 'Αν δύο γωνίες ήταν 90°, το άθροισμά τους θα ήταν 180°, οπότε η τρίτη γωνία θα έπρεπε να είναι 0°, πράγμα αδύνατο.'
+      : 'If two angles were 90°, their sum would be 180°, forcing the third angle to be 0°, which is impossible.'
   });
 
   // Q4: Οπτική αναγνώριση ορθογωνίου τριγώνου (SVG - No Giveaway)
+  const q4Correct = locale === 'el' ? 'Ορθογώνιο τρίγωνο' : 'Right-angled triangle';
   qs.push({
     id: 4,
     type: 'mcq',
-    title: 'ΑΝΑΓΝΩΡΙΣΗ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ',
-    prompt: 'Παρατηρήστε το παρακάτω τρίγωνο. Τι είδους τρίγωνο είναι ως προς τις γωνίες του;',
+    title: locale === 'el' ? 'ΑΝΑΓΝΩΡΙΣΗ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ' : 'IDENTIFYING RIGHT TRIANGLE',
+    prompt: locale === 'el'
+      ? 'Παρατηρήστε το παρακάτω τρίγωνο. Τι είδους τρίγωνο είναι ως προς τις γωνίες του;'
+      : 'Observe the triangle below. What type of triangle is it based on its angles?',
     svg: (
-      <svg viewBox="0 0 160 120" className="w-40 h-28 mx-auto my-2 select-none drop-shadow-sm">
+      <svg viewBox="0 0 160 120" className="w-40 h-28 max-w-full mx-auto my-2 select-none drop-shadow-sm">
         <polygon points="25,95 135,95 25,25" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="2.5" strokeLinejoin="round" />
         <rect x="25" y="80" width="15" height="15" fill="none" stroke="#e11d48" strokeWidth="2" />
         <circle cx="25" cy="95" r="3.5" fill="#e11d48" />
@@ -664,17 +595,21 @@ function generateQuestionsSet() {
         <circle cx="25" cy="25" r="3.5" fill="#4f46e5" />
       </svg>
     ),
-    options: ensureFourUniqueOptions('Ορθογώνιο τρίγωνο', () => [
-      'Οξυγώνιο τρίγωνο',
-      'Αμβλυγώνιο τρίγωνο',
-      'Ισόπλευρο τρίγωνο'
-    ]),
-    correctAnswer: 'Ορθογώνιο τρίγωνο',
-    tableData: [
+    options: ensureFourUniqueOptions(q4Correct, () => locale === 'el'
+      ? ['Οξυγώνιο τρίγωνο', 'Αμβλυγώνιο τρίγωνο', 'Ισόπλευρο τρίγωνο']
+      : ['Acute triangle', 'Obtuse triangle', 'Equilateral triangle']
+    ),
+    correctAnswer: q4Correct,
+    tableData: locale === 'el' ? [
       { label: 'Χαρακτηριστικό', value: 'Περιέχει μία ορθή γωνία 90° (κόκκινο τετραγωνάκι)' },
       { label: 'Είδος', value: 'Ορθογώνιο τρίγωνο' }
+    ] : [
+      { label: 'Feature', value: 'Contains one 90° angle (red square symbol)' },
+      { label: 'Type', value: 'Right-angled triangle' }
     ],
-    explanation: 'Το σύμβολο του τετραγώνου στην κάτω αριστερή κορυφή υποδηλώνει ορθή γωνία (90°), άρα το τρίγωνο είναι ορθογώνιο.'
+    explanation: locale === 'el'
+      ? 'Το σύμβολο του τετραγώνου στην κορυφή υποδηλώνει ορθή γωνία (90°), άρα το τρίγωνο είναι ορθογώνιο.'
+      : 'The square corner symbol indicates a right angle (90°), classifying it as a right-angled triangle.'
   });
 
   // Q5: Υπολογισμός 3ης γωνίας τριγώνου (Input αριθμού)
@@ -684,15 +619,23 @@ function generateQuestionsSet() {
   qs.push({
     id: 5,
     type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΤΡΙΤΗΣ ΓΩΝΙΑΣ ΤΡΙΓΩΝΟΥ',
-    prompt: `Σε ένα τρίγωνο οι δύο γωνίες είναι ${a5}° και ${b5}°. Πόσες μοίρες είναι η τρίτη γωνία; (Γράψτε μόνο τον αριθμό)`,
+    title: locale === 'el' ? 'ΥΠΟΛΟΓΙΣΜΟΣ ΤΡΙΤΗΣ ΓΩΝΙΑΣ ΤΡΙΓΩΝΟΥ' : 'CALCULATING 3RD TRIANGLE ANGLE',
+    prompt: locale === 'el'
+      ? `Σε ένα τρίγωνο οι δύο γωνίες είναι ${formatNum(a5, locale)}° και ${formatNum(b5, locale)}°. Πόσες μοίρες είναι η τρίτη γωνία; (Γράψτε μόνο τον αριθμό)`
+      : `In a triangle, two angles measure ${formatNum(a5, locale)}° and ${formatNum(b5, locale)}°. How many degrees is the third angle? (Write number only)`,
     correctAnswer: String(c5),
-    tableData: [
+    tableData: locale === 'el' ? [
       { label: 'Άθροισμα τριγώνου', value: '180°' },
-      { label: 'Άθροισμα 2 γνωστών', value: `${a5}° ＋ ${b5}° ＝ ${a5 + b5}°` },
-      { label: 'Πράξη', value: `180° － ${a5 + b5}° ＝ ${c5}°` }
+      { label: 'Άθροισμα 2 γνωστών', value: `${formatNum(a5, locale)}° ＋ ${formatNum(b5, locale)}° ＝ ${formatNum(a5 + b5, locale)}°` },
+      { label: 'Πράξη', value: `180° － ${formatNum(a5 + b5, locale)}° ＝ ${formatNum(c5, locale)}°` }
+    ] : [
+      { label: 'Triangle sum', value: '180°' },
+      { label: 'Sum of 2 known', value: `${formatNum(a5, locale)}° ＋ ${formatNum(b5, locale)}° ＝ ${formatNum(a5 + b5, locale)}°` },
+      { label: 'Calculation', value: `180° － ${formatNum(a5 + b5, locale)}° ＝ ${formatNum(c5, locale)}°` }
     ],
-    explanation: `Αφαιρούμε από το 180° το άθροισμα των δύο γνωστών γωνιών: 180° － (${a5}° ＋ ${b5}°) ＝ ${c5}°.`
+    explanation: locale === 'el'
+      ? `Αφαιρούμε από το 180° το άθροισμα των δύο γνωστών γωνιών: 180° － (${formatNum(a5, locale)}° ＋ ${formatNum(b5, locale)}°) ＝ ${formatNum(c5, locale)}°.`
+      : `Subtract the sum of the two angles from 180°: 180° － (${formatNum(a5, locale)}° ＋ ${formatNum(b5, locale)}°) ＝ ${formatNum(c5, locale)}°.`
   });
 
   // Q6: Υπολογισμός 4ης γωνίας τετραπλεύρου (Input αριθμού)
@@ -703,66 +646,40 @@ function generateQuestionsSet() {
   qs.push({
     id: 6,
     type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΤΑΡΤΗΣ ΓΩΝΙΑΣ ΤΕΤΡΑΠΛΕΥΡΟΥ',
-    prompt: `Σε ένα τετράπλευρο οι τρεις γωνίες είναι ${a6}°, ${b6}° και ${c6}°. Πόσες μοίρες είναι η τέταρτη γωνία του; (Γράψτε μόνο τον αριθμό)`,
+    title: locale === 'el' ? 'ΥΠΟΛΟΓΙΣΜΟΣ ΤΕΤΑΡΤΗΣ ΓΩΝΙΑΣ ΤΕΤΡΑΠΛΕΥΡΟΥ' : 'CALCULATING 4TH QUADRILATERAL ANGLE',
+    prompt: locale === 'el'
+      ? `Σε ένα τετράπλευρο οι τρεις γωνίες είναι ${formatNum(a6, locale)}°, ${formatNum(b6, locale)}° και ${formatNum(c6, locale)}°. Πόσες μοίρες είναι η τέταρτη γωνία του; (Γράψτε μόνο τον αριθμό)`
+      : `In a quadrilateral, three angles measure ${formatNum(a6, locale)}°, ${formatNum(b6, locale)}°, and ${formatNum(c6, locale)}°. How many degrees is the fourth angle? (Write number only)`,
     correctAnswer: String(d6),
-    tableData: [
+    tableData: locale === 'el' ? [
       { label: 'Άθροισμα τετραπλεύρου', value: '360°' },
-      { label: 'Άθροισμα 3 γνωστών', value: `${a6}° ＋ ${b6}° ＋ ${c6}° ＝ ${a6 + b6 + c6}°` },
-      { label: 'Πράξη', value: `360° － ${a6 + b6 + c6}° ＝ ${d6}°` }
+      { label: 'Άθροισμα 3 γνωστών', value: `${formatNum(a6, locale)}° ＋ ${formatNum(b6, locale)}° ＋ ${formatNum(c6, locale)}° ＝ ${formatNum(a6 + b6 + c6, locale)}°` },
+      { label: 'Πράξη', value: `360° － ${formatNum(a6 + b6 + c6, locale)}° ＝ ${formatNum(d6, locale)}°` }
+    ] : [
+      { label: 'Quadrilateral sum', value: '360°' },
+      { label: 'Sum of 3 known', value: `${formatNum(a6, locale)}° ＋ ${formatNum(b6, locale)}° ＋ ${formatNum(c6, locale)}° ＝ ${formatNum(a6 + b6 + c6, locale)}°` },
+      { label: 'Calculation', value: `360° － ${formatNum(a6 + b6 + c6, locale)}° ＝ ${formatNum(d6, locale)}°` }
     ],
-    explanation: `Αφαιρούμε από το 360° το άθροισμα των τριών γνωστών γωνιών: 360° － ${a6 + b6 + c6}° ＝ ${d6}°.`
+    explanation: locale === 'el'
+      ? `Αφαιρούμε από το 360° το άθροισμα των τριών γνωστών γωνιών: 360° － ${formatNum(a6 + b6 + c6, locale)}° ＝ ${formatNum(d6, locale)}°.`
+      : `Subtract the sum of the three known angles from 360°: 360° － ${formatNum(a6 + b6 + c6, locale)}° ＝ ${formatNum(d6, locale)}°.`
   });
 
-  // Q7: Γωνίες ισοπλεύρου τριγώνου (MCQ)
-  qs.push({
-    id: 7,
-    type: 'mcq',
-    title: 'ΓΩΝΙΕΣ ΙΣΟΠΛΕΥΡΟΥ ΤΡΙΓΩΝΟΥ',
-    prompt: 'Πόσες μοίρες είναι καθεμία από τις τρεις γωνίες ενός ισοπλεύρου τριγώνου;',
-    options: ensureFourUniqueOptions('60°', () => ['45°', '90°', '50°', '75°']),
-    correctAnswer: '60°',
-    tableData: [
-      { label: 'Ιδιότητα', value: '3 ίσες πλευρές και 3 ίσες γωνίες' },
-      { label: 'Υπολογισμός', value: '180° : 3 ＝ 60°' }
-    ],
-    explanation: 'Το ισόπλευρο τρίγωνο έχει 3 ίσες γωνίες: 180° : 3 ＝ 60° καθεμία.'
-  });
+  // Q7: Πρόβλημα από PROBLEM_POOL_Q7 (Τρίγωνα)
+  const p7 = PROBLEM_POOL_Q7[randInt(0, PROBLEM_POOL_Q7.length - 1)](locale);
+  qs.push({ id: 7, type: 'mcq', ...p7 });
 
-  // Q8: Κατασκευή γωνίας με μοιρογνωμόνιο (MCQ)
-  qs.push({
-    id: 8,
-    type: 'mcq',
-    title: 'ΚΑΤΑΣΚΕΥΗ ΓΩΝΙΑΣ',
-    prompt: 'Κατά την κατασκευή μιας γωνίας με το μοιρογνωμόνιο, πού πρέπει να τοποθετήσουμε το κέντρο του οργάνου;',
-    options: ensureFourUniqueOptions('Ακριβώς στην κορυφή της γωνίας', () => [
-      'Στο μέσο της πρώτης πλευράς',
-      'Στο τέλος της πρώτης πλευράς',
-      'Σε οποιοδήποτε σημείο του χαρτιού'
-    ]),
-    correctAnswer: 'Ακριβώς στην κορυφή της γωνίας',
-    tableData: [
-      { label: 'Κέντρο μοιρογνωμονίου', value: 'Ακριβώς στην κορυφή της γωνίας' },
-      { label: 'Γραμμή 0°', value: 'Ευθυγραμμισμένη με την αρχική πλευρά' }
-    ],
-    explanation: 'Το κέντρο του μοιρογνωμονίου τοποθετείται πάντοτε ακριβώς στην κορυφή της γωνίας, ώστε η μέτρηση των μοιρών να ξεκινήσει σωστά.'
-  });
+  // Q8: Πρόβλημα από PROBLEM_POOL_Q8 (Ισοσκελή & Ισόπλευρα)
+  const p8 = PROBLEM_POOL_Q8[randInt(0, PROBLEM_POOL_Q8.length - 1)](locale);
+  qs.push({ id: 8, type: 'mcq', ...p8 });
 
-  // Q9: Πρόβλημα από PROBLEM_POOL_Q9
-  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  // Q9: Πρόβλημα από PROBLEM_POOL_Q9 (Τετράπλευρα)
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)](locale);
   qs.push({ id: 9, type: 'mcq', ...p9 });
 
-  // Q10: Πρόβλημα από PROBLEM_POOL_Q10
-  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  // Q10: Πρόβλημα από PROBLEM_POOL_Q10 (Σύνθετα Προβλήματα)
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)](locale);
   qs.push({ id: 10, type: 'mcq', ...p10 });
-
-  // Q11: Πρόβλημα από PROBLEM_POOL_Q11
-  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
-  qs.push({ id: 11, type: 'mcq', ...p11 });
-
-  // Q12: Πρόβλημα από PROBLEM_POOL_Q12
-  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
-  qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
 }
@@ -772,16 +689,19 @@ function generateQuestionsSet() {
 // -------------------------------------------------------------
 
 export default function AthroismaGonionAskiseisPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     loadNewSet();
-  }, []);
+  }, [locale]);
 
   function loadNewSet() {
-    const newQs = generateQuestionsSet();
+    const newQs = generateQuestionsSet(locale);
     setQuestions(newQs);
     setUserAnswers({});
     setSubmitted(false);
@@ -832,56 +752,105 @@ export default function AthroismaGonionAskiseisPage() {
   ).length;
 
   const score = questions.reduce((acc, q) => (isQuestionCorrect(q) ? acc + 1 : acc), 0);
-  const totalCount = questions.length || 12;
+  const totalCount = questions.length || 10;
   const percentage = Math.round((score / totalCount) * 100);
+
+  // Μεταφράσεις UI
+  const ui = {
+    el: {
+      headTitle: "Ασκήσεις: Άθροισμα Γωνιών Τριγώνου & Τετραπλεύρου - ΣΤ' Δημοτικού | LearnMaths.gr",
+      headDesc: "Διαδραστικές ασκήσεις στην κατασκευή γωνιών και στους κανόνες των 180° και 360° για τρίγωνα και τετράπλευρα για τη ΣΤ' Δημοτικού.",
+      backTheory: "Θεωρία Κεφ. 69",
+      btnTheory: "📖 Θεωρία",
+      badge: "ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 69 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+      heroTitle: "Ασκήσεις: Άθροισμα Γωνιών Τριγώνου και Τετραπλεύρου",
+      heroDesc: "Εξασκηθείτε στην κατασκευή γωνιών και στους κανόνες των 180° και 360° μέσα από 10 δυναμικές ερωτήσεις και πλούσια προβλήματα.",
+      heroSub: "10 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση & Αναλυτική Επεξήγηση",
+      btnNewSet: "Νέες Ασκήσεις",
+      correctBadge: "ΣΩΣΤΟ",
+      wrongBadge: "ΛΑΘΟΣ",
+      trueBtn: "ΣΩΣΤΟ",
+      falseBtn: "ΛΑΘΟΣ",
+      inputPlaceholder: "Απάντηση...",
+      answeredLabel: "ΑΠΑΝΤΗΘΗΚΑΝ:",
+      scoreLabel: "ΣΚΟΡ:",
+      percentageLabel: "ΠΟΣΟΣΤΟ:",
+      btnSubmit: "ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ",
+      feedbackCorrect: "✓ Μπράβο! Σωστή απάντηση.",
+      feedbackWrong: "✗ Λάθος. Η σωστή απάντηση είναι: "
+    },
+    en: {
+      headTitle: "Exercises: Angle Sums of Triangles & Quadrilaterals - 6th Grade | LearnMaths.gr",
+      headDesc: "Interactive exercises on angle construction and 180° and 360° theorems for triangles and quadrilaterals for 6th Grade.",
+      backTheory: "Theory Chap. 69",
+      btnTheory: "📖 Theory",
+      badge: "EXERCISES • CHAPTER 69 • 6TH GRADE",
+      heroTitle: "Exercises: Angle Sums of Triangles and Quadrilaterals",
+      heroDesc: "Practice angle construction and the 180° and 360° rules through 10 dynamic questions and real-world problems.",
+      heroSub: "10 Dynamic Exercises with Instant Evaluation & Step-by-Step Solutions",
+      btnNewSet: "New Exercises",
+      correctBadge: "CORRECT",
+      wrongBadge: "WRONG",
+      trueBtn: "TRUE",
+      falseBtn: "FALSE",
+      inputPlaceholder: "Answer...",
+      answeredLabel: "ANSWERED:",
+      scoreLabel: "SCORE:",
+      percentageLabel: "PERCENTAGE:",
+      btnSubmit: "CHECK ANSWERS",
+      feedbackCorrect: "✓ Well done! Correct answer.",
+      feedbackWrong: "✗ Incorrect. The correct answer is: "
+    }
+  }[locale];
 
   return (
     <Layout
-      title="Ασκήσεις: Άθροισμα Γωνιών Τριγώνου &amp; Τετραπλεύρου - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις στην κατασκευή γωνιών και στους κανόνες των 180° και 360° για τρίγωνα και τετράπλευρα για τη ΣΤ' Δημοτικού."
+      title={ui.headTitle}
+      description={ui.headDesc}
       backUrl="/st-dimotikou/69-athroisma-gonion"
-      backText="Θεωρία Κεφ. 69"
+      backText={ui.backTheory}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/69-athroisma-gonion"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>{ui.btnTheory}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden box-border">
 
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 69 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span className="break-words">{ui.badge}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              {toCleanUppercase('Ασκησεις: Αθροισμα Γωνιων Τριγωνου και Τετραπλευρου')}
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(ui.heroTitle)}
             </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στην κατασκευή γωνιών και στους κανόνες των 180° και 360° μέσα από 12 δυναμικές ερωτήσεις και πλούσια προβλήματα.
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl break-words">
+              {ui.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+              <span className="break-words">{ui.heroSub}</span>
             </div>
             <button
+              type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base shrink-0"
             >
-              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
+              <span>🔄 {toCleanUppercase(ui.btnNewSet)}</span>
             </button>
           </div>
         </section>
 
-        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (12 ΕΡΩΤΗΣΕΙΣ) */}
+        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (ΑΚΡΙΒΩΣ 10 ΕΡΩΤΗΣΕΙΣ) */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, index) => {
             const isCorrect = isQuestionCorrect(q);
@@ -890,7 +859,7 @@ export default function AthroismaGonionAskiseisPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white rounded-3xl p-5 sm:p-8 shadow-sm border transition-all ${
+                className={`bg-white rounded-3xl p-4 sm:p-8 shadow-sm border transition-all min-w-0 ${
                   submitted
                     ? isCorrect
                       ? 'border-emerald-300 ring-1 ring-emerald-200'
@@ -899,42 +868,42 @@ export default function AthroismaGonionAskiseisPage() {
                 }`}
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
-                <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150">
+                <div className="flex items-center justify-between gap-2 sm:gap-4 mb-4 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150 shrink-0">
                       {index + 1}
                     </span>
-                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider">
-                      {toCleanUppercase(q.title || `ΕΡΩΤΗΣΗ ${index + 1}`)}
+                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider break-words [overflow-wrap:anywhere]">
+                      {toCleanUppercase(q.title || `${locale === 'el' ? 'ΕΡΩΤΗΣΗ' : 'QUESTION'} ${index + 1}`)}
                     </h2>
                   </div>
 
                   {submitted && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider ${
+                      className={`px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-black tracking-wider shrink-0 ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                      {isCorrect ? toCleanUppercase(ui.correctBadge) : toCleanUppercase(ui.wrongBadge)}
                     </span>
                   )}
                 </div>
 
-                {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY: ΟΥΔΕΙΣ ΠΙΝΑΚΑΣ ΕΔΩ) */}
+                {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY) */}
                 <div className="mb-6 space-y-3">
-                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed break-words [overflow-wrap:anywhere]">
                     {q.prompt}
                   </p>
-                  {q.svg && <div className="py-2">{q.svg}</div>}
+                  {q.svg && <div className="py-2 flex justify-center">{q.svg}</div>}
                 </div>
 
-                {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
+                {/* ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
                 <div className="mb-4">
                   {/* ΤΥΠΟΣ 1: BOOLEAN */}
                   {q.type === 'boolean' && (
-                    <div className="grid grid-cols-2 gap-3 max-w-md">
+                    <div className="grid grid-cols-2 gap-3 max-w-md w-full">
                       {[true, false].map((val) => {
                         const isSelected = userAns === val;
                         return (
@@ -943,20 +912,20 @@ export default function AthroismaGonionAskiseisPage() {
                             type="button"
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, val)}
-                            className={`py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm transition-all border ${
+                            className={`py-3 px-3 sm:px-4 rounded-2xl font-bold text-xs sm:text-sm transition-all border break-words ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
-                            {val ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                            {val ? toCleanUppercase(ui.trueBtn) : toCleanUppercase(ui.falseBtn)}
                           </button>
                         );
                       })}
                     </div>
                   )}
 
-                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ) */}
+                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΕΣ ΕΠΙΛΟΓΕΣ ΧΩΡΙΣ LINE-CLAMP) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {q.options.map((opt, optIdx) => {
@@ -967,14 +936,14 @@ export default function AthroismaGonionAskiseisPage() {
                             type="button"
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, opt)}
-                            className={`text-left p-3.5 sm:p-4 rounded-2xl border font-semibold text-xs sm:text-sm transition-all flex items-start gap-3 ${
+                            className={`text-left p-3.5 sm:p-4 rounded-2xl border font-semibold text-xs sm:text-sm transition-all flex items-start gap-3 w-full ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
                             <span
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'bg-white text-indigo-700'
                                   : 'bg-white text-slate-500 border border-slate-200'
@@ -982,7 +951,7 @@ export default function AthroismaGonionAskiseisPage() {
                             >
                               {String.fromCharCode(65 + optIdx)}
                             </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1">
+                            <span className="break-words [overflow-wrap:anywhere] whitespace-normal leading-snug flex-1">
                               {opt}
                             </span>
                           </button>
@@ -993,13 +962,13 @@ export default function AthroismaGonionAskiseisPage() {
 
                   {/* ΤΥΠΟΣ 3: INPUT */}
                   {q.type === 'input' && (
-                    <div className="max-w-xs">
+                    <div className="w-full max-w-xs">
                       <input
                         type="text"
                         inputMode="decimal"
                         maxLength={10}
                         disabled={submitted}
-                        placeholder="Απάντηση..."
+                        placeholder={ui.inputPlaceholder}
                         value={userAns || ''}
                         onChange={(e) => {
                           const cleaned = e.target.value
@@ -1013,12 +982,12 @@ export default function AthroismaGonionAskiseisPage() {
                   )}
                 </div>
 
-                {/* FEEDBACK & EXPLANATION (ΑΠΟΚΛΕΙΣΤΙΚΑ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
+                {/* FEEDBACK & EXPLANATION (ΜΟΝΟ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
                 {submitted && (
                   <div className="mt-6 pt-5 border-t border-slate-150 space-y-4">
-                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΕΔΩ */}
+                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) */}
                     {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
+                      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
                         <table className="w-full text-left text-xs sm:text-sm">
                           <tbody>
                             {q.tableData.map((row, rIdx) => (
@@ -1026,10 +995,10 @@ export default function AthroismaGonionAskiseisPage() {
                                 key={rIdx}
                                 className={rIdx !== q.tableData.length - 1 ? 'border-b border-slate-200/60' : ''}
                               >
-                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3">
+                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3 min-w-[110px] break-words">
                                   {row.label}
                                 </td>
-                                <td className="py-2.5 px-3 font-semibold text-slate-800">
+                                <td className="py-2.5 px-3 font-semibold text-slate-800 break-words [overflow-wrap:anywhere]">
                                   {row.value}
                                 </td>
                               </tr>
@@ -1039,7 +1008,7 @@ export default function AthroismaGonionAskiseisPage() {
                       </div>
                     )}
 
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
+                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ ΜΕ ΚΑΝΟΝΙΚΑ ΚΛΑΣΜΑΤΑ */}
                     <div
                       className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                         isCorrect
@@ -1047,18 +1016,27 @@ export default function AthroismaGonionAskiseisPage() {
                           : 'bg-rose-50 text-rose-950 border border-rose-200'
                       }`}
                     >
-                      <p className="font-bold mb-1">
+                      <p className="font-bold mb-1 break-words">
                         {isCorrect
-                          ? '✓ Μπράβο! Σωστή απάντηση.'
-                          : `✗ Λάθος. Η σωστή απάντηση είναι: ${
+                          ? ui.feedbackCorrect
+                          : `${ui.feedbackWrong}${
                               q.type === 'boolean'
                                 ? q.correctAnswer
-                                  ? 'Σωστό'
-                                  : 'Λάθος'
+                                  ? ui.trueBtn
+                                  : ui.falseBtn
                                 : q.correctAnswer
                             }`}
                       </p>
-                      <p className="text-slate-700">{q.explanation}</p>
+                      <div className="text-slate-700 flex flex-wrap items-center gap-1 leading-normal break-words">
+                        <span>{q.explanation}</span>
+                        {q.fractionData && (
+                          <span className="inline-flex flex-wrap items-center gap-1 font-mono font-bold">
+                            <span>(</span>
+                            <Fraction n={q.fractionData.n} d={q.fractionData.d} />
+                            <span>＝ {q.fractionData.res})</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1067,27 +1045,27 @@ export default function AthroismaGonionAskiseisPage() {
           })}
         </div>
 
-        {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        {/* STICKY BOTTOM SCORE FOOTER (10 ΕΡΩΤΗΣΕΙΣ) */}
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 sm:gap-8 min-w-0">
               {!submitted ? (
-                <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                  <span>{toCleanUppercase('ΑΠΑΝΤΗΘΗΚΑΝ:')} </span>
+                <div className="text-xs sm:text-sm font-semibold text-slate-300 truncate">
+                  <span>{toCleanUppercase(ui.answeredLabel)} </span>
                   <span className="font-black text-indigo-400 text-sm sm:text-base">
                     {answeredCount} / {totalCount}
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 sm:gap-6">
+                <div className="flex items-center gap-3 sm:gap-6 min-w-0">
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΣΚΟΡ:')} </span>
+                    <span className="hidden xs:inline">{toCleanUppercase(ui.scoreLabel)} </span>
                     <span className="font-black text-emerald-400 text-sm sm:text-base">
                       {score} / {totalCount}
                     </span>
                   </div>
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΠΟΣΟΣΤΟ:')} </span>
+                    <span className="hidden xs:inline">{toCleanUppercase(ui.percentageLabel)} </span>
                     <span className="font-black text-amber-400 text-sm sm:text-base">
                       {percentage}%
                     </span>
@@ -1096,7 +1074,7 @@ export default function AthroismaGonionAskiseisPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               {!submitted ? (
                 <button
                   type="button"
@@ -1106,18 +1084,18 @@ export default function AthroismaGonionAskiseisPage() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm"
+                  className="px-4 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm whitespace-nowrap"
                 >
-                  {toCleanUppercase('ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ')}
+                  {toCleanUppercase(ui.btnSubmit)}
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={loadNewSet}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2"
+                  className="px-4 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap"
                 >
                   <span>🔄</span>
-                  <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
+                  <span>{toCleanUppercase(ui.btnNewSet)}</span>
                 </button>
               )}
             </div>

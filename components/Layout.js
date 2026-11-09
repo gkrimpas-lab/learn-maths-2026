@@ -51,11 +51,16 @@ export default function Layout({
         "name": "LearnMaths.gr",
         "url": `${SITE_URL}/`,
         "logo": `${SITE_URL}/favicon.svg`,
+        "inLanguage": locale === 'en' ? 'en' : 'el',
         "founder": {
           "@type": "Person",
-          "name": "Δημήτρης Γκρίμπας",
+          "name": locale === 'en' ? "Dimitrios Gkrimpas" : "Δημήτρης Γκρίμπας",
           "jobTitle": locale === 'en' ? "Educator - Mathematician & Computer Engineer" : "Εκπαιδευτικός - Μαθηματικός & Μηχανικός Η/Υ",
-          "alumniOf": "Πανεπιστήμιο Πατρών"
+          "alumniOf": {
+            "@type": "EducationalOrganization",
+            "name": locale === 'en' ? "University of Patras" : "Πανεπιστήμιο Πατρών",
+            "url": "https://www.upatras.gr/"
+          }
         }
       },
       ...(schemaData ? (Array.isArray(schemaData) ? schemaData : [schemaData]) : [])
@@ -115,7 +120,7 @@ export default function Layout({
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${GA_MEASUREMENT_ID}', {
-            page_path: window.location.pathname,
+            page_path: window.location.pathname + window.location.search,
           });
         `}
       </Script>
@@ -144,7 +149,7 @@ export default function Layout({
                         locale={locale}
                         className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shrink-0"
                       >
-                        <span>🔙</span>
+                        <span aria-hidden="true">🔙</span>
                         <span>{backText}</span>
                       </Link>
                     )}
@@ -155,10 +160,12 @@ export default function Layout({
                 <Link
                   href={currentPath}
                   locale={locale === 'el' ? 'en' : 'el'}
+                  hrefLang={locale === 'el' ? 'en' : 'el'}
+                  lang={locale === 'el' ? 'en' : 'el'}
                   className="bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
                   title={locale === 'el' ? "Switch to English" : "Αλλαγή σε Ελληνικά"}
                 >
-                  <span>{locale === 'el' ? '🇬🇧' : '🇬🇷'}</span>
+                  <span aria-hidden="true">{locale === 'el' ? '🇬🇧' : '🇬🇷'}</span>
                   <span>{locale === 'el' ? 'EN' : 'ΕΛ'}</span>
                 </Link>
               </div>
@@ -186,13 +193,10 @@ export default function Layout({
       {!hideFooter && (
         <footer className="bg-gray-800 text-gray-400 py-6 text-center text-xs sm:text-sm border-t border-gray-700 w-full mt-12">
           <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-4`}>
-            <p>© {new Date().getFullYear()} LearnMaths.gr — {locale === 'en' ? 'Curated by' : 'Επιμέλεια'}: Δημήτρης Γκρίμπας</p>
+            <p>© {new Date().getFullYear()} LearnMaths.gr — {locale === 'en' ? 'Curated by: Dimitrios Gkrimpas' : 'Επιμέλεια: Δημήτρης Γκρίμπας'}</p>
             <div className="flex items-center gap-4 text-xs font-semibold">
               <Link href="/epikoinonia" locale={locale} className="hover:text-white transition">
-                {locale === 'en' ? '👨‍🏫 About the Creator' : '👨‍🏫 Σχετικά με τον Δημιουργό'}
-              </Link>
-              <Link href="/epikoinonia" locale={locale} className="hover:text-white transition">
-                {locale === 'en' ? '✉️ Contact' : '✉️ Επικοινωνία'}
+                {locale === 'en' ? '👨‍🏫 About the Creator & Contact' : '👨‍🏫 Σχετικά με τον Δημιουργό & Επικοινωνία'}
               </Link>
             </div>
           </div>

@@ -1,25 +1,29 @@
 // pages/st-dimotikou/33-agnostos-kai-prosthesi.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Οριο τιμων για το διαδραστικο οπτικο εργαστηριο
+// Όριο τιμών για το διαδραστικό οπτικό εργαστήριο
 const MAX_BALLS = 16;
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αυστηρή συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNum(num) {
+// Μορφοποίηση αριθμών βάσει locale
+function formatNum(num, locale = 'el') {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  return Number(num).toLocaleString(loc);
 }
 
 const PRESETS = [
@@ -30,22 +34,164 @@ const PRESETS = [
   { a: 6, b: 14, label: 'x ＋ 6 ＝ 14 (x ＝ 8)' }
 ];
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Εξισώσεις: Άγνωστος Προσθετέος - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Διαδραστική θεωρία με μεγάλη ζυγαριά, κουτί x και βάρη για την επίλυση εξισώσεων πρόσθεσης για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    navExercises: "🎯 Ασκήσεις",
+    heroBadge: "ΚΕΦΑΛΑΙΟ 33 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "33. Εξισώσεις: Ο Άγνωστος είναι Προσθετέος (x ＋ α ＝ β)",
+    heroDesc: "Μάθε πώς βρίσκουμε τον άγνωστο προσθετέο (x): αφαιρούμε τα ίδια βάρη και από τα δύο μέρη μιας ζυγαριάς για να μείνει το κουτί x μόνο του, κάνοντας αφαίρεση: x ＝ β － α!",
+    heroFeature: "Διαδραστική Ζυγαριά σε Ισορροπία & Οπτική Αφαίρεση Βαρών",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Βασικές Έννοιες: Η Ζυγαριά & Επίλυση Εξισώσεων Πρόσθεσης",
+    theorySubtitle: "Πώς διατηρείται η ισορροπία και πώς απομονώνουμε τον άγνωστο προσθετέο x.",
+    card1Badge: "ΙΣΟΡΡΟΠΙΑ",
+    card1Sub: "Δύο Ίσα Μέλη",
+    card1Title: "1. Η Ζυγαριά σε Ισορροπία",
+    card1Text: "Μια εξίσωση είναι σαν μια ζυγαριά που ισορροπεί. Το σύμβολο του ίσον (＝) σημαίνει ότι το αριστερό και το δεξί μέλος έχουν ακριβώς το ίδιο βάρος.",
+    card1Example: "x ＋ 3 ＝ 8 (Ισορροπία)",
+    card1Tip: "💡 Το σύμβολο του ίσον (＝) είναι το κέντρο της ζυγαριάς. Ό,τι αλλάζουμε στο ένα μέλος, πρέπει να το αλλάζουμε και στο άλλο!",
+    card2Badge: "ΜΕΘΟΔΟΣ",
+    card2Sub: "x ＝ β － α",
+    card2Title: "2. Αφαίρεση Ίδιων Βαρών",
+    card2Text: "Αν βγάλουμε τον ίδιο αριθμό από τους δύο δίσκους, η ζυγαριά εξακολουθεί να ισορροπεί! Έτσι μένει το x μόνο του:",
+    card2Example: (
+      <span>
+        x ＝ 8 － 3 ＝ <strong className="text-indigo-700">5</strong>
+      </span>
+    ),
+    card2Tip: "⚡ Χρυσός Κανόνας: Για να βρούμε τον άγνωστο προσθετέο, αφαιρούμε τον γνωστό προσθετέο από το άθροισμα!",
+    card3Badge: "ΕΛΕΓΧΟΣ",
+    card3Sub: "Αντικατάσταση",
+    card3Title: "3. Επαλήθευση",
+    card3Text: "Ελέγχουμε αν η τιμή του κουτιού x είναι σωστή, αντικαθιστώντας το x με τον αριθμό που βρήκαμε:",
+    card3Example: "5 ＋ 3 ＝ 8 (Σωστό! ✔️)",
+    card3Tip: "🎯 Αν μετά την αντικατάσταση τα δύο μέλη βγουν ίσα, τότε η λύση μας είναι απόλυτα σωστή!",
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Η Ζυγαριά με το Κουτί x και τα Βάρη",
+    labSubtitle: "Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη απευθείας επάνω στη ζυγαριά!",
+    step1Btn: "1️⃣ Αρχική Ζυγαριά",
+    step2Btn: (a) => `2️⃣ Επισήμανση ${a} Βαρών`,
+    step3Btn: (res) => `3️⃣ Αφαίρεση ➔ x ＝ ${res}`,
+    equationSettings: "⚙️ ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: x ＋ α ＝ β",
+    leftBallsLabel: "ΜΠΑΛΕΣ ΑΡΙΣΤΕΡΑ (α)",
+    rightBallsLabel: "ΜΠΑΛΕΣ ΔΕΞΙΑ (β)",
+    presetsTitle: "ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:",
+    tryCta: "Δοκιμή ➔",
+    stepExplainTitle: (s) => `📖 ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΒΗΜΑ ${s}:`,
+    step1Desc: (a, b) => `Στον αριστερό δίσκο έχουμε το άγνωστο κουτί x και ${a} μπάλες. Στον δεξιό δίσκο έχουμε ${b} μπάλες. Η ζυγαριά ισορροπεί: x ＋ ${a} ＝ ${b}.`,
+    step2Desc: (a) => `Επισημαίνουμε με κόκκινο χρώμα ${a} μπάλες από τον αριστερό δίσκο και ακριβώς ${a} μπάλες από τον δεξιό δίσκο, έτοιμες προς αφαίρεση!`,
+    step3Desc: (a, b, res) => `Αφαιρέσαμε ${a} μπάλες και από τους δύο δίσκους! Στα αριστερά έμεινε μόνο το κουτί x και στα δεξιά έμειναν οι υπόλοιπες ${res} μπάλες: x ＝ ${b} － ${a} ＝ ${res}.`,
+    labTip: "💡 Κανόνας: Για να βρούμε τον άγνωστο προσθετέο x, κάνουμε πάντα αφαίρεση: x ＝ β － α!",
+    scaleTitle: (a, b) => `⚖️ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ: ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (x ＋ ${a}) VS ΔΕΞΙΟΣ ΔΙΣΚΟΣ (${b})`,
+    perfectBalance: "✔ Τέλεια Ισορροπία",
+    boxText: "ΚΟΥΤΙ",
+    leftPanLabelStep3: "Μόνο το Κουτί x",
+    leftPanLabelInit: (a) => `x ＋ ${a} μπάλες`,
+    rightPanLabelStep3: (res) => `Απέμειναν ${res} μπάλες`,
+    rightPanLabelInit: (b) => `Σύνολο: ${b} μπάλες`,
+    stepTitle1: "Βήμα 1: Αρχική Ισότητα",
+    stepTitle2: (a) => `Βήμα 2: Αφαίρεση ${a} και από τα δύο μέλη`,
+    stepTitle3: (b, a, res) => `Βήμα 3: x ＝ ${b} － ${a} ＝ ${res}`,
+    btnPrev: "⬅️ Προηγούμενο",
+    btnNext: "Επόμενο ➡️",
+    stepOf: (cur, total) => `Βήμα ${cur} από ${total}`,
+    summaryTitle: (a, b, res) => `💡 ΣΥΜΠΕΡΑΣΜΑ: Αφαιρώντας ${a} μπάλες και από τους δύο δίσκους, βρίσκουμε ότι το κουτί x περιέχει ακριβώς ${res} μπάλες (x ＝ ${b} － ${a} ＝ ${res})!`,
+    ctaTitle: "Ώρα για Εξάσκηση στις Εξισώσεις Πρόσθεσης!",
+    ctaDesc: "Έμαθες πώς λύνουμε μια εξίσωση πρόσθεσης με τη βοήθεια της ζυγαριάς; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "Equations: Unknown Addend - 6th Grade | LearnMaths.gr",
+    pageDesc: "Interactive lesson with visual balance scale, mystery box x, and weights for solving addition equations for 6th Grade.",
+    backText: "6th Grade",
+    navExercises: "🎯 Exercises",
+    heroBadge: "CHAPTER 33 • 6TH GRADE",
+    heroTitle: "33. Equations: The Unknown is an Addend (x ＋ a ＝ b)",
+    heroDesc: "Discover how to find the unknown addend (x): subtract the same weights from both sides of the balance scale so box x stands alone: x ＝ b － a!",
+    heroFeature: "Interactive Balanced Scale & Visual Weight Subtraction",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Core Concepts: The Balance Scale & Solving Addition Equations",
+    theorySubtitle: "How balance is preserved and how we isolate the unknown addend x.",
+    card1Badge: "BALANCE",
+    card1Sub: "Two Equal Sides",
+    card1Title: "1. The Balanced Scale",
+    card1Text: "An equation acts like a balanced scale. The equals sign (＝) indicates that both left and right pans hold the exact same weight.",
+    card1Example: "x ＋ 3 ＝ 8 (In Balance)",
+    card1Tip: "💡 The equals sign (＝) is the pivot of the scale. Whatever we change on one side, we must also change on the other!",
+    card2Badge: "METHOD",
+    card2Sub: "x ＝ b － a",
+    card2Title: "2. Subtracting Equal Weights",
+    card2Text: "If we remove the exact same amount from both pans, the scale remains balanced! Box x is left isolated:",
+    card2Example: (
+      <span>
+        x ＝ 8 － 3 ＝ <strong className="text-indigo-700">5</strong>
+      </span>
+    ),
+    card2Tip: "⚡ Golden Rule: To find the unknown addend, subtract the known addend from the total sum!",
+    card3Badge: "CHECK",
+    card3Sub: "Substitution",
+    card3Title: "3. Verification",
+    card3Text: "Check whether the value inside box x is correct by substituting it back into the equation:",
+    card3Example: "5 ＋ 3 ＝ 8 (Correct! ✔️)",
+    card3Tip: "🎯 If both sides evaluate to the exact same number, our solution is confirmed correct!",
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: "The Balance Scale with Mystery Box x and Weights",
+    labSubtitle: "Follow the 3 guided steps to watch equal weights being removed directly from the scale!",
+    step1Btn: "1️⃣ Initial Scale",
+    step2Btn: (a) => `2️⃣ Highlight ${a} Weights`,
+    step3Btn: (res) => `3️⃣ Subtract ➔ x ＝ ${res}`,
+    equationSettings: "⚙️ EQUATION SETUP: x ＋ a ＝ b",
+    leftBallsLabel: "WEIGHTS ON LEFT (a)",
+    rightBallsLabel: "WEIGHTS ON RIGHT (b)",
+    presetsTitle: "PRESET EXAMPLES:",
+    tryCta: "Try ➔",
+    stepExplainTitle: (s) => `📖 WHAT HAPPENS IN STEP ${s}:`,
+    step1Desc: (a, b) => `On the left pan we have mystery box x and ${a} weights. On the right pan we have ${b} weights. The scale is balanced: x ＋ ${a} ＝ ${b}.`,
+    step2Desc: (a) => `We highlight ${a} weights in red on the left pan and exactly ${a} weights on the right pan, ready to be removed!`,
+    step3Desc: (a, b, res) => `We removed ${a} weights from both pans! Left pan holds only box x and right pan holds the remaining ${res} weights: x ＝ ${b} － ${a} ＝ ${res}.`,
+    labTip: "💡 Rule: To find the unknown addend x, always subtract: x ＝ b － a!",
+    scaleTitle: (a, b) => `⚖️ VISUAL SCALE: LEFT PAN (x ＋ ${a}) VS RIGHT PAN (${b})`,
+    perfectBalance: "✔ Perfect Balance",
+    boxText: "BOX",
+    leftPanLabelStep3: "Box x alone",
+    leftPanLabelInit: (a) => `x ＋ ${a} weights`,
+    rightPanLabelStep3: (res) => `${res} weights remaining`,
+    rightPanLabelInit: (b) => `Total: ${b} weights`,
+    stepTitle1: "Step 1: Initial Equation",
+    stepTitle2: (a) => `Step 2: Subtract ${a} from both sides`,
+    stepTitle3: (b, a, res) => `Step 3: x ＝ ${b} － ${a} ＝ ${res}`,
+    btnPrev: "⬅️ Previous",
+    btnNext: "Next ➡️",
+    stepOf: (cur, total) => `Step ${cur} of ${total}`,
+    summaryTitle: (a, b, res) => `💡 SUMMARY: By subtracting ${a} weights from both pans, we find that box x contains exactly ${res} weights (x ＝ ${b} － ${a} ＝ ${res})!`,
+    ctaTitle: "Time to Practice Addition Equations!",
+    ctaDesc: "Understood how to solve addition equations with the balance scale? Try the 10 interactive questions to test and consolidate your knowledge!",
+    ctaBtn: "Start Exercises"
+  }
+};
+
 export default function AgnostosKaiProsthesiPage() {
-  // Παραμετροι της εξισωσης: x + a = b
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
+  // Παράμετροι της εξίσωσης: x + a = b
   const [paramA, setParamA] = useState(3);
   const [paramB, setParamB] = useState(8);
 
-  // Βημα διαδραστικης επιλυσης: 1 (Αρχικη), 2 (Επισημανση), 3 (Αφαιρεση & Αποτελεσμα)
+  // Βήμα διαδραστικής επίλυσης: 1 (Αρχική), 2 (Επισήμανση), 3 (Αφαίρεση & Αποτέλεσμα)
   const [currentStep, setCurrentStep] = useState(1);
 
-  // Ασφαλεις αριθμητικες τιμες: 0 <= a <= b <= MAX_BALLS
+  // Ασφαλείς αριθμητικές τιμές: 0 <= a <= b <= MAX_BALLS
   const activeB = Math.min(MAX_BALLS, Math.max(0, Number(paramB) || 0));
   const activeA = Math.min(activeB, Math.max(0, Number(paramA) || 0));
 
-  // Σωστη μαθηματικη λυση: x = b - a
+  // Σωστή μαθηματική λύση: x = b - a
   const exactSolution = activeB - activeA;
 
-  // Αλλαγη παραμετρων με αυτοματη επαναφορα στο Βημα 1
   const setEquation = (a, b) => {
     setParamA(a);
     setParamB(b);
@@ -67,12 +213,12 @@ export default function AgnostosKaiProsthesiPage() {
     }
   };
 
-  // Σταθερη γεωμετρια σφαιρων
+  // Σταθερή γεωμετρία σφαιρών
   const BALL_RADIUS = 11;
   const BALL_SPACING = BALL_RADIUS * 2 + 4; // 26px
   const BASE_Y = 248;
 
-  // 1. Θεσεις σφαιρων αριστερου δισκου
+  // 1. Θέσεις σφαιρών αριστερού δίσκου
   const leftBallsPos = [];
   for (let i = 0; i < activeA; i++) {
     const row = Math.floor(i / 3);
@@ -83,7 +229,7 @@ export default function AgnostosKaiProsthesiPage() {
     });
   }
 
-  // 2. Θεσεις σφαιρων δεξιου δισκου
+  // 2. Θέσεις σφαιρών δεξιού δίσκου
   const COLS_RIGHT = 5;
   const rightBalls = [];
   for (let i = 0; i < activeB; i++) {
@@ -107,46 +253,46 @@ export default function AgnostosKaiProsthesiPage() {
 
   return (
     <Layout
-      title="Εξισώσεις: Άγνωστος Προσθετέος - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστική θεωρία με μεγάλη ζυγαριά, κουτί x και βάρη για την επίλυση εξισώσεων πρόσθεσης για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/33-agnostos-kai-prosthesi-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.navExercises}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 33 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.heroBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              33. Εξισώσεις: Ο Άγνωστος είναι Προσθετέος (x ＋ α ＝ β)
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε πώς βρίσκουμε τον <strong>άγνωστο προσθετέο (x)</strong>: αφαιρούμε <strong>τα ίδια βάρη</strong> και από τα δύο μέρη μιας ζυγαριάς για να μείνει το κουτί x μόνο του, κάνοντας <strong>αφαίρεση: x ＝ β － α</strong>!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Διαδραστική Ζυγαριά σε Ισορροπία &amp; Οπτική Αφαίρεση Βαρών</span>
+              <span>{t.heroFeature}</span>
             </div>
             <Link
               href="/st-dimotikou/33-agnostos-kai-prosthesi-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -156,10 +302,10 @@ export default function AgnostosKaiProsthesiPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες: Η Ζυγαριά &amp; Επίλυση Εξισώσεων Πρόσθεσης
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Πώς διατηρείται η ισορροπία και πώς απομονώνουμε τον άγνωστο προσθετέο x.
+              {t.theorySubtitle}
             </p>
           </div>
 
@@ -170,24 +316,24 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΙΣΟΡΡΟΠΙΑ
+                    {t.card1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Δύο Ίσα Μέλη</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.card1Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  1. Η Ζυγαριά σε Ισορροπία
+                  {t.card1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Μια εξίσωση είναι σαν μια <strong>ζυγαριά που ισορροπεί</strong>. Το σύμβολο του ίσον (＝) σημαίνει ότι το αριστερό και το δεξί μέλος έχουν <strong>ακριβώς το ίδιο βάρος</strong>.
+                  {t.card1Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>x ＋ 3 ＝ 8 (Ισορροπία)</p>
+                  <p>{t.card1Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Το σύμβολο του ίσον (＝) είναι το κέντρο της ζυγαριάς. Ό,τι αλλάζουμε στο ένα μέλος, πρέπει να το αλλάζουμε και στο άλλο!
+                {t.card1Tip}
               </div>
             </article>
 
@@ -196,24 +342,24 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΜΕΘΟΔΟΣ
+                    {t.card2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">x ＝ β － α</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">{t.card2Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  2. Αφαίρεση Ίδιων Βαρών
+                  {t.card2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν <strong>βγάλουμε τον ίδιο αριθμό από τους δύο δίσκους</strong>, η ζυγαριά εξακολουθεί να ισορροπεί! Έτσι μένει το x μόνο του:
+                  {t.card2Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>x ＝ 8 － 3 ＝ <strong className="text-indigo-700">5</strong></p>
+                  <p>{t.card2Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ <strong>Χρυσός Κανόνας:</strong> Για να βρούμε τον άγνωστο προσθετέο, αφαιρούμε τον γνωστό προσθετέο από το άθροισμα!
+                {t.card2Tip}
               </div>
             </article>
 
@@ -222,24 +368,24 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΕΛΕΓΧΟΣ
+                    {t.card3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Αντικατάσταση</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">{t.card3Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  3. Επαλήθευση
+                  {t.card3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Ελέγχουμε αν η τιμή του κουτιού x είναι σωστή, αντικαθιστώντας το x με τον αριθμό που βρήκαμε:
+                  {t.card3Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>5 ＋ 3 ＝ 8 (Σωστό! ✔️)</p>
+                  <p>{t.card3Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 Αν μετά την αντικατάσταση τα δύο μέλη βγουν ίσα, τότε η λύση μας είναι απόλυτα σωστή!
+                {t.card3Tip}
               </div>
             </article>
 
@@ -251,13 +397,13 @@ export default function AgnostosKaiProsthesiPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>{t.labBadge}</span>
               </div>
               <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Η Ζυγαριά με το Κουτί x και τα Βάρη
+                {t.labTitle}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
-                Ακολούθησε τα 3 βήματα για να δεις πώς αφαιρούνται τα ίδια βάρη απευθείας επάνω στη ζυγαριά!
+                {t.labSubtitle}
               </p>
             </div>
 
@@ -272,7 +418,7 @@ export default function AgnostosKaiProsthesiPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                1️⃣ {toCleanUppercase('Αρχική Ζυγαριά')}
+                {t.step1Btn}
               </button>
               <button
                 type="button"
@@ -283,7 +429,7 @@ export default function AgnostosKaiProsthesiPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                2️⃣ {toCleanUppercase(`Επισήμανση ${activeA} Βαρών`)}
+                {t.step2Btn(activeA)}
               </button>
               <button
                 type="button"
@@ -294,15 +440,15 @@ export default function AgnostosKaiProsthesiPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                3️⃣ {toCleanUppercase(`Αφαίρεση ➔ x ＝ ${exactSolution}`)}
+                {t.step3Btn(exactSolution)}
               </button>
             </div>
           </div>
 
-          {/* MAIN INTERACTIVE GRID (4 COLS LEFT / 8 COLS RIGHT) */}
+          {/* MAIN INTERACTIVE GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            {/* LEFT: CONTROLS & PRESETS (4 COLS) */}
+            {/* LEFT: CONTROLS & PRESETS */}
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 
@@ -310,7 +456,7 @@ export default function AgnostosKaiProsthesiPage() {
                 <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-slate-800 tracking-wider block uppercase">
-                      ⚙️ ΡΥΘΜΙΣΗ ΕΞΙΣΩΣΗΣ: x ＋ α ＝ β
+                      {t.equationSettings}
                     </span>
                     <span className="text-[10px] font-bold text-slate-400">0 ≤ α ≤ β</span>
                   </div>
@@ -318,7 +464,7 @@ export default function AgnostosKaiProsthesiPage() {
                   <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-center">
                     {/* ΓΝΩΣΤΟΣ ΠΡΟΣΘΕΤΕΟΣ (a) */}
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 block uppercase">ΜΠΑΛΕΣ ΑΡΙΣΤΕΡΑ (α)</span>
+                      <span className="text-[10px] font-bold text-slate-400 block uppercase">{t.leftBallsLabel}</span>
                       <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
                           type="button" 
@@ -342,7 +488,7 @@ export default function AgnostosKaiProsthesiPage() {
 
                     {/* ΣΥΝΟΛΙΚΕΣ ΜΠΑΛΕΣ ΔΕΞΙΑ (b) */}
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 block uppercase">ΜΠΑΛΕΣ ΔΕΞΙΑ (β)</span>
+                      <span className="text-[10px] font-bold text-slate-400 block uppercase">{t.rightBallsLabel}</span>
                       <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
                           type="button" 
@@ -369,7 +515,7 @@ export default function AgnostosKaiProsthesiPage() {
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
+                    {t.presetsTitle}
                   </span>
                   <div className="grid grid-cols-1 gap-2">
                     {PRESETS.map((p, idx) => (
@@ -384,7 +530,7 @@ export default function AgnostosKaiProsthesiPage() {
                         }`}
                       >
                         <span>{p.label}</span>
-                        <span className="text-[10px] opacity-75">Δοκιμή ➔</span>
+                        <span className="text-[10px] opacity-75">{t.tryCta}</span>
                       </button>
                     ))}
                   </div>
@@ -393,33 +539,27 @@ export default function AgnostosKaiProsthesiPage() {
                 {/* ΕΠΕΞΗΓΗΣΗ ΑΝΑΛΟΓΑ ΜΕ ΤΟ ΕΝΕΡΓΟ ΒΗΜΑ */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                   <span className="font-black text-slate-900 uppercase block text-[11px]">
-                    📖 ΤΙ ΣΥΜΒΑΙΝΕΙ ΣΤΟ ΒΗΜΑ {currentStep}:
+                    {t.stepExplainTitle(currentStep)}
                   </span>
                   {currentStep === 1 && (
-                    <p>
-                      Στον αριστερό δίσκο έχουμε το <strong>άγνωστο κουτί x</strong> και <strong>{activeA} μπάλες</strong>. Στον δεξιό δίσκο έχουμε <strong>{activeB} μπάλες</strong>. Η ζυγαριά ισορροπεί: <strong>x ＋ {activeA} ＝ {activeB}</strong>.
-                    </p>
+                    <p>{t.step1Desc(activeA, activeB)}</p>
                   )}
                   {currentStep === 2 && (
-                    <p className="text-amber-800">
-                      Επισημαίνουμε με κόκκινο χρώμα <strong>{activeA} μπάλες</strong> από τον αριστερό δίσκο και <strong>ακριβώς {activeA} μπάλες</strong> από τον δεξιό δίσκο, έτοιμες προς αφαίρεση!
-                    </p>
+                    <p className="text-amber-800">{t.step2Desc(activeA)}</p>
                   )}
                   {currentStep === 3 && (
-                    <p className="text-emerald-800 font-bold">
-                      Αφαιρέσαμε {activeA} μπάλες και από τους δύο δίσκους! Στα αριστερά έμεινε μόνο το <strong>κουτί x</strong> και στα δεξιά έμειναν οι υπόλοιπες <strong>{exactSolution} μπάλες</strong>: <strong>x ＝ {activeB} － {activeA} ＝ {exactSolution}</strong>.
-                    </p>
+                    <p className="text-emerald-800 font-bold">{t.step3Desc(activeA, activeB, exactSolution)}</p>
                   )}
                 </div>
 
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
-                💡 <strong>Κανόνας:</strong> Για να βρούμε τον άγνωστο προσθετέο x, κάνουμε πάντα <strong>αφαίρεση: x ＝ β － α</strong>!
+                {t.labTip}
               </div>
             </div>
 
-            {/* RIGHT: BIG SCALE & SVG BOX + BALLS VISUALIZER (8 COLS) */}
+            {/* RIGHT: BIG SCALE & SVG BOX + BALLS VISUALIZER */}
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[580px] space-y-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΕΞΙΣΩΣΗΣ & ΒΗΜΑΤΟΣ */}
@@ -433,9 +573,9 @@ export default function AgnostosKaiProsthesiPage() {
                 </div>
 
                 <div className="font-mono text-xs sm:text-sm md:text-base font-black text-indigo-700 bg-white px-3.5 py-2 rounded-2xl border border-indigo-200 shadow-xs">
-                  {currentStep === 1 && 'Βήμα 1: Αρχική Ισότητα'}
-                  {currentStep === 2 && `Βήμα 2: Αφαίρεση ${activeA} και από τα δύο μέλη`}
-                  {currentStep === 3 && `Βήμα 3: x ＝ ${activeB} － ${activeA} ＝ ${exactSolution}`}
+                  {currentStep === 1 && t.stepTitle1}
+                  {currentStep === 2 && t.stepTitle2(activeA)}
+                  {currentStep === 3 && t.stepTitle3(activeB, activeA, exactSolution)}
                 </div>
               </div>
 
@@ -443,10 +583,10 @@ export default function AgnostosKaiProsthesiPage() {
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                   <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                    ⚖️ ΟΠΤΙΚΗ ΖΥΓΑΡΙΑ: ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ (x ＋ {activeA}) VS ΔΕΞΙΟΣ ΔΙΣΚΟΣ ({activeB})
+                    {t.scaleTitle(activeA, activeB)}
                   </span>
                   <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    ✔️️ Τέλεια Ισορροπία
+                    {t.perfectBalance}
                   </span>
                 </div>
 
@@ -478,7 +618,7 @@ export default function AgnostosKaiProsthesiPage() {
                     <g transform="translate(60, 192)">
                       <rect width="56" height="56" rx="14" fill="#f59e0b" stroke="#b45309" strokeWidth="3" />
                       <text x="28" y="34" fill="#451a03" fontSize="26" fontWeight="900" textAnchor="middle" fontFamily="monospace">x</text>
-                      <text x="28" y="47" fill="#78350f" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">ΚΟΥΤΙ</text>
+                      <text x="28" y="47" fill="#78350f" fontSize="9" fontWeight="bold" textAnchor="middle" letterSpacing="0.5">{t.boxText}</text>
                     </g>
 
                     {/* 6. ΑΡΙΣΤΕΡΟΣ ΔΙΣΚΟΣ: ΟΙ ΜΠΑΛΕΣ a */}
@@ -519,11 +659,11 @@ export default function AgnostosKaiProsthesiPage() {
 
                     {/* Ετικέτες κάτω από τους δίσκους */}
                     <text x="150" y="325" fill="#1e3a8a" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                      {currentStep === 3 ? 'Μόνο το Κουτί x' : `x ＋ ${activeA} μπάλες`}
+                      {currentStep === 3 ? t.leftPanLabelStep3 : t.leftPanLabelInit(activeA)}
                     </text>
 
                     <text x="610" y="325" fill="#064e3b" fontSize="14" fontWeight="900" textAnchor="middle" fontFamily="monospace">
-                      {currentStep === 3 ? `Απέμειναν ${exactSolution} μπάλες` : `Σύνολο: ${activeB} μπάλες`}
+                      {currentStep === 3 ? t.rightPanLabelStep3(exactSolution) : t.rightPanLabelInit(activeB)}
                     </text>
                   </svg>
                 </div>
@@ -536,11 +676,11 @@ export default function AgnostosKaiProsthesiPage() {
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev - 1); }}
                     className="px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 text-xs font-black rounded-xl border border-slate-200 transition touch-manipulation active:scale-95"
                   >
-                    ⬅️ Προηγούμενο
+                    {t.btnPrev}
                   </button>
 
                   <div className="text-xs font-black text-indigo-900 bg-indigo-50 px-3 sm:px-5 py-2 rounded-xl border border-indigo-200">
-                    Βήμα {currentStep} από 3
+                    {t.stepOf(currentStep, 3)}
                   </div>
 
                   <button
@@ -549,14 +689,14 @@ export default function AgnostosKaiProsthesiPage() {
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentStep(prev => prev + 1); }}
                     className="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white text-xs font-black rounded-xl shadow-md transition transform active:scale-95 touch-manipulation"
                   >
-                    Επόμενο ➡️
+                    {t.btnNext}
                   </button>
                 </div>
               </div>
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 ΣΥΜΠΕΡΑΣΜΑ: Αφαιρώντας {activeA} μπάλες και από τους δύο δίσκους, βρίσκουμε ότι το <strong>κουτί x περιέχει ακριβώς {exactSolution} μπάλες (x ＝ {activeB} － {activeA} ＝ {exactSolution})</strong>!
+                {t.summaryTitle(activeA, activeB, exactSolution)}
               </div>
 
             </div>
@@ -568,10 +708,10 @@ export default function AgnostosKaiProsthesiPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στις Εξισώσεις Πρόσθεσης!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Έμαθες πώς λύνουμε μια εξίσωση πρόσθεσης με τη βοήθεια της ζυγαριάς; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              {t.ctaDesc}
             </p>
           </div>
 
@@ -579,7 +719,7 @@ export default function AgnostosKaiProsthesiPage() {
             href="/st-dimotikou/33-agnostos-kai-prosthesi-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(t.ctaBtn)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

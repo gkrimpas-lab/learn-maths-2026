@@ -1,42 +1,66 @@
 // pages/st-dimotikou/29-pollaplasiasmos-klasmaton.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Κεντρικη μεταβλητη ρυθμισης μεγιστων τιμων
+// Κεντρική μεταβλητή ρύθμισης μέγιστων τιμών
 const MAX_LIMIT = 100;
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αυστηρή συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNum(num) {
+// Μορφοποίηση αριθμών βάσει locale
+function formatNum(num, locale = 'el') {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  return Number(num).toLocaleString(loc);
+}
+
+// Component για κανονική κατακόρυφη μορφή κλάσματος
+function FractionDisplay({ num, den, size = 'md', className = '' }) {
+  const sizeClasses = {
+    sm: { numDen: 'text-xs sm:text-sm font-bold', line: 'w-full h-0.5' },
+    md: { numDen: 'text-sm sm:text-base font-black', line: 'w-full h-0.5' },
+    lg: { numDen: 'text-lg sm:text-xl md:text-2xl font-black', line: 'w-full h-1' },
+    xl: { numDen: 'text-2xl sm:text-3xl md:text-4xl font-black', line: 'w-full h-1.5' }
+  };
+
+  const selected = sizeClasses[size] || sizeClasses.md;
+
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle font-mono leading-none px-1 ${className}`}>
+      <span className={`${selected.numDen} pb-0.5`}>{num}</span>
+      <span className={`${selected.line} bg-current rounded-full my-0.5 min-w-[12px]`} />
+      <span className={`${selected.numDen} pt-0.5`}>{den}</span>
+    </span>
+  );
 }
 
 const PRESETS_FF = [
-  { nA: 2, dA: 3, nB: 3, dB: 4, label: '2/3 · 3/4 ➔ 1/2' },
-  { nA: 4, dA: 3, nB: 3, dB: 2, label: '4/3 · 3/2 ➔ 2 (Καταχρηστικά)' },
-  { nA: 5, dA: 4, nB: 2, dB: 3, label: '5/4 · 2/3 ➔ 5/6' },
-  { nA: 3, dA: 2, nB: 5, dB: 3, label: '3/2 · 5/3 ➔ 5/2' }
+  { nA: 2, dA: 3, nB: 3, dB: 4, resNum: 1, resDen: 2 },
+  { nA: 4, dA: 3, nB: 3, dB: 2, resNum: 2, resDen: 1 },
+  { nA: 5, dA: 4, nB: 2, dB: 3, resNum: 5, resDen: 6 },
+  { nA: 3, dA: 2, nB: 5, dB: 3, resNum: 5, resDen: 2 }
 ];
 
 const PRESETS_NF = [
-  { nA: 3, nB: 1, dB: 4, label: '3 · 1/4 ➔ 3/4' },
-  { nA: 2, nB: 2, dB: 5, label: '2 · 2/5 ➔ 4/5' },
-  { nA: 4, nB: 1, dB: 2, label: '4 · 1/2 ➔ 2' },
-  { nA: 3, nB: 4, dB: 3, label: '3 · 4/3 ➔ 4' }
+  { nA: 3, nB: 1, dB: 4, resNum: 3, resDen: 4 },
+  { nA: 2, nB: 2, dB: 5, resNum: 4, resDen: 5 },
+  { nA: 4, nB: 1, dB: 2, resNum: 2, resDen: 1 },
+  { nA: 3, nB: 4, dB: 3, resNum: 4, resDen: 1 }
 ];
 
-// Βοηθητικη συναρτηση για ευρεση Μεγιστου Κοινου Διαιρετη (ΜΚΔ)
+// Βοηθητική συνάρτηση για εύρεση Μεγίστου Κοινού Διαιρέτη (ΜΚΔ)
 function findGCD(a, b) {
   let x = Math.abs(a || 0);
   let y = Math.abs(b || 0);
@@ -48,19 +72,159 @@ function findGCD(a, b) {
   return x || 1;
 }
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Πολλαπλασιασμός Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Μάθε πώς πολλαπλασιάζουμε κλάσμα με κλάσμα και ακέραιο με κλάσμα, καθώς και πώς απλοποιούμε το γινόμενο για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    navExercises: "🎯 Ασκήσεις",
+    heroBadge: "ΚΕΦΑΛΑΙΟ 29 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "Πολλαπλασιασμός Κλασμάτων και Ακεραίου με Κλάσμα",
+    heroDesc: "Μάθε πώς πολλαπλασιάζουμε κλάσμα με κλάσμα (αριθμητή με αριθμητή και παρονομαστή με παρονομαστή) και ακέραιο με κλάσμα, καθώς και πώς απλοποιούμε το γινόμενο!",
+    heroFeature: "Οπτικοποίηση με Πλέγμα Εμβαδού & Επαναλαμβανόμενες Μονάδες",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Βασικές Έννοιες & Κανόνες Πολλαπλασιασμού Κλασμάτων",
+    theorySubtitle: "Όλα όσα πρέπει να γνωρίζεις για το γινόμενο κλασμάτων, τον πολλαπλασιασμό με ακέραιο και τους αντίστροφους αριθμούς.",
+    card1Badge: "1. ΚΛΑΣΜΑ ΕΠΙ ΚΛΑΣΜΑ",
+    card1Sub: "Απευθείας Γινόμενο",
+    card1Title: "Κλάσμα επί Κλάσμα",
+    card1Text: "Πολλαπλασιάζουμε αριθμητή με αριθμητή και παρονομαστή με παρονομαστή. Δεν χρειάζεται ποτέ να γίνουν ομώνυμα!",
+    card1Tip: "💡 Χρυσός Κανόνας: Δεν ψάχνουμε ποτέ Ε.Κ.Π. στον πολλαπλασιασμό! Πολλαπλασιάζουμε ευθεία οριζόντια.",
+    card2Badge: "2. ΑΚΕΡΑΙΟΣ ΕΠΙ ΚΛΑΣΜΑ",
+    card2Sub: "Μόνο στον Αριθμητή",
+    card2Title: "Ακέραιος επί Κλάσμα",
+    card2Text: "Πολλαπλασιάζουμε τον ακέραιο μόνο με τον αριθμητή του κλάσματος. Ο παρονομαστής παραμένει ακριβώς ο ίδιος.",
+    card2Tip: "⚡ Κάθε ακέραιος α μπορεί να γραφτεί ως κλάσμα α/1 (π.χ. 3 ＝ 3/1, άρα (3/1) · (2/7) ＝ 6/7).",
+    card3Badge: "3. ΑΝΤΙΣΤΡΟΦΟΙ",
+    card3Sub: "Γινόμενο ＝ 1",
+    card3Title: "Αντίστροφοι Αριθμοί",
+    card3Text: "Δύο αριθμοί λέγονται αντίστροφοι όταν το γινόμενό τους ισούται ακριβώς με τη μονάδα (1).",
+    card3Tip: "🎯 Για να βρεις τον αντίστροφο ενός κλάσματος, απλώς ανταλλάσσεις τη θέση του αριθμητή και του παρονομαστή!",
+    tabFracFrac: "Κλάσμα επί Κλάσμα",
+    tabNumFrac: "Ακέραιος επί Κλάσμα",
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Διαδραστικό Εργαστήριο Πολλαπλασιασμού Κλασμάτων",
+    labSubtitleFF: "Όρισε τους όρους των δύο κλασμάτων και δες το γινόμενο και την οπτικοποίηση με το πλέγμα εμβαδού!",
+    labSubtitleNF: "Όρισε τον ακέραιο και το κλάσμα και δες την αναπαράσταση ως επαναλαμβανόμενες μονάδες!",
+    fraction1Label: "🔵 ΚΛΑΣΜΑ 1",
+    wholeNumberLabel: "🔢 ΦΥΣΙΚΟΣ ΑΡΙΘΜΟΣ (ΑΚΕΡΑΙΟΣ)",
+    fraction2Label: "🟠 ΚΛΑΣΜΑ 2",
+    numerator: "ΑΡΙΘΜΗΤΗΣ",
+    denominator: "ΠΑΡΟΝΟΜΑΣΤΗΣ",
+    valueLabel: "ΤΙΜΗ",
+    presetsTitle: "ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:",
+    stepsTitle: "📝 ΒΗΜΑΤΑ ΥΠΟΛΟΓΙΣΜΟΥ:",
+    stepNumerators: (nA, nB, rN) => `1. Αριθμητές: ${nA} · ${nB} ＝ ${rN}`,
+    stepDenominators: (dA, dB, rD) => `2. Παρονομαστές: ${dA} · ${dB} ＝ ${rD}`,
+    stepImagineWhole: (w) => `1. Φανταζόμαστε τον ακέραιο ως κλάσμα: ${w}/1`,
+    stepNumWhole: (w, nB, rN) => `2. Αριθμητής: ${w} · ${nB} ＝ ${rN}`,
+    stepDenWhole: (dB, rD) => `3. Παρονομαστής: 1 · ${dB} ＝ ${rD}`,
+    simplifiedNotice: (g, sN, sD) => (
+      <span>
+        ✨ Απλοποίηση με το {g}: <FractionDisplay num={sN} den={sD} size="sm" className="text-emerald-800 font-bold" />
+      </span>
+    ),
+    labTip: "💡 Συμβουλή: Στον πολλαπλασιασμό κλασμάτων δεν χρειάζεται να κάνουμε τα κλάσματα ομώνυμα!",
+    visualGridTitle: "🔲 ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΠΛΕΓΜΑ ΕΜΒΑΔΟΥ:",
+    legendFraction1: "1ο Κλάσμα",
+    legendFraction2: "2ο Κλάσμα",
+    legendOverlap: "Κοινή Περιοχή (Γινόμενο)",
+    unitsNotice: (uY, uX, total) => `ℹ️ Εμφανίζονται ${uY} · ${uX} ＝ ${total} ακέραιες μονάδες (χωρισμένες με έντονη γραμμή) λόγω καταχρηστικών κλασμάτων.`,
+    visualPizzasTitle: "🍕 ΟΠΤΙΚΟΠΟΙΗΣΗ ΩΣ ΕΠΑΝΑΛΑΜΒΑΝΟΜΕΝΕΣ ΜΟΝΑΔΕΣ:",
+    timesLabel: (w) => `${w} φορές`,
+    timeRepetition: (i) => `Φορά ${i}η`,
+    slicesLabel: (rem, den) => `Κομμάτια: ${rem}/${den}`,
+    totalProduct: "ΣΥΝΟΛΙΚΟ ΓΙΝΟΜΕΝΟ",
+    summaryTitle: "💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ:",
+    ctaTitle: "Ώρα για Εξάσκηση στον Πολλαπλασιασμό Κλασμάτων!",
+    ctaDesc: "Έμαθες να πολλαπλασιάζεις κλάσματα και ακεραίους; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "Multiplying Fractions - 6th Grade | LearnMaths.gr",
+    pageDesc: "Learn how to multiply fractions by fractions and whole numbers by fractions, plus how to simplify products for 6th Grade.",
+    backText: "6th Grade",
+    navExercises: "🎯 Exercises",
+    heroBadge: "CHAPTER 29 • 6TH GRADE",
+    heroTitle: "Multiplying Fractions and Whole Numbers by Fractions",
+    heroDesc: "Discover how to multiply fraction by fraction (numerator by numerator and denominator by denominator) and whole number by fraction, plus how to simplify!",
+    heroFeature: "Visual Area Grid Model & Repeated Addition Representations",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Core Concepts & Rules for Multiplying Fractions",
+    theorySubtitle: "Everything you need to know about fraction products, multiplying with whole numbers, and reciprocals.",
+    card1Badge: "1. FRACTION BY FRACTION",
+    card1Sub: "Straightforward Product",
+    card1Title: "Fraction by Fraction",
+    card1Text: "Multiply numerator by numerator and denominator by denominator. Common denominators are NEVER needed!",
+    card1Tip: "💡 Golden Rule: We never seek an LCM in multiplication! Simply multiply straight across horizontally.",
+    card2Badge: "2. WHOLE NUMBER BY FRACTION",
+    card2Sub: "Numerator Only",
+    card2Title: "Whole Number by Fraction",
+    card2Text: "Multiply the whole number strictly by the numerator. The denominator stays exactly the same.",
+    card2Tip: "⚡ Any whole number a can be written as a/1 (e.g. 3 ＝ 3/1, so (3/1) · (2/7) ＝ 6/7).",
+    card3Badge: "3. RECIPROCALS",
+    card3Sub: "Product ＝ 1",
+    card3Title: "Reciprocal Numbers",
+    card3Text: "Two numbers are called reciprocals (or multiplicative inverses) when their product equals exactly 1.",
+    card3Tip: "🎯 To find the reciprocal of a fraction, simply flip the positions of the numerator and denominator!",
+    tabFracFrac: "Fraction by Fraction",
+    tabNumFrac: "Whole Number by Fraction",
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: "Interactive Fraction Multiplication Lab",
+    labSubtitleFF: "Set the terms of both fractions to watch the product calculation and explore the visual area grid model!",
+    labSubtitleNF: "Set the whole number and fraction to observe the repeated fractional units model!",
+    fraction1Label: "🔵 FRACTION 1",
+    wholeNumberLabel: "🔢 WHOLE NUMBER",
+    fraction2Label: "🟠 FRACTION 2",
+    numerator: "NUMERATOR",
+    denominator: "DENOMINATOR",
+    valueLabel: "VALUE",
+    presetsTitle: "PRESET EXAMPLES:",
+    stepsTitle: "📝 CALCULATION STEPS:",
+    stepNumerators: (nA, nB, rN) => `1. Numerators: ${nA} · ${nB} ＝ ${rN}`,
+    stepDenominators: (dA, dB, rD) => `2. Denominators: ${dA} · ${dB} ＝ ${rD}`,
+    stepImagineWhole: (w) => `1. Imagine the whole number as a fraction: ${w}/1`,
+    stepNumWhole: (w, nB, rN) => `2. Numerator: ${w} · ${nB} ＝ ${rN}`,
+    stepDenWhole: (dB, rD) => `3. Denominator: 1 · ${dB} ＝ ${rD}`,
+    simplifiedNotice: (g, sN, sD) => (
+      <span>
+        ✨ Simplifying by {g}: <FractionDisplay num={sN} den={sD} size="sm" className="text-emerald-800 font-bold" />
+      </span>
+    ),
+    labTip: "💡 Tip: When multiplying fractions, converting to common denominators is never required!",
+    visualGridTitle: "🔲 VISUALIZATION VIA AREA GRID:",
+    legendFraction1: "1st Fraction",
+    legendFraction2: "2nd Fraction",
+    legendOverlap: "Overlap Area (Product)",
+    unitsNotice: (uY, uX, total) => `ℹ️ Showing ${uY} · ${uX} ＝ ${total} whole units (separated by bold line borders) due to improper fractions.`,
+    visualPizzasTitle: "🍕 VISUALIZATION AS REPEATED UNITS:",
+    timesLabel: (w) => `${w} times`,
+    timeRepetition: (i) => `Repeat ${i}`,
+    slicesLabel: (rem, den) => `Slices: ${rem}/${den}`,
+    totalProduct: "TOTAL PRODUCT",
+    summaryTitle: "💡 FINAL RESULT:",
+    ctaTitle: "Time to Practice Multiplying Fractions!",
+    ctaDesc: "Mastered multiplying fractions and whole numbers? Test your skills with 10 interactive questions to solidify your knowledge!",
+    ctaBtn: "Start Exercises"
+  }
+};
+
 export default function PollaplasiasmosKlasmatonPage() {
-  // Mode: 'fraction-fraction' (κλασμα με κλασμα) η 'number-fraction' (αριθμος με κλασμα)
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
+  // Mode: 'fraction-fraction' ή 'number-fraction'
   const [mode, setMode] = useState('fraction-fraction');
 
-  // Κατασταση για Κλασμα Α (η Ακεραιο Α)
+  // Κατάσταση για Κλάσμα Α (ή Ακέραιο Α)
   const [numA, setNumA] = useState(2);
   const [denA, setDenA] = useState(3);
 
-  // Κατασταση για Κλασμα Β
+  // Κατάσταση για Κλάσμα Β
   const [numB, setNumB] = useState(3);
   const [denB, setDenB] = useState(4);
 
-  // Ελεγχος εισαγωγης κειμενου
   const handleNumAChange = (val) => {
     const clean = val.replace(/[^0-9]/g, '');
     if (clean === '') { setNumA(''); return; }
@@ -89,7 +253,6 @@ export default function PollaplasiasmosKlasmatonPage() {
     if (n > 0 && n <= MAX_LIMIT) setDenB(n);
   };
 
-  // Αυξομειωση με κουμπια για Κλασμα Α / Ακεραιο Α
   const adjustNumA = (amount) => {
     setNumA(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
   };
@@ -97,7 +260,6 @@ export default function PollaplasiasmosKlasmatonPage() {
     setDenA(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
-  // Αυξομειωση με κουμπια για Κλασμα Β
   const adjustNumB = (amount) => {
     setNumB(prev => Math.max(0, Math.min(MAX_LIMIT, (Number(prev) || 0) + amount)));
   };
@@ -105,13 +267,11 @@ export default function PollaplasiasmosKlasmatonPage() {
     setDenB(prev => Math.max(1, Math.min(MAX_LIMIT, (Number(prev) || 1) + amount)));
   };
 
-  // Ενεργες τιμες
   const activeNumA = numA === '' ? 0 : Number(numA);
   const activeDenA = denA === '' || Number(denA) === 0 ? 1 : Number(denA);
   const activeNumB = numB === '' ? 0 : Number(numB);
   const activeDenB = denB === '' || Number(denB) === 0 ? 1 : Number(denB);
 
-  // Υπολογισμοι Γινομενου
   let resultNum = 0;
   let resultDen = 1;
 
@@ -128,7 +288,6 @@ export default function PollaplasiasmosKlasmatonPage() {
   const simplifiedDen = resultDen / gcd;
   const isSimplified = gcd > 1 && resultNum !== 0;
 
-  // Προσαρμοστικη Σχεδιαση Πλεγματος / Εμβαδου
   const renderGridVisual = () => {
     const unitsY = Math.max(1, Math.ceil(activeNumA / activeDenA));
     const unitsX = Math.max(1, Math.ceil(activeNumB / activeDenB));
@@ -180,13 +339,13 @@ export default function PollaplasiasmosKlasmatonPage() {
             {cells}
           </div>
           <div className="flex flex-wrap justify-center gap-3 text-xs font-bold pt-1">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> 1ο Κλάσμα ({activeNumA}/{activeDenA})</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> 2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> Κοινή Περιοχή ({resultNum}/{resultDen})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> {t.legendFraction1} ({activeNumA}/{activeDenA})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> {t.legendFraction2} ({activeNumB}/{activeDenB})</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> {t.legendOverlap} ({resultNum}/{resultDen})</span>
           </div>
           {(unitsX > 1 || unitsY > 1) && (
             <span className="text-[11px] text-slate-500 font-medium italic text-center">
-              ℹ️ Εμφανίζονται {unitsY} · {unitsX} ＝ {unitsY * unitsX} ακέραιες μονάδες (χωρισμένες με έντονη γραμμή) λόγω καταχρηστικών κλασμάτων.
+              {t.unitsNotice(unitsY, unitsX, unitsY * unitsX)}
             </span>
           )}
         </div>
@@ -229,15 +388,14 @@ export default function PollaplasiasmosKlasmatonPage() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 text-xs font-bold pt-1">
-          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> 1ο Κλάσμα ({activeNumA}/{activeDenA})</span>
-          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> 2ο Κλάσμα ({activeNumB}/{activeDenB})</span>
-          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> Κοινή Περιοχή ({resultNum}/{resultDen})</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-300 rounded border border-blue-400" /> {t.legendFraction1} ({activeNumA}/{activeDenA})</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-orange-300 rounded border border-orange-400" /> {t.legendFraction2} ({activeNumB}/{activeDenB})</span>
+          <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-indigo-600 rounded border border-indigo-700" /> {t.legendOverlap} ({resultNum}/{resultDen})</span>
         </div>
       </div>
     );
   };
 
-  // Σχεδιαση Κυκλικων Διαγραμματων (Πιτσες) για Ακεραιος · Κλασμα
   const renderPizzasVisual = (num, den, fillColor = 'fill-blue-500', strokeColor = 'stroke-blue-700') => {
     const totalPizzasNeeded = Math.max(1, Math.ceil(num / den));
     const pizzas = [];
@@ -288,7 +446,7 @@ export default function PollaplasiasmosKlasmatonPage() {
             {slices}
             <circle cx={cx} cy={cy} r="2" className="fill-slate-800" />
           </svg>
-          <span className="text-[9px] font-bold text-slate-400 mt-1">Κομμάτια: {remainingNumForThisPizza}/{den}</span>
+          <span className="text-[9px] font-bold text-slate-400 mt-1">{t.slicesLabel(remainingNumForThisPizza, den)}</span>
         </div>
       );
     }
@@ -302,46 +460,46 @@ export default function PollaplasiasmosKlasmatonPage() {
 
   return (
     <Layout
-      title="Πολλαπλασιασμός Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μάθε πώς πολλαπλασιάζουμε κλάσμα με κλάσμα και ακέραιο με κλάσμα, καθώς και πώς απλοποιούμε το γινόμενο για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/29-pollaplasiasmos-klasmaton-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.navExercises}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 29 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.heroBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Πολλαπλασιασμός Κλασμάτων και Ακεραίου με Κλάσμα
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε πώς πολλαπλασιάζουμε <strong>κλάσμα με κλάσμα</strong> (αριθμητή με αριθμητή και παρονομαστή με παρονομαστή) και <strong>ακέραιο με κλάσμα</strong>, καθώς και πώς απλοποιούμε το γινόμενο!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Οπτικοποίηση με Πλέγμα Εμβαδού &amp; Επαναλαμβανόμενες Μονάδες</span>
+              <span>{t.heroFeature}</span>
             </div>
             <Link
               href="/st-dimotikou/29-pollaplasiasmos-klasmaton-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -351,10 +509,10 @@ export default function PollaplasiasmosKlasmatonPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες &amp; Κανόνες Πολλαπλασιασμού Κλασμάτων
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Όλα όσα πρέπει να γνωρίζεις για το γινόμενο κλασμάτων, τον πολλαπλασιασμό με ακέραιο και τους αντίστροφους αριθμούς.
+              {t.theorySubtitle}
             </p>
           </div>
 
@@ -365,24 +523,34 @@ export default function PollaplasiasmosKlasmatonPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    1. ΚΛΑΣΜΑ ΕΠΙ ΚΛΑΣΜΑ
+                    {t.card1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Απευθείας Γινόμενο</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.card1Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Κλάσμα επί Κλάσμα
+                  {t.card1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Πολλαπλασιάζουμε <strong>αριθμητή με αριθμητή</strong> και <strong>παρονομαστή με παρονομαστή</strong>. Δεν χρειάζεται ποτέ να γίνουν ομώνυμα!
+                  {t.card1Text}
                 </p>
 
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>(2/3) · (4/5) ＝ (2 · 4) / (3 · 5) ＝ <strong className="text-sky-700">8/15</strong></p>
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold flex items-center justify-center gap-1.5 flex-wrap">
+                  <FractionDisplay num="2" den="3" size="sm" />
+                  <span>·</span>
+                  <FractionDisplay num="4" den="5" size="sm" />
+                  <span>＝</span>
+                  <span className="flex flex-col items-center">
+                    <span>2 · 4</span>
+                    <span className="w-full h-0.5 bg-slate-700 my-0.5" />
+                    <span>3 · 5</span>
+                  </span>
+                  <span>＝</span>
+                  <FractionDisplay num="8" den="15" size="md" className="text-sky-700 font-bold" />
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 <strong>Χρυσός Κανόνας:</strong> Δεν ψάχνουμε ποτέ Ε.Κ.Π. στον πολλαπλασιασμό! Πολλαπλασιάζουμε ευθεία οριζόντια.
+                {t.card1Tip}
               </div>
             </article>
 
@@ -391,24 +559,33 @@ export default function PollaplasiasmosKlasmatonPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    2. ΑΚΕΡΑΙΟΣ ΕΠΙ ΚΛΑΣΜΑ
+                    {t.card2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">Μόνο στον Αριθμητή</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">{t.card2Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Ακέραιος επί Κλάσμα
+                  {t.card2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Πολλαπλασιάζουμε τον <strong>ακέραιο μόνο με τον αριθμητή</strong> του κλάσματος. Ο παρονομαστής παραμένει ακριβώς ο ίδιος.
+                  {t.card2Text}
                 </p>
 
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>3 · (2/7) ＝ (3 · 2) / 7 ＝ <strong className="text-indigo-700">6/7</strong></p>
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold flex items-center justify-center gap-1.5 flex-wrap">
+                  <span>3 ·</span>
+                  <FractionDisplay num="2" den="7" size="sm" />
+                  <span>＝</span>
+                  <span className="flex flex-col items-center">
+                    <span>3 · 2</span>
+                    <span className="w-full h-0.5 bg-slate-700 my-0.5" />
+                    <span>7</span>
+                  </span>
+                  <span>＝</span>
+                  <FractionDisplay num="6" den="7" size="md" className="text-indigo-700 font-bold" />
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ Κάθε ακέραιος α μπορεί να γραφτεί ως κλάσμα α/1 (π.χ. 3 ＝ 3/1, άρα (3/1) · (2/7) ＝ 6/7).
+                {t.card2Tip}
               </div>
             </article>
 
@@ -417,24 +594,30 @@ export default function PollaplasiasmosKlasmatonPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    3. ΑΝΤΙΣΤΡΟΦΟΙ
+                    {t.card3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Γινόμενο ＝ 1</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">{t.card3Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Αντίστροφοι Αριθμοί
+                  {t.card3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Δύο αριθμοί λέγονται <strong>αντίστροφοι</strong> όταν το γινόμενό τους ισούται ακριβώς με τη <strong>μονάδα (1)</strong>.
+                  {t.card3Text}
                 </p>
 
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>(3/4) · (4/3) ＝ 12/12 ＝ <strong className="text-emerald-700">1</strong></p>
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold flex items-center justify-center gap-1.5 flex-wrap">
+                  <FractionDisplay num="3" den="4" size="sm" />
+                  <span>·</span>
+                  <FractionDisplay num="4" den="3" size="sm" />
+                  <span>＝</span>
+                  <FractionDisplay num="12" den="12" size="sm" />
+                  <span>＝</span>
+                  <strong className="text-emerald-700 text-base">1</strong>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 Για να βρεις τον αντίστροφο ενός κλάσματος, απλώς ανταλλάσσεις τη θέση του αριθμητή και του παρονομαστή!
+                {t.card3Tip}
               </div>
             </article>
 
@@ -450,7 +633,7 @@ export default function PollaplasiasmosKlasmatonPage() {
               mode === 'fraction-fraction' ? 'bg-blue-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            ✖️ {toCleanUppercase('Κλάσμα επί Κλάσμα')}
+            ✖️ {toCleanUppercase(t.tabFracFrac)}
           </button>
           <button
             type="button"
@@ -459,7 +642,7 @@ export default function PollaplasiasmosKlasmatonPage() {
               mode === 'number-fraction' ? 'bg-indigo-600 text-white shadow-sm scale-105' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            🔢 {toCleanUppercase('Ακέραιος επί Κλάσμα')}
+            🔢 {toCleanUppercase(t.tabNumFrac)}
           </button>
         </div>
 
@@ -467,22 +650,20 @@ export default function PollaplasiasmosKlasmatonPage() {
         <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-              <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              <span>{t.labBadge}</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Διαδραστικό Εργαστήριο Πολλαπλασιασμού Κλασμάτων
+              {t.labTitle}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
-              {mode === 'fraction-fraction'
-                ? 'Όρισε τους όρους των δύο κλασμάτων και δες το γινόμενο και την οπτικοποίηση με το πλέγμα εμβαδού!'
-                : 'Όρισε τον ακέραιο και το κλάσμα και δες την αναπαράσταση ως επαναλαμβανόμενες μονάδες!'}
+              {mode === 'fraction-fraction' ? t.labSubtitleFF : t.labSubtitleNF}
             </p>
           </div>
 
-          {/* MAIN INTERACTIVE GRID (4 COLS LEFT / 8 COLS RIGHT) */}
+          {/* MAIN INTERACTIVE GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            {/* LEFT: CONTROLS & PRESETS (4 COLS) */}
+            {/* LEFT: CONTROLS & PRESETS */}
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between">
               <div className="space-y-4">
                 
@@ -490,11 +671,11 @@ export default function PollaplasiasmosKlasmatonPage() {
                 {mode === 'fraction-fraction' ? (
                   <div className="bg-blue-50/60 p-3.5 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                     <span className="text-xs font-black text-blue-800 uppercase block tracking-wider">
-                      🔵 ΚΛΑΣΜΑ 1
+                      {t.fraction1Label}
                     </span>
                     <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">{t.numerator}</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -524,7 +705,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">{t.denominator}</span>
                         <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                           <button 
                             type="button" 
@@ -558,10 +739,10 @@ export default function PollaplasiasmosKlasmatonPage() {
                 ) : (
                   <div className="bg-indigo-50/60 p-3.5 sm:p-4 rounded-2xl border border-indigo-200 space-y-3">
                     <span className="text-xs font-black text-indigo-800 uppercase block tracking-wider">
-                      🔢 ΦΥΣΙΚΟΣ ΑΡΙΘΜΟΣ (ΑΚΕΡΑΙΟΣ)
+                      {t.wholeNumberLabel}
                     </span>
                     <div className="space-y-1 text-center">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΤΙΜΗ</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{t.valueLabel}</span>
                       <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 max-w-[160px] mx-auto">
                         <button 
                           type="button" 
@@ -596,11 +777,11 @@ export default function PollaplasiasmosKlasmatonPage() {
                 {/* ΧΕΙΡΙΣΤΗΡΙΟ Β (ΚΛΑΣΜΑ 2) */}
                 <div className="bg-orange-50/60 p-3.5 sm:p-4 rounded-2xl border border-orange-200 space-y-3">
                   <span className="text-xs font-black text-orange-800 uppercase block tracking-wider">
-                    🟠 ΚΛΑΣΜΑ 2
+                    {t.fraction2Label}
                   </span>
                   <div className="grid grid-cols-2 gap-2 sm:gap-3 text-center">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΑΡΙΘΜΗΤΗΣ</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{t.numerator}</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
@@ -630,7 +811,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase block">ΠΑΡΟΝΟΜΑΣΤΗΣ</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase block">{t.denominator}</span>
                       <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-slate-200">
                         <button 
                           type="button" 
@@ -665,53 +846,88 @@ export default function PollaplasiasmosKlasmatonPage() {
                 {/* PRESET BUTTONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
+                    {t.presetsTitle}
                   </span>
                   <div className="grid grid-cols-2 gap-2">
-                    {(mode === 'fraction-fraction' ? PRESETS_FF : PRESETS_NF).map((p, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          if (mode === 'fraction-fraction') {
+                    {mode === 'fraction-fraction' ? (
+                      PRESETS_FF.map((p, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
                             setNumA(p.nA);
                             setDenA(p.dA);
                             setNumB(p.nB);
                             setDenB(p.dB);
-                          } else {
+                          }}
+                          className={`py-2 px-1.5 rounded-xl border text-xs transition-all text-center touch-manipulation active:scale-95 flex items-center justify-center gap-1 ${
+                            activeNumA === p.nA && activeDenA === p.dA && activeNumB === p.nB && activeDenB === p.dB
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-md scale-105'
+                              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
+                          }`}
+                        >
+                          <FractionDisplay num={p.nA} den={p.dA} size="sm" />
+                          <span className="font-bold">·</span>
+                          <FractionDisplay num={p.nB} den={p.dB} size="sm" />
+                          <span className="font-bold font-mono">➔</span>
+                          {p.resDen === 1 ? (
+                            <span className="font-bold">{p.resNum}</span>
+                          ) : (
+                            <FractionDisplay num={p.resNum} den={p.resDen} size="sm" />
+                          )}
+                        </button>
+                      ))
+                    ) : (
+                      PRESETS_NF.map((p, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
                             setNumA(p.nA);
                             setNumB(p.nB);
                             setDenB(p.dB);
-                          }
-                        }}
-                        className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs touch-manipulation active:scale-95"
-                      >
-                        {p.label}
-                      </button>
-                    ))}
+                          }}
+                          className={`py-2 px-1.5 rounded-xl border text-xs transition-all text-center touch-manipulation active:scale-95 flex items-center justify-center gap-1 ${
+                            activeNumA === p.nA && activeNumB === p.nB && activeDenB === p.dB
+                              ? 'bg-indigo-600 text-white border-indigo-600 shadow-md scale-105'
+                              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs'
+                          }`}
+                        >
+                          <span className="font-bold">{p.nA}</span>
+                          <span className="font-bold">·</span>
+                          <FractionDisplay num={p.nB} den={p.dB} size="sm" />
+                          <span className="font-bold font-mono">➔</span>
+                          {p.resDen === 1 ? (
+                            <span className="font-bold">{p.resNum}</span>
+                          ) : (
+                            <FractionDisplay num={p.resNum} den={p.resDen} size="sm" />
+                          )}
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
 
                 {/* ΒΗΜΑ-ΒΗΜΑ ΕΠΕΞΗΓΗΣΗ */}
                 <div className="bg-white p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-700 leading-relaxed font-medium shadow-xs space-y-2">
                   <span className="font-black text-slate-900 uppercase block text-[11px]">
-                    📝 ΒΗΜΑΤΑ ΥΠΟΛΟΓΙΣΜΟΥ:
+                    {t.stepsTitle}
                   </span>
                   {mode === 'fraction-fraction' ? (
                     <div className="space-y-1 text-xs">
-                      <p>1. Αριθμητές: {activeNumA} · {activeNumB} ＝ <strong className="text-blue-700">{resultNum}</strong></p>
-                      <p>2. Παρονομαστές: {activeDenA} · {activeDenB} ＝ <strong className="text-orange-700">{resultDen}</strong></p>
+                      <p>{t.stepNumerators(activeNumA, activeNumB, resultNum)}</p>
+                      <p>{t.stepDenominators(activeDenA, activeDenB, resultDen)}</p>
                     </div>
                   ) : (
                     <div className="space-y-1 text-xs">
-                      <p>1. Φανταζόμαστε τον ακέραιο ως κλάσμα: <span className="font-mono font-bold">{activeNumA}/1</span></p>
-                      <p>2. Αριθμητής: {activeNumA} · {activeNumB} ＝ <strong className="text-indigo-700">{resultNum}</strong></p>
-                      <p>3. Παρονομαστής: 1 · {activeDenB} ＝ <strong className="text-orange-700">{resultDen}</strong></p>
+                      <p>{t.stepImagineWhole(activeNumA)}</p>
+                      <p>{t.stepNumWhole(activeNumA, activeNumB, resultNum)}</p>
+                      <p>{t.stepDenWhole(activeDenB, resultDen)}</p>
                     </div>
                   )}
                   {isSimplified && (
                     <p className="text-emerald-700 text-[11px] font-bold pt-1 border-t border-slate-100">
-                      ✨ Απλοποίηση με το {gcd}: <strong>{simplifiedNum}/{simplifiedDen}</strong>
+                      {t.simplifiedNotice(gcd, simplifiedNum, simplifiedDen)}
                     </p>
                   )}
                 </div>
@@ -719,24 +935,20 @@ export default function PollaplasiasmosKlasmatonPage() {
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
-                💡 <strong>Συμβουλή:</strong> Στον πολλαπλασιασμό κλασμάτων <strong>δεν</strong> χρειάζεται να κάνουμε τα κλάσματα ομώνυμα!
+                {t.labTip}
               </div>
             </div>
 
-            {/* RIGHT: VISUALIZATION & AREA GRID / PIZZAS (8 COLS) */}
+            {/* RIGHT: VISUALIZATION & AREA GRID / PIZZAS */}
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
               
               {/* 1. ΜΑΘΗΜΑΤΙΚΗ ΠΑΡΟΥΣΙΑΣΗ ΤΗΣ ΠΡΑΞΗΣ */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-xs">
-                <div className="flex items-center gap-2.5 sm:gap-4 font-mono font-black text-lg sm:text-xl md:text-3xl select-none flex-wrap justify-center">
+              <div className="flex items-center justify-center p-4 sm:p-6 bg-slate-50 rounded-2xl border border-slate-200 shadow-xs overflow-x-auto">
+                <div className="flex items-center gap-2.5 sm:gap-4 font-mono font-black text-xl sm:text-2xl md:text-3xl select-none flex-wrap justify-center">
                   
                   {/* 1ος Όρος */}
                   {mode === 'fraction-fraction' ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-blue-600">{activeNumA}</span>
-                      <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                      <span className="text-blue-600">{activeDenA}</span>
-                    </div>
+                    <FractionDisplay num={activeNumA} den={activeDenA} size="lg" className="text-blue-600" />
                   ) : (
                     <span className="text-indigo-600 text-2xl sm:text-3xl md:text-4xl">{activeNumA}</span>
                   )}
@@ -744,48 +956,42 @@ export default function PollaplasiasmosKlasmatonPage() {
                   <div className="text-slate-400 font-light">·</div>
 
                   {/* 2ος Όρος */}
-                  <div className="flex flex-col items-center">
-                    <span className="text-orange-600">{activeNumB}</span>
-                    <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                    <span className="text-orange-600">{activeDenB}</span>
-                  </div>
+                  <FractionDisplay num={activeNumB} den={activeDenB} size="lg" className="text-orange-600" />
 
                   <div className="text-slate-400 font-light">＝</div>
 
                   {/* Αναλυτικό Ενδιάμεσο Βήμα */}
                   <div className="flex flex-col items-center px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-100 rounded-xl border border-slate-200">
                     {mode === 'fraction-fraction' ? (
-                      <>
-                        <span className="text-slate-700 text-sm sm:text-base md:text-lg">{activeNumA} · {activeNumB}</span>
-                        <div className="w-12 sm:w-16 h-0.5 bg-slate-500 my-1 rounded-full" />
-                        <span className="text-slate-700 text-sm sm:text-base md:text-lg">{activeDenA} · {activeDenB}</span>
-                      </>
+                      <FractionDisplay
+                        num={`${activeNumA} · ${activeNumB}`}
+                        den={`${activeDenA} · ${activeDenB}`}
+                        size="md"
+                        className="text-slate-700"
+                      />
                     ) : (
-                      <>
-                        <span className="text-slate-700 text-sm sm:text-base md:text-lg">{activeNumA} · {activeNumB}</span>
-                        <div className="w-10 sm:w-12 h-0.5 bg-slate-500 my-1 rounded-full" />
-                        <span className="text-slate-700 text-sm sm:text-base md:text-lg">{activeDenB}</span>
-                      </>
+                      <FractionDisplay
+                        num={`${activeNumA} · ${activeNumB}`}
+                        den={`${activeDenB}`}
+                        size="md"
+                        className="text-slate-700"
+                      />
                     )}
                   </div>
 
                   <div className="text-slate-500 font-bold">＝</div>
 
                   {/* Αποτέλεσμα */}
-                  <div className="flex flex-col items-center bg-emerald-50 px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-200">
-                    <span className="text-emerald-700">{resultNum}</span>
-                    <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                    <span className="text-emerald-700">{resultDen}</span>
+                  <div className="bg-emerald-50 px-3 py-2 rounded-2xl border border-emerald-200 shadow-xs">
+                    <FractionDisplay num={resultNum} den={resultDen} size="lg" className="text-emerald-700 font-bold" />
                   </div>
 
                   {/* Ανάγωγο Αποτέλεσμα */}
                   {isSimplified && (
                     <>
                       <div className="text-emerald-600 font-bold">＝</div>
-                      <div className="flex flex-col items-center bg-emerald-100 px-2.5 sm:px-3 py-1.5 rounded-xl border border-emerald-300">
-                        <span className="text-emerald-800">{simplifiedNum}</span>
-                        <div className="w-8 sm:w-10 h-1 bg-slate-800 my-1 rounded-full" />
-                        <span className="text-emerald-800">{simplifiedDen}</span>
+                      <div className="bg-emerald-100 px-3 py-2 rounded-2xl border border-emerald-300 shadow-xs">
+                        <FractionDisplay num={simplifiedNum} den={simplifiedDen} size="lg" className="text-emerald-800 font-black" />
                       </div>
                     </>
                   )}
@@ -798,10 +1004,12 @@ export default function PollaplasiasmosKlasmatonPage() {
                   <div className="space-y-3">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                       <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                        🔲 ΟΠΤΙΚΟΠΟΙΗΣΗ ΜΕ ΠΛΕΓΜΑ ΕΜΒΑΔΟΥ:
+                        {t.visualGridTitle}
                       </span>
-                      <span className="text-[11px] font-bold text-slate-400">
-                        {activeNumA}/{activeDenA} · {activeNumB}/{activeDenB}
+                      <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                        <FractionDisplay num={activeNumA} den={activeDenA} size="sm" />
+                        <span>·</span>
+                        <FractionDisplay num={activeNumB} den={activeDenB} size="sm" />
                       </span>
                     </div>
                     <div className="p-3 sm:p-4 bg-slate-50/70 rounded-3xl border border-slate-200 shadow-inner">
@@ -812,10 +1020,11 @@ export default function PollaplasiasmosKlasmatonPage() {
                   <div className="space-y-3">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                       <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                        🍕 ΟΠΤΙΚΟΠΟΙΗΣΗ ΩΣ ΕΠΑΝΑΛΑΜΒΑΝΟΜΕΝΕΣ ΜΟΝΑΔΕΣ:
+                        {t.visualPizzasTitle}
                       </span>
-                      <span className="text-[11px] font-bold text-slate-400">
-                        {activeNumA} φορές το {activeNumB}/{activeDenB}
+                      <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                        <span>{t.timesLabel(activeNumA)}</span>
+                        <FractionDisplay num={activeNumB} den={activeDenB} size="sm" />
                       </span>
                     </div>
 
@@ -823,7 +1032,7 @@ export default function PollaplasiasmosKlasmatonPage() {
                       <div className="flex flex-wrap items-center justify-center gap-2.5">
                         {Array.from({ length: activeNumA }).map((_, i) => (
                           <div key={i} className="flex flex-col items-center p-2 bg-white rounded-2xl border border-slate-200 shadow-xs">
-                            <span className="text-[9px] font-bold text-slate-400 mb-1">Φορά {i + 1}η</span>
+                            <span className="text-[9px] font-bold text-slate-400 mb-1">{t.timeRepetition(i + 1)}</span>
                             {renderPizzasVisual(activeNumB, activeDenB, 'fill-orange-400', 'stroke-orange-600')}
                           </div>
                         ))}
@@ -832,8 +1041,9 @@ export default function PollaplasiasmosKlasmatonPage() {
                       <div className="text-2xl text-slate-400 font-bold px-1">＝</div>
 
                       <div className="flex flex-col items-center p-3 bg-emerald-50 rounded-2xl border border-emerald-200">
-                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider mb-1">
-                          ΣΥΝΟΛΙΚΟ ΓΙΝΟΜΕΝΟ ({resultNum}/{resultDen})
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <span>{t.totalProduct}:</span>
+                          <FractionDisplay num={resultNum} den={resultDen} size="sm" />
                         </span>
                         {renderPizzasVisual(resultNum, resultDen, 'fill-emerald-500', 'stroke-emerald-700')}
                       </div>
@@ -843,10 +1053,35 @@ export default function PollaplasiasmosKlasmatonPage() {
               </div>
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
-              <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                {mode === 'fraction-fraction'
-                  ? `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: (${activeNumA}/${activeDenA}) · (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`
-                  : `💡 ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ: ${activeNumA} · (${activeNumB}/${activeDenB}) ＝ ${isSimplified ? `${simplifiedNum}/${simplifiedDen}` : `${resultNum}/${resultDen}`}`}
+              <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-emerald-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 flex-wrap">
+                <span>{t.summaryTitle}</span>
+                {mode === 'fraction-fraction' ? (
+                  <>
+                    <FractionDisplay num={activeNumA} den={activeDenA} size="sm" className="text-white" />
+                    <span className="text-base font-mono">·</span>
+                    <FractionDisplay num={activeNumB} den={activeDenB} size="sm" className="text-white" />
+                    <span className="text-base font-mono">＝</span>
+                    <FractionDisplay
+                      num={isSimplified ? simplifiedNum : resultNum}
+                      den={isSimplified ? simplifiedDen : resultDen}
+                      size="sm"
+                      className="text-amber-300 font-bold"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <span className="text-base font-mono">{activeNumA}</span>
+                    <span className="text-base font-mono">·</span>
+                    <FractionDisplay num={activeNumB} den={activeDenB} size="sm" className="text-white" />
+                    <span className="text-base font-mono">＝</span>
+                    <FractionDisplay
+                      num={isSimplified ? simplifiedNum : resultNum}
+                      den={isSimplified ? simplifiedDen : resultDen}
+                      size="sm"
+                      className="text-amber-300 font-bold"
+                    />
+                  </>
+                )}
               </div>
 
             </div>
@@ -858,10 +1093,10 @@ export default function PollaplasiasmosKlasmatonPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στον Πολλαπλασιασμό Κλασμάτων!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Έμαθες να πολλαπλασιάζεις κλάσματα και ακεραίους; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              {t.ctaDesc}
             </p>
           </div>
 
@@ -869,7 +1104,7 @@ export default function PollaplasiasmosKlasmatonPage() {
             href="/st-dimotikou/29-pollaplasiasmos-klasmaton-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(t.ctaBtn)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

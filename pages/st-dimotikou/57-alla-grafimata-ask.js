@@ -1,8 +1,8 @@
 // pages/st-dimotikou/57-alla-grafimata-ask.js
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
-import { LAYOUT } from '../../shared/layout-config';
 
 // ---------------------------------------------------------
 // ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ & DEFENSIVE CHECKS
@@ -28,29 +28,79 @@ function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// Δημιουργία 4 εγγυημένα μοναδικών επιλογών για MCQ
+function makeUniqueOptions(correct, wrongCandidates) {
+  const unique = new Set([correct]);
+  for (const opt of wrongCandidates) {
+    if (opt !== undefined && opt !== null && opt !== '') {
+      unique.add(String(opt));
+    }
+    if (unique.size === 4) break;
+  }
+
+  let counter = 1;
+  while (unique.size < 4) {
+    const numericMatch = String(correct).match(/\d+/);
+    if (numericMatch) {
+      const baseNum = parseInt(numericMatch[0], 10);
+      const fallbackVal = String(correct).replace(/\d+/, String(Math.max(1, baseNum + counter * 3)));
+      unique.add(fallbackVal);
+    } else {
+      unique.add(`Επιλογή ${counter}`);
+    }
+    counter++;
+  }
+
+  return shuffle(Array.from(unique));
+}
+
 // Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός με κόμμα)
-function formatNum(val, decimals = 1) {
+// Μορφοποίηση αριθμού (ακέραιος ή δεκαδικός ανάλογα με το locale)
+function formatNum(val, locale = 'el', decimals = 1) {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  if (Number.isInteger(Number(val))) return String(val);
-  const rounded = Number(Number(val).toFixed(decimals));
-  return String(rounded).replace('.', ',');
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  const num = Number(val);
+  if (Number.isInteger(num)) {
+    return num.toLocaleString(loc);
+  }
+  return Number(num.toFixed(decimals)).toLocaleString(loc, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  });
+}
+
+// Κανονική κατακόρυφη μορφή κλάσματος (responsive, mobile safe)
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span
+      className={`inline-flex flex-col items-center justify-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full ${className}`}
+    >
+      <span className="border-b border-current px-1 pb-0.5 text-center break-all">
+        {num}
+      </span>
+      <span className="px-1 pt-0.5 text-center break-all">
+        {den}
+      </span>
+    </span>
+  );
 }
 
 // =========================================================================
 // ΟΠΤΙΚΑ ΒΟΗΘΗΤΙΚΑ COMPONENTS (ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ, ΟΡΙΖΟΝΤΙΟ, ΚΥΚΛΙΚΟ)
 // =========================================================================
 
-function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
+function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C', chartTitle }) {
   const chartHeight = 160;
   const paddingLeft = 50;
   const chartWidth = 490;
@@ -70,12 +120,12 @@ function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
   const polylineStr = pts.map((p) => `${p.px},${p.py}`).join(' ');
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner">
-      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center mb-3">
-        {toCleanUppercase('Σχήμα: Γράφημα Γραμμής')}
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3.5 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner min-w-0 box-border">
+      <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center mb-2 sm:mb-3 break-words [overflow-wrap:anywhere]">
+        {toCleanUppercase(chartTitle || 'Σχήμα: Γράφημα Γραμμής')}
       </div>
-      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-sm flex items-center justify-center">
-        <svg viewBox="0 0 520 230" className="w-full h-full overflow-visible">
+      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-2 sm:p-3 shadow-sm flex items-center justify-center overflow-hidden">
+        <svg viewBox="0 0 520 230" className="w-full h-auto max-h-[220px] overflow-visible">
           {/* Οριζόντιες γραμμές πλέγματος */}
           {yTicks.map((val) => {
             const y = chartHeight + 20 - (val / maxVal) * chartHeight;
@@ -114,21 +164,21 @@ function MiniLineChart({ points, maxVal = 30, yStep = 10, unit = '°C' }) {
   );
 }
 
-function MiniHBarChart({ data, maxVal = 50, xStep = 10, unit = '' }) {
+function MiniHBarChart({ data, maxVal = 50, xStep = 10, unit = '', chartTitle }) {
   const chartWidth = 340;
-  const paddingLeft = 90;
+  const paddingLeft = 100;
   const xTicks = [];
   for (let v = 0; v <= maxVal; v += xStep) {
     xTicks.push(v);
   }
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner">
-      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center mb-3">
-        {toCleanUppercase('Σχήμα: Οριζόντιο Ραβδόγραμμα')}
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3.5 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner min-w-0 box-border">
+      <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center mb-2 sm:mb-3 break-words [overflow-wrap:anywhere]">
+        {toCleanUppercase(chartTitle || 'Σχήμα: Οριζόντιο Ραβδόγραμμα')}
       </div>
-      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-sm flex items-center justify-center">
-        <svg viewBox="0 0 480 200" className="w-full h-full overflow-visible">
+      <div className="w-full aspect-[16/9] sm:aspect-[2/1] bg-white rounded-2xl border border-slate-200 p-2 sm:p-3 shadow-sm flex items-center justify-center overflow-hidden">
+        <svg viewBox="0 0 490 200" className="w-full h-auto max-h-[220px] overflow-visible">
           {xTicks.map((val) => {
             const x = paddingLeft + (val / maxVal) * chartWidth;
             return (
@@ -165,11 +215,11 @@ function MiniHBarChart({ data, maxVal = 50, xStep = 10, unit = '' }) {
   );
 }
 
-function MiniPieChart({ slices }) {
+function MiniPieChart({ slices, chartTitle, locale = 'el' }) {
   const total = slices.reduce((sum, s) => sum + s.value, 0);
 
   let cumulativeAngle = 0;
-  const renderedSlices = slices.map((s, idx) => {
+  const renderedSlices = slices.map((s) => {
     const startAngle = cumulativeAngle;
     const sliceAngle = total > 0 ? (s.value / total) * 360 : 0;
     cumulativeAngle += sliceAngle;
@@ -190,25 +240,25 @@ function MiniPieChart({ slices }) {
   });
 
   return (
-    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-4 sm:p-6 my-4 w-full max-w-2xl shadow-inner space-y-3">
-      <div className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider text-center">
-        {toCleanUppercase('Σχήμα: Κυκλικό Διάγραμμα')}
+    <div className="bg-slate-50 border-2 border-slate-200 rounded-3xl p-3.5 sm:p-5 my-3.5 w-full max-w-2xl shadow-inner space-y-3 min-w-0 box-border">
+      <div className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider text-center break-words [overflow-wrap:anywhere]">
+        {toCleanUppercase(chartTitle || 'Σχήμα: Κυκλικό Διάγραμμα')}
       </div>
-      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-around gap-6 shadow-sm">
-        <svg viewBox="0 0 200 200" className="w-40 h-40 sm:w-48 sm:h-48 shrink-0 overflow-visible">
+      <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-5 flex flex-col sm:flex-row items-center justify-around gap-4 sm:gap-6 shadow-sm overflow-hidden min-w-0">
+        <svg viewBox="0 0 200 200" className="w-36 h-36 sm:w-44 sm:h-44 shrink-0 overflow-visible">
           {renderedSlices.map((s, idx) => (
             <path key={`slice-${idx}`} d={s.pathData} fill={s.color} stroke="#ffffff" strokeWidth="2" />
           ))}
         </svg>
 
-        <div className="flex flex-col gap-2.5 text-xs sm:text-sm font-mono w-full sm:w-auto">
+        <div className="flex flex-col gap-2 text-xs font-mono w-full sm:w-auto min-w-0">
           {slices.map((s, idx) => (
-            <div key={`pie-legend-${idx}`} className="flex items-center justify-between sm:justify-start gap-2.5 p-1.5 rounded-xl bg-slate-50 border border-slate-200">
-              <div className="flex items-center gap-2">
-                <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: s.color }}></span>
-                <span className="font-sans font-bold text-slate-700">{s.label}:</span>
+            <div key={`pie-legend-${idx}`} className="flex items-center justify-between sm:justify-start gap-2 p-1.5 rounded-xl bg-slate-50 border border-slate-200 min-w-0">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }}></span>
+                <span className="font-sans font-bold text-slate-700 truncate">{s.label}:</span>
               </div>
-              <span className="font-bold text-slate-900">{s.value}% ({formatNum((s.value / 100) * 360, 0)}°)</span>
+              <span className="font-bold text-slate-900 shrink-0">{s.value}% ({formatNum((s.value / 100) * 360, locale, 0)}°)</span>
             </div>
           ))}
         </div>
@@ -224,16 +274,28 @@ function MiniPieChart({ slices }) {
 const STANDARD_PROBLEMS_POOL = [
   {
     id: 'graf_std_1',
-    title: 'Μέγιστη Θερμοκρασία σε Γράφημα Γραμμής',
-    unit: '°C',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const t1 = randInt(10, 14);
       const t2 = randInt(18, 24);
       const t3 = randInt(15, 20);
       const t4 = randInt(11, 15);
       const maxT = Math.max(t1, t2, t3, t4);
+
+      const wrongOpts = [
+        `${maxT - 2} °C`,
+        `${maxT + 2} °C`,
+        `${maxT - 4} °C`
+      ];
+
       return {
-        prompt: `Στο παρακάτω γράφημα γραμμής καταγράφηκε η θερμοκρασία σε διάφορες ώρες της ημέρας. Ποια ήταν η μέγιστη θερμοκρασία (°C) που σημειώθηκε;`,
+        title: isEn ? 'Maximum Temperature in Line Graph' : 'Μέγιστη Θερμοκρασία σε Γράφημα Γραμμής',
+        prompt: isEn
+          ? 'In the line graph below, temperature was recorded at various times of the day. What was the maximum temperature (°C) recorded? (write only the number)'
+          : 'Στο παρακάτω γράφημα γραμμής καταγράφηκε η θερμοκρασία σε διάφορες ώρες της ημέρας. Ποια ήταν η μέγιστη θερμοκρασία (°C) που σημειώθηκε; (γράψε μόνο τον αριθμό)',
+        promptMcq: isEn
+          ? 'In the line graph below, temperature was recorded at various times of the day. What was the maximum temperature (°C) recorded?'
+          : 'Στο παρακάτω γράφημα γραμμής καταγράφηκε η θερμοκρασία σε διάφορες ώρες της ημέρας. Ποια ήταν η μέγιστη θερμοκρασία (°C) που σημειώθηκε;',
         lineChart: {
           points: [
             { label: '08:00', value: t1 },
@@ -249,90 +311,168 @@ const STANDARD_PROBLEMS_POOL = [
         correctVal: String(maxT),
         correctText: `${maxT} °C`,
         tableData: [
-          { item: 'Καταγεγραμμένες τιμές', formula: `${t1}°C, ${t2}°C, ${t3}°C, ${t4}°C`, val: '4 μετρήσεις' },
-          { item: 'Μέγιστη τιμή (κορυφή)', formula: `max(${t1}, ${t2}, ${t3}, ${t4})`, val: `${maxT} °C` }
+          { item: isEn ? 'Recorded values' : 'Καταγεγραμμένες τιμές', formula: `${t1}°C, ${t2}°C, ${t3}°C, ${t4}°C`, val: isEn ? '4 measurements' : '4 μετρήσεις' },
+          { item: isEn ? 'Peak / Maximum value' : 'Μέγιστη τιμή (κορυφή)', formula: `max(${t1}, ${t2}, ${t3}, ${t4})`, val: `${maxT} °C` }
         ],
-        explain: `Παρατηρούμε το ψηλότερο σημείο του γραφήματος γραμμής: η μέγιστη θερμοκρασία είναι ${maxT}°C.`,
-        distractors: [`${maxT - 2} °C`, `${maxT + 2} °C`, `${maxT - 4} °C`]
+        explain: isEn
+          ? `We observe the highest point on the line graph: the maximum temperature is ${maxT}°C.`
+          : `Παρατηρούμε το ψηλότερο σημείο του γραφήματος γραμμής: η μέγιστη θερμοκρασία είναι ${maxT}°C.`,
+        distractors: wrongOpts
       };
     }
   },
   {
     id: 'graf_std_2',
-    title: 'Σύνολο Πωλήσεων από Οριζόντιο Ραβδόγραμμα',
-    unit: 'τεμάχια',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const vA = randInt(25, 45);
       const vB = randInt(15, 30);
       const vC = randInt(30, 50);
       const total = vA + vB + vC;
+      const unit = isEn ? 'items' : 'τεμάχια';
+
+      const wrongOpts = [
+        `${total + 10} ${unit}`,
+        `${total - 10} ${unit}`,
+        `${total + 15} ${unit}`
+      ];
+
       return {
-        prompt: `Στο παρακάτω οριζόντιο ραβδόγραμμα καταγράφονται οι πωλήσεις τριών προϊόντων. Πόσα τεμάχια πουλήθηκαν συνολικά;`,
+        title: isEn ? 'Total Sales from Horizontal Bar Chart' : 'Σύνολο Πωλήσεων από Οριζόντιο Ραβδόγραμμα',
+        prompt: isEn
+          ? 'The horizontal bar chart below records sales for three products. How many items were sold in total? (write only the number)'
+          : 'Στο παρακάτω οριζόντιο ραβδόγραμμα καταγράφονται οι πωλήσεις τριών προϊόντων. Πόσα τεμάχια πουλήθηκαν συνολικά; (γράψε μόνο τον αριθμό)',
+        promptMcq: isEn
+          ? 'The horizontal bar chart below records sales for three products. How many items were sold in total?'
+          : 'Στο παρακάτω οριζόντιο ραβδόγραμμα καταγράφονται οι πωλήσεις τριών προϊόντων. Πόσα τεμάχια πουλήθηκαν συνολικά;',
         hbarChart: {
           data: [
-            { label: 'Προϊόν Α', value: vA, color: '#3b82f6' },
-            { label: 'Προϊόν Β', value: vB, color: '#10b981' },
-            { label: 'Προϊόν Γ', value: vC, color: '#f59e0b' }
+            { label: isEn ? 'Product A' : 'Προϊόν Α', value: vA, color: '#3b82f6' },
+            { label: isEn ? 'Product B' : 'Προϊόν Β', value: vB, color: '#10b981' },
+            { label: isEn ? 'Product C' : 'Προϊόν Γ', value: vC, color: '#f59e0b' }
           ],
           maxVal: 60,
           xStep: 15,
           unit: ''
         },
-        unit: 'τεμάχια',
+        unit,
         correctVal: String(total),
-        correctText: `${total} τεμάχια`,
+        correctText: `${total} ${unit}`,
         tableData: [
-          { item: 'Προϊόν Α', formula: `${vA} τεμάχια`, val: `${vA}` },
-          { item: 'Προϊόν Β', formula: `${vB} τεμάχια`, val: `${vB}` },
-          { item: 'Προϊόν Γ', formula: `${vC} τεμάχια`, val: `${vC}` },
-          { item: 'Συνολικό άθροισμα', formula: `${vA} ＋ ${vB} ＋ ${vC}`, val: `${total} τεμάχια` }
+          { item: isEn ? 'Product A' : 'Προϊόν Α', formula: `${vA} ${unit}`, val: `${vA}` },
+          { item: isEn ? 'Product B' : 'Προϊόν Β', formula: `${vB} ${unit}`, val: `${vB}` },
+          { item: isEn ? 'Product C' : 'Προϊόν Γ', formula: `${vC} ${unit}`, val: `${vC}` },
+          { item: isEn ? 'Total sum' : 'Συνολικό άθροισμα', formula: `${vA} ＋ ${vB} ＋ ${vC}`, val: `${total} ${unit}` }
         ],
-        explain: `Διαβάζουμε τα μήκη των οριζόντιων ράβδων και αθροίζουμε: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} τεμάχια.`,
-        distractors: [`${total + 10} τεμάχια`, `${total - 10} τεμάχια`, `${total + 15} τεμάχια`]
+        explain: isEn
+          ? `We read the lengths of the horizontal bars and add them together: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} items.`
+          : `Διαβάζουμε τα μήκη των οριζόντιων ράβδων και αθροίζουμε: ${vA} ＋ ${vB} ＋ ${vC} ＝ ${total} τεμάχια.`,
+        distractors: wrongOpts
       };
     }
   },
   {
     id: 'graf_std_3',
-    title: 'Υπολογισμός Επίκεντρης Γωνίας από Ποσοστό',
-    unit: '°',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const pct = pickRandom([20, 25, 30, 40, 50]);
       const deg = (pct * 360) / 100;
+
+      const wrongOpts = [
+        `${formatNum(deg + 18, locale, 0)}°`,
+        `${formatNum(Math.max(10, deg - 18), locale, 0)}°`,
+        `${formatNum(deg + 36, locale, 0)}°`
+      ];
+
       return {
-        prompt: `Ένας κυκλικός τομέας σε ένα κυκλικό διάγραμμα αντιπροσωπεύει το ${pct} % του συνόλου. Πόσες μοίρες (°) είναι η επίκεντρη γωνία αυτού του τομέα;`,
+        title: isEn ? 'Calculating Central Angle from Percentage' : 'Υπολογισμός Επίκεντρης Γωνίας από Ποσοστό',
+        prompt: isEn
+          ? `A sector in a pie chart represents ${pct} % of the whole. How many degrees (°) is the central angle of this sector? (write only the number)`
+          : `Ένας κυκλικός τομέας σε ένα κυκλικό διάγραμμα αντιπροσωπεύει το ${pct} % του συνόλου. Πόσες μοίρες (°) είναι η επίκεντρη γωνία αυτού του τομέα; (γράψε μόνο τον αριθμό)`,
+        promptMcq: isEn
+          ? `A sector in a pie chart represents ${pct} % of the whole. How many degrees (°) is the central angle of this sector?`
+          : `Ένας κυκλικός τομέας σε ένα κυκλικό διάγραμμα αντιπροσωπεύει το ${pct} % του συνόλου. Πόσες μοίρες (°) είναι η επίκεντρη γωνία αυτού του τομέα;`,
         unit: '°',
-        correctVal: formatNum(deg),
-        correctText: `${formatNum(deg)}°`,
+        correctVal: formatNum(deg, locale, 0),
+        correctText: `${formatNum(deg, locale, 0)}°`,
         tableData: [
-          { item: 'Ποσοστό τομέα', formula: `${pct} %`, val: `${pct} %` },
-          { item: 'Πλήρης κύκλος', formula: '100 % αντιστοιχεί σε 360°', val: '360°' },
-          { item: 'Επίκεντρη γωνία', formula: `(${pct} · 360°) : 100`, val: `${formatNum(deg)}°` }
+          { item: isEn ? 'Sector percentage' : 'Ποσοστό τομέα', formula: `${pct} %`, val: `${pct} %` },
+          { item: isEn ? 'Full circle' : 'Πλήρης κύκλος', formula: isEn ? '100 % corresponds to 360°' : '100 % αντιστοιχεί σε 360°', val: '360°' },
+          {
+            item: isEn ? 'Central angle' : 'Επίκεντρη γωνία',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num={`${pct} · 360°`} den="100" />
+              </span>
+            ),
+            val: `${formatNum(deg, locale, 0)}°`
+          }
         ],
-        explain: `Ολόκληρος ο κύκλος είναι 360° (100%). Η επίκεντρη γωνία υπολογίζεται με αναλογία: (${pct} · 360°) : 100 ＝ ${formatNum(deg)}°.`,
-        distractors: [`${formatNum(deg + 18)}°`, `${formatNum(Math.max(10, deg - 18))}°`, `${formatNum(deg + 36)}°`]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <span>
+              {isEn
+                ? 'A full circle is 360° (100%). The central angle is calculated by proportion:'
+                : 'Ολόκληρος ο κύκλος είναι 360° (100%). Η επίκεντρη γωνία υπολογίζεται με αναλογία:'}
+            </span>
+            <Fraction num={`${pct} · 360°`} den="100" />
+            <span>＝ {formatNum(deg, locale, 0)}°.</span>
+          </span>
+        ),
+        distractors: wrongOpts
       };
     }
   },
   {
     id: 'graf_std_4',
-    title: 'Υπολογισμός Ποσοστού από Επίκεντρη Γωνία',
-    unit: '%',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const deg = pickRandom([90, 180, 72, 36, 144]);
       const pct = (deg / 360) * 100;
+
+      const wrongOpts = [
+        `${pct + 10} %`,
+        `${Math.max(5, pct - 5)} %`,
+        `${pct + 15} %`
+      ];
+
       return {
-        prompt: `Σε ένα κυκλικό διάγραμμα, ένας τομέας έχει επίκεντρη γωνία ${deg}°. Τι ποσοστό (%) του συνόλου αντιπροσωπεύει αυτός ο τομέας;`,
+        title: isEn ? 'Calculating Percentage from Central Angle' : 'Υπολογισμός Ποσοστού από Επίκεντρη Γωνία',
+        prompt: isEn
+          ? `In a pie chart, a sector has a central angle of ${deg}°. What percentage (%) of the total does this sector represent? (write only the number)`
+          : `Σε ένα κυκλικό διάγραμμα, ένας τομέας έχει επίκεντρη γωνία ${deg}°. Τι ποσοστό (%) του συνόλου αντιπροσωπεύει αυτός ο τομέας; (γράψε μόνο τον αριθμό)`,
+        promptMcq: isEn
+          ? `In a pie chart, a sector has a central angle of ${deg}°. What percentage (%) of the total does this sector represent?`
+          : `Σε ένα κυκλικό διάγραμμα, ένας τομέας έχει επίκεντρη γωνία ${deg}°. Τι ποσοστό (%) του συνόλου αντιπροσωπεύει αυτός ο τομέας;`,
         unit: '%',
         correctVal: String(pct),
         correctText: `${pct} %`,
         tableData: [
-          { item: 'Επίκεντρη γωνία', formula: `${deg}°`, val: `${deg}°` },
-          { item: 'Πλήρης κύκλος', formula: '360°', val: '360°' },
-          { item: 'Ποσοστό (%)', formula: `(${deg} : 360) · 100`, val: `${pct} %` }
+          { item: isEn ? 'Central angle' : 'Επίκεντρη γωνία', formula: `${deg}°`, val: `${deg}°` },
+          { item: isEn ? 'Full circle' : 'Πλήρης κύκλος', formula: '360°', val: '360°' },
+          {
+            item: isEn ? 'Percentage (%)' : 'Ποσοστό (%)',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num={deg} den="360" />
+                <span>· 100</span>
+              </span>
+            ),
+            val: `${pct} %`
+          }
         ],
-        explain: `Διαιρούμε τις μοίρες με τις 360° του κύκλου και πολλαπλασιάζουμε με το 100: (${deg} : 360) · 100 ＝ ${pct} %.`,
-        distractors: [`${pct + 10} %`, `${Math.max(5, pct - 5)} %`, `${pct + 15} %`]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <span>
+              {isEn
+                ? 'We divide the angle by 360° and multiply by 100:'
+                : 'Διαιρούμε τις μοίρες με τις 360° του κύκλου και πολλαπλασιάζουμε με το 100:'}
+            </span>
+            <Fraction num={deg} den="360" />
+            <span>· 100 ＝ {pct} %.</span>
+          </span>
+        ),
+        distractors: wrongOpts
       };
     }
   }
@@ -341,14 +481,26 @@ const STANDARD_PROBLEMS_POOL = [
 const HARD_PROBLEMS_POOL = [
   {
     id: 'graf_hard_1',
-    title: 'Εύρος Διακύμανσης Θερμοκρασίας',
-    unit: '°C',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const minT = 8;
       const maxT = 24;
       const range = maxT - minT;
+
+      const wrongOpts = [
+        `${range + 4} °C`,
+        `${Math.max(2, range - 4)} °C`,
+        `${range + 6} °C`
+      ];
+
       return {
-        prompt: `Στο παρακάτω γράφημα γραμμής καταγράφηκαν οι θερμοκρασίες μιας ημέρας. Ποιο είναι το εύρος διακύμανσης της θερμοκρασίας (Μέγιστη － Ελάχιστη τιμή) σε °C;`,
+        title: isEn ? 'Temperature Variation Range' : 'Εύρος Διακύμανσης Θερμοκρασίας',
+        prompt: isEn
+          ? 'In the line graph below, daily temperatures were recorded. What is the temperature variation range (Maximum － Minimum value) in °C? (write only the number)'
+          : 'Στο παρακάτω γράφημα γραμμής καταγράφηκαν οι θερμοκρασίες μιας ημέρας. Ποιο είναι το εύρος διακύμανσης της θερμοκρασίας (Μέγιστη － Ελάχιστη τιμή) σε °C; (γράψε μόνο τον αριθμό)',
+        promptMcq: isEn
+          ? 'In the line graph below, daily temperatures were recorded. What is the temperature variation range (Maximum － Minimum value) in °C?'
+          : 'Στο παρακάτω γράφημα γραμμής καταγράφηκαν οι θερμοκρασίες μιας ημέρας. Ποιο είναι το εύρος διακύμανσης της θερμοκρασίας (Μέγιστη － Ελάχιστη τιμή) σε °C;',
         lineChart: {
           points: [
             { label: '06:00', value: minT },
@@ -365,62 +517,92 @@ const HARD_PROBLEMS_POOL = [
         correctVal: String(range),
         correctText: `${range} °C`,
         tableData: [
-          { item: 'Μέγιστη θερμοκρασία', formula: 'Στις 14:00', val: `${maxT} °C` },
-          { item: 'Ελάχιστη θερμοκρασία', formula: 'Στις 06:00', val: `${minT} °C` },
-          { item: 'Εύρος διακύμανσης', formula: `${maxT} － ${minT}`, val: `${range} °C` }
+          { item: isEn ? 'Maximum temperature' : 'Μέγιστη θερμοκρασία', formula: isEn ? 'At 14:00' : 'Στις 14:00', val: `${maxT} °C` },
+          { item: isEn ? 'Minimum temperature' : 'Ελάχιστη θερμοκρασία', formula: isEn ? 'At 06:00' : 'Στις 06:00', val: `${minT} °C` },
+          { item: isEn ? 'Variation range' : 'Εύρος διακύμανσης', formula: `${maxT} － ${minT}`, val: `${range} °C` }
         ],
-        explain: `Εύρος ＝ Μέγιστη τιμή (${maxT}°C) － Ελάχιστη τιμή (${minT}°C) ＝ ${range}°C.`,
-        distractors: [`${range + 4} °C`, `${range - 4} °C`, `${range + 6} °C`]
+        explain: isEn
+          ? `Range ＝ Maximum value (${maxT}°C) － Minimum value (${minT}°C) ＝ ${range}°C.`
+          : `Εύρος ＝ Μέγιστη τιμή (${maxT}°C) － Ελάχιστη τιμή (${minT}°C) ＝ ${range}°C.`,
+        distractors: wrongOpts
       };
     }
   },
   {
     id: 'graf_hard_2',
-    title: 'Επίκεντρη Γωνία Τομέα σε Κυκλικό Διάγραμμα',
-    unit: '°',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const pMath = 40;
       const pLang = 35;
       const pHist = 25;
       const degHist = (pHist * 360) / 100;
+      const histName = isEn ? 'History' : 'Ιστορία';
+
       return {
-        prompt: `Στο παρακάτω κυκλικό διάγραμμα καταγράφονται οι αγαπημένες θεματικές ενότητες των μαθητών. Πόσες μοίρες (°) είναι η επίκεντρη γωνία του τομέα της Ιστορίας (25%);`,
+        title: isEn ? 'Sector Angle in Pie Chart' : 'Επίκεντρη Γωνία Τομέα σε Κυκλικό Διάγραμμα',
+        prompt: isEn
+          ? `The pie chart below records students' favorite subjects. How many degrees (°) is the central angle for ${histName} (25%)? (write only the number)`
+          : `Στο παρακάτω κυκλικό διάγραμμα καταγράφονται οι αγαπημένες θεματικές ενότητες των μαθητών. Πόσες μοίρες (°) είναι η επίκεντρη γωνία του τομέα της ${histName} (25%); (γράψε μόνο τον αριθμό)`,
+        promptMcq: isEn
+          ? `The pie chart below records students' favorite subjects. How many degrees (°) is the central angle for ${histName} (25%)?`
+          : `Στο παρακάτω κυκλικό διάγραμμα καταγράφονται οι αγαπημένες θεματικές ενότητες των μαθητών. Πόσες μοίρες (°) είναι η επίκεντρη γωνία του τομέα της ${histName} (25%);`,
         pieChart: {
           slices: [
-            { label: 'Μαθηματικά', value: pMath, color: '#3b82f6' },
-            { label: 'Γλώσσα', value: pLang, color: '#10b981' },
-            { label: 'Ιστορία', value: pHist, color: '#f59e0b' }
+            { label: isEn ? 'Math' : 'Μαθηματικά', value: pMath, color: '#3b82f6' },
+            { label: isEn ? 'Language' : 'Γλώσσα', value: pLang, color: '#10b981' },
+            { label: histName, value: pHist, color: '#f59e0b' }
           ]
         },
         unit: '°',
         correctVal: String(degHist),
         correctText: `${degHist}°`,
         tableData: [
-          { item: 'Ποσοστό Ιστορίας', formula: '25 %', val: '25 %' },
-          { item: 'Επίκεντρη γωνία', formula: '(25 · 360°) : 100', val: `${degHist}°` }
+          { item: isEn ? `${histName} percentage` : `Ποσοστό ${histName}`, formula: '25 %', val: '25 %' },
+          {
+            item: isEn ? 'Central angle' : 'Επίκεντρη γωνία',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num="25 · 360°" den="100" />
+              </span>
+            ),
+            val: `${degHist}°`
+          }
         ],
-        explain: `Για ποσοστό 25%: (25 · 360°) : 100 ＝ 90°.`,
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <span>{isEn ? 'For a percentage of 25%:' : 'Για ποσοστό 25%:'}</span>
+            <Fraction num="25 · 360°" den="100" />
+            <span>＝ 90°.</span>
+          </span>
+        ),
         distractors: ['72°', '108°', '80°']
       };
     }
   },
   {
     id: 'graf_hard_3',
-    title: 'Ποσοστό Προσέλευσης από Οριζόντιο Ραβδόγραμμα',
-    unit: '%',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const vMon = 20;
       const vTue = 35;
       const vWed = 45;
       const total = vMon + vTue + vWed;
       const pctWed = (vWed / total) * 100;
+      const wedName = isEn ? 'Wednesday' : 'Τετάρτη';
+
       return {
-        prompt: `Στο οριζόντιο ραβδόγραμμα φαίνεται η προσέλευση 100 πελατών σε ένα κατάστημα για 3 ημέρες. Τι ποσοστό (%) των πελατών προσήλθε την Τετάρτη;`,
+        title: isEn ? 'Attendance Percentage from Horizontal Bar Chart' : 'Ποσοστό Προσέλευσης από Οριζόντιο Ραβδόγραμμα',
+        prompt: isEn
+          ? `The horizontal bar chart displays the attendance of 100 customers over 3 days. What percentage (%) visited on ${wedName}? (write only the number)`
+          : `Στο οριζόντιο ραβδόγραμμα φαίνεται η προσέλευση 100 πελατών σε ένα κατάστημα για 3 ημέρες. Τι ποσοστό (%) των πελατών προσήλθε την ${wedName}; (γράψε μόνο τον αριθμό)`,
+        promptMcq: isEn
+          ? `The horizontal bar chart displays the attendance of 100 customers over 3 days. What percentage (%) visited on ${wedName}?`
+          : `Στο οριζόντιο ραβδόγραμμα φαίνεται η προσέλευση 100 πελατών σε ένα κατάστημα για 3 ημέρες. Τι ποσοστό (%) των πελατών προσήλθε την ${wedName};`,
         hbarChart: {
           data: [
-            { label: 'Δευτέρα', value: vMon, color: '#64748b' },
-            { label: 'Τρίτη', value: vTue, color: '#f59e0b' },
-            { label: 'Τετάρτη', value: vWed, color: '#10b981' }
+            { label: isEn ? 'Monday' : 'Δευτέρα', value: vMon, color: '#64748b' },
+            { label: isEn ? 'Tuesday' : 'Τρίτη', value: vTue, color: '#f59e0b' },
+            { label: wedName, value: vWed, color: '#10b981' }
           ],
           maxVal: 50,
           xStep: 10,
@@ -430,35 +612,94 @@ const HARD_PROBLEMS_POOL = [
         correctVal: String(pctWed),
         correctText: `${pctWed} %`,
         tableData: [
-          { item: 'Πελάτες Τετάρτης', formula: `${vWed} πελάτες`, val: `${vWed}` },
-          { item: 'Συνολικοί πελάτες (3 ημέρες)', formula: `${total} πελάτες`, val: `${total}` },
-          { item: 'Ποσοστό (%)', formula: `(${vWed} : ${total}) · 100`, val: `${pctWed} %` }
+          { item: isEn ? `${wedName} visitors` : `Πελάτες ${wedName}`, formula: `${vWed} ${isEn ? 'visitors' : 'πελάτες'}`, val: `${vWed}` },
+          { item: isEn ? 'Total visitors (3 days)' : 'Συνολικοί πελάτες (3 ημέρες)', formula: `${total} ${isEn ? 'visitors' : 'πελάτες'}`, val: `${total}` },
+          {
+            item: isEn ? 'Percentage (%)' : 'Ποσοστό (%)',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num={vWed} den={total} />
+                <span>· 100</span>
+              </span>
+            ),
+            val: `${pctWed} %`
+          }
         ],
-        explain: `Η Τετάρτη έχει 45 πελάτες σε σύνολο 100 πελατών, άρα το ποσοστό είναι απευθείας 45 %.`,
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <span>
+              {isEn
+                ? `${wedName} has 45 visitors out of a total 100:`
+                : `Η ${wedName} έχει 45 πελάτες σε σύνολο 100:`}
+            </span>
+            <Fraction num={vWed} den={total} />
+            <span>· 100 ＝ 45 %.</span>
+          </span>
+        ),
         distractors: ['35 %', '50 %', '40 %']
       };
     }
   },
   {
     id: 'graf_hard_4',
-    title: 'Υπολογισμός Ποσού από Κυκλικό Διάγραμμα',
-    unit: '€',
-    generate: () => {
+    generate: (locale) => {
+      const isEn = locale === 'en';
       const totalBudget = 1200;
       const rentPct = 40;
       const rentAmount = (totalBudget * rentPct) / 100;
+      const rentName = isEn ? 'rent' : 'ενοίκιο';
+
+      const wrongOpts = [
+        `${rentAmount + 60} €`,
+        `${rentAmount - 60} €`,
+        `${rentAmount + 120} €`
+      ];
+
       return {
-        prompt: `Σε ένα κυκλικό διάγραμμα οικογενειακού προϋπολογισμού 1.200 €, ο τομέας του ενοικίου έχει επίκεντρη γωνία 144° (που αντιστοιχεί σε 40%). Πόσα ευρώ (€) δαπανώνται για το ενοίκιο;`,
+        title: isEn ? 'Calculating Amount from Pie Chart' : 'Υπολογισμός Ποσού από Κυκλικό Διάγραμμα',
+        prompt: isEn
+          ? `In a pie chart of a €1,200 family budget, the ${rentName} sector has a central angle of 144° (which corresponds to 40%). How many euros (€) are spent on ${rentName}? (write only the number)`
+          : `Σε ένα κυκλικό διάγραμμα οικογενειακού προϋπολογισμού 1.200 €, ο τομέας του ενοικίου έχει επίκεντρη γωνία 144° (που αντιστοιχεί σε 40%). Πόσα ευρώ (€) δαπανώνται για το ${rentName}; (γράψε μόνο τον αριθμό)`,
+        promptMcq: isEn
+          ? `In a pie chart of a €1,200 family budget, the ${rentName} sector has a central angle of 144° (which corresponds to 40%). How many euros (€) are spent on ${rentName}?`
+          : `Σε ένα κυκλικό διάγραμμα οικογενειακού προϋπολογισμού 1.200 €, ο τομέας του ενοικίου έχει επίκεντρη γωνία 144° (που αντιστοιχεί σε 40%). Πόσα ευρώ (€) δαπανώνται για το ${rentName};`,
         unit: '€',
         correctVal: String(rentAmount),
         correctText: `${rentAmount} €`,
         tableData: [
-          { item: 'Συνολικός προϋπολογισμός', formula: `${totalBudget} €`, val: `${totalBudget} €` },
-          { item: 'Ποσοστό ενοικίου', formula: '(144° : 360°) · 100', val: '40 %' },
-          { item: 'Ποσό ενοικίου', formula: `(${totalBudget} · 40) : 100`, val: `${rentAmount} €` }
+          { item: isEn ? 'Total budget' : 'Συνολικός προϋπολογισμός', formula: `${formatNum(totalBudget, locale, 0)} €`, val: `${formatNum(totalBudget, locale, 0)} €` },
+          {
+            item: isEn ? 'Rent percentage' : 'Ποσοστό ενοικίου',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num="144°" den="360°" />
+                <span>· 100</span>
+              </span>
+            ),
+            val: '40 %'
+          },
+          {
+            item: isEn ? 'Rent amount' : 'Ποσό ενοικίου',
+            formula: (
+              <span className="inline-flex items-center">
+                <Fraction num={`${formatNum(totalBudget, locale, 0)} · 40`} den="100" />
+              </span>
+            ),
+            val: `${rentAmount} €`
+          }
         ],
-        explain: `Υπολογίζουμε το 40% των 1.200 €: (1.200 · 40) : 100 ＝ 480 €.`,
-        distractors: [`${rentAmount + 60} €`, `${rentAmount - 60} €`, `${rentAmount + 120} €`]
+        explain: (
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <span>
+              {isEn
+                ? 'We calculate 40% of €1,200:'
+                : 'Υπολογίζουμε το 40% των 1.200 €:'}
+            </span>
+            <Fraction num={`${formatNum(totalBudget, locale, 0)} · 40`} den="100" />
+            <span>＝ 480 €.</span>
+          </span>
+        ),
+        distractors: wrongOpts
       };
     }
   }
@@ -468,7 +709,9 @@ const HARD_PROBLEMS_POOL = [
 // ΔΗΜΙΟΥΡΓΙΑ 10 ΔΥΝΑΜΙΚΩΝ ΕΡΩΤΗΣΕΩΝ
 // ---------------------------------------------------------
 
-function generateQuestions() {
+function generateQuestions(locale) {
+  const isEn = locale === 'en';
+
   // Q1: Input - Ανάγνωση μέγιστης τιμής από γράφημα γραμμής
   const q1T1 = randInt(12, 15);
   const q1T2 = randInt(22, 26);
@@ -477,26 +720,30 @@ function generateQuestions() {
   const q1MaxT = Math.max(q1T1, q1T2, q1T3, q1T4);
 
   // Q2: MCQ - Καταλληλότητα γραφήματος γραμμής
-  const q2Correct = 'Όταν θέλουμε να δείξουμε πώς μεταβάλλεται ένα μέγεθος στο πέρασμα του χρόνου';
-  const q2Options = shuffle([
-    q2Correct,
-    'Μόνο όταν έχουμε ακριβώς δύο κατηγορίες',
-    'Όταν θέλουμε να σχεδιάσουμε μια πίτα ποσοστών',
-    'Για να αντικαταστήσουμε τον πολλαπλασιασμό με διαίρεση'
-  ]);
+  const q2Correct = isEn
+    ? 'When we want to show how a quantity changes over time'
+    : 'Όταν θέλουμε να δείξουμε πώς μεταβάλλεται ένα μέγεθος στο πέρασμα του χρόνου';
+  const q2Wrong = [
+    isEn ? 'Only when we have exactly two categories' : 'Μόνο όταν έχουμε ακριβώς δύο κατηγορίες',
+    isEn ? 'When we want to draw a percentage pie chart' : 'Όταν θέλουμε να σχεδιάσουμε μια πίτα ποσοστών',
+    isEn ? 'To replace multiplication with division' : 'Για να αντικαταστήσουμε τον πολλαπλασιασμό με διαίρεση'
+  ];
+  const q2Options = makeUniqueOptions(q2Correct, q2Wrong);
 
   // Q3: Input - Υπολογισμός επίκεντρης γωνίας από ποσοστό
   const q3Pct = pickRandom([20, 25, 40, 50]);
   const q3Deg = (q3Pct * 360) / 100;
 
   // Q4: MCQ - Πότε προτιμάται το οριζόντιο ραβδόγραμμα
-  const q4Correct = 'Όταν οι κατηγορίες έχουν μεγάλα ονόματα ή θέλουμε να διαβάζονται ευκολότερα';
-  const q4Options = shuffle([
-    q4Correct,
-    'Όταν όλες οι τιμές είναι ίσες με το μηδέν',
-    'Μόνο όταν έχουμε θερμοκρασίες κάτω από το μηδέν',
-    'Επειδή απαγορεύεται το κατακόρυφο ραβδόγραμμα'
-  ]);
+  const q4Correct = isEn
+    ? 'When categories have long names or for easier horizontal reading'
+    : 'Όταν οι κατηγορίες έχουν μεγάλα ονόματα ή θέλουμε να διαβάζονται ευκολότερα';
+  const q4Wrong = [
+    isEn ? 'When all values are strictly equal to zero' : 'Όταν όλες οι τιμές είναι ίσες με το μηδέν',
+    isEn ? 'Only when recording temperatures below freezing' : 'Μόνο όταν έχουμε θερμοκρασίες κάτω από το μηδέν',
+    isEn ? 'Because vertical bar charts are forbidden' : 'Επειδή απαγορεύεται το κατακόρυφο ραβδόγραμμα'
+  ];
+  const q4Options = makeUniqueOptions(q4Correct, q4Wrong);
 
   // Q5: Input - Ανάγνωση αθροίσματος από οριζόντιο ραβδόγραμμα
   const q5V1 = randInt(15, 25);
@@ -505,50 +752,38 @@ function generateQuestions() {
 
   // Q6: MCQ - Άθροισμα μοιρών κυκλικού διαγράμματος
   const q6Correct = '360°';
-  const q6Options = shuffle([
-    q6Correct,
-    '180°',
-    '100°',
-    '90°'
-  ]);
+  const q6Wrong = ['180°', '100°', '90°'];
+  const q6Options = makeUniqueOptions(q6Correct, q6Wrong);
 
   // Q7: Standard Problem (Input)
   const spIndex1 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate();
+  const q7Data = STANDARD_PROBLEMS_POOL[spIndex1].generate(locale);
 
   // Q8: Standard Problem (MCQ)
   let spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
   while (spIndex2 === spIndex1) spIndex2 = randInt(0, STANDARD_PROBLEMS_POOL.length - 1);
-  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate();
-  const q8Options = shuffle([
-    ...new Set([
-      q8Data.correctText,
-      ...q8Data.distractors
-    ])
-  ]);
+  const q8Data = STANDARD_PROBLEMS_POOL[spIndex2].generate(locale);
+  const q8Options = makeUniqueOptions(q8Data.correctText, q8Data.distractors);
 
   // Q9: Hard Problem (Input)
   const hpIndex1 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate();
+  const q9Data = HARD_PROBLEMS_POOL[hpIndex1].generate(locale);
 
   // Q10: Hard Problem (MCQ)
   let hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
   while (hpIndex2 === hpIndex1) hpIndex2 = randInt(0, HARD_PROBLEMS_POOL.length - 1);
-  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate();
-  const q10Options = shuffle([
-    ...new Set([
-      q10Data.correctText,
-      ...q10Data.distractors
-    ])
-  ]);
+  const q10Data = HARD_PROBLEMS_POOL[hpIndex2].generate(locale);
+  const q10Options = makeUniqueOptions(q10Data.correctText, q10Data.distractors);
 
   return [
     {
       id: 'q1',
       type: 'input',
       inputType: 'number',
-      title: 'Ανάγνωση Γραφήματος Γραμμής',
-      prompt: 'Ποια ήταν η μέγιστη θερμοκρασία (°C) που καταγράφηκε στη διάρκεια της ημέρας;',
+      title: isEn ? 'Reading a Line Graph' : 'Ανάγνωση Γραφήματος Γραμμής',
+      prompt: isEn
+        ? 'What was the maximum temperature (°C) recorded during the day? (write only the number)'
+        : 'Ποια ήταν η μέγιστη θερμοκρασία (°C) που καταγράφηκε στη διάρκεια της ημέρας; (γράψε μόνο τον αριθμό)',
       lineChart: {
         points: [
           { label: '08:00', value: q1T1 },
@@ -561,67 +796,97 @@ function generateQuestions() {
         unit: '°C'
       },
       correct: String(q1MaxT),
-      explain: `Παρατηρούμε το ψηλότερο σημείο του γραφήματος: η μέγιστη θερμοκρασία είναι ${q1MaxT}°C.`
+      explain: isEn
+        ? `We observe the peak point of the line graph: the maximum temperature is ${q1MaxT}°C.`
+        : `Παρατηρούμε το ψηλότερο σημείο του γραφήματος: η μέγιστη θερμοκρασία είναι ${q1MaxT}°C.`
     },
     {
       id: 'q2',
       type: 'mcq',
-      title: 'Χρήση Γραφήματος Γραμμής',
-      prompt: 'Σε ποια περίπτωση χρησιμοποιούμε κατά προτίμηση ένα γράφημα γραμμής (χρονοσειρά);',
+      title: isEn ? 'Using Line Graphs' : 'Χρήση Γραφήματος Γραμμής',
+      prompt: isEn
+        ? 'In which scenario is a line graph (time series) preferably used?'
+        : 'Σε ποια περίπτωση χρησιμοποιούμε κατά προτίμηση ένα γράφημα γραμμής (χρονοσειρά);',
       options: q2Options,
       correct: q2Correct,
-      explain: 'Το γράφημα γραμμής χρησιμοποιείται για να αναδείξει τη μεταβολή και την τάση ενός μεγέθους στον χρόνο.'
+      explain: isEn
+        ? 'A line graph is used to display changes, developments, and trends over time.'
+        : 'Το γράφημα γραμμής χρησιμοποιείται για να αναδείξει τη μεταβολή και την τάση ενός μεγέθους στον χρόνο.'
     },
     {
       id: 'q3',
       type: 'input',
       inputType: 'decimal',
-      title: 'Επίκεντρη Γωνία σε Κυκλικό Διάγραμμα',
-      prompt: `Σε ένα κυκλικό διάγραμμα, ένας τομέας αντιπροσωπεύει το ${q3Pct} % του συνόλου. Πόσες μοίρες (°) είναι η επίκεντρη γωνία αυτού του τομέα; (γράψε μόνο τον αριθμό)`,
-      correct: formatNum(q3Deg),
-      explain: `Ολόκληρος ο κύκλος αντιστοιχεί σε 360° (100%). Γωνία: (${q3Pct} · 360°) : 100 ＝ ${formatNum(q3Deg)}°.`
+      title: isEn ? 'Central Angle in Pie Chart' : 'Επίκεντρη Γωνία σε Κυκλικό Διάγραμμα',
+      prompt: isEn
+        ? `In a pie chart, a sector represents ${q3Pct} % of the whole. How many degrees (°) is the central angle of this sector? (write only the number)`
+        : `Σε ένα κυκλικό διάγραμμα, ένας τομέας αντιπροσωπεύει το ${q3Pct} % του συνόλου. Πόσες μοίρες (°) είναι η επίκεντρη γωνία αυτού του τομέα; (γράψε μόνο τον αριθμό)`,
+      correct: formatNum(q3Deg, locale, 0),
+      explain: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          <span>
+            {isEn
+              ? 'The entire circle represents 360° (100%). Angle:'
+              : 'Ολόκληρος ο κύκλος αντιστοιχεί σε 360° (100%). Γωνία:'}
+          </span>
+          <Fraction num={`${q3Pct} · 360°`} den="100" />
+          <span>＝ {formatNum(q3Deg, locale, 0)}°.</span>
+        </span>
+      )
     },
     {
       id: 'q4',
       type: 'mcq',
-      title: 'Οριζόντιο Ραβδόγραμμα',
-      prompt: 'Για ποιο λόγο προτιμάμε συχνά ένα οριζόντιο ραβδόγραμμα αντί για κατακόρυφο;',
+      title: isEn ? 'Horizontal Bar Chart Purpose' : 'Οριζόντιο Ραβδόγραμμα',
+      prompt: isEn
+        ? 'Why do we often prefer a horizontal bar chart over a vertical one?'
+        : 'Για ποιο λόγο προτιμάμε συχνά ένα οριζόντιο ραβδόγραμμα αντί για κατακόρυφο;',
       options: q4Options,
       correct: q4Correct,
-      explain: 'Στο οριζόντιο ραβδόγραμμα τα ονόματα των κατηγοριών γράφονται άνετα στον κατακόρυφο άξονα χωρίς να επικαλύπτονται.'
+      explain: isEn
+        ? 'In horizontal bar charts, long category names fit comfortably on the vertical axis without overlapping.'
+        : 'Στο οριζόντιο ραβδόγραμμα τα ονόματα των κατηγοριών γράφονται άνετα στον κατακόρυφο άξονα χωρίς να επικαλύπτονται.'
     },
     {
       id: 'q5',
       type: 'input',
       inputType: 'number',
-      title: 'Ανάγνωση Οριζόντιου Ραβδογράμματος',
-      prompt: 'Πόσα βιβλία δανείστηκαν συνολικά τα δύο τμήματα;',
+      title: isEn ? 'Reading a Horizontal Bar Chart' : 'Ανάγνωση Οριζόντιου Ραβδογράμματος',
+      prompt: isEn
+        ? 'How many books did the two classes borrow in total? (write only the number)'
+        : 'Πόσα βιβλία δανείστηκαν συνολικά τα δύο τμήματα; (γράψε μόνο τον αριθμό)',
       hbarChart: {
         data: [
-          { label: 'ΣΤ1 Τμήμα', value: q5V1, color: '#3b82f6' },
-          { label: 'ΣΤ2 Τμήμα', value: q5V2, color: '#10b981' }
+          { label: isEn ? 'Class 6A' : 'ΣΤ1 Τμήμα', value: q5V1, color: '#3b82f6' },
+          { label: isEn ? 'Class 6B' : 'ΣΤ2 Τμήμα', value: q5V2, color: '#10b981' }
         ],
         maxVal: 35,
         xStep: 10,
         unit: ''
       },
       correct: String(q5Total),
-      explain: `Διαβάζουμε τα μήκη των ράβδων: ${q5V1} ＋ ${q5V2} ＝ ${q5Total} βιβλία.`
+      explain: isEn
+        ? `We read the bar lengths: ${q5V1} ＋ ${q5V2} ＝ ${q5Total} books.`
+        : `Διαβάζουμε τα μήκη των ράβδων: ${q5V1} ＋ ${q5V2} ＝ ${q5Total} βιβλία.`
     },
     {
       id: 'q6',
       type: 'mcq',
-      title: 'Άθροισμα Μοιρών Κυκλικού Διαγράμματος',
-      prompt: 'Πόσο ισούται πάντοτε το άθροισμα των επίκεντρων γωνιών όλων των τομέων σε ένα πλήρες κυκλικό διάγραμμα;',
+      title: isEn ? 'Sum of Angles in Pie Chart' : 'Άθροισμα Μοιρών Κυκλικού Διαγράμματος',
+      prompt: isEn
+        ? 'What is the sum of all central angles in a complete pie chart always equal to?'
+        : 'Πόσο ισούται πάντοτε το άθροισμα των επίκεντρων γωνιών όλων των τομέων σε ένα πλήρες κυκλικό διάγραμμα;',
       options: q6Options,
       correct: q6Correct,
-      explain: 'Ένας πλήρης κύκλος αποτελείται από 360°, επομένως όλες οι επιμέρους γωνίες μαζί αθροίζουν σε 360°.'
+      explain: isEn
+        ? 'A complete circle consists of 360°, therefore all sector angles together sum to 360°.'
+        : 'Ένας πλήρης κύκλος αποτελείται από 360°, επομένως όλες οι επιμέρους γωνίες μαζί αθροίζουν σε 360°.'
     },
     {
       id: 'q7',
       type: 'input',
       inputType: 'decimal',
-      title: `Πρόβλημα: ${q7Data.title}`,
+      title: `${isEn ? 'Problem' : 'Πρόβλημα'}: ${q7Data.title}`,
       prompt: q7Data.prompt,
       lineChart: q7Data.lineChart,
       hbarChart: q7Data.hbarChart,
@@ -633,9 +898,9 @@ function generateQuestions() {
     {
       id: 'q8',
       type: 'mcq',
-      title: `Πρόβλημα: ${q8Data.title}`,
-      prompt: q8Data.prompt,
-      lineChart: q8Data.lineChart,
+      title: `${isEn ? 'Problem' : 'Πρόβλημα'}: ${q8Data.title}`,
+      prompt: q8Data.promptMcq || q8Data.prompt,
+      lineChart: q7Data.lineChart ? undefined : q8Data.lineChart,
       hbarChart: q8Data.hbarChart,
       pieChart: q8Data.pieChart,
       options: q8Options,
@@ -647,7 +912,7 @@ function generateQuestions() {
       id: 'q9',
       type: 'input',
       inputType: 'decimal',
-      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
+      title: `${isEn ? 'Advanced Problem' : 'Σύνθετο Πρόβλημα'}: ${q9Data.title}`,
       prompt: q9Data.prompt,
       lineChart: q9Data.lineChart,
       hbarChart: q9Data.hbarChart,
@@ -659,9 +924,9 @@ function generateQuestions() {
     {
       id: 'q10',
       type: 'mcq',
-      title: `Σύνθετο Πρόβλημα: ${q9Data.title}`,
-      prompt: q10Data.prompt,
-      lineChart: q10Data.lineChart,
+      title: `${isEn ? 'Advanced Problem' : 'Σύνθετο Πρόβλημα'}: ${q10Data.title}`,
+      prompt: q10Data.promptMcq || q10Data.prompt,
+      lineChart: q9Data.lineChart ? undefined : q10Data.lineChart,
       hbarChart: q10Data.hbarChart,
       pieChart: q10Data.pieChart,
       options: q10Options,
@@ -677,13 +942,73 @@ function generateQuestions() {
 // ---------------------------------------------------------
 
 export default function AllaGrafimataExercisesPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+
+  const t = useMemo(() => {
+    return {
+      el: {
+        pageTitle: "Ασκήσεις: Άλλα Γραφήματα (Γραμμής, Οριζόντιο, Κυκλικό) - ΣΤ' Δημοτικού | LearnMaths.gr",
+        metaDescription: "Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στα γραφήματα γραμμής, τα οριζόντια ραβδογράμματα και τα κυκλικά διαγράμματα για τη ΣΤ' Δημοτικού.",
+        backText: "ΣΤ' Δημοτικού",
+        theoryBtn: "Θεωρία",
+        heroBadge: "ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+        heroTitle: "Διαδραστικές Ασκήσεις: Γράφημα Γραμμής, Οριζόντιο & Κυκλικό Διάγραμμα",
+        heroDesc: "Λύσε τα 10 δυναμικά θέματα με οπτικά διαγράμματα, ερμηνεία χρονοσειρών θερμοκρασίας, οριζόντιες ράβδους και υπολογισμό επίκεντρων γωνιών!",
+        newSetBtn: "Νέες Ασκήσεις",
+        exerciseLabel: "Άσκηση",
+        inputPlaceholderNumber: "Απάντηση...",
+        inputPlaceholderDecimal: "π.χ. 18",
+        tableHeaderElement: "Στοιχείο",
+        tableHeaderFormula: "Ανάλυση / Τύπος",
+        tableHeaderVal: "Τιμή",
+        feedbackSuccess: "🎯 Εξαιρετικά!",
+        feedbackExplanation: "💡 Επεξήγηση:",
+        checkBtn: "Έλεγχος Απαντήσεων",
+        scoreLabel: "Σκορ",
+        answeredLabel: "Απαντήθηκαν",
+        pctLabel: "Ποσοστό",
+        footerPrompt: "Απάντησε και στις 10 ερωτήσεις και πάτησε «Έλεγχος Απαντήσεων»!",
+        chartTitleLine: "Σχήμα: Γράφημα Γραμμής",
+        chartTitleHbar: "Σχήμα: Οριζόντιο Ραβδόγραμμα",
+        chartTitlePie: "Σχήμα: Κυκλικό Διάγραμμα"
+      },
+      en: {
+        pageTitle: "Exercises: Other Graphs (Line, Horizontal, Pie) - 6th Grade | LearnMaths.gr",
+        metaDescription: "Interactive exercises with 10 questions and auto-grading on line graphs, horizontal bar charts, and pie charts for 6th Grade.",
+        backText: "6th Grade",
+        theoryBtn: "Theory",
+        heroBadge: "CHAPTER 57 • 6TH GRADE • PRACTICE",
+        heroTitle: "Interactive Exercises: Line, Horizontal Bar & Pie Charts",
+        heroDesc: "Solve the 10 dynamic questions with visual diagrams, temperature trends, horizontal bars, and central angle calculations!",
+        newSetBtn: "New Exercises",
+        exerciseLabel: "Exercise",
+        inputPlaceholderNumber: "Answer...",
+        inputPlaceholderDecimal: "e.g. 18",
+        tableHeaderElement: "Component",
+        tableHeaderFormula: "Formula / Step",
+        tableHeaderVal: "Value",
+        feedbackSuccess: "🎯 Excellent!",
+        feedbackExplanation: "💡 Explanation:",
+        checkBtn: "Check Answers",
+        scoreLabel: "Score",
+        answeredLabel: "Answered",
+        pctLabel: "Percentage",
+        footerPrompt: "Answer all 10 questions and click “Check Answers”!",
+        chartTitleLine: "Diagram: Line Graph",
+        chartTitleHbar: "Diagram: Horizontal Bar Chart",
+        chartTitlePie: "Diagram: Pie Chart"
+      }
+    }[locale];
+  }, [locale]);
+
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
   const loadNewSet = useCallback(() => {
-    const qList = generateQuestions();
+    const qList = generateQuestions(locale);
     setQuestions(qList);
     const initialAnswers = {};
     qList.forEach(q => {
@@ -695,13 +1020,12 @@ export default function AllaGrafimataExercisesPage() {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     loadNewSet();
   }, [loadNewSet]);
 
-  // Χειρισμός απαντήσεων: sanitize για inputs, αυτούσιο για mcq
   const handleAnswerChange = (id, rawValue, type) => {
     if (submitted) return;
     if (type === 'input') {
@@ -710,9 +1034,13 @@ export default function AllaGrafimataExercisesPage() {
       if (q?.inputType === 'number') {
         sanitized = sanitized.replace(/[^0-9]/g, '');
       } else if (q?.inputType === 'decimal') {
-        sanitized = sanitized.replace(/\./g, ',').replace(/[^0-9,]/g, '');
-        const parts = sanitized.split(',');
-        if (parts.length > 2) sanitized = parts[0] + ',' + parts.slice(1).join('');
+        const sep = locale === 'en' ? '.' : ',';
+        const otherSep = locale === 'en' ? ',' : '.';
+        sanitized = sanitized.replace(new RegExp(`\\${otherSep}`, 'g'), sep);
+        const allowedRegex = locale === 'en' ? /[^0-9.]/g : /[^0-9,]/g;
+        sanitized = sanitized.replace(allowedRegex, '');
+        const parts = sanitized.split(sep);
+        if (parts.length > 2) sanitized = parts[0] + sep + parts.slice(1).join('');
       }
       if (sanitized.length > 10) {
         sanitized = sanitized.slice(0, 10);
@@ -732,12 +1060,9 @@ export default function AllaGrafimataExercisesPage() {
 
       if (cleanUser === cleanTarget) return true;
 
-      if (q.inputType === 'decimal') {
-        const numUser = parseFloat(cleanUser.replace(',', '.'));
-        const numTarget = parseFloat(cleanTarget.replace(',', '.'));
-        return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) < 0.05;
-      }
-      return false;
+      const numUser = parseFloat(cleanUser.replace(',', '.'));
+      const numTarget = parseFloat(cleanTarget.replace(',', '.'));
+      return !isNaN(numUser) && !isNaN(numTarget) && Math.abs(numUser - numTarget) <= 0.05;
     }
     if (q.type === 'mcq') {
       return userVal === q.correct;
@@ -769,10 +1094,10 @@ export default function AllaGrafimataExercisesPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Άλλα Γραφήματα (Γραμμής, Οριζόντιο, Κυκλικό) - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις με 10 θέματα και αυτόματη βαθμολόγηση στα γραφήματα γραμμής, τα οριζόντια ραβδογράμματα και τα κυκλικά διαγράμματα για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.metaDescription}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={false}
       hideFooter={true}
       actionButton={
@@ -781,24 +1106,24 @@ export default function AllaGrafimataExercisesPage() {
           className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border border-blue-200 transition shrink-0"
         >
           <span>📖</span>
-          <span>{toCleanUppercase('Θεωρία')}</span>
+          <span>{toCleanUppercase(t.theoryBtn)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8 box-border">
         
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-            <div className="space-y-2 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200">
-                <span>ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ</span>
+            <div className="space-y-2 max-w-3xl min-w-0">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-sky-200 break-words [overflow-wrap:anywhere]">
+                <span>{toCleanUppercase(t.heroBadge)}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight">
-                Διαδραστικές Ασκήσεις: Γράφημα Γραμμής, Οριζόντιο &amp; Κυκλικό Διάγραμμα
+              <h1 className="text-2xl sm:text-3xl md:text-4xl 2xl:text-5xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+                {t.heroTitle}
               </h1>
-              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed">
-                Λύσε τα 10 δυναμικά θέματα με οπτικά διαγράμματα, ερμηνεία χρονοσειρών θερμοκρασίας, οριζόντιες ράβδους και υπολογισμό επίκεντρων γωνιών!
+              <p className="text-sky-100 text-xs sm:text-sm md:text-base leading-relaxed break-words [overflow-wrap:anywhere]">
+                {t.heroDesc}
               </p>
             </div>
 
@@ -808,7 +1133,7 @@ export default function AllaGrafimataExercisesPage() {
               className="px-5 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-2xl font-black shadow-md transition transform active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 shrink-0 touch-manipulation"
             >
               <span>🔄</span>
-              <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
+              <span>{toCleanUppercase(t.newSetBtn)}</span>
             </button>
           </div>
         </section>
@@ -821,25 +1146,25 @@ export default function AllaGrafimataExercisesPage() {
               return (
                 <div
                   key={q.id}
-                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all ${getCardStyle(q)}`}
+                  className={`p-5 sm:p-7 rounded-3xl border flex flex-col justify-between transition-all min-w-0 overflow-hidden ${getCardStyle(q)}`}
                 >
-                  <div>
+                  <div className="min-w-0">
                     {/* CARD HEADER */}
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider">
-                        {toCleanUppercase(`Άσκηση ${qNum}`)} • {toCleanUppercase(q.title)}
+                    <div className="flex justify-between items-start gap-2 mb-3">
+                      <span className="text-xs font-black px-3 py-1 bg-sky-100 text-sky-900 rounded-full uppercase tracking-wider break-words [overflow-wrap:anywhere]">
+                        {toCleanUppercase(`${t.exerciseLabel} ${qNum}`)}: {toCleanUppercase(q.title)}
                       </span>
                       {submitted && (
-                        <span className="text-xl">
+                        <span className="text-xl shrink-0">
                           {isQuestionCorrect(q) ? '✅' : '❌'}
                         </span>
                       )}
                     </div>
 
                     {/* PROMPT (NO-GIVEAWAY: ΜΟΝΟ ΕΚΦΩΝΗΣΗ) */}
-                    <p className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-3">
+                    <div className="text-slate-800 text-sm sm:text-base leading-relaxed font-semibold mb-3 break-words [overflow-wrap:anywhere]">
                       {q.prompt}
-                    </p>
+                    </div>
 
                     {/* ΟΠΤΙΚΑ ΣΧΗΜΑΤΑ ΔΕΔΟΜΕΝΩΝ */}
                     {q.lineChart && (
@@ -848,6 +1173,7 @@ export default function AllaGrafimataExercisesPage() {
                         maxVal={q.lineChart.maxVal}
                         yStep={q.lineChart.yStep}
                         unit={q.lineChart.unit}
+                        chartTitle={t.chartTitleLine}
                       />
                     )}
 
@@ -857,12 +1183,15 @@ export default function AllaGrafimataExercisesPage() {
                         maxVal={q.hbarChart.maxVal}
                         xStep={q.hbarChart.xStep}
                         unit={q.hbarChart.unit}
+                        chartTitle={t.chartTitleHbar}
                       />
                     )}
 
                     {q.pieChart && (
                       <MiniPieChart
                         slices={q.pieChart.slices}
+                        chartTitle={t.chartTitlePie}
+                        locale={locale}
                       />
                     )}
 
@@ -877,7 +1206,7 @@ export default function AllaGrafimataExercisesPage() {
                               type="button"
                               disabled={submitted}
                               onClick={() => handleAnswerChange(q.id, opt, 'mcq')}
-                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words whitespace-normal leading-snug flex items-center justify-center min-h-[48px] ${
+                              className={`p-3 rounded-2xl text-xs sm:text-sm font-mono font-bold border text-center transition touch-manipulation active:scale-95 break-words [overflow-wrap:anywhere] whitespace-normal leading-snug flex-1 flex items-center justify-center min-h-[48px] ${
                                 isSelected
                                   ? 'bg-blue-600 text-white border-blue-600 shadow-md ring-2 ring-blue-300'
                                   : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
@@ -902,7 +1231,7 @@ export default function AllaGrafimataExercisesPage() {
                           disabled={submitted}
                           value={answers[q.id] || ''}
                           onChange={(e) => handleAnswerChange(q.id, e.target.value, 'input')}
-                          placeholder={q.inputType === 'decimal' ? 'π.χ. 18' : 'Απάντηση...'}
+                          placeholder={q.inputType === 'decimal' ? t.inputPlaceholderDecimal : t.inputPlaceholderNumber}
                           className="w-full p-3 bg-white border-2 border-slate-200 rounded-2xl font-bold text-center text-base sm:text-lg focus:border-indigo-500 outline-none disabled:bg-slate-100 font-mono tracking-wider shadow-inner"
                         />
                       </div>
@@ -911,23 +1240,29 @@ export default function AllaGrafimataExercisesPage() {
 
                   {/* POST-SUBMISSION FEEDBACK & TABLEDATA (NO-GIVEAWAY) */}
                   {submitted && (
-                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3">
+                    <div className="mt-4 pt-3 border-t border-slate-200/70 space-y-3 min-w-0">
                       {q.tableData && (
-                        <div className="overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
+                        <div className="w-full overflow-x-auto bg-white/90 p-2.5 rounded-2xl border border-slate-200">
                           <table className="w-full text-xs text-left text-slate-700">
                             <thead>
                               <tr className="border-b border-slate-200 font-black text-slate-500 uppercase">
-                                <th className="p-1.5">{toCleanUppercase('Στοιχείο')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Ανάλυση / Τύπος')}</th>
-                                <th className="p-1.5">{toCleanUppercase('Τιμή')}</th>
+                                <th className="p-1.5">{toCleanUppercase(t.tableHeaderElement)}</th>
+                                <th className="p-1.5">{toCleanUppercase(t.tableHeaderFormula)}</th>
+                                <th className="p-1.5">{toCleanUppercase(t.tableHeaderVal)}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 font-mono">
                               {q.tableData.map((row, rIdx) => (
                                 <tr key={rIdx}>
-                                  <td className="p-1.5 font-sans font-bold text-slate-900">{row.item}</td>
-                                  <td className="p-1.5 text-indigo-700">{row.formula}</td>
-                                  <td className="p-1.5 font-black text-emerald-700">{row.val}</td>
+                                  <td className="p-1.5 font-sans font-bold text-slate-900 break-words [overflow-wrap:anywhere]">
+                                    {row.item}
+                                  </td>
+                                  <td className="p-1.5 text-indigo-700 align-middle">
+                                    {row.formula}
+                                  </td>
+                                  <td className="p-1.5 font-black text-emerald-700">
+                                    {row.val}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -936,16 +1271,16 @@ export default function AllaGrafimataExercisesPage() {
                       )}
 
                       <div
-                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed ${
+                        className={`p-3 rounded-2xl text-xs sm:text-sm font-medium leading-relaxed break-words [overflow-wrap:anywhere] ${
                           isQuestionCorrect(q)
                             ? 'bg-emerald-100 text-emerald-950 border border-emerald-200'
                             : 'bg-rose-100 text-rose-950 border border-rose-200'
                         }`}
                       >
                         <p className="font-bold mb-1">
-                          {isQuestionCorrect(q) ? '🎯 Εξαιρετικά!' : '💡 Επεξήγηση:'}
+                          {isQuestionCorrect(q) ? t.feedbackSuccess : t.feedbackExplanation}
                         </p>
-                        <p>{q.explain}</p>
+                        <div className="leading-relaxed">{q.explain}</div>
                       </div>
                     </div>
                   )}
@@ -962,7 +1297,7 @@ export default function AllaGrafimataExercisesPage() {
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-base sm:text-lg font-black px-8 sm:px-10 py-4 rounded-2xl shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2.5 touch-manipulation"
               >
                 <span className="text-xl">🎯</span>
-                <span>{toCleanUppercase('Έλεγχος Απαντήσεων')}</span>
+                <span>{toCleanUppercase(t.checkBtn)}</span>
               </button>
             </div>
           )}
@@ -970,19 +1305,21 @@ export default function AllaGrafimataExercisesPage() {
       </div>
 
       {/* FIXED BOTTOM SCORE FOOTER */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
+      <div className="fixed bottom-0 left-0 w-full bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           
           {/* SCORE & PERCENTAGE */}
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-sm sm:text-base md:text-lg flex items-center gap-2 shadow-sm">
               <span>🏆</span>
-              <span>{submitted ? toCleanUppercase('Σκορ') : toCleanUppercase('Απαντήθηκαν')}:</span>
-              <span className="font-mono text-lg sm:text-xl md:text-2xl">{score} / 10</span>
+              <span>{submitted ? toCleanUppercase(t.scoreLabel) : toCleanUppercase(t.answeredLabel)}:</span>
+              <span className="font-mono text-lg sm:text-xl md:text-2xl">
+                {submitted ? score : answeredCount} / 10
+              </span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                {toCleanUppercase('Ποσοστό')}:{' '}
+                {toCleanUppercase(t.pctLabel)}:{' '}
                 <span className="text-emerald-400 font-black text-sm sm:text-base">
                   {Math.round((score / 10) * 100)}%
                 </span>
@@ -999,11 +1336,11 @@ export default function AllaGrafimataExercisesPage() {
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base flex items-center gap-2 touch-manipulation"
               >
                 <span>🔄</span>
-                <span>{toCleanUppercase('Νέες Ασκήσεις')}</span>
+                <span>{toCleanUppercase(t.newSetBtn)}</span>
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Απάντησε και στις 10 ερωτήσεις και πάτησε «{toCleanUppercase('Έλεγχος Απαντήσεων')}»!
+                {t.footerPrompt}
               </p>
             )}
           </div>

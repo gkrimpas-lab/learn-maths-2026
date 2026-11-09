@@ -1,60 +1,60 @@
 // pages/st-dimotikou/79-kilindros.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποίηση αριθμού με ελληνική υποδιαστολή
-function formatNum(val) {
+// Μορφοποίηση αριθμού ανά locale
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  const loc = locale === 'el' ? 'el-GR' : 'en-US';
+  return Number(val).toLocaleString(loc, { maximumFractionDigits: 4 });
 }
 
 export default function KilindrosTheoriaPage() {
+  const router = useRouter();
+  const { locale = 'el' } = router;
+
   // -------------------------------------------------------------------------
   // Εργαστήριο 1: Διαδραστικό Άνοιγμα Καπακιών & Ξετύλιγμα Κυλίνδρου (SVG)
-  // 0% -> 40%: Άνοιγμα καπακιών (πάνω & κάτω)
-  // 40% -> 100%: Ξετύλιγμα της παράπλευρης επιφάνειας σε ορθογώνιο
   // -------------------------------------------------------------------------
   const [animProgress, setAnimProgress] = useState(0);
 
   const radiusR = 34; // Ακτίνα ρ = 34px
   const heightH = 80; // Ύψος υ = 80px
   const rectW = 2 * Math.PI * radiusR; // 2 · 3,1415 · 34 ≈ 214px
-  const centerX = 210; // Κέντρο του καμβά στο SVG
+  const centerX = 210; // Κέντρο καμβά
   const topY = 110;
 
-  // Υπολογισμοί σταδίων κίνησης
   // Στάδιο 1: 0% έως 40% (Άνοιγμα καπακιών)
   const capStage = Math.min(1, animProgress / 40);
   const capTopOffset = capStage * (radiusR + 12);
-  // Μεγαλύτερο περιθώριο προς τα κάτω για να μην πέφτει η κάτω βάση πάνω στη γραμμή διαστάσεων
   const capBottomOffset = capStage * (radiusR + 42);
 
   // Στάδιο 2: 40% έως 100% (Ξετύλιγμα παράπλευρης επιφάνειας)
   const unrollStage = Math.max(0, (animProgress - 40) / 60);
 
-  // Πλάτος ξετυλίγματος: από το αρχικό πλάτος κυλίνδρου (2*ρ = 68px) έως το πλήρες ορθογώνιο (214px)
   const startW = radiusR * 2;
   const currentW = startW + unrollStage * (rectW - startW);
-
-  // Καμπυλότητα κυλινδρικής επιφάνειας: εξαφανίζεται όσο πλησιάζουμε στο 100%
   const cylinderOpacity = Math.max(0, 1 - unrollStage * 1.5);
 
   // -------------------------------------------------------------------------
   // Εργαστήριο 2: Δυναμικός Υπολογιστής Εμβαδών Κυλίνδρου
   // -------------------------------------------------------------------------
-  const [calcRadius, setCalcRadius] = useState(5); // Ακτίνα ρ σε cm
-  const [calcHeight, setCalcHeight] = useState(10); // Ύψος υ σε cm
+  const [calcRadius, setCalcRadius] = useState(5); // Ακτίνα σε cm
+  const [calcHeight, setCalcHeight] = useState(10); // Ύψος σε cm
   const piVal = 3.14;
 
   const diameter = useMemo(() => calcRadius * 2, [calcRadius]);
@@ -67,50 +67,346 @@ export default function KilindrosTheoriaPage() {
   const totalAreaDm2 = useMemo(() => totalArea / 100, [totalArea]);
   const totalAreaM2 = useMemo(() => totalArea / 10000, [totalArea]);
 
+  // -------------------------------------------------------------------------
+  // Λεξικό Μεταφράσεων (i18n Dictionary)
+  // -------------------------------------------------------------------------
+  const translations = {
+    el: {
+      metaTitle: "Κύλινδρος: Ανάπτυγμα & Εμβαδόν Επιφάνειας - ΣΤ' Δημοτικού | LearnMaths.gr",
+      metaDesc: "Μαθαίνουμε για τον κύλινδρο, το ανάπτυγμά του, πώς υπολογίζουμε το εμβαδόν βάσεων, παράπλευρης και ολικής επιφάνειας με διαδραστικά εργαστήρια SVG.",
+      backText: "ΣΤ' Δημοτικού",
+      actionExercises: "🎯 Ασκήσεις",
+      chapterBadge: "ΚΕΦΑΛΑΙΟ 79 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+      heroTitle: "Ο Κύλινδρος • Ανάπτυγμα, Παράπλευρη & Ολική Επιφάνεια",
+      heroDesc: "Ανακαλύπτουμε τα μυστικά του κυλίνδρου! Βλέπουμε πώς ένα κονσερβοκούτι ή ένα βαρέλι «ξετυλίγεται» σε ένα ορθογώνιο παραλληλόγραμμο και δύο ίσους κυκλικούς δίσκους, και μαθαίνουμε να υπολογίζουμε με ευκολία το εμβαδόν των βάσεων, την παράπλευρη επιφάνεια και το ολικό εμβαδόν.",
+      heroFeature: "Θεωρία, Ανάπτυγμα, Παράπλευρη & Ολική Επιφάνεια & Διαδραστικά Εργαστήρια",
+      tryExercises: "Δοκίμασε τις Ασκήσεις",
+
+      stepsHeading: "Ο Κύλινδρος σε 4 Βήματα",
+      stepsSubheading: "Από τη δομή του στερεού μέχρι το ξετύλιγμα της παράπλευρης επιφάνειας και τον τελικό υπολογισμό.",
+
+      step1Badge: "ΒΗΜΑ 1",
+      step1Subtitle: "Στοιχεία Στερεού",
+      step1Title: "Τι είναι ο Κύλινδρος;",
+      step1P1: "Ο κύλινδρος είναι ένα σώμα εκ περιστροφής (δεν είναι πολύεδρο) που αποτελείται από:",
+      step1BasesTitle: "• 2 Παράλληλες Βάσεις:",
+      step1BasesDesc: "Δύο απολύτως ίσοι κυκλικοί δίσκοι με ακτίνα ρ (πάνω και κάτω βάση).",
+      step1LatTitle: "• 1 Καμπύλη Παράπλευρη Επιφάνεια:",
+      step1LatDesc: "Η κυρτή επιφάνεια που αγκαλιάζει τις δύο βάσεις με ύψος υ.",
+      step1Tip: "💡 Παραδείγματα στην καθημερινή ζωή: κονσέρβες, σωλήνες, κολόνες, ποτήρια, βαρέλια και μπαταρίες!",
+
+      step2Badge: "ΒΗΜΑ 2",
+      step2Subtitle: "Το Ανάπτυγμα",
+      step2Title: "Πώς Ξετυλίγεται ο Κύλινδρος;",
+      step2P1: "Αν «κόψουμε» κατακόρυφα την παράπλευρη επιφάνεια και την ανοίξουμε επίπεδα:",
+      step2L1: "1. Η παράπλευρη επιφάνεια γίνεται ένα ορθογώνιο παραλληλόγραμμο.",
+      step2Length: "• Μήκος ορθογωνίου: Ίσο με την περίμετρο του κύκλου της βάσης: 2 · π · ρ.",
+      step2Width: "• Πλάτος ορθογωνίου: Ίσο με το ύψος του κυλίνδρου: υ.",
+      step2L2: "Επίσης, συνδέονται οι δύο κυκλικοί δίσκοι των βάσεων (επάνω και κάτω).",
+      step2Tip: "⚡ Σκεφτείτε την ετικέτα μιας κονσέρβας: όταν την ξεκολλάμε, είναι ένα απλό ορθογώνιο χαρτί!",
+
+      step3Badge: "ΒΗΜΑ 3",
+      step3Subtitle: "Οι Τύποι",
+      step3Title: "Υπολογισμός Εμβαδών",
+      step3P1: "Χρησιμοποιούμε τον μαθηματικό αριθμό π ≈ 3,14 και την ακτίνα ρ:",
+      step3Base1: "• Εμβαδόν 1 Βάσης:",
+      step3Base1Formula: "Εβ ＝ π · ρ² ＝ 3,14 · ρ · ρ",
+      step3Base2: "• Εμβαδόν 2 Βάσεων:",
+      step3Base2Formula: "2 · Εβ ＝ 2 · (π · ρ²)",
+      step3Lat: "• Παράπλευρη Επιφάνεια:",
+      step3LatFormula: "Επ ＝ (2 · π · ρ) · υ",
+      step3Total: "• Ολική Επιφάνεια: Εολ ＝ Επ ＋ 2 · Εβ",
+      step3Tip: "🎯 Αν το δοχείο είναι ανοιχτό από πάνω (χωρίς καπάκι), υπολογίζουμε μόνο τη 1 βάση: Εολ ＝ Επ ＋ Εβ!",
+
+      step4Badge: "ΒΗΜΑ 4",
+      step4Subtitle: "Εφαρμογές",
+      step4Title: "Μονάδες & Προσοχή στη Διάμετρο",
+      step4P1: "Πρακτικοί κανόνες για σωστή επίλυση προβλημάτων:",
+      step4DiamRule: "• Αν δίνεται η διάμετρος (δ):",
+      step4DiamSub: "Βρίσκουμε πρώτα την ακτίνα: ρ ＝ δ : 2.",
+      step4UnitsRule: "• Μονάδες Επιφάνειας:",
+      step4UnitsSub: "1 m² ＝ 100 dm² ＝ 10.000 cm². Όλα τα εμβαδά μετριούνται σε τετραγωνικές μονάδες (cm², m²).",
+      step4Tip: "🚀 Βεβαιωθείτε ότι η ακτίνα ρ και το ύψος υ είναι εκφρασμένα στην ίδια μονάδα μέτρησης πριν πολλαπλασιάσετε!",
+
+      lab1Badge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1",
+      lab1Title: "Πώς Ανοίγει ο Κύλινδρος στο Ανάπτυγμά του; (SVG)",
+      lab1Desc: "Σύρε την μπάρα προόδου: Στο πρώτο στάδιο τα 2 καπάκια ανοίγουν πάνω και κάτω, και στο δεύτερο στάδιο η κυρτή επιφάνεια ξετυλίγεται σε ορθογώνιο διαστάσεων (2 · π · ρ) επί υ:",
+      lab1SliderLabel: "ΣΤΑΔΙΟ ΑΝΑΠΤΥΓΜΑΤΟΣ:",
+      lab1State0: "0% (Κύλινδρος)",
+      lab1State40: "40% (Άνοιγμα Καπακιών)",
+      lab1State100: "100% (Πλήρες Ανάπτυγμα)",
+      lab1Info0: "🔷 Στάδιο 0: Κλειστός κύλινδρος με 2 κυκλικές βάσεις και καμπύλη επιφάνεια.",
+      lab1InfoStage1: "🔄 Στάδιο 1: Τα δύο κυκλικά καπάκια ξεκουμπώνουν και ανοίγουν πάνω & κάτω...",
+      lab1InfoStage2: "🔄 Στάδιο 2: Η καμπύλη παράπλευρη επιφάνεια ξετυλίγεται ομαλά σε ορθογώνιο φύλλο...",
+      lab1InfoDone: "🟩 Ολοκληρώθηκε: 1 ορθογώνιο μήκους (2 · π · ρ) και 2 κυκλικές βάσεις!",
+      lab1SummaryRectLen: "Μήκος Ορθογωνίου: 2 · π · ρ ＝ 2 · 3,14 · 34 ≈ 214 px",
+      lab1SummaryRectHeight: "Ύψος Ορθογωνίου: Ύψος υ ＝ 80 px",
+      lab1SummaryLatArea: "Εμβαδόν Παράπλευρης: Επ ＝ (2 · π · ρ) · υ",
+      lab1SummaryTotArea: "Ολικό Εμβαδόν: Εολ ＝ Επ ＋ 2 · (π · ρ²)",
+      lab1SvgLatTitle: "Παράπλευρη Επιφάνεια",
+      lab1SvgUnrolling: "Ξετύλιγμα...",
+      lab1SvgLatFormula: "Επ ＝ (2 · π · ρ) · υ",
+      lab1SvgRadiusSym: "ρ",
+      lab1SvgBaseWord: "Βάση",
+      lab1SvgRectLenLabel: "Μήκος ＝ 2 · π · ρ",
+      lab1SvgHeightSym: "υ",
+      lab1StatusClosed: "Τα δύο καπάκια ξεκουμπώνουν πάνω και κάτω από τον κύλινδρο.",
+      lab1StatusUnrolling: "Τα καπάκια άνοιξαν και η παράπλευρη επιφάνεια απλώνει σε ορθογώνιο.",
+      lab1StatusComplete: "✓ Το ανάπτυγμα ολοκληρώθηκε: 1 ορθογώνιο (2 · π · ρ) · υ και 2 κυκλικές βάσεις π · ρ².",
+
+      lab2Badge: "📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΕΜΒΑΔΩΝ",
+      lab2Title: "Υπολογισμός Παράπλευρης & Ολικής Επιφάνειας",
+      lab2Desc: "Άλλαξε την ακτίνα (ρ) και το ύψος (υ) σε cm για να υπολογίσεις αυτόματα όλα τα εμβαδά του κυλίνδρου:",
+      lab2RadiusLabel: "ΑΚΤΙΝΑ ΒΑΣΗΣ (ρ):",
+      lab2HeightLabel: "ΥΨΟΣ ΚΥΛΙΝΔΡΟΥ (υ):",
+      lab2DiameterText: "Διάμετρος:",
+      lab2BaseCirc: "Περίμετρος βάσης: 2 · π · ρ ＝ 2 · 3,14 ·",
+      lab2OneBase: "Εμβαδόν 1 βάσης: π · ρ² ＝ 3,14 ·",
+      lab2TwoBases: "Εμβαδόν 2 βάσεων: 2 ·",
+      lab2LatArea: "Παράπλευρη επιφάνεια:",
+      lab2TotalHeader: "ΟΛΙΚΟ ΕΜΒΑΔΟΝ ΚΥΛΙΝΔΡΟΥ (Εολ ＝ Επ ＋ 2 · Εβ)",
+      lab2TotalSub: "({lat} cm² παράπλευρη ＋ {bases} cm² 2 βάσεις)",
+      lab2InDm2: "Σε dm² (: 100):",
+      lab2InM2: "Σε m² (: 10.000):",
+      lab2OpenWarning: "💡 Αν ο κύλινδρος είναι ανοιχτός από πάνω (π.χ. ποτήρι), το ολικό εμβαδόν είναι Επ ＋ Εβ ＝ {openArea} cm².",
+
+      probHeading: "Λυμένα Προβλήματα με Εμβαδόν Κυλίνδρου",
+      probSubheading: "Εφαρμογές των τύπων σε μεταλλικές κονσέρβες και βαρέλια αποθήκευσης.",
+
+      prob1Badge: "ΠΡΟΒΛΗΜΑ 1: ΕΤΙΚΕΤΑ ΚΟΝΣΕΡΒΑΣ",
+      prob1Subtitle: "Παράπλευρη Επιφάνεια",
+      prob1Title: "Υπολογισμός Χάρτινης Ετικέτας για Κονσέρβα",
+      prob1Text: "Μια κυλινδρική κονσέρβα έχει διάμετρο βάσης 10 cm και ύψος 12 cm. Πόσα τετραγωνικά εκατοστόμετρα (cm²) χαρτιού χρειάζονται για να καλυφθεί ολόκληρη η γύρω-γύρω επιφάνειά της (η ετικέτα); (Χρησιμοποιήστε π ＝ 3,14)",
+      prob1DataHeader: "ΔΕΔΟΜΕΝΑ ΠΡΟΒΛΗΜΑΤΟΣ",
+      prob1Diameter: "Διάμετρος (δ)",
+      prob1Radius: "Ακτίνα (ρ)",
+      prob1Height: "Ύψος (υ)",
+      prob1StepHeader: "Βήματα Επίλυσης:",
+      prob1Step1: "Η ετικέτα καλύπτει μόνο την παράπλευρη επιφάνεια (όχι τα καπάκια).",
+      prob1Step2: "Μήκος ετικέτας (περίμετρος βάσης): 2 · π · ρ ＝ 2 · 3,14 · 5 ＝ 31,4 cm.",
+      prob1Step3: "Εμβαδόν ετικέτας (Επ): 31,4 · 12 ＝ 376,8 cm².",
+      prob1Tip: "💡 Όταν μας ζητείται η ετικέτα, υπολογίζουμε αποκλειστικά την παράπλευρη επιφάνεια: Επ ＝ (2 · π · ρ) · υ!",
+
+      prob2Badge: "ΠΡΟΒΛΗΜΑ 2: ΒΑΨΙΜΟ ΒΑΡΕΛΙΟΥ",
+      prob2Subtitle: "Ολική Επιφάνεια",
+      prob2Title: "Βάψιμο Κλειστού Κυλινδρικού Βαρελιού",
+      prob2Text: "Ένα μεταλλικό κλειστό βαρέλι έχει ακτίνα βάσης 0,5 m και ύψος 2 m. Θέλουμε να βάψουμε ολόκληρη την εξωτερική του επιφάνεια (και τα δύο καπάκια και γύρω-γύρω). Πόσα m² θα βαφτούν; (π ＝ 3,14)",
+      prob2DataHeader: "ΣΤΟΙΧΕΙΑ ΥΠΟΛΟΓΙΣΜΟΥ",
+      prob2Radius: "Ακτίνα (ρ)",
+      prob2Height: "Ύψος (υ)",
+      prob2Formula: "Τύπος",
+      prob2StepHeader: "Βήματα Επίλυσης:",
+      prob2Step1: "Παράπλευρη επιφάνεια: 2 · 3,14 · 0,5 · 2 ＝ 3,14 · 2 ＝ 6,28 m².",
+      prob2Step2: "Εμβαδόν 1 βάσης: 3,14 · 0,5 · 0,5 ＝ 3,14 · 0,25 ＝ 0,785 m².",
+      prob2Step3: "Εμβαδόν 2 βάσεων: 2 · 0,785 ＝ 1,57 m².",
+      prob2Step4: "Ολική επιφάνεια: 6,28 ＋ 1,57 ＝ 7,85 m².",
+      prob2Tip: "⚡ Επειδή το βαρέλι είναι κλειστό, προσθέτουμε οπωσδήποτε και τις 2 κυκλικές βάσεις (καπάκια)!",
+
+      alertTitle: "ΠΡΟΣΟΧΗ / ΣΥΝΗΘΗ ΛΑΘΗ ΠΟΥ ΠΡΕΠΕΙ ΝΑ ΑΠΟΦΕΥΓΕΤΕ",
+      alertL1Bold: "Μην ξεχνάτε ότι οι βάσεις είναι ΔΥΟ:",
+      alertL1Text: " Στην ολική επιφάνεια του κλειστού κυλίνδρου προσθέτουμε δύο βάσεις: Εολ ＝ Επ ＋ 2 · Εβ (όχι μόνο μία).",
+      alertL2Bold: "Μην μπερδεύετε το 2 · π · ρ με το π · ρ²:",
+      alertL2Text: " Το 2 · π · ρ είναι το μήκος της περιφέρειας (το μήκος του ορθογωνίου). Το π · ρ² είναι το εμβαδόν του κυκλικού δίσκου (της βάσης).",
+      alertL3Bold: "Αν δίνεται η διάμετρος:",
+      alertL3Text: " Πάντα πρώτα διαιρούμε με το 2 για να βρούμε την ακτίνα ρ: ρ ＝ δ : 2.",
+      alertL4Bold: "Ανοιχτά δοχεία:",
+      alertL4Text: " Προσέξτε την εκφώνηση! Αν το δοχείο είναι ανοιχτό από πάνω (όπως ένα ποτήρι ή κουβάς), έχει μόνο 1 βάση. Αν είναι σωλήνας ανοιχτός και από τις δύο μεριές, υπολογίζουμε μόνο την παράπλευρη επιφάνεια.",
+
+      ctaTitle: "Ώρα για Εξάσκηση στον Κύλινδρο!",
+      ctaDesc: "Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς παράπλευρης επιφάνειας, βάσεων και ολικού εμβαδού κυλίνδρου για τη ΣΤ' Δημοτικού.",
+      ctaButton: "Έναρξη Ασκήσεων"
+    },
+    en: {
+      metaTitle: "Cylinder: Net & Surface Area - 6th Grade | LearnMaths.gr",
+      metaDesc: "Learn about the cylinder, its geometric net, how to calculate base areas, lateral surface area, and total surface area with interactive SVG models.",
+      backText: "6th Grade",
+      actionExercises: "🎯 Exercises",
+      chapterBadge: "CHAPTER 79 • 6TH GRADE",
+      heroTitle: "The Cylinder • Net, Lateral & Total Surface Area",
+      heroDesc: "Discover the geometry of cylinders! Observe how a metal can or barrel unfolds into a flat rectangle and two congruent circular discs, and learn how to easily compute base areas, lateral surface area, and total area.",
+      heroFeature: "Theory, Cylinder Net, Lateral & Total Area & Interactive Labs",
+      tryExercises: "Try Exercises",
+
+      stepsHeading: "The Cylinder in 4 Steps",
+      stepsSubheading: "From solid structure to lateral surface unrolling and total area formulas.",
+
+      step1Badge: "STEP 1",
+      step1Subtitle: "Solid Components",
+      step1Title: "What is a Cylinder?",
+      step1P1: "A cylinder is a solid of revolution (not a polyhedron) formed by:",
+      step1BasesTitle: "• 2 Parallel Bases:",
+      step1BasesDesc: "Two identical circular discs of radius r (top and bottom bases).",
+      step1LatTitle: "• 1 Curved Lateral Surface:",
+      step1LatDesc: "The curved surface wrapping the two bases with height h.",
+      step1Tip: "💡 Real-life examples: tin cans, pipes, pillars, drinking glasses, barrels, and batteries!",
+
+      step2Badge: "STEP 2",
+      step2Subtitle: "The Net",
+      step2Title: "How Does a Cylinder Unroll?",
+      step2P1: "If we slice the lateral curved surface vertically and flatten it out:",
+      step2L1: "1. The lateral surface becomes a flat rectangle.",
+      step2Length: "• Rectangle length: Equal to base circumference: 2 · π · r.",
+      step2Width: "• Rectangle width: Equal to cylinder height: h.",
+      step2L2: "The two circular discs (bases) remain attached at top and bottom.",
+      step2Tip: "⚡ Think of a tin can label: once peeled off, it is simply a flat rectangular sheet!",
+
+      step3Badge: "STEP 3",
+      step3Subtitle: "The Formulas",
+      step3Title: "Area Calculations",
+      step3P1: "Using the constant π ≈ 3.14 and radius r:",
+      step3Base1: "• 1 Base Area:",
+      step3Base1Formula: "Abase ＝ π · r² ＝ 3.14 · r · r",
+      step3Base2: "• 2 Bases Area:",
+      step3Base2Formula: "2 · Abase ＝ 2 · (π · r²)",
+      step3Lat: "• Lateral Surface Area:",
+      step3LatFormula: "Alat ＝ (2 · π · r) · h",
+      step3Total: "• Total Surface Area: Atot ＝ Alat ＋ 2 · Abase",
+      step3Tip: "🎯 If a container has no lid (open at top), add only 1 base: Atot ＝ Alat ＋ Abase!",
+
+      step4Badge: "STEP 4",
+      step4Subtitle: "Applications",
+      step4Title: "Units & Diameter Caution",
+      step4P1: "Essential problem-solving guidelines:",
+      step4DiamRule: "• When diameter (d) is given:",
+      step4DiamSub: "Always find the radius first: r ＝ d : 2.",
+      step4UnitsRule: "• Area Units:",
+      step4UnitsSub: "1 m² ＝ 100 dm² ＝ 10,000 cm². All areas are measured in square units (cm², m²).",
+      step4Tip: "🚀 Make sure radius r and height h share the same unit of length before calculating!",
+
+      lab1Badge: "🔬 INTERACTIVE LAB 1",
+      lab1Title: "How the Cylinder Unfolds into its Net (SVG)",
+      lab1Desc: "Drag the progress slider: First, the two lids open upwards and downwards. Second, the curved surface unrolls into a rectangle of dimensions (2 · π · r) by h:",
+      lab1SliderLabel: "NET PROGRESS:",
+      lab1State0: "0% (Cylinder)",
+      lab1State40: "40% (Lids Open)",
+      lab1State100: "100% (Complete Net)",
+      lab1Info0: "🔷 Stage 0: Closed cylinder with 2 circular bases and curved lateral surface.",
+      lab1InfoStage1: "🔄 Stage 1: The two circular lids unclip and open up and down...",
+      lab1InfoStage2: "🔄 Stage 2: The curved surface unrolls smoothly into a flat rectangle...",
+      lab1InfoDone: "🟩 Complete: 1 rectangle of length (2 · π · r) and 2 circular bases!",
+      lab1SummaryRectLen: "Rectangle Length: 2 · π · r ＝ 2 · 3.14 · 34 ≈ 214 px",
+      lab1SummaryRectHeight: "Rectangle Height: Height h ＝ 80 px",
+      lab1SummaryLatArea: "Lateral Area: Alat ＝ (2 · π · r) · h",
+      lab1SummaryTotArea: "Total Area: Atot ＝ Alat ＋ 2 · (π · r²)",
+      lab1SvgLatTitle: "Lateral Surface",
+      lab1SvgUnrolling: "Unrolling...",
+      lab1SvgLatFormula: "Alat ＝ (2 · π · r) · h",
+      lab1SvgRadiusSym: "r",
+      lab1SvgBaseWord: "Base",
+      lab1SvgRectLenLabel: "Length ＝ 2 · π · r",
+      lab1SvgHeightSym: "h",
+      lab1StatusClosed: "The two circular lids unclip from the cylinder.",
+      lab1StatusUnrolling: "The lids opened and the lateral surface is flattening into a rectangle.",
+      lab1StatusComplete: "✓ Net complete: 1 rectangle (2 · π · r) · h and 2 circular bases π · r².",
+
+      lab2Badge: "📐 INTERACTIVE LAB 2: AREA CALCULATOR",
+      lab2Title: "Lateral & Total Area Calculator",
+      lab2Desc: "Adjust radius (r) and height (h) in cm to automatically compute all cylinder areas:",
+      lab2RadiusLabel: "BASE RADIUS (r):",
+      lab2HeightLabel: "CYLINDER HEIGHT (h):",
+      lab2DiameterText: "Diameter:",
+      lab2BaseCirc: "Base perimeter: 2 · π · r ＝ 2 · 3.14 ·",
+      lab2OneBase: "1 Base area: π · r² ＝ 3.14 ·",
+      lab2TwoBases: "2 Bases area: 2 ·",
+      lab2LatArea: "Lateral area:",
+      lab2TotalHeader: "TOTAL CYLINDER AREA (Atot ＝ Alat ＋ 2 · Abase)",
+      lab2TotalSub: "({lat} cm² lateral ＋ {bases} cm² 2 bases)",
+      lab2InDm2: "In dm² (: 100):",
+      lab2InM2: "In m² (: 10,000):",
+      lab2OpenWarning: "💡 If the cylinder is open at top (e.g., cup), total area is Alat ＋ Abase ＝ {openArea} cm².",
+
+      probHeading: "Solved Cylinder Problems",
+      probSubheading: "Practical formulas applied to cans and storage barrels.",
+
+      prob1Badge: "PROBLEM 1: CAN LABEL",
+      prob1Subtitle: "Lateral Surface Area",
+      prob1Title: "Calculating Paper Label for a Can",
+      prob1Text: "A cylindrical tin can has a base diameter of 10 cm and a height of 12 cm. How many square centimeters (cm²) of paper are needed to cover its side surface (the label)? (Use π ＝ 3.14)",
+      prob1DataHeader: "PROBLEM DATA",
+      prob1Diameter: "Diameter (d)",
+      prob1Radius: "Radius (r)",
+      prob1Height: "Height (h)",
+      prob1StepHeader: "Solution Steps:",
+      prob1Step1: "The label covers only the lateral surface (not the top or bottom lids).",
+      prob1Step2: "Label length (base circumference): 2 · π · r ＝ 2 · 3.14 · 5 ＝ 31.4 cm.",
+      prob1Step3: "Label area (Alat): 31.4 · 12 ＝ 376.8 cm².",
+      prob1Tip: "💡 When asked for a label, compute strictly the lateral surface area: Alat ＝ (2 · π · r) · h!",
+
+      prob2Badge: "PROBLEM 2: PAINTING A BARREL",
+      prob2Subtitle: "Total Surface Area",
+      prob2Title: "Painting a Closed Cylindrical Barrel",
+      prob2Text: "A closed metal barrel has a base radius of 0.5 m and a height of 2 m. We want to paint its entire exterior surface (both lids and side). How many m² will be painted? (π ＝ 3.14)",
+      prob2DataHeader: "CALCULATION ELEMENTS",
+      prob2Radius: "Radius (r)",
+      prob2Height: "Height (h)",
+      prob2Formula: "Formula",
+      prob2StepHeader: "Solution Steps:",
+      prob2Step1: "Lateral surface area: 2 · 3.14 · 0.5 · 2 ＝ 3.14 · 2 ＝ 6.28 m².",
+      prob2Step2: "1 Base area: 3.14 · 0.5 · 0.5 ＝ 3.14 · 0.25 ＝ 0.785 m².",
+      prob2Step3: "2 Bases area: 2 · 0.785 ＝ 1.57 m².",
+      prob2Step4: "Total surface area: 6.28 ＋ 1.57 ＝ 7.85 m².",
+      prob2Tip: "⚡ Since the barrel is closed, always include both circular bases (top and bottom lids)!",
+
+      alertTitle: "CAUTION / COMMON PITFALLS TO AVOID",
+      alertL1Bold: "Remember that there are TWO bases:",
+      alertL1Text: " In a closed cylinder, add both bases to the lateral area: Atot ＝ Alat ＋ 2 · Abase (not just one).",
+      alertL2Bold: "Do not confuse 2 · π · r with π · r²:",
+      alertL2Text: " 2 · π · r is the circumference of the circle (length of the rectangle). π · r² is the flat area of the circular base.",
+      alertL3Bold: "When diameter is given:",
+      alertL3Text: " Always divide by 2 first to find the radius r: r ＝ d : 2.",
+      alertL4Bold: "Open containers:",
+      alertL4Text: " Pay attention to the wording! If a container is open at the top (like a glass or bucket), it has only 1 base. If it is an open pipe on both sides, compute only the lateral area.",
+
+      ctaTitle: "Time to Practice Cylinder Problems!",
+      ctaDesc: "Test your skills with 12 interactive exercises on lateral area, base calculations, and total cylinder surface area for 6th Grade.",
+      ctaButton: "Start Exercises"
+    }
+  };
+
+  const tLoc = translations[locale] || translations.el;
+
   return (
     <Layout
-      title="Κύλινδρος: Ανάπτυγμα &amp; Εμβαδόν Επιφάνειας - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε για τον κύλινδρο, το ανάπτυγμά του, πώς υπολογίζουμε το εμβαδόν βάσεων, παράπλευρης και ολικής επιφάνειας με διαδραστικά εργαστήρια SVG."
+      title={tLoc.metaTitle}
+      description={tLoc.metaDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={tLoc.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/79-kilindros-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{tLoc.actionExercises}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 79 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{tLoc.chapterBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ο Κύλινδρος • Ανάπτυγμα, Παράπλευρη &amp; Ολική Επιφάνεια
+              {tLoc.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε τα μυστικά του κυλίνδρου! Βλέπουμε πώς ένα κονσερβοκούτι ή ένα βαρέλι «ξετυλίγεται» σε ένα 
-              <strong> ορθογώνιο παραλληλόγραμμο</strong> και <strong>δύο ίσους κυκλικούς δίσκους</strong>, 
-              και μαθαίνουμε να υπολογίζουμε με ευκολία το <strong>εμβαδόν των βάσεων</strong>, την <strong>παράπλευρη επιφάνεια</strong> και το <strong>ολικό εμβαδόν</strong>.
+              {tLoc.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Ανάπτυγμα, Παράπλευρη &amp; Ολική Επιφάνεια &amp; Διαδραστικά Εργαστήρια</span>
+              <span>{tLoc.heroFeature}</span>
             </div>
             <Link
               href="/st-dimotikou/79-kilindros-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{tLoc.tryExercises}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -120,10 +416,10 @@ export default function KilindrosTheoriaPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Ο Κύλινδρος σε 4 Βήματα
+              {tLoc.stepsHeading}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Από τη δομή του στερεού μέχρι το ξετύλιγμα της παράπλευρης επιφάνειας και τον τελικό υπολογισμό.
+              {tLoc.stepsSubheading}
             </p>
           </div>
 
@@ -134,35 +430,35 @@ export default function KilindrosTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {tLoc.step1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Στοιχεία Στερεού</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{tLoc.step1Subtitle}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Τι είναι ο Κύλινδρος;
+                  {tLoc.step1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Ο κύλινδρος είναι ένα σώμα εκ περιστροφής (δεν είναι πολύεδρο) που αποτελείται από:
+                  {tLoc.step1P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
                   <div className="text-indigo-950 font-bold">
-                    • 2 Παράλληλες Βάσεις:
+                    {tLoc.step1BasesTitle}
                   </div>
                   <div className="text-slate-700 text-xs font-sans">
-                    Δύο απολύτως ίσοι κυκλικοί δίσκοι με ακτίνα <strong>ρ</strong> (πάνω και κάτω βάση).
+                    {tLoc.step1BasesDesc}
                   </div>
                   <div className="text-indigo-950 font-bold pt-1 border-t border-slate-200">
-                    • 1 Καμπύλη Παράπλευρη Επιφάνεια:
+                    {tLoc.step1LatTitle}
                   </div>
                   <div className="text-slate-700 text-xs font-sans">
-                    Η κυρτή επιφάνεια που αγκαλιάζει τις δύο βάσεις με ύψος <strong>υ</strong>.
+                    {tLoc.step1LatDesc}
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Παραδείγματα στην καθημερινή ζωή: κονσέρβες, σωλήνες, κολόνες, ποτήρια, βαρέλια και μπαταρίες!
+                {tLoc.step1Tip}
               </div>
             </article>
 
@@ -171,35 +467,29 @@ export default function KilindrosTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {tLoc.step2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Το Ανάπτυγμα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{tLoc.step2Subtitle}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Πώς Ξετυλίγεται ο Κύλινδρος;
+                  {tLoc.step2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αν «κόψουμε» κατακόρυφα την παράπλευρη επιφάνεια και την ανοίξουμε επίπεδα:
+                  {tLoc.step2P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
-                  <div>
-                    1. Η παράπλευρη επιφάνεια γίνεται ένα <strong>ορθογώνιο παραλληλόγραμμο</strong>.
-                  </div>
-                  <div className="font-mono text-xs">
-                    • <strong>Μήκος ορθογωνίου:</strong> Ίσο με την περίμετρο του κύκλου της βάσης: <strong>2 · π · ρ</strong>.
-                  </div>
-                  <div className="font-mono text-xs">
-                    • <strong>Πλάτος ορθογωνίου:</strong> Ίσο με το ύψος του κυλίνδρου: <strong>υ</strong>.
-                  </div>
+                  <div>{tLoc.step2L1}</div>
+                  <div className="font-mono text-xs">{tLoc.step2Length}</div>
+                  <div className="font-mono text-xs">{tLoc.step2Width}</div>
                   <div className="text-amber-950 font-bold pt-1 border-t border-slate-200">
-                    Επίσης, συνδέονται οι δύο κυκλικοί δίσκοι των βάσεων (επάνω και κάτω).
+                    {tLoc.step2L2}
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Σκεφτείτε την ετικέτα μιας κονσέρβας: όταν την ξεκολλάμε, είναι ένα απλό ορθογώνιο χαρτί!
+                {tLoc.step2Tip}
               </div>
             </article>
 
@@ -208,38 +498,38 @@ export default function KilindrosTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {tLoc.step3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Οι Τύποι</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{tLoc.step3Subtitle}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Υπολογισμός Εμβαδών
+                  {tLoc.step3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Χρησιμοποιούμε τον μαθηματικό αριθμό <strong>π ≈ 3,14</strong> και την ακτίνα <strong>ρ</strong>:
+                  {tLoc.step3P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
                   <div>
-                    • <strong>Εμβαδόν 1 Βάσης:</strong><br />
-                    Εβ ＝ π · ρ² ＝ 3,14 · ρ · ρ
+                    <strong>{tLoc.step3Base1}</strong><br />
+                    {tLoc.step3Base1Formula}
                   </div>
                   <div>
-                    • <strong>Εμβαδόν 2 Βάσεων:</strong><br />
-                    2 · Εβ ＝ 2 · (π · ρ²)
+                    <strong>{tLoc.step3Base2}</strong><br />
+                    {tLoc.step3Base2Formula}
                   </div>
                   <div>
-                    • <strong>Παράπλευρη Επιφάνεια:</strong><br />
-                    Επ ＝ (2 · π · ρ) · υ
+                    <strong>{tLoc.step3Lat}</strong><br />
+                    {tLoc.step3LatFormula}
                   </div>
                   <div className="text-indigo-950 font-black pt-1 border-t border-slate-200">
-                    • Ολική Επιφάνεια: Εολ ＝ Επ ＋ 2 · Εβ
+                    {tLoc.step3Total}
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Αν το δοχείο είναι ανοιχτό από πάνω (χωρίς καπάκι), υπολογίζουμε μόνο τη 1 βάση: Εολ ＝ Επ ＋ Εβ!
+                {tLoc.step3Tip}
               </div>
             </article>
 
@@ -248,32 +538,31 @@ export default function KilindrosTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 4
+                    {tLoc.step4Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Εφαρμογές</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{tLoc.step4Subtitle}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Μονάδες &amp; Προσοχή στη Διάμετρο
+                  {tLoc.step4Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Πρακτικοί κανόνες για σωστή επίλυση προβλημάτων:
+                  {tLoc.step4P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
                   <div>
-                    • <strong>Αν δίνεται η διάμετρος (δ):</strong><br />
-                    Βρίσκουμε πρώτα την ακτίνα: <strong>ρ ＝ δ : 2</strong>.
+                    <strong>{tLoc.step4DiamRule}</strong><br />
+                    {tLoc.step4DiamSub}
                   </div>
                   <div>
-                    • <strong>Μονάδες Επιφάνειας:</strong><br />
-                    1 m² ＝ 100 dm² ＝ 10.000 cm².<br />
-                    Όλα τα εμβαδά μετριούνται σε τετραγωνικές μονάδες (cm², m²).
+                    <strong>{tLoc.step4UnitsRule}</strong><br />
+                    {tLoc.step4UnitsSub}
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Βεβαιωθείτε ότι η ακτίνα ρ και το ύψος υ είναι εκφρασμένα στην ίδια μονάδα μέτρησης πριν πολλαπλασιάσετε!
+                {tLoc.step4Tip}
               </div>
             </article>
 
@@ -284,13 +573,13 @@ export default function KilindrosTheoriaPage() {
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-              <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
+              <span>{tLoc.lab1Badge}</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς Ανοίγει ο Κύλινδρος στο Ανάπτυγμά του; (SVG)
+              {tLoc.lab1Title}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα προόδου: Στο πρώτο στάδιο τα 2 καπάκια ανοίγουν πάνω και κάτω, και στο δεύτερο στάδιο η κυρτή επιφάνεια ξετυλίγεται σε ορθογώνιο διαστάσεων (2 · π · ρ) επί υ:
+              {tLoc.lab1Desc}
             </p>
           </div>
 
@@ -300,7 +589,7 @@ export default function KilindrosTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΣΤΑΔΙΟ ΑΝΑΠΤΥΓΜΑΤΟΣ:</span>
+                  <span>{tLoc.lab1SliderLabel}</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {animProgress}%
                   </span>
@@ -315,30 +604,32 @@ export default function KilindrosTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (Κύλινδρος)</span>
-                  <span>40% (Άνοιγμα Καπακιών)</span>
-                  <span>100% (Πλήρες Ανάπτυγμα)</span>
+                  <span>{tLoc.lab1State0}</span>
+                  <span>{tLoc.lab1State40}</span>
+                  <span>{tLoc.lab1State100}</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {animProgress === 0 && '🔷 Στάδιο 0: Κλειστός κύλινδρος με 2 κυκλικές βάσεις και καμπύλη επιφάνεια.'}
-                  {animProgress > 0 && animProgress < 40 && '🔄 Στάδιο 1: Τα δύο κυκλικά καπάκια ξεκουμπώνουν και ανοίγουν πάνω & κάτω...'}
-                  {animProgress >= 40 && animProgress < 100 && '🔄 Στάδιο 2: Η καμπύλη παράπλευρη επιφάνεια ξετυλίγεται ομαλά σε ορθογώνιο φύλλο...'}
-                  {animProgress === 100 && '🟩 Ολοκληρώθηκε: 1 ορθογώνιο μήκους (2 · π · ρ) και 2 κυκλικές βάσεις!'}
+                  {animProgress === 0 && tLoc.lab1Info0}
+                  {animProgress > 0 && animProgress < 40 && tLoc.lab1InfoStage1}
+                  {animProgress >= 40 && animProgress < 100 && tLoc.lab1InfoStage2}
+                  {animProgress === 100 && tLoc.lab1InfoDone}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• <strong>Μήκος Ορθογωνίου:</strong> 2 · π · ρ ＝ 2 · 3,14 · {radiusR} ≈ <strong>{Math.round(rectW)} px</strong></div>
-                  <div>• <strong>Ύψος Ορθογωνίου:</strong> Ύψος υ ＝ <strong>{heightH} px</strong></div>
-                  <div>• <strong>Εμβαδόν Παράπλευρης:</strong> Επ ＝ (2 · π · ρ) · υ</div>
-                  <div className="text-indigo-900 font-bold">• <strong>Ολικό Εμβαδόν:</strong> Εολ ＝ Επ ＋ 2 · (π · ρ²)</div>
+                  <div><strong>{tLoc.lab1SummaryRectLen}</strong></div>
+                  <div><strong>{tLoc.lab1SummaryRectHeight}</strong></div>
+                  <div><strong>{tLoc.lab1SummaryLatArea}</strong></div>
+                  <div className="text-indigo-900 font-bold">
+                    <strong>{tLoc.lab1SummaryTotArea}</strong>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* SVG Visualizer με Αυξημένο Κάθετο Χώρο (7 στήλες) */}
+            {/* SVG Visualizer (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 min-h-[400px] p-6 rounded-3xl border border-slate-800 flex flex-col items-center justify-center">
               <svg
                 viewBox="0 0 440 330"
@@ -364,7 +655,7 @@ export default function KilindrosTheoriaPage() {
                   </g>
                 )}
 
-                {/* Ετικέτα Παράπλευρης Επιφάνειας σε 2 καθαρές γραμμές ώστε να μην εξέχει */}
+                {/* Ετικέτα Παράπλευρης Επιφάνειας */}
                 {animProgress > 45 && (
                   <g>
                     <text
@@ -375,7 +666,7 @@ export default function KilindrosTheoriaPage() {
                       fontWeight="bold"
                       textAnchor="middle"
                     >
-                      {animProgress === 100 ? 'Παράπλευρη Επιφάνεια' : 'Ξετύλιγμα...'}
+                      {animProgress === 100 ? tLoc.lab1SvgLatTitle : tLoc.lab1SvgUnrolling}
                     </text>
                     {animProgress === 100 && (
                       <text
@@ -386,7 +677,7 @@ export default function KilindrosTheoriaPage() {
                         fontWeight="black"
                         textAnchor="middle"
                       >
-                        Επ ＝ (2 · π · ρ) · υ
+                        {tLoc.lab1SvgLatFormula}
                       </text>
                     )}
                   </g>
@@ -408,16 +699,16 @@ export default function KilindrosTheoriaPage() {
                       <line x1="0" y1="0" x2={radiusR} y2="0" stroke="#f59e0b" strokeWidth="2" />
                       <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
                       <text x={radiusR / 2} y="-6" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="middle">
-                        ρ
+                        {tLoc.lab1SvgRadiusSym}
                       </text>
                       <text x="0" y="14" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                        Βάση
+                        {tLoc.lab1SvgBaseWord}
                       </text>
                     </>
                   )}
                 </g>
 
-                {/* 3. Κάτω Κυκλική Βάση (Μωβ - με αρκετό κενό ώστε να μην τέμνει το κείμενο) */}
+                {/* 3. Κάτω Κυκλική Βάση (Μωβ) */}
                 <g transform={`translate(${centerX}, ${topY + heightH + capBottomOffset})`}>
                   <ellipse
                     cx="0"
@@ -430,7 +721,7 @@ export default function KilindrosTheoriaPage() {
                   />
                   {animProgress > 20 && (
                     <text x="0" y="4" fill="#ffffff" fontSize="10" fontWeight="bold" textAnchor="middle">
-                      Βάση
+                      {tLoc.lab1SvgBaseWord}
                     </text>
                   )}
                 </g>
@@ -438,16 +729,16 @@ export default function KilindrosTheoriaPage() {
                 {/* 4. Ετικέτες & Διαστάσεις Αναπτύγματος στο 100% */}
                 {animProgress === 100 && (
                   <g>
-                    {/* Ένδειξη Μήκους Ορθογωνίου (με ασφαλή απόσταση πριν την κάτω βάση) */}
+                    {/* Ένδειξη Μήκους Ορθογωνίου */}
                     <line x1={centerX - rectW / 2} y1={topY + heightH + 12} x2={centerX + rectW / 2} y2={topY + heightH + 12} stroke="#38bdf8" strokeWidth="1.5" />
                     <text x={centerX} y={topY + heightH + 26} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
-                      Μήκος ＝ 2 · π · ρ
+                      {tLoc.lab1SvgRectLenLabel}
                     </text>
 
-                    {/* Ένδειξη Ύψους υ (στα δεξιά του ορθογωνίου) */}
+                    {/* Ένδειξη Ύψους υ */}
                     <line x1={centerX + rectW / 2 + 14} y1={topY} x2={centerX + rectW / 2 + 14} y2={topY + heightH} stroke="#f59e0b" strokeWidth="2" />
                     <text x={centerX + rectW / 2 + 24} y={topY + heightH / 2 + 5} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="start">
-                      υ
+                      {tLoc.lab1SvgHeightSym}
                     </text>
                   </g>
                 )}
@@ -457,7 +748,7 @@ export default function KilindrosTheoriaPage() {
                   <g>
                     <line x1={centerX + radiusR + 14} y1={topY} x2={centerX + radiusR + 14} y2={topY + heightH} stroke="#f59e0b" strokeWidth="2" />
                     <text x={centerX + radiusR + 24} y={topY + heightH / 2 + 5} fill="#f59e0b" fontSize="13" fontWeight="black" textAnchor="start">
-                      υ
+                      {tLoc.lab1SvgHeightSym}
                     </text>
                   </g>
                 )}
@@ -465,10 +756,10 @@ export default function KilindrosTheoriaPage() {
 
               <div className="mt-3 text-center text-xs text-slate-400">
                 {animProgress === 100
-                  ? '✓ Το ανάπτυγμα ολοκληρώθηκε: 1 ορθογώνιο (2 · π · ρ) · υ και 2 κυκλικές βάσεις π · ρ².'
+                  ? tLoc.lab1StatusComplete
                   : animProgress >= 40
-                  ? 'Τα καπάκια άνοιξαν και η παράπλευρη επιφάνεια απλώνει σε ορθογώνιο.'
-                  : 'Τα δύο καπάκια ξεκουμπώνουν πάνω και κάτω από τον κύλινδρο.'}
+                  ? tLoc.lab1StatusUnrolling
+                  : tLoc.lab1StatusClosed}
               </div>
             </div>
 
@@ -479,13 +770,13 @@ export default function KilindrosTheoriaPage() {
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ ΕΜΒΑΔΩΝ</span>
+              <span>{tLoc.lab2Badge}</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Υπολογισμός Παράπλευρης &amp; Ολικής Επιφάνειας
+              {tLoc.lab2Title}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Άλλαξε την ακτίνα (ρ) και το ύψος (υ) σε cm για να υπολογίσεις αυτόματα όλα τα εμβαδά του κυλίνδρου:
+              {tLoc.lab2Desc}
             </p>
           </div>
 
@@ -495,7 +786,7 @@ export default function KilindrosTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΑΚΤΙΝΑ ΒΑΣΗΣ (ρ):</span>
+                  <span>{tLoc.lab2RadiusLabel}</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {calcRadius} cm
                   </span>
@@ -511,14 +802,14 @@ export default function KilindrosTheoriaPage() {
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
                   <span>1 cm</span>
-                  <span>Διάμετρος: {diameter} cm</span>
+                  <span>{tLoc.lab2DiameterText} {diameter} cm</span>
                   <span>20 cm</span>
                 </div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΥΨΟΣ ΚΥΛΙΝΔΡΟΥ (υ):</span>
+                  <span>{tLoc.lab2HeightLabel}</span>
                   <span className="font-mono text-base font-black text-sky-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
                     {calcHeight} cm
                   </span>
@@ -535,41 +826,43 @@ export default function KilindrosTheoriaPage() {
               </div>
 
               <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 font-mono space-y-1.5">
-                <div>• Περίμετρος βάσης: 2 · π · ρ ＝ 2 · 3,14 · {calcRadius} ＝ <strong>{formatNum(baseCircumference)} cm</strong></div>
-                <div>• Εμβαδόν 1 βάσης: π · ρ² ＝ 3,14 · {calcRadius} · {calcRadius} ＝ <strong>{formatNum(oneBaseArea)} cm²</strong></div>
-                <div>• Εμβαδόν 2 βάσεων: 2 · {formatNum(oneBaseArea)} ＝ <strong>{formatNum(twoBasesArea)} cm²</strong></div>
-                <div className="text-indigo-900 font-bold">• Παράπλευρη επιφάνεια: {formatNum(baseCircumference)} · {calcHeight} ＝ <strong>{formatNum(lateralArea)} cm²</strong></div>
+                <div>{tLoc.lab2BaseCirc} {calcRadius} ＝ <strong>{formatNum(baseCircumference, locale)} cm</strong></div>
+                <div>{tLoc.lab2OneBase} {calcRadius} · {calcRadius} ＝ <strong>{formatNum(oneBaseArea, locale)} cm²</strong></div>
+                <div>{tLoc.lab2TwoBases} {formatNum(oneBaseArea, locale)} ＝ <strong>{formatNum(twoBasesArea, locale)} cm²</strong></div>
+                <div className="text-indigo-900 font-bold">{tLoc.lab2LatArea} {formatNum(baseCircumference, locale)} · {calcHeight} ＝ <strong>{formatNum(lateralArea, locale)} cm²</strong></div>
               </div>
             </div>
 
             {/* Αποτελέσματα Ολικής Επιφάνειας (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 p-5 sm:p-7 rounded-3xl border border-slate-800 text-white space-y-3">
               <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider text-center">
-                ΟΛΙΚΟ ΕΜΒΑΔΟΝ ΚΥΛΙΝΔΡΟΥ (Εολ ＝ Επ ＋ 2 · Εβ)
+                {tLoc.lab2TotalHeader}
               </span>
 
               <div className="text-center py-2">
                 <span className="text-3xl sm:text-4xl font-black font-mono text-emerald-400">
-                  {formatNum(totalArea)} cm²
+                  {formatNum(totalArea, locale)} cm²
                 </span>
                 <span className="text-xs text-slate-400 block mt-1 font-sans">
-                  {formatNum(lateralArea)} cm² (παράπλευρη) ＋ {formatNum(twoBasesArea)} cm² (2 βάσεις)
+                  {tLoc.lab2TotalSub
+                    .replace('{lat}', formatNum(lateralArea, locale))
+                    .replace('{bases}', formatNum(twoBasesArea, locale))}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs sm:text-sm pt-2 border-t border-slate-800">
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε dm² (: 100):</span>
-                  <span className="text-amber-400 font-black text-base">{formatNum(totalAreaDm2)} dm²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{tLoc.lab2InDm2}</span>
+                  <span className="text-amber-400 font-black text-base">{formatNum(totalAreaDm2, locale)} dm²</span>
                 </div>
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε m² (: 10.000):</span>
-                  <span className="text-purple-400 font-black text-base">{formatNum(totalAreaM2)} m²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{tLoc.lab2InM2}</span>
+                  <span className="text-purple-400 font-black text-base">{formatNum(totalAreaM2, locale)} m²</span>
                 </div>
               </div>
 
               <div className="text-[11px] text-slate-400 text-center pt-1 font-sans">
-                💡 Αν ο κύλινδρος είναι ανοιχτός από πάνω (π.χ. ποτήρι), το ολικό εμβαδόν είναι Επ ＋ Εβ ＝ {formatNum(lateralArea + oneBaseArea)} cm².
+                {tLoc.lab2OpenWarning.replace('{openArea}', formatNum(lateralArea + oneBaseArea, locale))}
               </div>
             </div>
 
@@ -580,10 +873,10 @@ export default function KilindrosTheoriaPage() {
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Προβλήματα με Εμβαδόν Κυλίνδρου
+              {tLoc.probHeading}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Εφαρμογές των τύπων σε μεταλλικές κονσέρβες και βαρέλια αποθήκευσης.
+              {tLoc.probSubheading}
             </p>
           </div>
 
@@ -593,47 +886,46 @@ export default function KilindrosTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 1: ΕΤΙΚΕΤΑ ΚΟΝΣΕΡΒΑΣ
+                  {tLoc.prob1Badge}
                 </span>
-                <span className="text-xs font-bold text-slate-400">Παράπλευρη Επιφάνεια</span>
+                <span className="text-xs font-bold text-slate-400">{tLoc.prob1Subtitle}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Υπολογισμός Χάρτινης Ετικέτας για Κονσέρβα
+                {tLoc.prob1Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Μια κυλινδρική κονσέρβα έχει διάμετρο βάσης <strong>10 cm</strong> και ύψος <strong>12 cm</strong>. 
-                Πόσα τετραγωνικά εκατοστόμετρα (cm²) χαρτιού χρειάζονται για να καλυφθεί ολόκληρη η γύρω-γύρω επιφάνειά της (η ετικέτα); (Χρησιμοποιήστε π ＝ 3,14)
+                {tLoc.prob1Text}
               </p>
 
               {/* Πίνακας Δεδομένων */}
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs sm:text-sm">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1.5">
-                  ΔΕΔΟΜΕΝΑ ΠΡΟΒΛΗΜΑΤΟΣ
+                  {tLoc.prob1DataHeader}
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Διάμετρος (δ)</span> 10 cm
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob1Diameter}</span> 10 cm
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ακτίνα (ρ)</span> 10 : 2 ＝ 5 cm
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob1Radius}</span> 10 : 2 ＝ 5 cm
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ύψος (υ)</span> 12 cm
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob1Height}</span> 12 cm
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• Η ετικέτα καλύπτει <strong>μόνο την παράπλευρη επιφάνεια</strong> (όχι τα καπάκια).</div>
-                  <div>• <strong>Μήκος ετικέτας (περίμετρος βάσης):</strong> 2 · π · ρ ＝ 2 · 3,14 · 5 ＝ <strong>31,4 cm</strong>.</div>
-                  <div>• <strong>Εμβαδόν ετικέτας (Επ):</strong> 31,4 · 12 ＝ <strong className="text-blue-700">376,8 cm²</strong>.</div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{tLoc.prob1StepHeader}</span>
+                  <div>{tLoc.prob1Step1}</div>
+                  <div>{tLoc.prob1Step2}</div>
+                  <div className="pt-1 border-t border-slate-200 font-bold text-blue-700">{tLoc.prob1Step3}</div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Όταν μας ζητείται η ετικέτα, υπολογίζουμε αποκλειστικά την παράπλευρη επιφάνεια: Επ ＝ (2 · π · ρ) · υ!
+                {tLoc.prob1Tip}
               </div>
             </article>
 
@@ -641,48 +933,47 @@ export default function KilindrosTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 2: ΒΑΨΙΜΟ ΒΑΡΕΛΙΟΥ
+                  {tLoc.prob2Badge}
                 </span>
-                <span className="text-xs font-bold text-slate-400">Ολική Επιφάνεια</span>
+                <span className="text-xs font-bold text-slate-400">{tLoc.prob2Subtitle}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Βάψιμο Κλειστού Κυλινδρικού Βαρελιού
+                {tLoc.prob2Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Ένα μεταλλικό κλειστό βαρέλι έχει ακτίνα βάσης <strong>0,5 m</strong> και ύψος <strong>2 m</strong>. 
-                Θέλουμε να βάψουμε ολόκληρη την εξωτερική του επιφάνεια (και τα δύο καπάκια και γύρω-γύρω). Πόσα m² θα βαφτούν; (π ＝ 3,14)
+                {tLoc.prob2Text}
               </p>
 
               {/* Πίνακας Δεδομένων */}
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs sm:text-sm">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1.5">
-                  ΣΤΟΙΧΕΙΑ ΥΠΟΛΟΓΙΣΜΟΥ
+                  {tLoc.prob2DataHeader}
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold text-[11px]">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ακτίνα (ρ)</span> 0,5 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob2Radius}</span> 0,5 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ύψος (υ)</span> 2 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob2Height}</span> 2 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος</span> Εολ ＝ Επ ＋ 2 · Εβ
+                    <span className="text-slate-400 text-[10px] block font-sans">{tLoc.prob2Formula}</span> {locale === 'el' ? 'Εολ ＝ Επ ＋ 2 · Εβ' : 'Atot ＝ Alat ＋ 2 · Abase'}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Παράπλευρη επιφάνεια:</strong> 2 · 3,14 · 0,5 · 2 ＝ 3,14 · 2 ＝ <strong>6,28 m²</strong>.</div>
-                  <div>• <strong>Εμβαδόν 1 βάσης:</strong> 3,14 · 0,5 · 0,5 ＝ 3,14 · 0,25 ＝ <strong>0,785 m²</strong>.</div>
-                  <div>• <strong>Εμβαδόν 2 βάσεων:</strong> 2 · 0,785 ＝ <strong>1,57 m²</strong>.</div>
-                  <div>• <strong>Ολική επιφάνεια:</strong> 6,28 ＋ 1,57 ＝ <strong className="text-amber-700">7,85 m²</strong>.</div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{tLoc.prob2StepHeader}</span>
+                  <div>{tLoc.prob2Step1}</div>
+                  <div>{tLoc.prob2Step2}</div>
+                  <div>{tLoc.prob2Step3}</div>
+                  <div className="pt-1 border-t border-slate-200 font-bold text-amber-700">{tLoc.prob2Step4}</div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
-                ⚡ Επειδή το βαρέλι είναι κλειστό, προσθέτουμε οπωσδήποτε και τις 2 κυκλικές βάσεις (καπάκια)!
+                {tLoc.prob2Tip}
               </div>
             </article>
 
@@ -695,20 +986,20 @@ export default function KilindrosTheoriaPage() {
             <span className="text-3xl sm:text-4xl flex-shrink-0">⚠️</span>
             <div className="space-y-3">
               <h3 className="text-base sm:text-lg font-black text-amber-950">
-                {toCleanUppercase('Προσοχη / Συνηθη Λαθη που πρεπει να Αποφευγετε')}
+                {toCleanUppercase(tLoc.alertTitle)}
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην ξεχνάτε ότι οι βάσεις είναι ΔΥΟ:</strong> Στην ολική επιφάνεια του κλειστού κυλίνδρου προσθέτουμε <strong>δύο βάσεις</strong>: <strong>Εολ ＝ Επ ＋ 2 · Εβ</strong> (όχι μόνο μία).
+                  <strong>{tLoc.alertL1Bold}</strong>{tLoc.alertL1Text}
                 </li>
                 <li>
-                  <strong>Μην μπερδεύετε το 2 · π · ρ με το π · ρ²:</strong> Το <strong>2 · π · ρ</strong> είναι το μήκος της περιφέρειας (το μήκος του ορθογωνίου). Το <strong>π · ρ²</strong> είναι το εμβαδόν του κυκλικού δίσκου (της βάσης).
+                  <strong>{tLoc.alertL2Bold}</strong>{tLoc.alertL2Text}
                 </li>
                 <li>
-                  <strong>Αν δίνεται η διάμετρος:</strong> Πάντα πρώτα διαιρούμε με το 2 για να βρούμε την ακτίνα ρ: <strong>ρ ＝ δ : 2</strong>.
+                  <strong>{tLoc.alertL3Bold}</strong>{tLoc.alertL3Text}
                 </li>
                 <li>
-                  <strong>Ανοιχτά δοχεία:</strong> Προσέξτε την εκφώνηση! Αν το δοχείο είναι ανοιχτό από πάνω (όπως ένα ποτήρι ή κουβάς), έχει μόνο <strong>1 βάση</strong>. Αν είναι σωλήνας ανοιχτός και από τις δύο μεριές, υπολογίζουμε <strong>μόνο την παράπλευρη επιφάνεια</strong>.
+                  <strong>{tLoc.alertL4Bold}</strong>{tLoc.alertL4Text}
                 </li>
               </ul>
             </div>
@@ -719,10 +1010,10 @@ export default function KilindrosTheoriaPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στον Κύλινδρο!
+              {tLoc.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς παράπλευρης επιφάνειας, βάσεων και ολικού εμβαδού κυλίνδρου για τη ΣΤ' Δημοτικού.
+              {tLoc.ctaDesc}
             </p>
           </div>
 
@@ -730,7 +1021,7 @@ export default function KilindrosTheoriaPage() {
             href="/st-dimotikou/79-kilindros-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(tLoc.ctaButton)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

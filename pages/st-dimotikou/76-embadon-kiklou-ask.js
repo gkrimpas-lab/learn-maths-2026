@@ -1,19 +1,22 @@
 // pages/st-dimotikou/76-embadon-kiklou-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // -------------------------------------------------------------
-// DEFENSIVE UTILITY FUNCTIONS
+// DEFENSIVE UTILITY FUNCTIONS & TYPOGRAPHY
 // -------------------------------------------------------------
 
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 function randInt(min, max) {
@@ -29,9 +32,20 @@ function shuffle(array) {
   return arr;
 }
 
-function formatNum(val) {
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  const loc = locale === 'el' ? 'el-GR' : 'en-US';
+  return Number(val).toLocaleString(loc, { maximumFractionDigits: 4 });
+}
+
+// Visual Fraction component: αριθμητής πάνω, κλασματική γραμμή, παρονομαστής κάτω
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-0.5 sm:mx-1 text-center font-mono leading-none text-[0.85em] sm:text-[0.9em] shrink-0 max-w-full ${className}`}>
+      <span className="border-b border-current pb-0.5 px-0.5 sm:px-1 break-all">{num}</span>
+      <span className="pt-0.5 px-0.5 sm:px-1 break-all">{den}</span>
+    </span>
+  );
 }
 
 // Διασφάλιση ακριβώς 4 μοναδικών επιλογών για ερωτήσεις MCQ
@@ -46,10 +60,18 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
     }
   }
 
-  let counter = 1;
+  let offset = 6.28;
   while (optionsSet.size < 4) {
-    optionsSet.add(`${correctText} (${counter})`);
-    counter++;
+    const numPart = parseFloat(String(correctText).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    if (!isNaN(numPart)) {
+      const unit = String(correctText).replace(/[0-9.,\s]/g, '');
+      const fakeNum = (numPart + offset).toFixed(2).replace('.', ',');
+      const fakeOpt = unit ? `${fakeNum} ${unit}` : `${fakeNum}`;
+      optionsSet.add(fakeOpt);
+      offset += 6.28;
+    } else {
+      optionsSet.add(`${correctText} · ${optionsSet.size}`);
+    }
   }
 
   return shuffle([...optionsSet]);
@@ -62,131 +84,188 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 // POOL ΓΙΑ Q9: Υπολογισμός Εμβαδού από Ακτίνα ή Διάμετρο (Ε ＝ π · ρ²)
 const PROBLEM_POOL_Q9 = [
   // 1. Στρογγυλό τραπέζι με διάμετρο
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const r = randInt(2, 6);
     const d = 2 * r;
     const rSquared = r * r;
     const area = 3.14 * rSquared;
-    const correct = `${formatNum(area)} m²`;
+    const correct = `${formatNum(area, locale)} m²`;
+    const rSym = isEl ? 'ρ' : 'r';
+    const dSym = isEl ? 'δ' : 'd';
     return {
-      title: 'ΣΤΡΟΓΓΥΛΟ ΤΡΑΠΕΖΙ',
-      prompt: `Ένα στρογγυλό τραπέζι έχει διάμετρο ${d} m. Πόσο είναι το εμβαδόν της επιφάνειάς του σε m²; (Χρησιμοποιήστε π ＝ 3,14)`,
+      title: isEl ? 'ΣΤΡΟΓΓΥΛΟ ΤΡΑΠΕΖΙ' : 'ROUND TABLE',
+      prompt: isEl
+        ? `Ένα στρογγυλό τραπέζι έχει διάμετρο ${formatNum(d, locale)} m. Πόσο είναι το εμβαδόν της επιφάνειάς του σε m²; (Χρησιμοποιήστε π ＝ 3,14)`
+        : `A round table has a diameter of ${formatNum(d, locale)} m. What is the area of its surface in m²? (Use π ＝ 3.14)`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(3.14 * d * d)} m²`,
-        `${formatNum(2 * 3.14 * r)} m²`,
-        `${formatNum(area + 5)} m²`,
-        `${formatNum(area - 3 > 0 ? area - 3 : area + 8)} m²`
+        `${formatNum(3.14 * d * d, locale)} m²`,
+        `${formatNum(2 * 3.14 * r, locale)} m²`,
+        `${formatNum(area + 5.25, locale)} m²`,
+        `${formatNum(area > 6 ? area - 6.28 : area + 12.56, locale)} m²`
       ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Διάμετρος (δ)', value: `${d} m` },
-        { label: 'Ακτίνα (ρ ＝ δ : 2)', value: `${d} : 2 ＝ ${r} m` },
-        { label: 'Τετράγωνο ακτίνας (ρ²)', value: `${r} · ${r} ＝ ${rSquared} m²` },
-        { label: 'Πράξη', value: `Ε ＝ 3,14 · ${rSquared} ＝ ${formatNum(area)} m²` }
+        { label: isEl ? `Διάμετρος (${dSym})` : `Diameter (${dSym})`, value: `${formatNum(d, locale)} m` },
+        {
+          label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`,
+          valueNode: (
+            <span className="inline-flex items-center">
+              <span>{rSym} ＝ </span>
+              <Fraction num={formatNum(d, locale)} den="2" />
+              <span>＝ {formatNum(r, locale)} m</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+          valueNode: (
+            <span>
+              {rSym}<sup>2</sup> ＝ {formatNum(r, locale)} · {formatNum(r, locale)} ＝ {formatNum(rSquared, locale)} m²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Υπολογισμός Εμβαδού' : 'Area Calculation',
+          valueNode: (
+            <span>
+              {isEl ? 'Ε' : 'A'} ＝ {isEl ? '3,14' : '3.14'} · {formatNum(rSquared, locale)} ＝ {formatNum(area, locale)} m²
+            </span>
+          )
+        }
       ],
-      explanation: `Βρίσκουμε πρώτα την ακτίνα: ρ ＝ ${d} : 2 ＝ ${r} m. Εμβαδόν: Ε ＝ π · ρ² ＝ 3,14 · ${r} · ${r} ＝ ${formatNum(area)} m².`
+      explanation: isEl
+        ? `Βρίσκουμε πρώτα την ακτίνα: ${rSym} ＝ ${d} : 2 ＝ ${r} m. Εμβαδόν: Ε ＝ π · ${rSym}² ＝ 3,14 · ${r} · ${r} ＝ ${formatNum(area, locale)} m².`
+        : `First find the radius: ${rSym} ＝ ${d} : 2 ＝ ${r} m. Area: A ＝ π · ${rSym}² ＝ 3.14 · ${r} · ${r} ＝ ${formatNum(area, locale)} m².`
     };
   },
   // 2. Κυκλικό σιντριβάνι με ακτίνα
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const r = randInt(3, 8);
     const rSquared = r * r;
     const area = 3.14 * rSquared;
-    const correct = `${formatNum(area)} m²`;
+    const correct = `${formatNum(area, locale)} m²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΚΥΚΛΙΚΟ ΣΙΝΤΡΙΒΑΝΙ',
-      prompt: `Ένα κυκλικό σιντριβάνι έχει ακτίνα ${r} m. Ποια είναι η επιφάνεια που καταλαμβάνει στην πλατεία; (π ＝ 3,14)`,
+      title: isEl ? 'ΚΥΚΛΙΚΟ ΣΙΝΤΡΙΒΑΝΙ' : 'CIRCULAR FOUNTAIN',
+      prompt: isEl
+        ? `Ένα κυκλικό σιντριβάνι έχει ακτίνα ${formatNum(r, locale)} m. Ποια είναι η επιφάνεια που καταλαμβάνει στην πλατεία; (π ＝ 3,14)`
+        : `A circular fountain has a radius of ${formatNum(r, locale)} m. What is the surface area it occupies in the square? (π ＝ 3.14)`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(2 * 3.14 * r)} m²`,
-        `${formatNum(area + 12)} m²`,
-        `${formatNum(area - 10 > 0 ? area - 10 : area + 20)} m²`,
-        `${formatNum(area * 2)} m²`
+        `${formatNum(2 * 3.14 * r, locale)} m²`,
+        `${formatNum(area + 12.56, locale)} m²`,
+        `${formatNum(area > 15 ? area - 12.56 : area + 25.12, locale)} m²`,
+        `${formatNum(area / 2, locale)} m²`
       ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Ακτίνα (ρ)', value: `${r} m` },
-        { label: 'Τετράγωνο ακτίνας (ρ²)', value: `${r} · ${r} ＝ ${rSquared}` },
-        { label: 'Εμβαδόν', value: `3,14 · ${rSquared} ＝ ${formatNum(area)} m²` }
+        { label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`, value: `${formatNum(r, locale)} m` },
+        {
+          label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+          valueNode: (
+            <span>
+              {rSym}<sup>2</sup> ＝ {formatNum(r, locale)} · {formatNum(r, locale)} ＝ {formatNum(rSquared, locale)}
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Εμβαδόν' : 'Area',
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · {formatNum(rSquared, locale)} ＝ {formatNum(area, locale)} m²
+            </span>
+          )
+        }
       ],
-      explanation: `Ε ＝ π · ρ² ＝ 3,14 · ${r} · ${r} ＝ ${formatNum(area)} m².`
+      explanation: isEl
+        ? `Ε ＝ π · ${rSym}² ＝ 3,14 · ${r} · ${r} ＝ ${formatNum(area, locale)} m².`
+        : `A ＝ π · ${rSym}² ＝ 3.14 · ${r} · ${r} ＝ ${formatNum(area, locale)} m².`
     };
   },
   // 3. Στρογγυλό ρολόι τοίχου
-  () => {
-    const r = 10;
-    const area = 3.14 * 100;
-    const correct = '314 cm²';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(314, locale)} cm²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΡΟΛΟΙ ΤΟΙΧΟΥ',
-      prompt: `Ένα στρογγυλό ρολόι τοίχου έχει ακτίνα 10 cm. Πόσο είναι το εμβαδόν του καντράν του; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['62,8 cm²', '31,4 cm²', '628 cm²', '157 cm²']),
+      title: isEl ? 'ΡΟΛΟΙ ΤΟΙΧΟΥ' : 'WALL CLOCK',
+      prompt: isEl
+        ? 'Ένα στρογγυλό ρολόι τοίχου έχει ακτίνα 10 cm. Πόσο είναι το εμβαδόν του καντράν του; (π ＝ 3,14)'
+        : 'A circular wall clock has a radius of 10 cm. What is the area of its face? (π ＝ 3.14)',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(62.8, locale)} cm²`,
+        `${formatNum(31.4, locale)} cm²`,
+        `${formatNum(628, locale)} cm²`,
+        `${formatNum(157, locale)} cm²`
+      ]),
       correctAnswer: correct,
-      unit: 'cm²',
       tableData: [
-        { label: 'Ακτίνα (ρ)', value: '10 cm' },
-        { label: 'Τετράγωνο ακτίνας (ρ²)', value: '10 · 10 ＝ 100 cm²' },
-        { label: 'Πράξη', value: '3,14 · 100 ＝ 314 cm²' }
+        { label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`, value: '10 cm' },
+        {
+          label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+          valueNode: (
+            <span>
+              {rSym}<sup>2</sup> ＝ 10 · 10 ＝ 100 cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Υπολογισμός' : 'Calculation',
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 100 ＝ {formatNum(314, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `Ε ＝ 3,14 · 10 · 10 ＝ 3,14 · 100 ＝ 314 cm².`
+      explanation: isEl
+        ? 'Ε ＝ 3,14 · 10 · 10 ＝ 3,14 · 100 ＝ 314 cm².'
+        : 'A ＝ 3.14 · 10 · 10 ＝ 3.14 · 100 ＝ 314 cm².'
     };
   },
   // 4. Κυκλική πίτσα
-  () => {
-    const d = 30;
-    const r = 15;
-    const area = 3.14 * r * r;
-    const correct = '706,5 cm²';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(706.5, locale)} cm²`;
+    const rSym = isEl ? 'ρ' : 'r';
+    const dSym = isEl ? 'δ' : 'd';
     return {
-      title: 'ΕΠΙΦΑΝΕΙΑ ΠΙΤΣΑΣ',
-      prompt: `Μια οικογενειακή πίτσα έχει διάμετρο 30 cm. Πόσο είναι το εμβαδόν της επιφάνειάς της; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['2.826 cm²', '94,2 cm²', '353,25 cm²', '450 cm²']),
+      title: isEl ? 'ΕΠΙΦΑΝΕΙΑ ΠΙΤΣΑΣ' : 'PIZZA SURFACE',
+      prompt: isEl
+        ? 'Μια οικογενειακή πίτσα έχει διάμετρο 30 cm. Πόσο είναι το εμβαδόν της επιφάνειάς της; (π ＝ 3,14)'
+        : 'A large pizza has a diameter of 30 cm. What is its surface area? (π ＝ 3.14)',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(2826, locale)} cm²`,
+        `${formatNum(94.2, locale)} cm²`,
+        `${formatNum(353.25, locale)} cm²`,
+        `${formatNum(450, locale)} cm²`
+      ]),
       correctAnswer: correct,
-      unit: 'cm²',
       tableData: [
-        { label: 'Διάμετρος (δ)', value: '30 cm' },
-        { label: 'Ακτίνα (ρ ＝ δ : 2)', value: '30 : 2 ＝ 15 cm' },
-        { label: 'Πράξη', value: '3,14 · 15 · 15 ＝ 3,14 · 225 ＝ 706,5 cm²' }
+        { label: isEl ? `Διάμετρος (${dSym})` : `Diameter (${dSym})`, value: '30 cm' },
+        {
+          label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`,
+          valueNode: (
+            <span className="inline-flex items-center">
+              <span>{rSym} ＝ </span>
+              <Fraction num="30" den="2" />
+              <span>＝ 15 cm</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Πράξη' : 'Calculation',
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 15 · 15 ＝ {isEl ? '3,14' : '3.14'} · 225 ＝ {formatNum(706.5, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `Ακτίνα: ρ ＝ 30 : 2 ＝ 15 cm. Ε ＝ 3,14 · 15 · 15 ＝ 706,5 cm².`
-    };
-  },
-  // 5. Μεταλλικό καπάκι φρεατίου
-  () => {
-    const d = 60;
-    const area = 3.14 * 30 * 30;
-    const correct = `${formatNum(area)} cm²`;
-    return {
-      title: 'ΚΑΠΑΚΙ ΦΡΕΑΤΙΟΥ',
-      prompt: `Ένα στρογγυλό καπάκι φρεατίου έχει διάμετρο 60 cm. Πόσο είναι το εμβαδόν του σε cm²; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['11.304 cm²', '188,4 cm²', '1.413 cm²', '3.600 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Διάμετρος (δ)', value: '60 cm' },
-        { label: 'Ακτίνα (ρ)', value: '60 : 2 ＝ 30 cm' },
-        { label: 'Πράξη', value: '3,14 · 30 · 30 ＝ 3,14 · 900 ＝ 2.826 cm²' }
-      ],
-      explanation: `ρ ＝ 60 : 2 ＝ 30 cm. Ε ＝ 3,14 · 900 ＝ 2.826 cm².`
-    };
-  },
-  // 6. Κυκλικός δίσκος κοπής
-  () => {
-    const r = 20;
-    const area = 3.14 * 20 * 20;
-    const correct = `${formatNum(area)} cm²`;
-    return {
-      title: 'ΚΥΚΛΙΚΟΣ ΔΙΣΚΟΣ',
-      prompt: `Ένας κυκλικός δίσκος έχει ακτίνα 20 cm. Ποιο είναι το εμβαδόν του σε cm²; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['125,6 cm²', '628 cm²', '2.512 cm²', '400 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Ακτίνα (ρ)', value: '20 cm' },
-        { label: 'Πράξη', value: '3,14 · 20 · 20 ＝ 3,14 · 400 ＝ 1.256 cm²' }
-      ],
-      explanation: `Ε ＝ 3,14 · 20 · 20 ＝ 1.256 cm².`
+      explanation: isEl
+        ? 'Ακτίνα: ρ ＝ 30 : 2 ＝ 15 cm. Ε ＝ 3,14 · 15 · 15 ＝ 706,5 cm².'
+        : 'Radius: r ＝ 30 : 2 ＝ 15 cm. A ＝ 3.14 · 15 · 15 ＝ 706.5 cm².'
     };
   }
 ];
@@ -194,112 +273,139 @@ const PROBLEM_POOL_Q9 = [
 // POOL ΓΙΑ Q10: Ημικύκλιο και Τέταρτο Κύκλου
 const PROBLEM_POOL_Q10 = [
   // 1. Ημικύκλιο με δοσμένη ακτίνα
-  () => {
-    const r = 10;
-    const fullArea = 3.14 * r * r;
-    const semiArea = fullArea / 2;
-    const correct = `${formatNum(semiArea)} cm²`;
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(157, locale)} cm²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΕΜΒΑΔΟΝ ΗΜΙΚΥΚΛΙΟΥ',
-      prompt: `Μια διακοσμητική βεντάλια έχει σχήμα ημικυκλίου με ακτίνα 10 cm. Πόσο είναι το εμβαδόν της επιφάνειάς της; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['314 cm²', '62,8 cm²', '78,5 cm²', '100 cm²']),
+      title: isEl ? 'ΕΜΒΑΔΟΝ ΗΜΙΚΥΚΛΙΟΥ' : 'SEMICIRCLE AREA',
+      prompt: isEl
+        ? 'Μια διακοσμητική βεντάλια έχει σχήμα ημικυκλίου με ακτίνα 10 cm. Πόσο είναι το εμβαδόν της επιφάνειάς της; (π ＝ 3,14)'
+        : 'A decorative fan is semicircular with a radius of 10 cm. What is its surface area? (π ＝ 3.14)',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(314, locale)} cm²`,
+        `${formatNum(62.8, locale)} cm²`,
+        `${formatNum(78.5, locale)} cm²`,
+        `${formatNum(100, locale)} cm²`
+      ]),
       correctAnswer: correct,
-      unit: 'cm²',
       tableData: [
-        { label: 'Εμβαδόν ολόκληρου κύκλου', value: '3,14 · 10 · 10 ＝ 314 cm²' },
-        { label: 'Εμβαδόν ημικυκλίου', value: '314 : 2 ＝ 157 cm²' }
+        {
+          label: isEl ? 'Εμβαδόν ολόκληρου κύκλου' : 'Full circle area',
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 10 · 10 ＝ {formatNum(314, locale)} cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Εμβαδόν ημικυκλίου' : 'Semicircle area',
+          valueNode: (
+            <span className="inline-flex items-center">
+              <Fraction num="314" den="2" />
+              <span>＝ {formatNum(157, locale)} cm²</span>
+            </span>
+          )
+        }
       ],
-      explanation: `Το ημικύκλιο είναι το μισό του κύκλου: (3,14 · 10 · 10) : 2 ＝ 314 : 2 ＝ 157 cm².`
+      explanation: isEl
+        ? `Το ημικύκλιο είναι το μισό του κύκλου: (3,14 · 10 · 10) : 2 ＝ 314 : 2 ＝ 157 cm².`
+        : `The semicircle is half the circle: (3.14 · 10 · 10) : 2 ＝ 314 : 2 ＝ 157 cm².`
     };
   },
   // 2. Ημικυκλική σήραγγα
-  () => {
-    const d = 12;
-    const r = 6;
-    const semiArea = (3.14 * r * r) / 2;
-    const correct = `${formatNum(semiArea)} m²`;
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(56.52, locale)} m²`;
+    const rSym = isEl ? 'ρ' : 'r';
+    const dSym = isEl ? 'δ' : 'd';
     return {
-      title: 'ΗΜΙΚΥΚΛΙΚΗ ΣΗΡΑΓΓΑ',
-      prompt: `Το άνοιγμα μιας σήραγγας έχει σχήμα ημικυκλίου με διάμετρο 12 m. Πόσο είναι το εμβαδόν του ανοίγματος; (π ＝ 3,14)`,
+      title: isEl ? 'ΗΜΙΚΥΚΛΙΚΗ ΣΗΡΑΓΓΑ' : 'SEMICIRCULAR TUNNEL',
+      prompt: isEl
+        ? 'Το άνοιγμα μιας σήραγγας έχει σχήμα ημικυκλίου με διάμετρο 12 m. Πόσο είναι το εμβαδόν του ανοίγματος; (π ＝ 3,14)'
+        : 'A tunnel entrance is semicircular with a diameter of 12 m. What is the entrance area? (π ＝ 3.14)',
       options: ensureFourUniqueOptions(correct, () => [
-        '113,04 m²',
-        '226,08 m²',
-        '37,68 m²',
-        '72 m²'
+        `${formatNum(113.04, locale)} m²`,
+        `${formatNum(226.08, locale)} m²`,
+        `${formatNum(37.68, locale)} m²`,
+        `${formatNum(72, locale)} m²`
       ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Διάμετρος (δ)', value: '12 m' },
-        { label: 'Ακτίνα (ρ)', value: '12 : 2 ＝ 6 m' },
-        { label: 'Εμβαδόν ημικυκλίου', value: '(3,14 · 6 · 6) : 2 ＝ 113,04 : 2 ＝ 56,52 m²' }
+        { label: isEl ? `Διάμετρος (${dSym})` : `Diameter (${dSym})`, value: '12 m' },
+        {
+          label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`,
+          valueNode: (
+            <span className="inline-flex items-center">
+              <span>{rSym} ＝ </span>
+              <Fraction num="12" den="2" />
+              <span>＝ 6 m</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Εμβαδόν ημικυκλίου' : 'Semicircle area',
+          valueNode: (
+            <span className="inline-flex flex-wrap items-center gap-1">
+              <Fraction num={`${isEl ? '3,14' : '3.14'} · 6 · 6`} den="2" />
+              <span>＝</span>
+              <Fraction num="113,04" den="2" />
+              <span>＝ {formatNum(56.52, locale)} m²</span>
+            </span>
+          )
+        }
       ],
-      explanation: `ρ ＝ 6 m. Εημικ ＝ (3,14 · 36) : 2 ＝ 56,52 m².`
+      explanation: isEl
+        ? 'ρ ＝ 6 m. Εημικ ＝ (3,14 · 36) : 2 ＝ 56,52 m².'
+        : 'r ＝ 6 m. Asemi ＝ (3.14 · 36) : 2 ＝ 56.52 m².'
     };
   },
-  // 3. Ημικυκλικό παράθυρο
-  () => {
-    const correct = '1,57 m²';
+  // 3. Τέταρτο του κύκλου
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(314, locale)} cm²`;
+    const num1256 = isEl ? '1.256' : '1,256';
     return {
-      title: 'ΗΜΙΚΥΚΛΙΚΟ ΠΑΡΑΘΥΡΟ',
-      prompt: `Ένα τοξωτό παράθυρο έχει σχήμα ημικυκλίου με διάμετρο 2 m (ακτίνα 1 m). Πόσα τετραγωνικά μέτρα (m²) τζαμιού χρειάζονται; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['3,14 m²', '6,28 m²', '0,785 m²', '2 m²']),
+      title: isEl ? 'ΤΕΤΑΡΤΟ ΚΥΚΛΟΥ' : 'CIRCLE QUADRANT',
+      promptNode: (
+        <span className="inline-flex flex-wrap items-center gap-1">
+          <span>{isEl ? 'Ένα κομμάτι πίτας αποτελεί το ένα τέταρτο (' : 'A pie slice forms one fourth ('}</span>
+          <Fraction num="1" den="4" />
+          <span>{isEl ? ') ενός κυκλικού δίσκου με ακτίνα 20 cm. Πόσο είναι το εμβαδόν του κομματιού; (π ＝ 3,14)' : ') of a circular disk with radius 20 cm. What is the area of the slice? (π ＝ 3.14)'}</span>
+        </span>
+      ),
+      prompt: isEl
+        ? 'Ένα κομμάτι πίτας αποτελεί το ένα τέταρτο (1/4) ενός κυκλικού δίσκου με ακτίνα 20 cm. Πόσο είναι το εμβαδόν του κομματιού; (π ＝ 3,14)'
+        : 'A pie slice forms one fourth (1/4) of a circular disk with radius 20 cm. What is the area of the slice? (π ＝ 3.14)',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(628, locale)} cm²`,
+        `${formatNum(157, locale)} cm²`,
+        `${formatNum(1256, locale)} cm²`,
+        `${formatNum(31.4, locale)} cm²`
+      ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Ακτίνα (ρ)', value: '1 m' },
-        { label: 'Πράξη', value: '(3,14 · 1 · 1) : 2 ＝ 3,14 : 2 ＝ 1,57 m²' }
+        {
+          label: isEl ? 'Ολόκληρος κύκλος' : 'Full circle',
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 20 · 20 ＝ {formatNum(1256, locale)} cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Τέταρτο κύκλου' : 'Quadrant',
+          valueNode: (
+            <span className="inline-flex items-center">
+              <Fraction num={num1256} den="4" />
+              <span>＝ {formatNum(314, locale)} cm²</span>
+            </span>
+          )
+        }
       ],
-      explanation: `(3,14 · 1 · 1) : 2 ＝ 1,57 m².`
-    };
-  },
-  // 4. Τέταρτο του κύκλου
-  () => {
-    const r = 20;
-    const correct = '314 cm²';
-    return {
-      title: 'ΤΕΤΑΡΤΟ ΚΥΚΛΟΥ',
-      prompt: `Ένα κομμάτι πίτας αποτελεί το ένα τέταρτο (1/4) ενός κυκλικού δίσκου με ακτίνα 20 cm. Πόσο είναι το εμβαδόν του κομματιού; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['628 cm²', '157 cm²', '1.256 cm²', '31,4 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Ολόκληρος κύκλος', value: '3,14 · 20 · 20 ＝ 1.256 cm²' },
-        { label: 'Τέταρτο κύκλου (: 4)', value: '1.256 : 4 ＝ 314 cm²' }
-      ],
-      explanation: `(3,14 · 20 · 20) : 4 ＝ 1.256 : 4 ＝ 314 cm².`
-    };
-  },
-  // 5. Ημικυκλικό παρτέρι με ακτίνα 4 m
-  () => {
-    const correct = '25,12 m²';
-    return {
-      title: 'ΗΜΙΚΥΚΛΙΚΟ ΠΑΡΤΕΡΙ',
-      prompt: `Ένα ημικυκλικό παρτέρι έχει ακτίνα 4 m. Ποια είναι η επιφάνειά του; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['50,24 m²', '12,56 m²', '16 m²', '24 m²']),
-      correctAnswer: correct,
-      unit: 'm²',
-      tableData: [
-        { label: 'Ακτίνα (ρ)', value: '4 m' },
-        { label: 'Πράξη', value: '(3,14 · 4 · 4) : 2 ＝ 50,24 : 2 ＝ 25,12 m²' }
-      ],
-      explanation: `(3,14 · 16) : 2 ＝ 25,12 m².`
-    };
-  },
-  // 6. Ημικυκλική σκηνή
-  () => {
-    const correct = '39,25 m²';
-    return {
-      title: 'ΗΜΙΚΥΚΛΙΚΗ ΣΚΗΝΗ',
-      prompt: `Μια θεατρική σκηνή έχει σχήμα ημικυκλίου με διάμετρο 10 m. Πόσο είναι το εμβαδόν του δαπέδου της; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['78,5 m²', '157 m²', '31,4 m²', '25 m²']),
-      correctAnswer: correct,
-      unit: 'm²',
-      tableData: [
-        { label: 'Διάμετρος (δ)', value: '10 m (ακτίνα ρ ＝ 5 m)' },
-        { label: 'Πράξη', value: '(3,14 · 5 · 5) : 2 ＝ 78,5 : 2 ＝ 39,25 m²' }
-      ],
-      explanation: `ρ ＝ 5 m. Ε ＝ (3,14 · 25) : 2 ＝ 39,25 m².`
+      explanation: isEl
+        ? '(3,14 · 20 · 20) : 4 ＝ 1.256 : 4 ＝ 314 cm².'
+        : '(3.14 · 20 · 20) : 4 ＝ 1,256 : 4 ＝ 314 cm².'
     };
   }
 ];
@@ -307,237 +413,261 @@ const PROBLEM_POOL_Q10 = [
 // POOL ΓΙΑ Q11: Κυκλικός Δακτύλιος (Ροδέλα / Διάδρομος γύρω από Κύκλο)
 const PROBLEM_POOL_Q11 = [
   // 1. Διάδρομος γύρω από πισίνα
-  () => {
-    const rSmall = 3;
-    const rBig = 5;
-    const areaBig = 3.14 * rBig * rBig;
-    const areaSmall = 3.14 * rSmall * rSmall;
-    const ringArea = areaBig - areaSmall;
-    const correct = `${formatNum(ringArea)} m²`;
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(50.24, locale)} m²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΔΙΑΔΡΟΜΟΣ ΓΥΡΩ ΑΠΟ ΠΙΣΙΝΑ',
-      prompt: `Γύρω από μια κυκλική πισίνα ακτίνας 3 m κατασκευάζεται διάδρομος, ώστε ο εξωτερικός κύκλος να έχει ακτίνα 5 m. Πόσο είναι το εμβαδόν μόνο του διαδρόμου; (π ＝ 3,14)`,
+      title: isEl ? 'ΔΙΑΔΡΟΜΟΣ ΓΥΡΩ ΑΠΟ ΠΙΣΙΝΑ' : 'WALKWAY AROUND POOL',
+      prompt: isEl
+        ? 'Γύρω από μια κυκλική πισίνα ακτίνας 3 m κατασκευάζεται διάδρομος, ώστε ο εξωτερικός κύκλος να έχει ακτίνα 5 m. Πόσο είναι το εμβαδόν μόνο του διαδρόμου; (π ＝ 3,14)'
+        : 'Around a circular pool with radius 3 m, a walkway is paved so the outer circle has radius 5 m. What is the walkway area alone? (π ＝ 3.14)',
       options: ensureFourUniqueOptions(correct, () => [
-        '78,5 m²',
-        '28,26 m²',
-        '106,76 m²',
-        '12,56 m²'
+        `${formatNum(78.5, locale)} m²`,
+        `${formatNum(28.26, locale)} m²`,
+        `${formatNum(106.76, locale)} m²`,
+        `${formatNum(12.56, locale)} m²`
       ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Εμβαδόν μεγάλου κύκλου (ρ ＝ 5)', value: '3,14 · 5 · 5 ＝ 78,5 m²' },
-        { label: 'Εμβαδόν πισίνας (ρ ＝ 3)', value: '3,14 · 3 · 3 ＝ 28,26 m²' },
-        { label: 'Εμβαδόν διαδρόμου (αφαίρεση)', value: '78,5 － 28,26 ＝ 50,24 m²' }
+        {
+          label: isEl ? `Εμβαδόν μεγάλου κύκλου (${rSym} ＝ 5)` : `Outer circle area (${rSym} ＝ 5)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 5 · 5 ＝ {formatNum(78.5, locale)} m²
+            </span>
+          )
+        },
+        {
+          label: isEl ? `Εμβαδόν πισίνας (${rSym} ＝ 3)` : `Pool area (${rSym} ＝ 3)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 3 · 3 ＝ {formatNum(28.26, locale)} m²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Εμβαδόν διαδρόμου (αφαίρεση)' : 'Walkway area (subtraction)',
+          valueNode: (
+            <span>
+              {formatNum(78.5, locale)} － {formatNum(28.26, locale)} ＝ {formatNum(50.24, locale)} m²
+            </span>
+          )
+        }
       ],
-      explanation: `Αφαιρούμε το εμβαδόν του εσωτερικού κύκλου από το εμβαδόν του εξωτερικού: 78,5 － 28,26 ＝ 50,24 m².`
+      explanation: isEl
+        ? 'Αφαιρούμε το εμβαδόν του εσωτερικού κύκλου από το εμβαδόν του εξωτερικού: 78,5 － 28,26 ＝ 50,24 m².'
+        : 'Subtract the inner circle area from the outer circle area: 78.5 － 28.26 ＝ 50.24 m².'
     };
   },
   // 2. Μεταλλική ροδέλα
-  () => {
-    const correct = '200,96 cm²';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(200.96, locale)} cm²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΜΕΤΑΛΛΙΚΗ ΡΟΔΕΛΑ',
-      prompt: `Μια μεταλλική ροδέλα έχει εξωτερική ακτίνα 10 cm και μία κυκλική τρύπα στο κέντρο με ακτίνα 6 cm. Πόσο είναι το εμβαδόν της μεταλλικής επιφάνειας; (π ＝ 3,14)`,
+      title: isEl ? 'ΜΕΤΑΛΛΙΚΗ ΡΟΔΕΛΑ' : 'METAL WASHER',
+      prompt: isEl
+        ? 'Μια μεταλλική ροδέλα έχει εξωτερική ακτίνα 10 cm και μία κυκλική τρύπα στο κέντρο με ακτίνα 6 cm. Πόσο είναι το εμβαδόν της μεταλλικής επιφάνειας; (π ＝ 3,14)'
+        : 'A metal washer has an outer radius of 10 cm and a central hole of radius 6 cm. What is the area of the metal surface? (π ＝ 3.14)',
       options: ensureFourUniqueOptions(correct, () => [
-        '314 cm²',
-        '113,04 cm²',
-        '50,24 cm²',
-        '250 cm²'
+        `${formatNum(314, locale)} cm²`,
+        `${formatNum(113.04, locale)} cm²`,
+        `${formatNum(50.24, locale)} cm²`,
+        `${formatNum(250, locale)} cm²`
       ]),
       correctAnswer: correct,
-      unit: 'cm²',
       tableData: [
-        { label: 'Εξωτερικός κύκλος (ρ ＝ 10)', value: '3,14 · 10 · 10 ＝ 314 cm²' },
-        { label: 'Εσωτερική τρύπα (ρ ＝ 6)', value: '3,14 · 6 · 6 ＝ 113,04 cm²' },
-        { label: 'Επιφάνεια ροδέλας', value: '314 － 113,04 ＝ 200,96 cm²' }
+        {
+          label: isEl ? `Εξωτερικός κύκλος (${rSym} ＝ 10)` : `Outer circle (${rSym} ＝ 10)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 10 · 10 ＝ {formatNum(314, locale)} cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? `Εσωτερική τρύπα (${rSym} ＝ 6)` : `Inner hole (${rSym} ＝ 6)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 6 · 6 ＝ {formatNum(113.04, locale)} cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Επιφάνεια ροδέλας' : 'Washer surface',
+          valueNode: (
+            <span>
+              {formatNum(314, locale)} － {formatNum(113.04, locale)} ＝ {formatNum(200.96, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `314 － 113,04 ＝ 200,96 cm².`
+      explanation: isEl
+        ? '314 － 113,04 ＝ 200,96 cm².'
+        : '314 － 113.04 ＝ 200.96 cm².'
     };
   },
   // 3. Στίβος τρεξίματος
-  () => {
-    const correct = '1.570 m²';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(1570, locale)} m²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΚΥΚΛΙΚΟΣ ΣΤΙΒΟΣ',
-      prompt: `Ένας κυκλικός στίβος έχει εσωτερική ακτίνα 20 m και εξωτερική ακτίνα 30 m. Πόσο είναι το εμβαδόν της ζώνης του στίβου; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['2.826 m²', '1.256 m²', '3.140 m²', '1.000 m²']),
+      title: isEl ? 'ΚΥΚΛΙΚΟΣ ΣΤΙΒΟΣ' : 'RUNNING TRACK',
+      prompt: isEl
+        ? 'Ένας κυκλικός στίβος έχει εσωτερική ακτίνα 20 m και εξωτερική ακτίνα 30 m. Πόσο είναι το εμβαδόν της ζώνης του στίβου; (π ＝ 3,14)'
+        : 'A circular track has an inner radius of 20 m and an outer radius of 30 m. What is the area of the track ring? (π ＝ 3.14)',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(2826, locale)} m²`,
+        `${formatNum(1256, locale)} m²`,
+        `${formatNum(3140, locale)} m²`,
+        `${formatNum(1000, locale)} m²`
+      ]),
       correctAnswer: correct,
-      unit: 'm²',
       tableData: [
-        { label: 'Μεγάλος κύκλος (ρ ＝ 30)', value: '3,14 · 30 · 30 ＝ 2.826 m²' },
-        { label: 'Μικρός κύκλος (ρ ＝ 20)', value: '3,14 · 20 · 20 ＝ 1.256 m²' },
-        { label: 'Δακτύλιος', value: '2.826 － 1.256 ＝ 1.570 m²' }
+        {
+          label: isEl ? `Μεγάλος κύκλος (${rSym} ＝ 30)` : `Outer circle (${rSym} ＝ 30)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 30 · 30 ＝ {formatNum(2826, locale)} m²
+            </span>
+          )
+        },
+        {
+          label: isEl ? `Μικρός κύκλος (${rSym} ＝ 20)` : `Inner circle (${rSym} ＝ 20)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 20 · 20 ＝ {formatNum(1256, locale)} m²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Δακτύλιος' : 'Annulus',
+          valueNode: (
+            <span>
+              {formatNum(2826, locale)} － {formatNum(1256, locale)} ＝ {formatNum(1570, locale)} m²
+            </span>
+          )
+        }
       ],
-      explanation: `2.826 － 1.256 ＝ 1.570 m².`
-    };
-  },
-  // 4. Κυκλικό σιντριβάνι με περιμετρικό διάδρομο
-  () => {
-    const correct = '37,68 m²';
-    return {
-      title: 'ΔΙΑΔΡΟΜΟΣ ΣΙΝΤΡΙΒΑΝΙΟΥ',
-      prompt: `Γύρω από ένα σιντριβάνι ακτίνας 2 m κατασκευάζεται διάδρομος πλάτους 2 m (εξωτερική ακτίνα 4 m). Πόσο είναι το εμβαδόν του διαδρόμου; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['50,24 m²', '12,56 m²', '25,12 m²', '62,8 m²']),
-      correctAnswer: correct,
-      unit: 'm²',
-      tableData: [
-        { label: 'Μεγάλος κύκλος (ρ ＝ 4)', value: '3,14 · 16 ＝ 50,24 m²' },
-        { label: 'Μικρός κύκλος (ρ ＝ 2)', value: '3,14 · 4 ＝ 12,56 m²' },
-        { label: 'Δακτύλιος', value: '50,24 － 12,56 ＝ 37,68 m²' }
-      ],
-      explanation: `50,24 － 12,56 ＝ 37,68 m².`
-    };
-  },
-  // 5. CD / DVD δίσκος
-  () => {
-    const correct = '109,9 cm²';
-    return {
-      title: 'ΕΠΙΦΑΝΕΙΑ ΟΠΤΙΚΟΥ ΔΙΣΚΟΥ (CD)',
-      prompt: `Ένας οπτικός δίσκος CD έχει εξωτερική ακτίνα 6 cm και στο κέντρο του υπάρχει τρύπα ακτίνας 1 cm. Πόση είναι η επιφάνεια εγγραφής δεδομένων; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['113,04 cm²', '3,14 cm²', '100 cm²', '120 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Εξωτερικός κύκλος (ρ ＝ 6)', value: '3,14 · 36 ＝ 113,04 cm²' },
-        { label: 'Τρύπα (ρ ＝ 1)', value: '3,14 · 1 ＝ 3,14 cm²' },
-        { label: 'Επιφάνεια εγγραφής', value: '113,04 － 3,14 ＝ 109,9 cm²' }
-      ],
-      explanation: `113,04 － 3,14 ＝ 109,9 cm².`
-    };
-  },
-  // 6. Κορνίζα κυκλικού καθρέφτη
-  () => {
-    const correct = '138,16 cm²';
-    return {
-      title: 'ΚΥΚΛΙΚΗ ΚΟΡΝΙΖΑ',
-      prompt: `Ένας στρογγυλός καθρέφτης έχει ακτίνα 10 cm και περιβάλλεται από ξύλινη κορνίζα, ώστε η εξωτερική ακτίνα να είναι 12 cm. Πόσο είναι το εμβαδόν μόνο της κορνίζας; (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['452,16 cm²', '314 cm²', '150 cm²', '125,6 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Μεγάλος κύκλος (ρ ＝ 12)', value: '3,14 · 144 ＝ 452,16 cm²' },
-        { label: 'Καθρέφτης (ρ ＝ 10)', value: '3,14 · 100 ＝ 314 cm²' },
-        { label: 'Κορνίζα', value: '452,16 － 314 ＝ 138,16 cm²' }
-      ],
-      explanation: `452,16 － 314 ＝ 138,16 cm².`
+      explanation: isEl
+        ? '2.826 － 1.256 ＝ 1.570 m².'
+        : '2,826 － 1,256 ＝ 1,570 m².'
     };
   }
 ];
 
 // POOL ΓΙΑ Q12: Σύγκριση Σχημάτων & Μεταβολή Ακτίνας ρ
 const PROBLEM_POOL_Q12 = [
-  // 1. Διπλασιασμός ακτίνας (τετραπλασιασμός εμβαδού)
-  () => {
-    const correct = '4 φορές μεγαλύτερο (τετραπλασιάζεται)';
+  // 1. Διπλασιασμός ακτίνας
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = isEl ? '4 φορές μεγαλύτερο (τετραπλασιάζεται)' : '4 times larger (quadruples)';
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΑΚΤΙΝΑΣ',
-      prompt: `Αν διπλασιάσουμε την ακτίνα ενός κύκλου (από ρ σε 2ρ), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`,
+      title: isEl ? 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΑΚΤΙΝΑΣ' : 'DOUBLING RADIUS',
+      prompt: isEl
+        ? `Αν διπλασιάσουμε την ακτίνα ενός κύκλου (από ${rSym} σε 2${rSym}), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`
+        : `If we double the radius of a circle (from ${rSym} to 2${rSym}), how many times larger does its area become?`,
       options: ensureFourUniqueOptions(correct, () => [
-        '2 φορές μεγαλύτερο (διπλασιάζεται)',
-        '8 φορές μεγαλύτερο',
-        'Παραμένει το ίδιο'
+        isEl ? '2 φορές μεγαλύτερο (διπλασιάζεται)' : '2 times larger (doubles)',
+        isEl ? '8 φορές μεγαλύτερο' : '8 times larger',
+        isEl ? 'Παραμένει το ίδιο' : 'Remains unchanged'
       ]),
       correctAnswer: correct,
-      unit: 'απάντηση',
       tableData: [
-        { label: 'Αρχικό εμβαδόν', value: 'Ε₁ ＝ π · ρ²' },
-        { label: 'Νέο εμβαδόν', value: 'Ε₂ ＝ π · (2ρ)² ＝ π · 4ρ² ＝ 4 · (π · ρ²) ＝ 4 · Ε₁' }
+        {
+          label: isEl ? 'Αρχικό εμβαδόν' : 'Initial area',
+          valueNode: (
+            <span>
+              {isEl ? 'Ε₁' : 'A₁'} ＝ π · {rSym}<sup>2</sup>
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Νέο εμβαδόν' : 'New area',
+          valueNode: (
+            <span>
+              {isEl ? 'Ε₂' : 'A₂'} ＝ π · (2{rSym})<sup>2</sup> ＝ π · 4{rSym}<sup>2</sup> ＝ 4 · {isEl ? 'Ε₁' : 'A₁'}
+            </span>
+          )
+        }
       ],
-      explanation: `Επειδή η ακτίνα υψώνεται στο τετράγωνο (ρ²), ο διπλασιασμός της ακτίνας τετραπλασιάζει το εμβαδόν: 2 · 2 ＝ 4 φορές μεγαλύτερο.`
+      explanation: isEl
+        ? `Επειδή η ακτίνα υψώνεται στο τετράγωνο (${rSym}²), ο διπλασιασμός της ακτίνας τετραπλασιάζει το εμβαδόν: 2 · 2 ＝ 4 φορές μεγαλύτερο.`
+        : `Because radius is squared (${rSym}²), doubling the radius quadruples the area: 2 · 2 ＝ 4 times larger.`
     };
   },
   // 2. Τριπλασιασμός ακτίνας
-  () => {
-    const correct = '9 φορές μεγαλύτερο';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = isEl ? '9 φορές μεγαλύτερο' : '9 times larger';
     return {
-      title: 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΑΚΤΙΝΑΣ',
-      prompt: `Αν τριπλασιάσουμε την ακτίνα ενός κύκλου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`,
+      title: isEl ? 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΑΚΤΙΝΑΣ' : 'TRIPLING RADIUS',
+      prompt: isEl
+        ? 'Αν τριπλασιάσουμε την ακτίνα ενός κύκλου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;'
+        : 'If we triple the radius of a circle, how many times larger does its area become?',
       options: ensureFourUniqueOptions(correct, () => [
-        '3 φορές μεγαλύτερο',
-        '6 φορές μεγαλύτερο',
-        '27 φορές μεγαλύτερο'
+        isEl ? '3 φορές μεγαλύτερο' : '3 times larger',
+        isEl ? '6 φορές μεγαλύτερο' : '6 times larger',
+        isEl ? '27 φορές μεγαλύτερο' : '27 times larger'
       ]),
       correctAnswer: correct,
-      unit: 'απάντηση',
       tableData: [
-        { label: 'Συντελεστής ακτίνας', value: '3' },
-        { label: 'Συντελεστής εμβαδού', value: '3 · 3 ＝ 9 φορές μεγαλύτερο' }
+        { label: isEl ? 'Συντελεστής ακτίνας' : 'Radius factor', value: '3' },
+        {
+          label: isEl ? 'Συντελεστής εμβαδού' : 'Area factor',
+          valueNode: <span>3 · 3 ＝ {isEl ? '9 φορές μεγαλύτερο' : '9 times larger'}</span>
+        }
       ],
-      explanation: `3 · 3 ＝ 9 φορές μεγαλύτερο.`
+      explanation: isEl
+        ? '3 · 3 ＝ 9 φορές μεγαλύτερο.'
+        : '3 · 3 ＝ 9 times larger.'
     };
   },
   // 3. Κύκλος εγγεγραμμένος σε τετράγωνο
-  () => {
-    const correct = '21,5 cm²';
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(21.5, locale)} cm²`;
+    const rSym = isEl ? 'ρ' : 'r';
     return {
-      title: 'ΚΥΚΛΟΣ ΜΕΣΑ ΣΕ ΤΕΤΡΑΓΩΝΟ',
-      prompt: `Μέσα σε ένα τετράγωνο πλευράς 10 cm σχεδιάζουμε τον μεγαλύτερο δυνατό κύκλο (διάμετρος 10 cm, ακτίνα ρ ＝ 5 cm). Πόσο εμβαδόν μένει έξω από τον κύκλο (στις 4 γωνίες); (π ＝ 3,14)`,
-      options: ensureFourUniqueOptions(correct, () => ['78,5 cm²', '100 cm²', '31,4 cm²', '15 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Εμβαδόν τετραγώνου', value: '10 · 10 ＝ 100 cm²' },
-        { label: 'Εμβαδόν κύκλου (ρ ＝ 5)', value: '3,14 · 25 ＝ 78,5 cm²' },
-        { label: 'Εμβαδόν που περισσεύει', value: '100 － 78,5 ＝ 21,5 cm²' }
-      ],
-      explanation: `100 － 78,5 ＝ 21,5 cm².`
-    };
-  },
-  // 4. Σύγκριση δύο κύκλων με ακτίνες 4 και 8
-  () => {
-    const correct = 'Ο κύκλος Β έχει 4 φορές μεγαλύτερο εμβαδόν';
-    return {
-      title: 'ΣΥΓΚΡΙΣΗ ΔΥΟ ΚΥΚΛΩΝ',
-      prompt: `Ο κύκλος Α έχει ακτίνα ρ ＝ 4 cm και ο κύκλος Β έχει ακτίνα ρ ＝ 8 cm. Ποια είναι η σχέση των εμβαδών τους;`,
+      title: isEl ? 'ΚΥΚΛΟΣ ΜΕΣΑ ΣΕ ΤΕΤΡΑΓΩΝΟ' : 'CIRCLE IN SQUARE',
+      prompt: isEl
+        ? `Μέσα σε ένα τετράγωνο πλευράς 10 cm σχεδιάζουμε τον μεγαλύτερο δυνατό κύκλο (διάμετρος 10 cm, ακτίνα ${rSym} ＝ 5 cm). Πόσο εμβαδόν μένει έξω από τον κύκλο (στις 4 γωνίες); (π ＝ 3,14)`
+        : `Inside a square of side 10 cm we draw the largest possible circle (diameter 10 cm, radius ${rSym} ＝ 5 cm). How much area remains outside the circle (in the 4 corners)? (π ＝ 3.14)`,
       options: ensureFourUniqueOptions(correct, () => [
-        'Ο κύκλος Β έχει 2 φορές μεγαλύτερο εμβαδόν',
-        'Έχουν το ίδιο εμβαδόν',
-        'Ο κύκλος Β έχει 8 φορές μεγαλύτερο εμβαδόν'
+        `${formatNum(78.5, locale)} cm²`,
+        `${formatNum(100, locale)} cm²`,
+        `${formatNum(31.4, locale)} cm²`,
+        `${formatNum(15, locale)} cm²`
       ]),
       correctAnswer: correct,
-      unit: 'απάντηση',
       tableData: [
-        { label: 'Κύκλος Α (ρ ＝ 4)', value: 'Ε₁ ＝ π · 16' },
-        { label: 'Κύκλος Β (ρ ＝ 8)', value: 'Ε₂ ＝ π · 64 ＝ 4 · Ε₁' }
+        {
+          label: isEl ? 'Εμβαδόν τετραγώνου' : 'Square area',
+          valueNode: <span>10 · 10 ＝ 100 cm²</span>
+        },
+        {
+          label: isEl ? `Εμβαδόν κύκλου (${rSym} ＝ 5)` : `Circle area (${rSym} ＝ 5)`,
+          valueNode: (
+            <span>
+              {isEl ? '3,14' : '3.14'} · 25 ＝ {formatNum(78.5, locale)} cm²
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Εμβαδόν που περισσεύει' : 'Remaining area',
+          valueNode: (
+            <span>
+              100 － {formatNum(78.5, locale)} ＝ {formatNum(21.5, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `Αφού η ακτίνα διπλασιάστηκε, το εμβαδόν τετραπλασιάζεται.`
-    };
-  },
-  // 5. Υποδιπλασιασμός ακτίνας
-  () => {
-    const correct = 'Γίνεται 4 φορές μικρότερο (στο 1/4)';
-    return {
-      title: 'ΣΜΙΚΡΥΝΣΗ ΑΚΤΙΝΑΣ',
-      prompt: `Αν μειώσουμε την ακτίνα ενός κύκλου στο μισό (ρ : 2), πώς θα αλλάξει το εμβαδόν του;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        'Μειώνεται στο μισό (στο 1/2)',
-        'Μειώνεται στο 1/8',
-        'Παραμένει το ίδιο'
-      ]),
-      correctAnswer: correct,
-      unit: 'απάντηση',
-      tableData: [
-        { label: 'Μεταβολή ακτίνας', value: ': 2' },
-        { label: 'Μεταβολή εμβαδού', value: ': (2 · 2) ＝ : 4 (στο ένα τέταρτο)' }
-      ],
-      explanation: `Το εμβαδόν διαιρείται με το 2 · 2 ＝ 4.`
-    };
-  },
-  // 6. Μετατροπή εμβαδού από m² σε στρέμματα
-  () => {
-    const correct = '1,256 στρέμματα';
-    return {
-      title: 'ΚΥΚΛΙΚΟ ΧΩΡΑΦΙ ΣΕ ΣΤΡΕΜΜΑΤΑ',
-      prompt: `Ένα κυκλικό αγρόκτημα έχει ακτίνα ρ ＝ 20 m (εμβαδόν 1.256 m²). Πόσα στρέμματα είναι η έκτασή του;`,
-      options: ensureFourUniqueOptions(correct, () => ['12,56 στρέμματα', '0,1256 στρέμματα', '125,6 στρέμματα', '1256 στρέμματα']),
-      correctAnswer: correct,
-      unit: 'στρέμματα',
-      tableData: [
-        { label: 'Εμβαδόν σε m²', value: '3,14 · 20 · 20 ＝ 1.256 m²' },
-        { label: 'Μετατροπή σε στρέμματα (: 1.000)', value: '1.256 : 1.000 ＝ 1,256 στρέμματα' }
-      ],
-      explanation: `1.256 : 1.000 ＝ 1,256 στρέμματα.`
+      explanation: isEl
+        ? '100 － 78,5 ＝ 21,5 cm².'
+        : '100 － 78.5 ＝ 21.5 cm².'
     };
   }
 ];
@@ -546,187 +676,329 @@ const PROBLEM_POOL_Q12 = [
 // ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
-function generateQuestionsSet() {
+function generateQuestionsSet(locale = 'el') {
+  const isEl = locale === 'el';
+  const rSym = isEl ? 'ρ' : 'r';
+  const dSym = isEl ? 'δ' : 'd';
   const qs = [];
 
-  // Q1: Τύπος εμβαδού κύκλου (True/False)
+  // Q1: Τύπος εμβαδού κύκλου (Boolean)
   const isQ1True = Math.random() < 0.5;
   qs.push({
     id: 1,
     type: 'boolean',
-    title: 'ΤΥΠΟΣ ΕΜΒΑΔΟΥ ΚΥΚΛΟΥ',
-    prompt: isQ1True
-      ? 'Το εμβαδόν του κύκλου υπολογίζεται με τον τύπο Ε ＝ π · ρ², δηλαδή 3,14 επί την ακτίνα επί την ακτίνα.'
-      : 'Το εμβαδόν του κύκλου υπολογίζεται πολλαπλασιάζοντας την ακτίνα επί 2 και μετά επί 3,14: Ε ＝ 2 · π · ρ.',
+    title: isEl ? 'ΤΥΠΟΣ ΕΜΒΑΔΟΥ ΚΥΚΛΟΥ' : 'CIRCLE AREA FORMULA',
+    prompt: isEl
+      ? (isQ1True
+          ? `Το εμβαδόν του κύκλου υπολογίζεται με τον τύπο Ε ＝ π · ${rSym}², δηλαδή 3,14 επί την ακτίνα επί την ακτίνα.`
+          : `Το εμβαδόν του κύκλου υπολογίζεται πολλαπλασιάζοντας την ακτίνα επί 2 και μετά επί 3,14: Ε ＝ 2 · π · ${rSym}.`)
+      : (isQ1True
+          ? `The area of a circle is calculated with the formula A ＝ π · ${rSym}², which means 3.14 times radius times radius.`
+          : `The area of a circle is calculated by multiplying radius times 2 and then by 3.14: A ＝ 2 · π · ${rSym}.`),
     correctAnswer: isQ1True,
     tableData: [
-      { label: 'Τύπος Εμβαδού', value: 'Ε ＝ π · ρ² (επιφάνεια)' },
-      { label: 'Τύπος Περιφέρειας', value: 'L ＝ 2 · π · ρ (μήκος γραμμής)' }
+      {
+        label: isEl ? 'Τύπος Εμβαδού' : 'Area Formula',
+        valueNode: (
+          <span>
+            {isEl ? 'Ε' : 'A'} ＝ π · {rSym}<sup>2</sup> ({isEl ? 'επιφάνεια' : 'surface'})
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Τύπος Περιφέρειας' : 'Circumference Formula',
+        valueNode: (
+          <span>
+            L ＝ 2 · π · {rSym} ({isEl ? 'μήκος γραμμής' : 'outline length'})
+          </span>
+        )
+      }
     ],
-    explanation: isQ1True
-      ? 'Το εμβαδόν του κύκλου είναι πάντοτε Ε ＝ π · ρ² (3,14 · ρ · ρ).'
-      : 'Ο τύπος 2 · π · ρ δίνει το μήκος της περιφέρειας (περίμετρο). Το εμβαδόν δίνεται από τον τύπο Ε ＝ π · ρ².'
+    explanation: isEl
+      ? (isQ1True
+          ? `Το εμβαδόν του κύκλου είναι πάντοτε Ε ＝ π · ${rSym}² (3,14 · ${rSym} · ${rSym}).`
+          : `Ο τύπος 2 · π · ${rSym} δίνει το μήκος της περιφέρειας (περίμετρο). Το εμβαδόν δίνεται από τον τύπο Ε ＝ π · ${rSym}².`)
+      : (isQ1True
+          ? `The area of a circle is always A ＝ π · ${rSym}² (3.14 · ${rSym} · ${rSym}).`
+          : `The formula 2 · π · ${rSym} gives circumference (perimeter). Area is given by A ＝ π · ${rSym}².`)
   });
 
-  // Q2: Τι σημαίνει ρ² (MCQ)
+  // Q2: Τι σημαίνει ρ² / r² (MCQ)
+  const q2Correct = isEl
+    ? `Η ακτίνα πολλαπλασιασμένη με τον εαυτό της: ${rSym} · ${rSym}`
+    : `The radius multiplied by itself: ${rSym} · ${rSym}`;
   qs.push({
     id: 2,
     type: 'mcq',
-    title: 'Η ΕΝΝΟΙΑ ΤΟΥ Ρ²',
-    prompt: 'Τι σημαίνει το σύμβολο ρ² στον τύπο του εμβαδού κύκλου;',
-    options: ensureFourUniqueOptions('Η ακτίνα πολλαπλασιασμένη με τον εαυτό της: ρ · ρ', () => [
-      'Η ακτίνα πολλαπλασιασμένη επί 2: ρ · 2',
-      'Η διάμετρος του κύκλου',
-      'Η ακτίνα συν 2: ρ ＋ 2'
+    title: isEl ? `Η ΕΝΝΟΙΑ ΤΟΥ ${toCleanUppercase(rSym)}²` : `THE MEANING OF ${rSym.toUpperCase()}²`,
+    prompt: isEl
+      ? `Τι σημαίνει το σύμβολο ${rSym}² στον τύπο του εμβαδού κύκλου;`
+      : `What does the symbol ${rSym}² represent in the circle area formula?`,
+    options: ensureFourUniqueOptions(q2Correct, () => [
+      isEl ? `Η ακτίνα πολλαπλασιασμένη επί 2: ${rSym} · 2` : `The radius multiplied by 2: ${rSym} · 2`,
+      isEl ? 'Η διάμετρος του κύκλου' : 'The diameter of the circle',
+      isEl ? `Η ακτίνα συν 2: ${rSym} ＋ 2` : `The radius plus 2: ${rSym} ＋ 2`
     ]),
-    correctAnswer: 'Η ακτίνα πολλαπλασιασμένη με τον εαυτό της: ρ · ρ',
+    correctAnswer: q2Correct,
     tableData: [
-      { label: 'Τετράγωνο ακτίνας', value: 'ρ² ＝ ρ · ρ' },
-      { label: 'Σύνηθες λάθος', value: 'ρ · 2 (αυτό είναι η διάμετρος)' }
+      {
+        label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+        valueNode: (
+          <span>
+            {rSym}<sup>2</sup> ＝ {rSym} · {rSym}
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Σύνηθες λάθος' : 'Common pitfall',
+        value: `${rSym} · 2 (${isEl ? `αυτό είναι η διάμετρος ${dSym}` : `that is diameter ${dSym}`})`
+      }
     ],
-    explanation: 'Το ρ² είναι δύναμη και σημαίνει ρ · ρ (π.χ. αν ρ ＝ 5, τότε ρ² ＝ 5 · 5 ＝ 25).'
+    explanation: isEl
+      ? `Το ${rSym}² είναι δύναμη και σημαίνει ${rSym} · ${rSym} (π.χ. αν ${rSym} ＝ 5, τότε ${rSym}² ＝ 5 · 5 ＝ 25).`
+      : `${rSym}² is an exponent and means ${rSym} · ${rSym} (e.g., if ${rSym} ＝ 5, then ${rSym}² ＝ 5 · 5 ＝ 25).`
   });
 
-  // Q3: Σχέση διαμέτρου και ακτίνας ρ (MCQ)
+  // Q3: Σχέση διαμέτρου και ακτίνας (MCQ)
+  const q3Correct = isEl
+    ? `Να διαιρέσουμε τη διάμετρο με το 2 για να βρούμε την ακτίνα (${rSym} ＝ ${dSym} : 2)`
+    : `Divide diameter by 2 to find radius (${rSym} ＝ ${dSym} : 2)`;
   qs.push({
     id: 3,
     type: 'mcq',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟ ΤΗ ΔΙΑΜΕΤΡΟ',
-    prompt: 'Αν σε ένα πρόβλημα γνωρίζουμε τη διάμετρο (δ) ενός κύκλου, τι πρέπει να κάνουμε πρώτα για να βρούμε το εμβαδόν;',
-    options: ensureFourUniqueOptions(
-      'Να διαιρέσουμε τη διάμετρο με το 2 για να βρούμε την ακτίνα (ρ ＝ δ : 2)',
-      () => [
-        'Να βάλουμε απευθείας τη διάμετρο στον τύπο: 3,14 · δ · δ',
-        'Να πολλαπλασιάσουμε τη διάμετρο με το 2',
-        'Δεν μπορούμε να βρούμε το εμβαδόν από τη διάμετρο'
-      ]
-    ),
-    correctAnswer: 'Να διαιρέσουμε τη διάμετρο με το 2 για να βρούμε την ακτίνα (ρ ＝ δ : 2)',
+    title: isEl ? 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟ ΤΗ ΔΙΑΜΕΤΡΟ' : 'CALCULATION FROM DIAMETER',
+    prompt: isEl
+      ? `Αν σε ένα πρόβλημα γνωρίζουμε τη διάμετρο (${dSym}) ενός κύκλου, τι πρέπει να κάνουμε πρώτα για να βρούμε το εμβαδόν;`
+      : `If a problem gives the diameter (${dSym}) of a circle, what must we do first to find its area?`,
+    options: ensureFourUniqueOptions(q3Correct, () => [
+      isEl ? `Να βάλουμε απευθείας τη διάμετρο στον τύπο: 3,14 · ${dSym} · ${dSym}` : `Plug diameter directly into formula: 3.14 · ${dSym} · ${dSym}`,
+      isEl ? 'Να πολλαπλασιάσουμε τη διάμετρο με το 2' : 'Multiply diameter by 2',
+      isEl ? 'Δεν μπορούμε να βρούμε το εμβαδόν από τη διάμετρο' : 'Cannot compute area from diameter'
+    ]),
+    correctAnswer: q3Correct,
     tableData: [
-      { label: 'Σχέση', value: 'δ ＝ 2 · ρ, άρα ρ ＝ δ : 2' },
-      { label: 'Βήμα υπολογισμού', value: 'Πρώτα βρίσκουμε την ακτίνα ρ και μετά υπολογίζουμε το π · ρ²' }
+      {
+        label: isEl ? 'Σχέση' : 'Relation',
+        valueNode: (
+          <span className="inline-flex items-center">
+            <span>{dSym} ＝ 2 · {rSym}, {isEl ? 'άρα' : 'so'} {rSym} ＝ </span>
+            <Fraction num={dSym} den="2" />
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Βήμα υπολογισμού' : 'Procedure',
+        valueNode: (
+          <span>
+            {isEl ? `Πρώτα βρίσκουμε την ακτίνα ${rSym} και μετά υπολογίζουμε το π · ` : `First compute radius ${rSym}, then calculate π · `}
+            {rSym}<sup>2</sup>
+          </span>
+        )
+      }
     ],
-    explanation: 'Ο τύπος του εμβαδού απαιτεί την ακτίνα (ρ), επομένως διαιρούμε πάντοτε πρώτα τη διάμετρο διά 2.'
+    explanation: isEl
+      ? `Ο τύπος του εμβαδού απαιτεί την ακτίνα (${rSym}), επομένως διαιρούμε πάντοτε πρώτα τη διάμετρο διά 2.`
+      : `The area formula requires radius (${rSym}), so we always divide diameter by 2 first.`
   });
 
   // Q4: Οπτική αναγνώριση ακτίνας ρ (SVG - No Giveaway)
+  const q4Correct = isEl
+    ? `Την κίτρινη ακτίνα (${rSym}) από το κέντρο προς την περιφέρεια`
+    : `The yellow radius (${rSym}) from center to circumference`;
   qs.push({
     id: 4,
     type: 'mcq',
-    title: 'ΑΝΑΓΝΩΡΙΣΗ ΣΤΟΙΧΕΙΩΝ ΚΥΚΛΟΥ',
-    prompt: 'Παρατηρήστε τον παρακάτω κύκλο. Ποιο ευθύγραμμο τμήμα πρέπει να υψώσουμε στο τετράγωνο για να υπολογίσουμε το εμβαδόν του;',
+    title: isEl ? 'ΑΝΑΓΝΩΡΙΣΗ ΣΤΟΙΧΕΙΩΝ ΚΥΚΛΟΥ' : 'CIRCLE ELEMENTS IDENTIFICATION',
+    prompt: isEl
+      ? 'Παρατηρήστε τον παρακάτω κύκλο. Ποιο ευθύγραμμο τμήμα πρέπει να υψώσουμε στο τετράγωνο για να υπολογίσουμε το εμβαδόν του;'
+      : 'Look at the circle below. Which line segment must be squared to calculate its area?',
     svg: (
-      <svg viewBox="0 0 160 120" className="w-40 h-28 mx-auto my-2 select-none drop-shadow-sm">
+      <svg viewBox="0 0 160 120" className="w-full max-w-[160px] h-auto mx-auto my-2 select-none drop-shadow-sm">
         <circle cx="80" cy="60" r="45" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="2" />
         <line x1="80" y1="60" x2="125" y2="60" stroke="#f59e0b" strokeWidth="2.5" />
         <circle cx="80" cy="60" r="3" fill="#ffffff" />
-        <text x="102" y="52" fill="#f59e0b" fontSize="11" fontWeight="bold">ρ</text>
+        <text x="102" y="52" fill="#f59e0b" fontSize="11" fontWeight="bold">{rSym}</text>
       </svg>
     ),
-    options: ensureFourUniqueOptions(
-      'Την κίτρινη ακτίνα (ρ) από το κέντρο προς την περιφέρεια',
-      () => [
-        'Ολόκληρη τη διάμετρο του κύκλου',
-        'Το μήκος της περιφέρειας',
-        'Οποιοδήποτε σημείο του κύκλου'
-      ]
-    ),
-    correctAnswer: 'Την κίτρινη ακτίνα (ρ) από το κέντρο προς την περιφέρεια',
+    options: ensureFourUniqueOptions(q4Correct, () => [
+      isEl ? 'Ολόκληρη τη διάμετρο του κύκλου' : 'The entire circle diameter',
+      isEl ? 'Το μήκος της περιφέρειας' : 'The circumference length',
+      isEl ? 'Οποιοδήποτε σημείο του κύκλου' : 'Any point on the circle'
+    ]),
+    correctAnswer: q4Correct,
     tableData: [
-      { label: 'Κίτρινο τμήμα (ρ)', value: 'Ακτίνα του κύκλου' },
-      { label: 'Τύπος εμβαδού', value: 'Ε ＝ π · ρ²' }
+      { label: isEl ? `Κίτρινο τμήμα (${rSym})` : `Yellow segment (${rSym})`, value: isEl ? 'Ακτίνα του κύκλου' : 'Radius of the circle' },
+      {
+        label: isEl ? 'Τύπος εμβαδού' : 'Area formula',
+        valueNode: (
+          <span>
+            {isEl ? 'Ε' : 'A'} ＝ π · {rSym}<sup>2</sup>
+          </span>
+        )
+      }
     ],
-    explanation: 'Για το εμβαδόν υψώνουμε στο τετράγωνο την ακτίνα (ρ).'
+    explanation: isEl
+      ? `Για το εμβαδόν υψώνουμε στο τετράγωνο την ακτίνα (${rSym}).`
+      : `For area, we square the radius (${rSym}).`
   });
 
-  // Q5: Υπολογισμός εμβαδού με ρ = 10 (Input αριθμού)
+  // Q5: Υπολογισμός εμβαδού με ρ = 10 (Input)
   qs.push({
     id: 5,
     type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΕΜΒΑΔΟΥ ΜΕ Ρ = 10 CM',
-    prompt: 'Ένας κύκλος έχει ακτίνα ρ ＝ 10 cm. Πόσα cm² είναι το εμβαδόν του; (Χρησιμοποιήστε π ＝ 3,14 - Γράψτε μόνο τον αριθμό)',
+    title: isEl ? `ΥΠΟΛΟΓΙΣΜΟΣ ΕΜΒΑΔΟΥ ΜΕ ${toCleanUppercase(rSym)} ＝ 10 CM` : `AREA CALCULATION WITH ${rSym.toUpperCase()} ＝ 10 CM`,
+    prompt: isEl
+      ? `Ένας κύκλος έχει ακτίνα ${rSym} ＝ 10 cm. Πόσα cm² είναι το εμβαδόν του; (Χρησιμοποιήστε π ＝ 3,14 - Γράψτε μόνο τον αριθμό)`
+      : `A circle has radius ${rSym} ＝ 10 cm. What is its area in cm²? (Use π ＝ 3.14 - Enter number only)`,
     correctAnswer: '314',
     tableData: [
-      { label: 'Ακτίνα (ρ)', value: '10 cm' },
-      { label: 'Τετράγωνο ακτίνας (ρ²)', value: '10 · 10 ＝ 100 cm²' },
-      { label: 'Πράξη', value: '3,14 · 100 ＝ 314 cm²' }
+      { label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`, value: '10 cm' },
+      {
+        label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+        valueNode: (
+          <span>
+            {rSym}<sup>2</sup> ＝ 10 · 10 ＝ 100 cm²
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Υπολογισμός' : 'Calculation',
+        valueNode: (
+          <span>
+            {isEl ? '3,14' : '3.14'} · 100 ＝ {formatNum(314, locale)} cm²
+          </span>
+        )
+      }
     ],
-    explanation: 'Ε ＝ 3,14 · 10 · 10 ＝ 314 cm².'
+    explanation: isEl ? 'Ε ＝ 3,14 · 10 · 10 ＝ 314 cm².' : 'A ＝ 3.14 · 10 · 10 ＝ 314 cm².'
   });
 
-  // Q6: Υπολογισμός εμβαδού με ρ = 2 cm (Input αριθμού)
+  // Q6: Υπολογισμός εμβαδού με ρ = 2 cm (Input)
   qs.push({
     id: 6,
     type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΕΜΒΑΔΟΥ ΜΕ Ρ = 2 CM',
-    prompt: 'Ένας κύκλος έχει ακτίνα ρ ＝ 2 cm. Πόσα cm² είναι το εμβαδόν του; (Χρησιμοποιήστε π ＝ 3,14)',
-    correctAnswer: '12,56',
+    title: isEl ? `ΥΠΟΛΟΓΙΣΜΟΣ ΕΜΒΑΔΟΥ ΜΕ ${toCleanUppercase(rSym)} ＝ 2 CM` : `AREA CALCULATION WITH ${rSym.toUpperCase()} ＝ 2 CM`,
+    prompt: isEl
+      ? `Ένας κύκλος έχει ακτίνα ${rSym} ＝ 2 cm. Πόσα cm² είναι το εμβαδόν του; (Χρησιμοποιήστε π ＝ 3,14)`
+      : `A circle has radius ${rSym} ＝ 2 cm. What is its area in cm²? (Use π ＝ 3.14)`,
+    correctAnswer: isEl ? '12,56' : '12.56',
     tableData: [
-      { label: 'Ακτίνα (ρ)', value: '2 cm' },
-      { label: 'Τετράγωνο ακτίνας (ρ²)', value: '2 · 2 ＝ 4 cm²' },
-      { label: 'Πράξη', value: '3,14 · 4 ＝ 12,56 cm²' }
+      { label: isEl ? `Ακτίνα (${rSym})` : `Radius (${rSym})`, value: '2 cm' },
+      {
+        label: isEl ? 'Τετράγωνο ακτίνας' : 'Radius squared',
+        valueNode: (
+          <span>
+            {rSym}<sup>2</sup> ＝ 2 · 2 ＝ 4 cm²
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Υπολογισμός' : 'Calculation',
+        valueNode: (
+          <span>
+            {isEl ? '3,14' : '3.14'} · 4 ＝ {isEl ? '12,56' : '12.56'} cm²
+          </span>
+        )
+      }
     ],
-    explanation: 'Ε ＝ 3,14 · 2 · 2 ＝ 3,14 · 4 ＝ 12,56 cm².'
+    explanation: isEl ? 'Ε ＝ 3,14 · 2 · 2 ＝ 3,14 · 4 ＝ 12,56 cm².' : 'A ＝ 3.14 · 2 · 2 ＝ 3.14 · 4 ＝ 12.56 cm².'
   });
 
   // Q7: Εμβαδόν ημικυκλίου (MCQ)
+  const q7Correct = isEl
+    ? `Υπολογίζουμε το εμβαδόν ολόκληρου του κύκλου και διαιρούμε με το 2: (π · ${rSym}²) : 2`
+    : `Calculate the full circle area and divide by 2: (π · ${rSym}²) : 2`;
   qs.push({
     id: 7,
     type: 'mcq',
-    title: 'ΕΜΒΑΔΟΝ ΗΜΙΚΥΚΛΙΟΥ',
-    prompt: 'Πώς υπολογίζουμε το εμβαδόν ενός ημικυκλίου;',
-    options: ensureFourUniqueOptions(
-      'Υπολογίζουμε το εμβαδόν ολόκληρου του κύκλου και διαιρούμε με το 2: (π · ρ²) : 2',
-      () => [
-        'Πολλαπλασιάζουμε την ακτίνα με το 2',
-        'Διαιρούμε την ακτίνα με το 2 και μετά πολλαπλασιάζουμε με το 3,14',
-        'Έχει ακριβώς το ίδιο εμβαδόν με τον κύκλο'
-      ]
-    ),
-    correctAnswer: 'Υπολογίζουμε το εμβαδόν ολόκληρου του κύκλου και διαιρούμε με το 2: (π · ρ²) : 2',
+    title: isEl ? 'ΕΜΒΑΔΟΝ ΗΜΙΚΥΚΛΙΟΥ' : 'SEMICIRCLE AREA',
+    prompt: isEl
+      ? 'Πώς υπολογίζουμε το εμβαδόν ενός ημικυκλίου;'
+      : 'How do we calculate the area of a semicircle?',
+    options: ensureFourUniqueOptions(q7Correct, () => [
+      isEl ? 'Πολλαπλασιάζουμε την ακτίνα με το 2' : 'Multiply radius by 2',
+      isEl ? 'Διαιρούμε την ακτίνα με το 2 και μετά πολλαπλασιάζουμε με το 3,14' : 'Divide radius by 2 and multiply by 3.14',
+      isEl ? 'Έχει ακριβώς το ίδιο εμβαδόν με τον κύκλο' : 'It has the exact same area as full circle'
+    ]),
+    correctAnswer: q7Correct,
     tableData: [
-      { label: 'Ολόκληρος κύκλος', value: 'Ε ＝ π · ρ²' },
-      { label: 'Ημικύκλιο', value: 'Εημικ ＝ (π · ρ²) : 2' }
+      {
+        label: isEl ? 'Ολόκληρος κύκλος' : 'Full circle',
+        valueNode: (
+          <span>
+            {isEl ? 'Ε' : 'A'} ＝ π · {rSym}<sup>2</sup>
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Ημικύκλιο' : 'Semicircle',
+        valueNode: (
+          <span className="inline-flex items-center">
+            <span>{isEl ? 'Εημικ ＝ ' : 'Asemi ＝ '}</span>
+            <Fraction num={<span>π · {rSym}<sup>2</sup></span>} den="2" />
+          </span>
+        )
+      }
     ],
-    explanation: 'Το ημικύκλιο είναι το μισό του κύκλου, άρα διαιρούμε το εμβαδόν με το 2.'
+    explanation: isEl
+      ? 'Το ημικύκλιο είναι το μισό του κύκλου, άρα διαιρούμε το εμβαδόν με το 2.'
+      : 'A semicircle is half of a full circle, so we divide circle area by 2.'
   });
 
   // Q8: Περίμετρος vs Εμβαδόν (MCQ)
+  const q8Correct = isEl
+    ? `Η περίμετρος είναι μήκος γραμμής (2 · π · ${rSym} σε cm), ενώ το εμβαδόν είναι επιφάνεια (π · ${rSym}² σε cm²)`
+    : `Perimeter is line length (2 · π · ${rSym} in cm), while area is flat surface (π · ${rSym}² in cm²)`;
   qs.push({
     id: 8,
     type: 'mcq',
-    title: 'ΠΕΡΙΜΕΤΡΟΣ ΕΝΑΝΤΙ ΕΜΒΑΔΟΥ',
-    prompt: 'Ποια είναι η διαφορά ανάμεσα στην περίμετρο (μήκος κύκλου) και στο εμβαδόν του κύκλου;',
-    options: ensureFourUniqueOptions(
-      'Η περίμετρος είναι μήκος γραμμής (2 · π · ρ σε cm), ενώ το εμβαδόν είναι επιφάνεια (π · ρ² σε cm²)',
-      () => [
-        'Είναι ακριβώς το ίδιο πράγμα με άλλο όνομα',
-        'Η περίμετρος μετριέται σε cm² και το εμβαδόν σε cm',
-        'Το εμβαδόν είναι πάντοτε μικρότερο από την περίμετρο'
-      ]
-    ),
-    correctAnswer: 'Η περίμετρος είναι μήκος γραμμής (2 · π · ρ σε cm), ενώ το εμβαδόν είναι επιφάνεια (π · ρ² σε cm²)',
+    title: isEl ? 'ΠΕΡΙΜΕΤΡΟΣ ΕΝΑΝΤΙ ΕΜΒΑΔΟΥ' : 'PERIMETER VS AREA',
+    prompt: isEl
+      ? 'Ποια είναι η διαφορά ανάμεσα στην περίμετρο (μήκος κύκλου) και στο εμβαδόν του κύκλου;'
+      : 'What is the key difference between circle perimeter and circle area?',
+    options: ensureFourUniqueOptions(q8Correct, () => [
+      isEl ? 'Είναι ακριβώς το ίδιο πράγμα με άλλο όνομα' : 'They are the exact same thing with different names',
+      isEl ? 'Η περίμετρος μετριέται σε cm² και το εμβαδόν σε cm' : 'Perimeter is measured in cm² and area in cm',
+      isEl ? 'Το εμβαδόν είναι πάντοτε μικρότερο από την περίμετρο' : 'Area is always less than perimeter'
+    ]),
+    correctAnswer: q8Correct,
     tableData: [
-      { label: 'Περίμετρος', value: 'L ＝ 2 · π · ρ (μήκος σε cm, m)' },
-      { label: 'Εμβαδόν', value: 'Ε ＝ π · ρ² (επιφάνεια σε cm², m²)' }
+      {
+        label: isEl ? 'Περίμετρος' : 'Perimeter',
+        valueNode: (
+          <span>
+            L ＝ 2 · π · {rSym} ({isEl ? 'μήκος σε cm, m' : 'length in cm, m'})
+          </span>
+        )
+      },
+      {
+        label: isEl ? 'Εμβαδόν' : 'Area',
+        valueNode: (
+          <span>
+            {isEl ? 'Ε' : 'A'} ＝ π · {rSym}<sup>2</sup> ({isEl ? 'επιφάνεια σε cm², m²' : 'surface in cm², m²'})
+          </span>
+        )
+      }
     ],
-    explanation: 'Η περίμετρος μετράει το εξωτερικό μήκος της γραμμής, ενώ το εμβαδόν μετράει ολόκληρη την εσωτερική επιφάνεια.'
+    explanation: isEl
+      ? 'Η περίμετρος μετράει το εξωτερικό μήκος της γραμμής, ενώ το εμβαδόν μετράει ολόκληρη την εσωτερική επιφάνεια.'
+      : 'Perimeter measures boundary length, while area measures the enclosed surface region.'
   });
 
   // Q9: Πρόβλημα από PROBLEM_POOL_Q9
-  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)](locale);
   qs.push({ id: 9, type: 'mcq', ...p9 });
 
   // Q10: Πρόβλημα από PROBLEM_POOL_Q10
-  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)](locale);
   qs.push({ id: 10, type: 'mcq', ...p10 });
 
   // Q11: Πρόβλημα από PROBLEM_POOL_Q11
-  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
+  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)](locale);
   qs.push({ id: 11, type: 'mcq', ...p11 });
 
   // Q12: Πρόβλημα από PROBLEM_POOL_Q12
-  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
+  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)](locale);
   qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
@@ -737,16 +1009,20 @@ function generateQuestionsSet() {
 // -------------------------------------------------------------
 
 export default function EmbadonKiklouAskiseisPage() {
+  const router = useRouter();
+  const { locale = 'el' } = router;
+  const isEl = locale === 'el';
+
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     loadNewSet();
-  }, []);
+  }, [locale]);
 
   function loadNewSet() {
-    const newQs = generateQuestionsSet();
+    const newQs = generateQuestionsSet(locale);
     setQuestions(newQs);
     setUserAnswers({});
     setSubmitted(false);
@@ -800,48 +1076,80 @@ export default function EmbadonKiklouAskiseisPage() {
   const totalCount = questions.length || 12;
   const percentage = Math.round((score / totalCount) * 100);
 
+  // Στατικά μεταφραστικά strings UI
+  const ui = {
+    metaTitle: isEl
+      ? "Ασκήσεις: Εμβαδόν Κύκλου - ΣΤ' Δημοτικού | LearnMaths.gr"
+      : "Exercises: Circle Area - 6th Grade | LearnMaths.gr",
+    metaDesc: isEl
+      ? "Διαδραστικές ασκήσεις στον υπολογισμό εμβαδού κύκλου (Ε ＝ π · ρ²), διαμέτρου, ημικυκλίου και κυκλικού δακτυλίου για τη ΣΤ' Δημοτικού."
+      : "Interactive exercises on circle area (A ＝ π · r²), diameter, semicircles, and circular rings for 6th Grade.",
+    backText: isEl ? "Θεωρία Κεφ. 76" : "Theory Ch. 76",
+    actionTheory: isEl ? "📖 Θεωρία" : "📖 Theory",
+    chapterBadge: isEl ? "ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 76 • ΣΤ' ΔΗΜΟΤΙΚΟΥ" : "EXERCISES • CHAPTER 76 • 6TH GRADE",
+    heroTitle: isEl ? "Ασκήσεις: Εμβαδόν Κύκλου" : "Exercises: Circle Area",
+    heroDesc: isEl
+      ? "Εξασκηθείτε στον υπολογισμό εμβαδού με τον τύπο Ε ＝ π · ρ², στις σχέσεις ακτίνας-διαμέτρου και στα ημικύκλια μέσα από 12 δυναμικές ερωτήσεις."
+      : "Practice circle area calculation with A ＝ π · r², radius-diameter relationships, and semicircles through 12 dynamic questions.",
+    heroFeature: isEl
+      ? "12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση & Αναλυτική Επεξήγηση"
+      : "12 Dynamic Exercises with Automatic Grading & Detailed Explanation",
+    btnNewSet: isEl ? "Νέες Ασκήσεις" : "New Exercises",
+    btnSubmit: isEl ? "Έλεγχος Απαντήσεων" : "Check Answers",
+    lblTrue: isEl ? "ΣΩΣΤΟ" : "TRUE",
+    lblFalse: isEl ? "ΛΑΘΟΣ" : "FALSE",
+    lblCorrectBadge: isEl ? "ΣΩΣΤΟ" : "CORRECT",
+    lblWrongBadge: isEl ? "ΛΑΘΟΣ" : "INCORRECT",
+    inputPlaceholder: isEl ? "Απάντηση..." : "Answer...",
+    answered: isEl ? "ΑΠΑΝΤΗΘΗΚΑΝ:" : "ANSWERED:",
+    score: isEl ? "ΣΚΟΡ:" : "SCORE:",
+    percentage: isEl ? "ΠΟΣΟΣΤΟ:" : "PERCENTAGE:",
+    feedbackCorrect: isEl ? "✓ Σωστή απάντηση!" : "✓ Correct answer!",
+    feedbackWrongPrefix: isEl ? "✗ Λάθος. Η σωστή απάντηση είναι: " : "✗ Incorrect. The correct answer is: "
+  };
+
   return (
     <Layout
-      title="Ασκήσεις: Εμβαδόν Κύκλου - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις στον υπολογισμό εμβαδού κύκλου (Ε ＝ π · ρ²), διαμέτρου, ημικυκλίου και κυκλικού δακτυλίου για τη ΣΤ' Δημοτικού."
+      title={ui.metaTitle}
+      description={ui.metaDesc}
       backUrl="/st-dimotikou/76-embadon-kiklou"
-      backText="Θεωρία Κεφ. 76"
+      backText={ui.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/76-embadon-kiklou"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>{ui.actionTheory}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 76 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{ui.chapterBadge}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              {toCleanUppercase('Ασκησεις: Εμβαδον Κυκλου')}
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(ui.heroTitle)}
             </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στον υπολογισμό εμβαδού με τον τύπο Ε ＝ π · ρ², στις σχέσεις ακτίνας-διαμέτρου και στα ημικύκλια μέσα από 12 δυναμικές ερωτήσεις.
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl break-words [overflow-wrap:anywhere]">
+              {ui.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
+              <span className="break-words">{ui.heroFeature}</span>
             </div>
             <button
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base shrink-0"
             >
-              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
+              <span>🔄 {toCleanUppercase(ui.btnNewSet)}</span>
             </button>
           </div>
         </section>
@@ -865,34 +1173,34 @@ export default function EmbadonKiklouAskiseisPage() {
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
                 <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150 shrink-0">
                       {index + 1}
                     </span>
-                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider">
-                      {toCleanUppercase(q.title || `ΕΡΩΤΗΣΗ ${index + 1}`)}
+                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider truncate">
+                      {toCleanUppercase(q.title || `${isEl ? 'ΕΡΩΤΗΣΗ' : 'QUESTION'} ${index + 1}`)}
                     </h2>
                   </div>
 
                   {submitted && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider ${
+                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider shrink-0 ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                      {isCorrect ? toCleanUppercase(ui.lblCorrectBadge) : toCleanUppercase(ui.lblWrongBadge)}
                     </span>
                   )}
                 </div>
 
                 {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY: ΟΥΔΕΙΣ ΠΙΝΑΚΑΣ ΕΔΩ) */}
                 <div className="mb-6 space-y-3">
-                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed">
-                    {q.prompt}
-                  </p>
-                  {q.svg && <div className="py-2">{q.svg}</div>}
+                  <div className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed break-words [overflow-wrap:anywhere]">
+                    {q.promptNode ? q.promptNode : q.prompt}
+                  </div>
+                  {q.svg && <div className="py-2 flex justify-center max-w-full overflow-hidden">{q.svg}</div>}
                 </div>
 
                 {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
@@ -914,14 +1222,14 @@ export default function EmbadonKiklouAskiseisPage() {
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
-                            {val ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                            {val ? toCleanUppercase(ui.lblTrue) : toCleanUppercase(ui.lblFalse)}
                           </button>
                         );
                       })}
                     </div>
                   )}
 
-                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ) */}
+                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ ΧΩΡΙΣ TRUNCATE) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {q.options.map((opt, optIdx) => {
@@ -939,7 +1247,7 @@ export default function EmbadonKiklouAskiseisPage() {
                             }`}
                           >
                             <span
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                                 isSelected
                                   ? 'bg-white text-indigo-700'
                                   : 'bg-white text-slate-500 border border-slate-200'
@@ -947,7 +1255,7 @@ export default function EmbadonKiklouAskiseisPage() {
                             >
                               {String.fromCharCode(65 + optIdx)}
                             </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1">
+                            <span className="break-words whitespace-normal leading-snug flex-1 [overflow-wrap:anywhere]">
                               {opt}
                             </span>
                           </button>
@@ -964,12 +1272,12 @@ export default function EmbadonKiklouAskiseisPage() {
                         inputMode="decimal"
                         maxLength={10}
                         disabled={submitted}
-                        placeholder="Απάντηση..."
+                        placeholder={ui.inputPlaceholder}
                         value={userAns || ''}
                         onChange={(e) => {
                           const cleaned = e.target.value
                             .replace(/[^0-9.,]/g, '')
-                            .replace(/\./g, ',');
+                            .replace(/\./g, isEl ? ',' : '.');
                           handleAnswerChange(q.id, cleaned);
                         }}
                         className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-80"
@@ -981,9 +1289,9 @@ export default function EmbadonKiklouAskiseisPage() {
                 {/* FEEDBACK & EXPLANATION (ΑΠΟΚΛΕΙΣΤΙΚΑ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
                 {submitted && (
                   <div className="mt-6 pt-5 border-t border-slate-150 space-y-4">
-                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΕΔΩ */}
+                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΣΤΟ FEEDBACK */}
                     {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
+                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1 w-full block">
                         <table className="w-full text-left text-xs sm:text-sm">
                           <tbody>
                             {q.tableData.map((row, rIdx) => (
@@ -991,11 +1299,11 @@ export default function EmbadonKiklouAskiseisPage() {
                                 key={rIdx}
                                 className={rIdx !== q.tableData.length - 1 ? 'border-b border-slate-200/60' : ''}
                               >
-                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3">
+                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3 break-words">
                                   {row.label}
                                 </td>
-                                <td className="py-2.5 px-3 font-semibold text-slate-800">
-                                  {row.value}
+                                <td className="py-2.5 px-3 font-semibold text-slate-800 break-words">
+                                  {row.valueNode || row.value}
                                 </td>
                               </tr>
                             ))}
@@ -1004,9 +1312,9 @@ export default function EmbadonKiklouAskiseisPage() {
                       </div>
                     )}
 
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ (ΚΑΘΑΡΟΣ ΤΙΤΛΟΣ ΧΩΡΙΣ ΠΕΡΙΤΤΑ ΛΑΘΟΣ/ΣΩΣΤΟ) */}
+                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
                     <div
-                      className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                      className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                         isCorrect
                           ? 'bg-emerald-50 text-emerald-950 border border-emerald-200'
                           : 'bg-rose-50 text-rose-950 border border-rose-200'
@@ -1014,12 +1322,12 @@ export default function EmbadonKiklouAskiseisPage() {
                     >
                       <p className="font-bold mb-1">
                         {isCorrect
-                          ? 'Σωστή απάντηση!'
-                          : `Η σωστή απάντηση είναι: ${
+                          ? ui.feedbackCorrect
+                          : `${ui.feedbackWrongPrefix}${
                               q.type === 'boolean'
                                 ? q.correctAnswer
-                                  ? 'Σωστό'
-                                  : 'Λάθος'
+                                  ? (isEl ? 'Σωστό' : 'True')
+                                  : (isEl ? 'Λάθος' : 'False')
                                 : q.correctAnswer
                             }`}
                       </p>
@@ -1033,12 +1341,12 @@ export default function EmbadonKiklouAskiseisPage() {
         </div>
 
         {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 sm:gap-8">
               {!submitted ? (
                 <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                  <span>{toCleanUppercase('ΑΠΑΝΤΗΘΗΚΑΝ:')} </span>
+                  <span>{toCleanUppercase(ui.answered)} </span>
                   <span className="font-black text-indigo-400 text-sm sm:text-base">
                     {answeredCount} / {totalCount}
                   </span>
@@ -1046,13 +1354,13 @@ export default function EmbadonKiklouAskiseisPage() {
               ) : (
                 <div className="flex items-center gap-4 sm:gap-6">
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΣΚΟΡ:')} </span>
+                    <span>{toCleanUppercase(ui.score)} </span>
                     <span className="font-black text-emerald-400 text-sm sm:text-base">
                       {score} / {totalCount}
                     </span>
                   </div>
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΠΟΣΟΣΤΟ:')} </span>
+                    <span>{toCleanUppercase(ui.percentage)} </span>
                     <span className="font-black text-amber-400 text-sm sm:text-base">
                       {percentage}%
                     </span>
@@ -1071,18 +1379,18 @@ export default function EmbadonKiklouAskiseisPage() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm shrink-0"
                 >
-                  {toCleanUppercase('ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ')}
+                  {toCleanUppercase(ui.btnSubmit)}
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={loadNewSet}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2 shrink-0"
                 >
                   <span>🔄</span>
-                  <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
+                  <span>{toCleanUppercase(ui.btnNewSet)}</span>
                 </button>
               )}
             </div>

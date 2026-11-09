@@ -1,6 +1,7 @@
 // pages/d-dimotikou/22-diairesi-2-psifia-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
@@ -9,19 +10,117 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
+export function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono leading-none ${className}`}>
+      <span className="text-[0.9em] px-1 pb-0.5 border-b border-current font-bold">{num}</span>
+      <span className="text-[0.9em] px-1 pt-0.5 font-bold">{den}</span>
+    </span>
+  );
+}
+
+const translations = {
+  el: {
+    pageTitle: "Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στη διαίρεση με διψήφιο διαιρέτη: τέλεια διαίρεση, εύρεση υπολοίπου, επιλογή πηλίκου και επαλήθευση.",
+    backText: "Δ' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    badge: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    title: "📝 Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη",
+    subtitle: "Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι πράξεις ανανεώνονται αυτόματα από τη δεξαμενή!",
+    newQuestionsBtn: "Νέες Ασκήσεις",
+    submitBtn: "🎯 Έλεγχος Απαντήσεων",
+    scoreLabel: "Σκορ:",
+    successRate: "Επιτυχία:",
+    fillReminder: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    quotientLabel: "Πηλίκο (π):",
+    remainderLabel: "Υπόλοιπο (υ):",
+    dividendLabel: "Διαιρετέος (Δ):",
+    qExactTitle: "Υπολόγισε το πηλίκο της τέλειας διαίρεσης:",
+    qRemainderTitle: "Πόσο είναι το υπόλοιπο της διαίρεσης:",
+    qMcqTitle: "Επίλεξε το ορθό αποτέλεσμα της διαίρεσης:",
+    qVerificationTitle: (d, q, r) => (
+      <>
+        Σε μια διαίρεση ο διαιρέτης είναι {d}, το πηλίκο είναι {q} και το υπόλοιπο {r}. Ποιος είναι ο Διαιρετέος (Δ);
+      </>
+    ),
+    exactExplain: (D, d, q) =>
+      `Η διαίρεση είναι τέλεια (υπόλοιπο 0): ${D} ： ${d} ＝ ${q}, επειδή ${d} · ${q} ＝ ${D}.`,
+    exactCorrectIs: "Το σωστό πηλίκο είναι",
+    remainderExplain: (D, d, q, prod, diff, r) =>
+      `Στη διαίρεση ${D} ： ${d}, το πηλίκο είναι ${q} (${d} · ${q} ＝ ${prod}) και το υπόλοιπο είναι ${D} － ${prod} ＝ ${r} (ισχύει ${r} ＜ ${d}).`,
+    remainderCorrectIs: "Το σωστό υπόλοιπο είναι",
+    mcqExplain: (D, d, correctText, prod, r) =>
+      `Εκτελώντας τη διαίρεση ${D} ： ${d}, προκύπτει ${correctText}, καθώς (${d} · ${prod}) ＋ ${r} ＝ ${D}.`,
+    mcqCorrectIs: "Το ορθό αποτέλεσμα είναι:",
+    verificationExplain: (d, q, r, prod, D) =>
+      `Εφαρμόζουμε τον τύπο της επαλήθευσης: Δ ＝ (δ · π) ＋ υ ＝ (${d} · ${q}) ＋ ${r} ＝ ${prod} ＋ ${r} ＝ ${D}.`,
+    verificationCorrectIs: "Ο Διαιρετέος είναι",
+    qNotation: "π",
+    rNotation: "υ",
+    dNotation: "Δ"
+  },
+  en: {
+    pageTitle: "Exercises: 2-Digit Divisor Division | LearnMaths.gr",
+    pageDesc: "Interactive Grade 4 math exercises on 2-digit divisor division: exact division, finding remainder, quotient selection, and verification.",
+    backText: "Grade 4",
+    theoryBtn: "Theory",
+    badge: "GRADE 4 • PRACTICE",
+    title: "📝 Exercises: Division with 2-Digit Divisor",
+    subtitle: "Click «New Exercises» to dynamically refresh the numbers and operations from the pool!",
+    newQuestionsBtn: "New Exercises",
+    submitBtn: "🎯 Check Answers",
+    scoreLabel: "Score:",
+    successRate: "Accuracy:",
+    fillReminder: "Complete all questions and click «Check Answers»!",
+    quotientLabel: "Quotient (q):",
+    remainderLabel: "Remainder (r):",
+    dividendLabel: "Dividend (D):",
+    qExactTitle: "Calculate the quotient of the exact division:",
+    qRemainderTitle: "What is the remainder of the division:",
+    qMcqTitle: "Select the correct result of the division:",
+    qVerificationTitle: (d, q, r) => (
+      <>
+        In a division, the divisor is {d}, the quotient is {q}, and the remainder is {r}. What is the Dividend (D)?
+      </>
+    ),
+    exactExplain: (D, d, q) =>
+      `The division is exact (remainder 0): ${D} ： ${d} ＝ ${q}, because ${d} · ${q} ＝ ${D}.`,
+    exactCorrectIs: "The correct quotient is",
+    remainderExplain: (D, d, q, prod, diff, r) =>
+      `In the division ${D} ： ${d}, the quotient is ${q} (${d} · ${q} ＝ ${prod}) and the remainder is ${D} － ${prod} ＝ ${r} (where ${r} ＜ ${d}).`,
+    remainderCorrectIs: "The correct remainder is",
+    mcqExplain: (D, d, correctText, prod, r) =>
+      `Executing the division ${D} ： ${d} gives ${correctText}, since (${d} · ${prod}) ＋ ${r} ＝ ${D}.`,
+    mcqCorrectIs: "The correct result is:",
+    verificationExplain: (d, q, r, prod, D) =>
+      `We apply the Euclidean verification formula: D ＝ (d · q) ＋ r ＝ (${d} · ${q}) ＋ ${r} ＝ ${prod} ＋ ${r} ＝ ${D}.`,
+    verificationCorrectIs: "The Dividend is",
+    qNotation: "q",
+    rNotation: "r",
+    dNotation: "D"
+  }
+};
+
 // 1. Άσκηση: Τέλεια Διαίρεση με 2ψήφιο διαιρέτη (Input - Εύρεση Πηλίκου)
-function makeExactDivisionQuestion(prevQ = null) {
+function makeExactDivisionQuestion(locale, t, formatNum, prevQ = null) {
   let d, q, D;
 
   while (true) {
-    d = getRandomInt(11, 45); // Διαιρέτης (δ)
-    q = getRandomInt(12, 65); // Πηλίκο (π)
-    D = d * q;                // Διαιρετέος (Δ)
+    d = getRandomInt(11, 45);
+    q = getRandomInt(12, 65);
+    D = d * q;
 
     if (!prevQ || prevQ.D !== D) break;
   }
@@ -30,34 +129,45 @@ function makeExactDivisionQuestion(prevQ = null) {
     D,
     d,
     correct: q,
-    explainText: `Η διαίρεση είναι τέλεια (υπόλοιπο 0): ${formatNumber(D)} ： ${d} ＝ ${q}, επειδή ${d} · ${q} ＝ ${formatNumber(D)}.`
+    explainText: t.exactExplain(formatNum(D), formatNum(d), formatNum(q))
   };
 }
 
 // 2. Άσκηση: Ατελής Διαίρεση - Εύρεση Υπολοίπου (Input)
-function makeRemainderQuestion(prevQ = null) {
+function makeRemainderQuestion(locale, t, formatNum, prevQ = null) {
   let d, q, r, D;
 
   while (true) {
-    d = getRandomInt(12, 50);        // Διαιρέτης (δ)
-    q = getRandomInt(10, 45);        // Πηλίκο (π)
-    r = getRandomInt(1, d - 1);      // Υπόλοιπο (υ < δ)
-    D = d * q + r;                   // Διαιρετέος (Δ)
+    d = getRandomInt(12, 50);
+    q = getRandomInt(10, 45);
+    r = getRandomInt(1, d - 1);
+    D = d * q + r;
 
     if (!prevQ || prevQ.D !== D) break;
   }
+
+  const prod = d * q;
 
   return {
     D,
     d,
     correct: r,
-    explainText: `Στη διαίρεση ${formatNumber(D)} ： ${d}, το πηλίκο είναι ${q} (${d} · ${q} ＝ ${formatNumber(d * q)}) και το υπόλοιπο είναι ${formatNumber(D)} － ${formatNumber(d * q)} ＝ ${r} (ισχύει ${r} ＜ ${d}).`
+    explainText: t.remainderExplain(
+      formatNum(D),
+      formatNum(d),
+      formatNum(q),
+      formatNum(prod),
+      formatNum(D - prod),
+      formatNum(r)
+    )
   };
 }
 
 // 3. Άσκηση: Πολλαπλή Επιλογή (MCQ) με 4 Μοναδικές Επιλογές (ΟΜΑΔΑ Α)
-function makeMCQDivisionQuestion(prevQ = null) {
+function makeMCQDivisionQuestion(locale, t, formatNum, prevQ = null) {
   let d, q, r, D, correctText;
+  const qSym = t.qNotation;
+  const rSym = t.rNotation;
 
   while (true) {
     d = getRandomInt(12, 35);
@@ -65,19 +175,19 @@ function makeMCQDivisionQuestion(prevQ = null) {
     r = getRandomInt(0, d - 1);
     D = d * q + r;
 
-    correctText = r === 0 ? `π ＝ ${q}` : `π ＝ ${q}, υ ＝ ${r}`;
-    if (!prevQ || prevQ.correct !== correctText) break;
+    correctText = r === 0 ? `${qSym} ＝ ${formatNum(q)}` : `${qSym} ＝ ${formatNum(q)}, ${rSym} ＝ ${formatNum(r)}`;
+    if (!prevQ || prevQ.correctText !== correctText) break;
   }
 
-  const wrong1 = r === 0 ? `π ＝ ${q + 2}` : `π ＝ ${q + 1}, υ ＝ ${r}`;
-  const wrong2 = r === 0 ? `π ＝ ${q - 2}` : `π ＝ ${q}, υ ＝ ${r > 1 ? r - 1 : r + 2}`;
-  const wrong3 = `π ＝ ${q + 3}, υ ＝ ${r + 1}`;
+  const wrong1 = r === 0 ? `${qSym} ＝ ${formatNum(q + 2)}` : `${qSym} ＝ ${formatNum(q + 1)}, ${rSym} ＝ ${formatNum(r)}`;
+  const wrong2 = r === 0 ? `${qSym} ＝ ${formatNum(Math.max(1, q - 2))}` : `${qSym} ＝ ${formatNum(q)}, ${rSym} ＝ ${formatNum(r > 1 ? r - 1 : r + 2)}`;
+  const wrong3 = `${qSym} ＝ ${formatNum(q + 3)}, ${rSym} ＝ ${formatNum(r + 1)}`;
 
   const rawOptions = [correctText, wrong1, wrong2, wrong3];
-  const uniqueOptions = Array.from(new Set(rawOptions));
+  const uniqueOptions = [...new Set(rawOptions)];
 
   while (uniqueOptions.length < 4) {
-    const dummy = `π ＝ ${q + getRandomInt(4, 10)}, υ ＝ ${getRandomInt(0, d - 1)}`;
+    const dummy = `${qSym} ＝ ${formatNum(q + getRandomInt(4, 10))}, ${rSym} ＝ ${formatNum(getRandomInt(0, d - 1))}`;
     if (!uniqueOptions.includes(dummy)) {
       uniqueOptions.push(dummy);
     }
@@ -92,13 +202,14 @@ function makeMCQDivisionQuestion(prevQ = null) {
     D,
     d,
     options: choices,
+    correctText,
     correct: correctText,
-    explainText: `Εκτελώντας τη διαίρεση ${formatNumber(D)} ： ${d}, προκύπτει ${correctText}, καθώς (${d} · ${q}) ＋ ${r} ＝ ${formatNumber(D)}.`
+    explainText: t.mcqExplain(formatNum(D), formatNum(d), correctText, formatNum(q), formatNum(r))
   };
 }
 
 // 4. Άσκηση: Επαλήθευση Διαίρεσης - Εύρεση Διαιρετέου (Input)
-function makeVerificationQuestion(prevQ = null) {
+function makeVerificationQuestion(locale, t, formatNum, prevQ = null) {
   let d, q, r, D;
 
   while (true) {
@@ -110,33 +221,47 @@ function makeVerificationQuestion(prevQ = null) {
     if (!prevQ || prevQ.correct !== D) break;
   }
 
+  const prod = d * q;
+
   return {
     d,
     q,
     r,
     correct: D,
-    explainText: `Εφαρμόζουμε τον τύπο της επαλήθευσης: Δ ＝ (δ · π) ＋ υ ＝ (${d} · ${q}) ＋ ${r} ＝ ${formatNumber(d * q)} ＋ ${r} ＝ ${formatNumber(D)}.`
+    explainText: t.verificationExplain(formatNum(d), formatNum(q), formatNum(r), formatNum(prod), formatNum(D))
   };
 }
 
 // Δημιουργία 8 Ερωτήσεων
-function generateQuestions() {
-  const q1 = makeExactDivisionQuestion();
-  const q2 = makeExactDivisionQuestion(q1);
+function generateQuestions(locale) {
+  const t = translations[locale] || translations.el;
+  const formatNum = (num) => num.toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
 
-  const q3 = makeRemainderQuestion();
-  const q4 = makeRemainderQuestion(q3);
+  const q1 = makeExactDivisionQuestion(locale, t, formatNum);
+  const q2 = makeExactDivisionQuestion(locale, t, formatNum, q1);
 
-  const q5 = makeMCQDivisionQuestion();
-  const q6 = makeMCQDivisionQuestion(q5);
+  const q3 = makeRemainderQuestion(locale, t, formatNum);
+  const q4 = makeRemainderQuestion(locale, t, formatNum, q3);
 
-  const q7 = makeVerificationQuestion();
-  const q8 = makeVerificationQuestion(q7);
+  const q5 = makeMCQDivisionQuestion(locale, t, formatNum);
+  const q6 = makeMCQDivisionQuestion(locale, t, formatNum, q5);
+
+  const q7 = makeVerificationQuestion(locale, t, formatNum);
+  const q8 = makeVerificationQuestion(locale, t, formatNum, q7);
 
   return { q1, q2, q3, q4, q5, q6, q7, q8 };
 }
 
 export default function Diairesi2PsifiaAskPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
+  const formatNumber = (num) => {
+    if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+    return Number(num).toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
+  };
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -145,7 +270,7 @@ export default function Diairesi2PsifiaAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(locale));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -153,7 +278,7 @@ export default function Diairesi2PsifiaAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [locale]);
 
   if (!questions) return null;
 
@@ -164,7 +289,7 @@ export default function Diairesi2PsifiaAskPage() {
 
   const handleNumericInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace(/\D/g, '');
+    const clean = rawVal.replace(/[^0-9]/g, '');
     setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
@@ -201,21 +326,22 @@ export default function Diairesi2PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Υπολόγισε το πηλίκο της τέλειας διαίρεσης: <span className="text-indigo-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>
+            {t.qExactTitle} <span className="text-indigo-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {formatNumber(qData.d)}</span>
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Πηλίκο (π):</span>
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">{t.quotientLabel}</span>
             <span>＝</span>
             <input
               type="text"
               inputMode="numeric"
+              maxLength={10}
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="π"
+              placeholder={t.qNotation}
               value={answers[qKey]}
               onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
@@ -232,7 +358,7 @@ export default function Diairesi2PsifiaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το σωστό πηλίκο είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+                {t.exactCorrectIs} <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
               </p>
             )}
           </div>
@@ -255,21 +381,22 @@ export default function Diairesi2PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Πόσο είναι το <span className="text-amber-700 font-black">υπόλοιπο</span> της διαίρεσης: <span className="text-amber-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>;
+            {t.qRemainderTitle} <span className="text-amber-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {formatNumber(qData.d)}</span>;
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Υπόλοιπο (υ):</span>
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">{t.remainderLabel}</span>
             <span>＝</span>
             <input
               type="text"
               inputMode="numeric"
+              maxLength={10}
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="υ"
+              placeholder={t.rNotation}
               value={answers[qKey]}
               onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
@@ -286,7 +413,7 @@ export default function Diairesi2PsifiaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το σωστό υπόλοιπο είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+                {t.remainderCorrectIs} <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
               </p>
             )}
           </div>
@@ -309,7 +436,7 @@ export default function Diairesi2PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Επίλεξε το ορθό αποτέλεσμα της διαίρεσης: <span className="text-purple-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {qData.d}</span>
+            {t.qMcqTitle} <span className="text-purple-700 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.D)} ： {formatNumber(qData.d)}</span>
           </h3>
         </div>
 
@@ -335,7 +462,9 @@ export default function Diairesi2PsifiaAskPage() {
                   disabled={submitted}
                   className="w-4 h-4 text-purple-600 focus:ring-purple-500 shrink-0"
                 />
-                <span className="leading-snug font-mono font-bold text-sm sm:text-base">{opt.text}</span>
+                <span className="break-words whitespace-normal leading-snug flex-1 font-mono font-bold text-sm sm:text-base">
+                  {opt.text}
+                </span>
               </label>
             );
           })}
@@ -349,7 +478,7 @@ export default function Diairesi2PsifiaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ορθό αποτέλεσμα είναι: <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+                {t.mcqCorrectIs} <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
               </p>
             )}
           </div>
@@ -372,21 +501,26 @@ export default function Diairesi2PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Σε μια διαίρεση ο διαιρέτης είναι <span className="text-blue-600 font-black">{qData.d}</span>, το πηλίκο είναι <span className="text-purple-600 font-black">{qData.q}</span> και το υπόλοιπο <span className="text-amber-600 font-black">{qData.r}</span>. Ποιος είναι ο <span className="text-indigo-700 font-black">Διαιρετέος (Δ)</span>;
+            {t.qVerificationTitle(
+              <span className="text-blue-600 font-black">{formatNumber(qData.d)}</span>,
+              <span className="text-purple-600 font-black">{formatNumber(qData.q)}</span>,
+              <span className="text-amber-600 font-black">{formatNumber(qData.r)}</span>
+            )}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Διαιρετέος (Δ):</span>
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">{t.dividendLabel}</span>
             <span>＝</span>
             <input
               type="text"
               inputMode="numeric"
+              maxLength={10}
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="Δ"
+              placeholder={t.dNotation}
               value={answers[qKey]}
               onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
@@ -403,7 +537,7 @@ export default function Diairesi2PsifiaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Ο Διαιρετέος είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+                {t.verificationCorrectIs} <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
               </p>
             )}
           </div>
@@ -414,32 +548,33 @@ export default function Diairesi2PsifiaAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στη διαίρεση με διψήφιο διαιρέτη: τέλεια διαίρεση, εύρεση υπολοίπου, επιλογή πηλίκου και επαλήθευση."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/d-dimotikou/22-diairesi-2-psifia"
           className="bg-purple-100 hover:bg-purple-200 text-purple-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
+        
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badge)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Διαίρεση με Διψήφιο Διαιρέτη
+              {t.title}
             </h1>
             <p className="text-purple-100 text-xs sm:text-sm md:text-base">
-              Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι πράξεις ανανεώνονται αυτόματα από τη δεξαμενή!
+              {t.subtitle}
             </p>
           </div>
 
@@ -447,12 +582,12 @@ export default function Diairesi2PsifiaAskPage() {
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-purple-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            🔄 {t.newQuestionsBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderExactDivision('q1', questions.q1, 1)}
           {renderExactDivision('q2', questions.q2, 2)}
 
@@ -472,24 +607,24 @@ export default function Diairesi2PsifiaAskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                {t.submitBtn}
               </button>
             </div>
           )}
         </form>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      {/* ΣΤΑΘΕΡΟ FOOTER SCORES & FEEDBACK BAR */}
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
+              <span>🏆 {t.scoreLabel}</span>
               <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -500,11 +635,11 @@ export default function Diairesi2PsifiaAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                <span>🔄</span> {t.newQuestionsBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.fillReminder}
               </p>
             )}
           </div>
