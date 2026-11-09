@@ -6,36 +6,36 @@ import { D_DIMOTIKOU_MODULES, D_DIMOTIKOU_SECTIONS } from '../../data/d-dimotiko
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά Δ' Δημοτικού: Θεωρία & Διαδραστικές Ασκήσεις | LearnMaths.gr",
-    pageDesc: "Δωρεάν διαδραστικές ασκήσεις και θεωρία για τα Μαθηματικά Δ' Δημοτικού (Μεγάλοι Αριθμοί, Κλάσματα, Δεκαδικοί, Διαίρεση, Γεωμετρία, Περίμετρος & Εμβαδόν).",
+    pageTitle: "Ασκήσεις Μαθηματικών Δ' Δημοτικού: Θεωρία & Ασκήσεις Online | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών για τη Δ' Δημοτικού: ασκήσεις αριθμητικής (μεγάλοι αριθμοί, κλάσματα, δεκαδικοί, διαίρεση) και ασκήσεις γεωμετρίας (σχήματα, περίμετρος, εμβαδόν).",
     backText: "Αρχική",
     badgeProgram: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΠΙΣΗΜΟ ΣΧΟΛΙΚΟ ΠΡΟΓΡΑΜΜΑ",
-    heroTitle: "Μαθηματικά Δ' Δημοτικού",
-    heroDesc: "Εξερεύνησε τους μεγάλους αριθμούς, τα δεκαδικά κλάσματα, τις κάθετες πράξεις και τα γεωμετρικά σχήματα μέσα από διαδραστικά εργαλεία και παραδείγματα!",
+    heroTitle: "Μαθηματικά Δ' Δημοτικού: Θεωρία & Ασκήσεις",
+    heroDesc: "Μάθε τα μαθηματικά της Δ' Δημοτικού διαδραστικά! Λύσε ασκήσεις μαθηματικών στους μεγάλους αριθμούς, τα κλάσματα, τις κάθετες πράξεις και ασκήσεις γεωμετρίας με άμεση επαλήθευση.",
     lessonsSuffix: "μαθήματα",
-    seoOverviewTitle: "🎒 Ύλη Μαθηματικών Δ' Δημοτικού: Βασικοί Άξονες Μάθησης",
-    seoCol1Title: "Αριθμοί & Πράξεις",
-    seoCol1Text: "Οι μαθητές εξοικειώνονται με αριθμούς έως το 100.000, τον πολλαπλασιασμό με διψήφιο και τριψήφιο αριθμό, τη διαίρεση με διψήφιο διαιρέτη και την αναγωγή στη μονάδα.",
-    seoCol2Title: "Δεκαδικοί & Κλάσματα",
-    seoCol2Text: "Εισαγωγή στα δεκαδικά κλάσματα και τη σχέση τους με τους δεκαδικούς αριθμούς (έως τρία δεκαδικά ψηφία), καθώς και πράξεις πολλαπλασιασμού και διαίρεσης με το 10, 100, 1.000.",
-    seoCol3Title: "Γεωμετρία & Μετρήσεις",
-    seoCol3Text: "Μελέτη παραλλήλων και τεμνόμενων ευθειών, ειδών τετραπλεύρων, αξονικής συμμετρίας, μέτρησης μήκους, μάζας, χρόνου και χωρητικότητας, καθώς και εισαγωγή στην περίμετρο και το εμβαδόν."
+    seoOverviewTitle: "🎒 Ύλη & Ασκήσεις Μαθηματικών Δ' Δημοτικού",
+    seoCol1Title: "Ασκήσεις Αριθμητικής & Πράξεων",
+    seoCol1Text: "Διαδραστικές ασκήσεις μαθηματικών στους αριθμούς έως το 100.000, κάθετο πολλαπλασιασμό, κάθετη διαίρεση με διψήφιο διαιρέτη και προβλήματα αναγωγής στη μονάδα.",
+    seoCol2Title: "Ασκήσεις σε Κλάσματα & Δεκαδικούς",
+    seoCol2Text: "Εμπέδωση στα δεκαδικά κλάσματα, μετατροπή σε δεκαδικούς αριθμούς και στοχευμένες ασκήσεις πολλαπλασιασμού και διαίρεσης με το 10, 100 και 1.000.",
+    seoCol3Title: "Ασκήσεις Γεωμετρίας & Μετρήσεων",
+    seoCol3Text: "Πλούσιες ασκήσεις γεωμετρίας σε παράλληλες και κάθετες ευθείες, αναγνώριση τετραπλεύρων, άξονες συμμετρίας, μονάδες μέτρησης και υπολογισμό περιμέτρου και εμβαδού."
   },
   en: {
-    pageTitle: "Grade 4 Mathematics: Theory & Interactive Exercises | LearnMaths.gr",
-    pageDesc: "Free interactive exercises and theory for Grade 4 Mathematics (Large Numbers, Fractions, Decimals, Long Division, Geometry, Perimeter & Area).",
+    pageTitle: "Grade 4 Mathematics Exercises: Theory & Interactive Practice | LearnMaths.gr",
+    pageDesc: "Interactive math exercises for Grade 4: arithmetic problem sets (large numbers, fractions, decimals, division) and geometry modules (perimeter, area, symmetry).",
     backText: "Home",
     badgeProgram: "GRADE 4 • OFFICIAL CURRICULUM",
-    heroTitle: "Grade 4 Mathematics",
-    heroDesc: "Explore large numbers, decimal fractions, vertical operations, and geometric shapes through interactive visual tools and applied problems!",
+    heroTitle: "Grade 4 Mathematics: Theory & Exercises",
+    heroDesc: "Explore Grade 4 mathematics interactively! Practice arithmetic problem sets, fraction models, vertical long division, and geometry problems with instant feedback.",
     lessonsSuffix: "lessons",
-    seoOverviewTitle: "🎒 Grade 4 Mathematics Curriculum: Core Learning Pillars",
-    seoCol1Title: "Numbers & Operations",
-    seoCol1Text: "Students master numbers up to 100,000, multi-digit multiplication, division by two-digit divisors, and the unitary method for problem solving.",
-    seoCol2Title: "Decimals & Fractions",
-    seoCol2Text: "Introduction to decimal fractions, conversion to decimal numbers (up to three decimal places), and multiplication/division by 10, 100, 1,000.",
-    seoCol3Title: "Geometry & Measurement",
-    seoCol3Text: "Study of parallel and intersecting lines, quadrilaterals, line symmetry, measuring length, mass, time, capacity, and early work with perimeter and area."
+    seoOverviewTitle: "🎒 Grade 4 Mathematics: Core Curriculum",
+    seoCol1Title: "Arithmetic & Operations Exercises",
+    seoCol1Text: "Interactive math problems covering whole numbers up to 100,000, multi-digit multiplication, long division with two-digit divisors, and unitary method problems.",
+    seoCol2Title: "Fractions & Decimals Practice",
+    seoCol2Text: "Exercises on decimal fractions, decimal place values, and multiplication/division with powers of 10 (10, 100, 1,000).",
+    seoCol3Title: "Geometry & Measurement Exercises",
+    seoCol3Text: "Targeted geometry problems on parallel and perpendicular lines, quadrilaterals, line symmetry, units of measurement, perimeter, and area."
   }
 };
 
@@ -44,7 +44,9 @@ export default function DDimotikouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/d-dimotikou' : 'https://learnmaths.gr/d-dimotikou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/d-dimotikou' 
+    : 'https://learnmaths.gr/d-dimotikou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -59,7 +61,29 @@ export default function DDimotikouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Primary Education (Δ' Δημοτικού)",
+      "teaches": [
+        "Ασκήσεις μαθηματικά",
+        "Ασκήσεις μαθηματικών",
+        "Ασκήσεις γεωμετρία",
+        "Μεγάλοι Αριθμοί",
+        "Κλάσματα και Δεκαδικοί",
+        "Κάθετη Διαίρεση",
+        "Περίμετρος και Εμβαδόν"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Interactive Modules",
+      "educationalUse": "Primary Math Practice",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -70,11 +94,11 @@ export default function DDimotikouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
-        {/* Banner Header - Teal Theme της Δ' Δημοτικού */}
+        {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-900 via-cyan-900 to-blue-950 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-teal-700/40 text-center md:text-left">
           <div className="max-w-4xl space-y-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-teal-500/30 text-teal-200 border border-teal-400/30">

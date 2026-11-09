@@ -6,40 +6,40 @@ import { G_GYMNASIOU_CHAPTERS, G_GYMNASIOU_SECTIONS } from '../../data/g-gymnasi
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά Γ' Γυμνασίου (Νέα Ύλη 2027-2028): Θεωρία & Ασκήσεις | LearnMaths.gr",
-    pageDesc: "Δωρεάν διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά Γ' Γυμνασίου σύμφωνα με τα νέα σχολικά βιβλία 2027-2028 (Πραγματικοί Αριθμοί, Μονώνυμα, Πολυώνυμα, Ταυτότητες).",
+    pageTitle: "Ασκήσεις Μαθηματικών Γ' Γυμνασίου - Άλγεβρα & Γεωμετρία | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών και θεωρία για τη Γ' Γυμνασίου: ασκήσεις άλγεβρας (μονώνυμα, ταυτότητες, παραγοντοποίηση, εξισώσεις) και γεωμετρίας (ομοιότητα, τριγωνομετρία).",
     backText: "Αρχική",
     badgeProgram: "Γ' ΓΥΜΝΑΣΙΟΥ • ΝΕΑ ΥΛΗ & ΒΙΒΛΙΑ 2027–2028",
     heroTitle: "Μαθηματικά Γ' Γυμνασίου: Θεωρία & Ασκήσεις",
-    heroDesc: "Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις προσαρμοσμένες στη νέα σειρά διδασκαλίας 2027–2028!",
+    heroDesc: "Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και λύσε διαδραστικές ασκήσεις μαθηματικών προσαρμοσμένες στη νέα σειρά διδασκαλίας. Εμπεδωτικές ασκήσεις άλγεβρας και γεωμετρίας για άριστη προετοιμασία για το Λύκειο.",
     statusActive: "ΕΝΕΡΓΟ",
     statusSoon: "ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ",
     startReviewBtn: "ΕΝΑΡΞΗ ΕΠΑΝΑΛΗΨΗΣ",
     theoryBtn: "Θεωρία",
     exercisesBtn: "Ασκήσεις",
-    seoOverviewTitle: "📚 Ύλη Μαθηματικών Γ' Γυμνασίου: Σύμφωνα με τα Νέα Βιβλία (2027–2028)",
-    seoCol1Title: "Πραγματικοί Αριθμοί & Αλγεβρικές Παραστάσεις",
-    seoCol1Text: "Η Γ' Γυμνασίου αποτελεί τη γέφυρα για το Λύκειο. Καλύπτει σε βάθος τους πραγματικούς αριθμούς (ρητούς και άρρητους), τις πράξεις με μονώνυμα και πολυώνυμα, τις ταυτότητες και την παραγοντοποίηση.",
-    seoCol2Title: "Γεωμετρία, Τριγωνομετρία & Εξισώσεις",
-    seoCol2Text: "Με διαδραστικά εργαλεία και αυτόματη αξιολόγηση, οι μαθητές εμπεδώνουν την ισότητα και ομοιότητα τριγώνων, τους τριγωνομετρικούς αριθμούς και την επίλυση εξισώσεων δευτέρου βαθμού."
+    seoOverviewTitle: "📚 Ύλη & Ασκήσεις Μαθηματικών Γ' Γυμνασίου",
+    seoCol1Title: "Ασκήσεις Άλγεβρας: Μονώνυμα, Ταυτότητες & Εξισώσεις",
+    seoCol1Text: "Πλούσιες διαδραστικές ασκήσεις άλγεβρας στους πραγματικούς αριθμούς, πράξεις με μονώνυμα και πολυώνυμα, αξιοσημείωτες ταυτότητες, μεθόδους παραγοντοποίησης και επίλυση δευτεροβάθμιων εξισώσεων.",
+    seoCol2Title: "Ασκήσεις Γεωμετρίας & Τριγωνομετρίας",
+    seoCol2Text: "Εξειδικευμένες ασκήσεις γεωμετρίας με δυναμικά σχήματα για την ισότητα και ομοιότητα τριγώνων, το θεώρημα του Θαλή, καθώς και τους τριγωνομετρικούς αριθμούς με άμεσο έλεγχο απαντήσεων."
   },
   en: {
-    pageTitle: "Grade 9 Mathematics (Curriculum 2027-2028): Theory & Exercises | LearnMaths.gr",
-    pageDesc: "Free interactive lessons, theory, and exercises for Grade 9 Mathematics based on modern textbooks (Real Numbers, Polynomials, Special Products, Geometry).",
+    pageTitle: "Grade 9 Mathematics Exercises - Algebra & Geometry | LearnMaths.gr",
+    pageDesc: "Interactive math exercises and theory for Grade 9: algebra sets (monomials, polynomials, identities, quadratic equations) and geometry modules (similarity, trigonometry).",
     backText: "Home",
     badgeProgram: "GRADE 9 • NEW CURRICULUM 2027–2028",
     heroTitle: "Grade 9 Mathematics: Theory & Exercises",
-    heroDesc: "Explore theory through dynamic labs and practice with interactive exercises structured according to the modern curriculum framework!",
+    heroDesc: "Explore theory through dynamic labs and practice interactive math exercises structured according to modern standards. Bridge the step to High School with strong algebra and geometry foundations.",
     statusActive: "ACTIVE",
     statusSoon: "COMING SOON",
     startReviewBtn: "START REVIEW",
     theoryBtn: "Theory",
     exercisesBtn: "Exercises",
-    seoOverviewTitle: "📚 Grade 9 Mathematics Curriculum: Key Topics",
-    seoCol1Title: "Real Numbers & Algebraic Expressions",
-    seoCol1Text: "Grade 9 serves as the bridge to High School. It covers real numbers (rationals and irrationals) in depth, operations with monomials and polynomials, algebraic identities, and factoring.",
-    seoCol2Title: "Geometry, Trigonometry & Equations",
-    seoCol2Text: "Through interactive tools and instant feedback, students master triangle congruence, similarity, trigonometric ratios, and quadratic equations."
+    seoOverviewTitle: "📚 Grade 9 Mathematics: Core Curriculum",
+    seoCol1Title: "Algebra Exercises: Monomials, Identities & Equations",
+    seoCol1Text: "Comprehensive algebra exercises covering real numbers, operations with polynomials, special algebraic identities, factoring techniques, and quadratic equation solving.",
+    seoCol2Title: "Geometry & Trigonometry Exercises",
+    seoCol2Text: "Interactive geometry exercises featuring triangle congruence and similarity proofs, Thales's theorem, and trigonometric ratios with immediate evaluation."
   }
 };
 
@@ -48,7 +48,9 @@ export default function GGymnasiouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/g-gymnasiou' : 'https://learnmaths.gr/g-gymnasiou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/g-gymnasiou' 
+    : 'https://learnmaths.gr/g-gymnasiou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -63,7 +65,30 @@ export default function GGymnasiouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Secondary Education (Γ' Γυμνασίου)",
+      "teaches": [
+        "Ασκήσεις μαθηματικά",
+        "Ασκήσεις άλγεβρα",
+        "Ασκήσεις γεωμετρία",
+        "Μονώνυμα και Πολυώνυμα",
+        "Ταυτότητες και Παραγοντοποίηση",
+        "Εξισώσεις 2ου Βαθμού",
+        "Ομοιότητα Τριγώνων",
+        "Τριγωνομετρία"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Theory Guide",
+      "educationalUse": "Instruction & Homework Practice",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -74,9 +99,9 @@ export default function GGymnasiouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
         {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
@@ -125,7 +150,7 @@ export default function GGymnasiouIndex() {
                     >
                       <div className="bg-indigo-600 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
                         <div className="flex items-center gap-2">
-                          <span>{chapterIcon}</span>
+                          <span aria-hidden="true">{chapterIcon}</span>
                           <span>{badgeLabel}</span>
                         </div>
                         {isItemActive && (
@@ -153,7 +178,7 @@ export default function GGymnasiouIndex() {
                                 locale={locale}
                                 className="flex items-center justify-center w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:scale-95 text-slate-950 font-black py-2.5 px-4 rounded-xl transition shadow-md text-xs sm:text-sm tracking-wide touch-manipulation cursor-pointer"
                               >
-                                <span>🎯</span>
+                                <span aria-hidden="true">🎯</span>
                                 <span className="ml-1.5">{t.startReviewBtn}</span>
                               </Link>
                             </div>
@@ -164,7 +189,7 @@ export default function GGymnasiouIndex() {
                                 locale={locale}
                                 className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                               >
-                                <span>📖</span>
+                                <span aria-hidden="true">📖</span>
                                 <span>{t.theoryBtn}</span>
                               </Link>
                               <Link
@@ -172,7 +197,7 @@ export default function GGymnasiouIndex() {
                                 locale={locale}
                                 className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                               >
-                                <span>🎯</span>
+                                <span aria-hidden="true">🎯</span>
                                 <span>{t.exercisesBtn}</span>
                               </Link>
                             </div>

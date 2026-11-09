@@ -6,36 +6,36 @@ import { E_DIMOTIKOU_MODULES, E_DIMOTIKOU_SECTIONS } from '../../data/e-dimotiko
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά Ε' Δημοτικού: Θεωρία & Διαδραστικές Ασκήσεις | LearnMaths.gr",
-    pageDesc: "Δωρεάν διαδραστικές ασκήσεις και θεωρία για τα Μαθηματικά Ε' Δημοτικού (Κλάσματα, ΕΚΠ, ΜΚΔ, Ποσοστά, Γεωμετρία, Εμβαδόν & Όγκος).",
+    pageTitle: "Ασκήσεις Μαθηματικών Ε' Δημοτικού: Θεωρία & Ασκήσεις Online | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών για την Ε' Δημοτικού: ασκήσεις σε κλάσματα, απλοποίηση, ΕΚΠ, ΜΚΔ, ποσοστά, καθώς και ασκήσεις γεωμετρίας (τρίγωνα, εμβαδόν, όγκος).",
     backText: "Αρχική",
     badgeProgram: "Ε' ΔΗΜΟΤΙΚΟΥ • ΕΠΙΣΗΜΟ ΣΧΟΛΙΚΟ ΠΡΟΓΡΑΜΜΑ",
-    heroTitle: "Μαθηματικά Ε' Δημοτικού",
-    heroDesc: "Κατανόησε τα κλάσματα, το ΕΚΠ, τον ΜΚΔ και τις γεωμετρικές έννοιες μέσα από διαδραστικούς προσομοιωτές και πρακτικές ασκήσεις με άμεσο feedback!",
+    heroTitle: "Μαθηματικά Ε' Δημοτικού: Θεωρία & Ασκήσεις",
+    heroDesc: "Κατανόησε τα κλάσματα, το ΕΚΠ, τον ΜΚΔ, τα ποσοστά και τα γεωμετρικά σχήματα μέσα από διαδραστικούς προσομοιωτές και πλούσιες ασκήσεις μαθηματικών με άμεση επαλήθευση!",
     lessonsSuffix: "μαθήματα",
-    seoOverviewTitle: "🎒 Ύλη Μαθηματικών Ε' Δημοτικού: Βασικοί Άξονες Μάθησης",
-    seoCol1Title: "Κλάσματα & Διαιρετότητα",
-    seoCol1Text: "Η Ε' Δημοτικού εμβαθύνει στα ισοδύναμα κλάσματα, την απλοποίηση, την αναγωγή στην κλασματική μονάδα, καθώς και στον υπολογισμό του ΕΚΠ και του ΜΚΔ με κριτήρια διαιρετότητας.",
-    seoCol2Title: "Μέση Τιμή & Ποσοστά",
-    seoCol2Text: "Εισαγωγή στην επεξεργασία δεδομένων με την έννοια της μέσης τιμής και στα πρώτα πρακτικά προβλήματα με ποσοστά (%) στην καθημερινή ζωή.",
-    seoCol3Title: "Γεωμετρία & Μετρήσεις",
-    seoCol3Text: "Μελέτη των ειδών τριγώνων (ως προς πλευρές και γωνίες), κανονικών πολυγώνων, αξονικής συμμετρίας και υπολογισμός περιμέτρου, εμβαδού και όγκου στερεών σωμάτων."
+    seoOverviewTitle: "🎒 Ύλη & Ασκήσεις Μαθηματικών Ε' Δημοτικού",
+    seoCol1Title: "Ασκήσεις σε Κλάσματα & Διαιρετότητα",
+    seoCol1Text: "Διαδραστικές ασκήσεις άλγεβρας στα ισοδύναμα κλάσματα, την απλοποίηση, την πρόσθεση και αφαίρεση ετερώνυμων κλασμάτων, καθώς και στον υπολογισμό ΕΚΠ και ΜΚΔ.",
+    seoCol2Title: "Ασκήσεις σε Ποσοστά & Μέση Τιμή",
+    seoCol2Text: "Πρακτικές ασκήσεις μαθηματικών στην επεξεργασία δεδομένων, τον υπολογισμό μέσης τιμής και την επίλυση προβλημάτων καθημερινής ζωής με ποσοστά (%).",
+    seoCol3Title: "Ασκήσεις Γεωμετρίας & Μετρήσεων",
+    seoCol3Text: "Πλούσιες ασκήσεις γεωμετρίας για τη μελέτη και κατηγοριοποίηση τριγώνων, τα κανονικά πολύγωνα, την αξονική συμμετρία και τον υπολογισμό περιμέτρου, εμβαδού και όγκου."
   },
   en: {
-    pageTitle: "Grade 5 Mathematics: Theory & Interactive Exercises | LearnMaths.gr",
-    pageDesc: "Free interactive math exercises and theory for Grade 5 Mathematics (Fractions, LCM, GCD, Percentages, Geometry, Area & Volume).",
+    pageTitle: "Grade 5 Mathematics Exercises: Theory & Interactive Practice | LearnMaths.gr",
+    pageDesc: "Interactive math exercises for Grade 5: fractions, simplification, LCM, GCD, percentages, and geometry modules (triangles, area, volume).",
     backText: "Home",
     badgeProgram: "GRADE 5 • OFFICIAL CURRICULUM",
-    heroTitle: "Grade 5 Mathematics",
-    heroDesc: "Understand fractions, LCM, GCD, and key geometric concepts through interactive visual simulators and targeted exercises with instant feedback!",
+    heroTitle: "Grade 5 Mathematics: Theory & Exercises",
+    heroDesc: "Master fractions, LCM, GCD, percentages, and geometric figures through interactive simulators and targeted math exercises with instant grading!",
     lessonsSuffix: "lessons",
-    seoOverviewTitle: "🎒 Grade 5 Mathematics Curriculum: Core Learning Pillars",
-    seoCol1Title: "Fractions & Divisibility",
-    seoCol1Text: "Grade 5 focuses on equivalent fractions, fraction simplification, unit fractions, and calculating LCM and GCD using divisibility criteria.",
-    seoCol2Title: "Mean & Percentages",
-    seoCol2Text: "Introduction to basic statistical data processing through the mean (average) and applied real-world percentage (%) problem solving.",
-    seoCol3Title: "Geometry & Measurement",
-    seoCol3Text: "Classification of triangles by sides and angles, regular polygons, line symmetry, alongside calculations of perimeter, area, and solid volume."
+    seoOverviewTitle: "🎒 Grade 5 Mathematics: Core Curriculum",
+    seoCol1Title: "Fractions & Divisibility Exercises",
+    seoCol1Text: "Interactive algebra problems covering equivalent fractions, simplification, fraction arithmetic, and calculating LCM and GCD with divisibility rules.",
+    seoCol2Title: "Percentages & Mean Problem Sets",
+    seoCol2Text: "Applied math exercises focused on data handling, calculating the arithmetic mean, and solving real-world percentage (%) word problems.",
+    seoCol3Title: "Geometry & Measurement Exercises",
+    seoCol3Text: "Targeted geometry problems on triangle classification, regular polygons, symmetry axes, perimeter, area, and 3D volume calculations."
   }
 };
 
@@ -44,7 +44,9 @@ export default function EDimotikouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/e-dimotikou' : 'https://learnmaths.gr/e-dimotikou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/e-dimotikou' 
+    : 'https://learnmaths.gr/e-dimotikou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -59,7 +61,30 @@ export default function EDimotikouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Primary Education (Ε' Δημοτικού)",
+      "teaches": [
+        "Ασκήσεις μαθηματικά",
+        "Ασκήσεις μαθηματικών",
+        "Ασκήσεις άλγεβρα",
+        "Ασκήσεις γεωμετρία",
+        "Κλάσματα και Απλοποίηση",
+        "ΕΚΠ και ΜΚΔ",
+        "Ποσοστά",
+        "Εμβαδόν και Όγκος"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Interactive Modules",
+      "educationalUse": "Primary Math Practice",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -70,11 +95,11 @@ export default function EDimotikouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
-        {/* Banner Header - Cyan/Teal Theme της Ε' Δημοτικού */}
+        {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-900 via-teal-900 to-blue-950 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-cyan-700/40 text-center md:text-left">
           <div className="max-w-4xl space-y-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-cyan-500/30 text-cyan-200 border border-cyan-400/30">

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -5,23 +6,23 @@ import { LAYOUT } from '../shared/layout-config';
 
 const I18N = {
   el: {
-    pageTitle: "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
-    pageDesc: "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2027-2028) και τα Πρότυπα Σχολεία.",
+    pageTitle: "LearnMaths.gr - Ασκήσεις Μαθηματικών & Θέματα Προτύπων",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών, άλγεβρα, γεωμετρία (Πυθαγόρειο θεώρημα κ.ά.) και επίσημα θέματα εξετάσεων & τεστ προσομοίωσης για Πρότυπα Σχολεία.",
     navPrimary: "Δημοτικό",
     navMiddle: "Γυμνάσιο",
     navProtipa: "🎯 Πρότυπα",
     navContact: "✉️ Επικοινωνία",
-    heroSubtitle: "Μάθε τα Μαθηματικά εύκολα, γρήγορα και διαδραστικά από το Δημοτικό έως το Γυμνάσιο!",
+    heroSubtitle: "Μάθε τα Μαθηματικά εύκολα, γρήγορα και διαδραστικά: πλούσιες ασκήσεις άλγεβρας και γεωμετρίας από το Δημοτικό έως το Γυμνάσιο!",
     quickPrimary: "Δημοτικό 🎒",
     quickMiddle: "Γυμνάσιο 📐",
     appDownloadText: "ΚΑΤΕΒΑΣΤΕ ΤΗΝ ΕΦΑΡΜΟΓΗ",
     appBadgeImg: "https://play.google.com/intl/en_us/badges/static/images/badges/el_badge_web_generic.png",
-    
+
     // Protipa Banner
-    protypaBadge: "🎯 ΕΙΔΙΚΗ ΠΡΟΕΤΟΙΜΑΣΙΑ",
-    protypaTitle: "Εισαγωγή στα Πρότυπα Σχολεία",
-    protypaDesc: "Προετοιμάσου για τις εξετάσεις με επίσημα θέματα προηγούμενων ετών, τεστ προσομοίωσης και δωρεάν λήψη όλων των θεμάτων σε PDF!",
-    protypaBtn: "🚀 Είσοδος στα Πρότυπα",
+    protypaBadge: "🎯 ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΠΡΟΤΥΠΩΝ & ΠΡΟΣΟΜΟΙΩΣΗ",
+    protypaTitle: "Θέματα Προτύπων & Τεστ Προσομοίωσης",
+    protypaDesc: "Ολοκληρωμένη προετοιμασία εξετάσεων: επίσημα θέματα προτύπων παλαιότερων ετών με λύσεις, τεστ προσομοίωσης και δωρεάν λήψη όλων των θεμάτων σε PDF!",
+    protypaBtn: "🚀 Θέματα & Προσομοίωση",
 
     // Primary School Section
     primarySectionTitle: "🎒 Μαθηματικά Δημοτικού",
@@ -43,48 +44,48 @@ const I18N = {
     classB_GymTitle: "Β' Γυμνασίου ⭐",
     classG_GymTitle: "Γ' Γυμνασίου",
     classA_GymDesc: "Φυσικοί, Δυνάμεις, Κλάσματα, Εξισώσεις, Ποσοστά & Γεωμετρία.",
-    classB_GymModuleTitle: "Ενότητα: Συναρτήσεις",
-    classB_GymDesc: "Μελέτησε τη συνάρτηση y ＝ α · x και δες live τη γραφική παράσταση στο πλέγμα!",
+    classB_GymModuleTitle: "Ενότητα: Συναρτήσεις & Γεωμετρία",
+    classB_GymDesc: "Μελέτησε τη συνάρτηση y ＝ α · x, το Πυθαγόρειο θεώρημα και δες live γραφικές παραστάσεις!",
     classG_GymDesc: "Αλγεβρικές Παραστάσεις, Μονώνυμα, Ταυτότητες & Ομοιότητα.",
 
     // SEO Overview
-    seoMainTitle: "Διαδραστικά Μαθηματικά σύμφωνα με το Σχολικό Πρόγραμμα",
-    seoMainDesc: "Το LearnMaths.gr δημιουργήθηκε για να βοηθήσει μαθητές Δημοτικού και Γυμνάσιου να κατανοήσουν σε βάθος τις μαθηματικές έννοιες μέσα από διαδραστικά εργαλεία, οπτικοποιημένα παραδείγματα και στοχευμένες ασκήσεις. Κάθε κεφάλαιο ακολουθεί τη δομή του επίσημου σχολικού βιβλίου (ΙΕΠ), κάνοντας τη μελέτη στο σπίτι απλή και ευχάριστη.",
-    seoCard1Title: "Προετοιμασία για Πρότυπα",
-    seoCard1Desc: "Ολοκληρωμένη συλλογή με επίσημα παλαιότερα θέματα εξετάσεων για εισαγωγή στα Πρότυπα Γυμνάσια, αναλυτικές απαντήσεις και δωρεάν PDF.",
-    seoCard2Title: "Διαδραστικοί Προσομοιωτές",
-    seoCard2Desc: "Από τα κλάσματα, το ΕΚΠ και τον ΜΚΔ μέχρι τις γραφικές παραστάσεις συναρτήσεων και τις αλγεβρικές εξισώσεις, οι μαθητές πειραματίζονται ενεργά.",
-    seoCard3Title: "Μελέτη από Παντού",
-    seoCard3Desc: "Πλήρης συμβατότητα με υπολογιστές, τάμπλετ και κινητά, καθώς και διαθέσιμη δωρεάν εφαρμογή στο Google Play Store.",
+    seoMainTitle: "Διαδραστικές Ασκήσεις Μαθηματικών & Προετοιμασία Εξετάσεων",
+    seoMainDesc: "Στο LearnMaths.gr μαθητές Δημοτικού και Γυμνασίου βρίσκουν πλούσιες ασκήσεις μαθηματικών, διαδραστική άλγεβρα, ασκήσεις γεωμετρίας (όπως το Πυθαγόρειο θεώρημα) και επίσημα θέματα εξετάσεων με τεστ προσομοίωσης για τα Πρότυπα Σχολεία.",
+    seoCard1Title: "Θέματα Προτύπων & Προσομοίωση",
+    seoCard1Desc: "Επίσημα θέματα προτύπων προηγούμενων ετών, διαδραστικά τεστ προσομοίωσης, αναλυτικές απαντήσεις και δωρεάν αρχεία PDF.",
+    seoCard2Title: "Ασκήσεις Άλγεβρας & Γεωμετρίας",
+    seoCard2Desc: "Από κλάσματα, ΕΚΠ και εξισώσεις μέχρι το Πυθαγόρειο θεώρημα, οι μαθητές λύνουν ασκήσεις άλγεβρας και γεωμετρίας με δυναμικούς προσομοιωτές.",
+    seoCard3Title: "Μελέτη & Εξάσκηση Online",
+    seoCard3Desc: "Όλες οι ασκήσεις μαθηματικών είναι διαθέσιμες δωρεάν online σε υπολογιστές, τάμπλετ, καθώς και μέσω της επίσημης εφαρμογής στο Google Play.",
 
     // FAQ
     faqTitle: "Συχνές Ερωτήσεις (FAQ)",
     faq1Q: "Είναι το περιεχόμενο του LearnMaths.gr δωρεάν;",
-    faq1A: "Ναι, όλο το εκπαιδευτικό υλικό, η θεωρία, τα διαδραστικά εργαλεία και τα θέματα για τα Πρότυπα Σχολεία διατίθενται εντελώς δωρεάν για όλους τους μαθητές και εκπαιδευτικούς.",
-    faq2Q: "Ποιες τάξεις καλύπτει η πλατφόρμα;",
-    faq2A: "Καλύπτει τις τάξεις του Δημοτικού (Δ΄, Ε΄, ΣΤ΄ Δημοτικού), όλες τις τάξεις του Γυμνασίου (Α΄, Β΄, Γ΄ Γυμνασίου) και περιλαμβάνει ειδική κατηγορία προετοιμασίας εξετάσεων για τα Πρότυπα Σχολεία.",
-    faq3Q: "Ακολουθεί η πλατφόρμα τα Νέα Βιβλία και Προγράμματα Σπουδών 2027-2028;",
-    faq3A: "Ναι! Όλη η ύλη και τα διαδραστικά κεφάλαια του Γυμνασίου έχουν αναδιαρθρωθεί σύμφωνα με τα Νέα Βιβλία Μαθηματικών (2027–2028). Τα μαθήματα του Δημοτικού ακολουθούν πιστά το ισχύον πρόγραμμα των τάξεων Δ΄, Ε΄ και ΣΤ΄.",
+    faq1A: "Ναι, όλο το εκπαιδευτικό υλικό, η θεωρία, οι ασκήσεις μαθηματικών, τα εργαλεία άλγεβρας και τα θέματα για τα Πρότυπα Σχολεία διατίθενται εντελώς δωρεάν.",
+    faq2Q: "Ποιες τάξεις και αντικείμενα καλύπτει η πλατφόρμα;",
+    faq2A: "Καλύπτει τάξεις Δημοτικού (Δ΄, Ε΄, ΣΤ΄) και Γυμνασίου (Α΄, Β΄, Γ΄), περιλαμβάνει ενότητες άλγεβρας και γεωμετρίας (όπως το Πυθαγόρειο θεώρημα) και ειδική ενότητα προετοιμασίας για Πρότυπα Σχολεία.",
+    faq3Q: "Περιλαμβάνονται επίσημα θέματα και τεστ προσομοίωσης για Πρότυπα;",
+    faq3A: "Βεβαίως! Παρέχονται επίσημα θέματα προτύπων προηγούμενων ετών με πλήρεις λύσεις, τεστ προσομοίωσης με αυτόματη βαθμολόγηση και δυνατότητα δωρεάν λήψης των θεμάτων σε PDF.",
     faq4Q: "Πώς βοηθούν οι διαδραστικές ασκήσεις στην κατανόηση;",
-    faq4A: "Αντί για απλή αποστήθιση, οι μαθητές αλληλεπιδρούν με οπτικά μοντέλα (όπως κλασματικές ράβδους, ζυγαριές εξισώσεων και διαδραστικούς άξονες), κατανοώντας βαθύτερα τη λογική πίσω από κάθε μαθηματική έννοια."
+    faq4A: "Αντί για στείρα αποστήθιση τύπων, οι μαθητές χειρίζονται οπτικά μοντέλα (ράβδους κλασμάτων, ζυγαριές εξισώσεων, καρτεσιανούς άξονες και γεωμετρικά σχήματα), αποκτώντας ουσιαστική μαθηματική αντίληψη."
   },
   en: {
-    pageTitle: "LearnMaths.gr - Mathematics Reimagined",
-    pageDesc: "Modern interactive mathematics learning platform for Elementary, Middle School (New Curriculum), and Selective Magnet Schools.",
+    pageTitle: "LearnMaths.gr - Mathematics Exercises & Entrance Exams Prep",
+    pageDesc: "Interactive math exercises, algebra, geometry (Pythagorean theorem), official past papers, and mock simulation tests for Model Magnet Schools.",
     navPrimary: "Elementary",
     navMiddle: "Middle School",
     navProtipa: "🎯 Exam Prep",
     navContact: "✉️ Contact",
-    heroSubtitle: "Learn Mathematics easily, quickly, and interactively from Elementary to Middle School!",
+    heroSubtitle: "Learn Mathematics easily, quickly, and interactively: rich algebra and geometry exercises from Elementary to Middle School!",
     quickPrimary: "Elementary 🎒",
     quickMiddle: "Middle School 📐",
     appDownloadText: "GET IT ON GOOGLE PLAY",
     appBadgeImg: "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
 
     // Protipa Banner
-    protypaBadge: "🎯 SPECIALIZED EXAM PREPARATION",
+    protypaBadge: "🎯 OFFICIAL EXAM PAPERS & MOCK TESTS",
     protypaTitle: "Model & Magnet School Entrance",
-    protypaDesc: "Prepare for standardized entrance examinations with official past papers, simulation tests, and free downloadable PDFs!",
+    protypaDesc: "Prepare for standardized entrance examinations with official past papers, full simulation tests, and free downloadable PDFs!",
     protypaBtn: "🚀 Access Exam Materials",
 
     // Primary School Section
@@ -107,17 +108,17 @@ const I18N = {
     classB_GymTitle: "Grade 8 (Year 2) ⭐",
     classG_GymTitle: "Grade 9 (Year 3)",
     classA_GymDesc: "Whole Numbers, Powers, Fractions, Linear Equations, Percentages & Geometry.",
-    classB_GymModuleTitle: "Module: Functions",
-    classB_GymDesc: "Explore the function y ＝ a · x and observe interactive graphing live on the coordinate grid!",
+    classB_GymModuleTitle: "Module: Functions & Geometry",
+    classB_GymDesc: "Explore linear functions, the Pythagorean theorem, and observe live interactive graphs!",
     classG_GymDesc: "Algebraic Expressions, Monomials, Special Products & Triangle Similarity.",
 
     // SEO Overview
     seoMainTitle: "Interactive Mathematics Aligned with Curriculum Standards",
-    seoMainDesc: "LearnMaths.gr was created to help elementary and middle school students gain a deep conceptual understanding of mathematics through interactive tools, visual representations, and targeted problem sets. Every chapter follows clear pedagogical guidelines, making independent study simple and engaging.",
+    seoMainDesc: "LearnMaths.gr helps students gain deep conceptual understanding through interactive exercises, algebra simulators, geometry modules, and past entrance exam preparation.",
     seoCard1Title: "Model School Preparation",
     seoCard1Desc: "Comprehensive collection of past entrance exam papers, step-by-step solutions, and downloadable PDF material.",
-    seoCard2Title: "Interactive Visual Simulators",
-    seoCard2Desc: "From fractions, LCM and GCD to coordinate graphing and algebraic balance scales, students learn through hands-on experimentation.",
+    seoCard2Title: "Algebra & Geometry Exercises",
+    seoCard2Desc: "From fractions and equations to the Pythagorean theorem, students learn through interactive experimentation.",
     seoCard3Title: "Study Anywhere",
     seoCard3Desc: "Fully responsive across desktops, tablets, and smartphones, with a free companion application on Google Play Store.",
 
@@ -127,10 +128,10 @@ const I18N = {
     faq1A: "Yes, all educational resources, theory lessons, interactive tools, and entrance examination materials are provided completely free for students and educators.",
     faq2Q: "Which grades are covered by the platform?",
     faq2A: "The platform covers Elementary school (Grades 4, 5, 6), all Middle School grades (Grades 7, 8, 9), and includes a dedicated section for Model School entrance preparation.",
-    faq3Q: "Are the courses aligned with the latest educational standards?",
-    faq3A: "Yes! All curriculum content and interactive units have been restructured according to modern mathematics education frameworks and official textbooks.",
+    faq3Q: "Are official exam papers and mock tests included?",
+    faq3A: "Yes, official past papers with detailed solutions, automatic mock simulation tests, and free downloadable PDFs are fully accessible.",
     faq4Q: "How do interactive exercises enhance mathematical understanding?",
-    faq4A: "Rather than rote memorization, students manipulate visual models (such as fraction bars, equation balance scales, and interactive number lines), fostering deep conceptual understanding."
+    faq4A: "Rather than rote memorization, students manipulate visual models (such as fraction bars, equation balance scales, and geometry tools), fostering deep conceptual understanding."
   }
 };
 
@@ -138,6 +139,54 @@ export default function Home() {
   const router = useRouter();
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LearnMaths.gr",
+    "url": "https://learnmaths.gr",
+    "description": t.pageDesc,
+    "keywords": [
+      "ασκήσεις μαθηματικά",
+      "ασκήσεις μαθηματικών",
+      "ασκήσεις άλγεβρα",
+      "ασκήσεις γεωμετρία",
+      "πυθαγόρειο θεώρημα",
+      "θέματα πρότυπα",
+      "θέματα προτύπων",
+      "τεστ προσομοίωσης",
+      "προσομοίωση προτύπων",
+      "επίσημα θέματα προτύπων"
+    ],
+    "inLanguage": "el-GR"
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": t.faq1Q,
+        "acceptedAnswer": { "@type": "Answer", "text": t.faq1A }
+      },
+      {
+        "@type": "Question",
+        "name": t.faq2Q,
+        "acceptedAnswer": { "@type": "Answer", "text": t.faq2A }
+      },
+      {
+        "@type": "Question",
+        "name": t.faq3Q,
+        "acceptedAnswer": { "@type": "Answer", "text": t.faq3A }
+      },
+      {
+        "@type": "Question",
+        "name": t.faq4Q,
+        "acceptedAnswer": { "@type": "Answer", "text": t.faq4A }
+      }
+    ]
+  };
 
   const navLinks = (
     <>
@@ -172,6 +221,17 @@ export default function Home() {
       fullWidth={true}
       showAds={true}
     >
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      </Head>
+
       {/* 1. HERO SECTION */}
       <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-8 sm:py-10 md:py-12 text-center shadow-md -mt-2">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-4">
@@ -209,11 +269,15 @@ export default function Home() {
               href="https://play.google.com/store/apps/details?id=com.gkrimpas.learn_maths&pcampaignid=web_share"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={t.appDownloadText}
               className="inline-block transform hover:scale-105 transition duration-200"
             >
               <img
                 src={t.appBadgeImg}
                 alt="Get it on Google Play"
+                width="144"
+                height="43"
+                loading="eager"
                 className="w-32 sm:w-36 h-auto mx-auto"
               />
             </a>
@@ -416,7 +480,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="text-2xl mb-2">🎯</div>
+              <div className="text-2xl mb-2" aria-hidden="true">🎯</div>
               <h3 className="font-bold text-gray-900 mb-1">{t.seoCard1Title}</h3>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                 {t.seoCard1Desc}
@@ -424,7 +488,7 @@ export default function Home() {
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="text-2xl mb-2">🧮</div>
+              <div className="text-2xl mb-2" aria-hidden="true">🧮</div>
               <h3 className="font-bold text-gray-900 mb-1">{t.seoCard2Title}</h3>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                 {t.seoCard2Desc}
@@ -432,7 +496,7 @@ export default function Home() {
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-              <div className="text-2xl mb-2">📱</div>
+              <div className="text-2xl mb-2" aria-hidden="true">📱</div>
               <h3 className="font-bold text-gray-900 mb-1">{t.seoCard3Title}</h3>
               <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                 {t.seoCard3Desc}
@@ -442,48 +506,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. FAQ SECTION */}
+      {/* 6. FAQ SECTION (Accordion) */}
       <section className="py-12 bg-gray-50 border-t border-gray-200">
         <div className={`${LAYOUT.CONTAINER} px-4 sm:px-6 max-w-4xl mx-auto`}>
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-8">
             {t.faqTitle}
           </h2>
           <div className="space-y-4">
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-base text-gray-900 mb-1">
-                {t.faq1Q}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                {t.faq1A}
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-base text-gray-900 mb-1">
-                {t.faq2Q}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                {t.faq2A}
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-base text-gray-900 mb-1">
-                {t.faq3Q}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                {t.faq3A}
-              </p>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-base text-gray-900 mb-1">
-                {t.faq4Q}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                {t.faq4A}
-              </p>
-            </div>
+            {[
+              { q: t.faq1Q, a: t.faq1A, defaultOpen: true },
+              { q: t.faq2Q, a: t.faq2A, defaultOpen: false },
+              { q: t.faq3Q, a: t.faq3A, defaultOpen: false },
+              { q: t.faq4Q, a: t.faq4A, defaultOpen: false }
+            ].map((faq, idx) => (
+              <details
+                key={idx}
+                open={faq.defaultOpen}
+                className="group bg-white p-5 rounded-2xl border border-gray-200 shadow-sm transition [&_summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="flex items-center justify-between cursor-pointer list-none select-none font-bold text-base text-gray-900">
+                  <span>{faq.q}</span>
+                  <span className="transition duration-300 group-open:-rotate-180 text-gray-400">
+                    ▼
+                  </span>
+                </summary>
+                <p className="mt-3 text-xs sm:text-sm text-gray-600 leading-relaxed border-t pt-3 border-gray-100">
+                  {faq.a}
+                </p>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import AdSlot from './AdSlot';
 import Script from 'next/script';
 import { LAYOUT } from '../shared/layout-config';
@@ -12,6 +13,7 @@ export default function Layout({
   children,
   title = "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
   description = "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2027-2028) και τα Πρότυπα Σχολεία.",
+  image = "/og-image.png",
   schemaData = null,
   backUrl = null,
   backText = "Πίσω",
@@ -19,7 +21,7 @@ export default function Layout({
   hideNav = false,
   customNavContent = null,
   hideFooter = false,
-  showAds = true,
+  showAds = false,
   fullWidth = false,
 }) {
   const router = useRouter();
@@ -34,6 +36,24 @@ export default function Layout({
   
   const greekUrl = `${SITE_URL}${cleanPath}`;
   const englishUrl = `${SITE_URL}/en${cleanPath}`;
+
+  // Αυτόματη καταγραφή κάθε σελίδας στο Google Analytics κατά την πλοήγηση
+  useEffect(() => {
+    const handleRouteChange = (url) => {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('config', GA_MEASUREMENT_ID, {
+          page_path: url,
+        });
+      }
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
+
+  const ogImageUrl = image.startsWith('http') ? image : `${SITE_URL}${image}`;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -88,7 +108,7 @@ export default function Layout({
         <meta property="og:description" content={description} />
         <meta property="og:site_name" content="LearnMaths.gr" />
         <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'el_GR'} />
-        <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
+        <meta property="og:image" content={ogImageUrl} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:type" content="image/png" />
@@ -97,7 +117,7 @@ export default function Layout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={`${SITE_URL}/og-image.png`} />
+        <meta name="twitter:image" content={ogImageUrl} />
 
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="alternate icon" href="/favicon.ico" />

@@ -6,40 +6,40 @@ import { A_GYMNASIOU_CHAPTERS, A_GYMNASIOU_SECTIONS } from '../../data/a-gymnasi
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά Α' Γυμνασίου (Νέα Ύλη 2027-2028): Θεωρία & Ασκήσεις | LearnMaths.gr",
-    pageDesc: "Διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά Α' Γυμνασίου με βάση τα νέα σχολικά βιβλία 2027-2028 (Φυσικοί, Ακέραιοι, Ρητοί, Εξισώσεις, Γεωμετρία).",
+    pageTitle: "Ασκήσεις Μαθηματικών Α' Γυμνασίου - Άλγεβρα & Γεωμετρία | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών και θεωρία για την Α' Γυμνασίου: ασκήσεις άλγεβρας (φυσικοί, κλάσματα, εξισώσεις) και ασκήσεις γεωμετρίας (γωνίες, παράλληλες, εμβαδά).",
     backText: "Αρχική",
     badgeProgram: "Α' ΓΥΜΝΑΣΙΟΥ • ΝΕΑ ΥΛΗ & ΒΙΒΛΙΑ 2027–2028",
-    heroTitle: "Μαθηματικά Α' Γυμνασίου",
-    heroDesc: "Ολοκληρωμένη θεωρία και δυναμικές διαδραστικές ασκήσεις προσαρμοσμένες στη νέα σειρά διδασκαλίας του σχολικού βιβλίου 2027–2028.",
+    heroTitle: "Μαθηματικά Α' Γυμνασίου: Θεωρία & Ασκήσεις",
+    heroDesc: "Ολοκληρωμένη θεωρία και δυναμικές ασκήσεις μαθηματικών προσαρμοσμένες στη νέα σειρά διδασκαλίας του σχολικού βιβλίου (ΙΕΠ). Λύσε διαδραστικές ασκήσεις άλγεβρας και γεωμετρίας με άμεση επαλήθευση αποτελέσματος.",
     statusActive: "ΕΝΕΡΓΟ",
     statusSoon: "ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ",
     startReviewBtn: "ΕΝΑΡΞΗ ΕΠΑΝΑΛΗΨΗΣ",
     theoryBtn: "Θεωρία",
     exercisesBtn: "Ασκήσεις",
-    seoOverviewTitle: "📚 Ύλη Μαθηματικών Α' Γυμνασίου: Τι περιλαμβάνει το πρόγραμμα",
-    seoCol1Title: "Αριθμητική & Άλγεβρα",
-    seoCol1Text: "Πλήρης κάλυψη στους φυσικούς, ακέραιους και ρητούς αριθμούς, τις δυνάμεις, την προτεραιότητα πράξεων και την εισαγωγή στις εξισώσεις πρώτου βαθμού.",
-    seoCol2Title: "Γεωμετρία & Μετρήσεις",
-    seoCol2Text: "Μελέτη βασικών σχημάτων, γωνιών, παραλληλίας, καθετότητας, καθώς και υπολογισμός εμβαδών και περιμέτρων με διαδραστικά σχεδιαστικά εργαλεία."
+    seoOverviewTitle: "📚 Ύλη & Ασκήσεις Μαθηματικών Α' Γυμνασίου",
+    seoCol1Title: "Ασκήσεις Άλγεβρας & Αριθμητικής",
+    seoCol1Text: "Πλούσιες διαδραστικές ασκήσεις άλγεβρας στους φυσικούς, ακέραιους και ρητούς αριθμούς, στις δυνάμεις, στην προτεραιότητα πράξεων, στα ποσοστά και στις πρωτοβάθμιες εξισώσεις με οπτικοποιημένα βήματα επίλυσης.",
+    seoCol2Title: "Ασκήσεις Γεωμετρίας & Σχεδίασης",
+    seoCol2Text: "Διαδραστικές ασκήσεις γεωμετρίας για τη μελέτη βασικών γεωμετρικών σχημάτων, τη μέτρηση γωνιών, τη μεσοκάθετο, τις θέσεις ευθειών και τον υπολογισμό εμβαδών και περιμέτρων."
   },
   en: {
-    pageTitle: "Grade 7 Mathematics (Curriculum 2027-2028): Theory & Exercises | LearnMaths.gr",
-    pageDesc: "Interactive lessons, comprehensive theory, and practice exercises for Grade 7 Mathematics based on modern textbooks (Integers, Rationals, Linear Equations, Geometry).",
+    pageTitle: "Grade 7 Mathematics Exercises - Algebra & Geometry | LearnMaths.gr",
+    pageDesc: "Interactive math exercises and lessons for Grade 7: algebra problem sets (integers, fractions, linear equations) and geometry exercises with live visual tools.",
     backText: "Home",
     badgeProgram: "GRADE 7 • NEW CURRICULUM 2027–2028",
-    heroTitle: "Grade 7 Mathematics",
-    heroDesc: "Comprehensive theory and dynamic interactive problem sets aligned with the latest secondary education mathematics curriculum.",
+    heroTitle: "Grade 7 Mathematics: Theory & Exercises",
+    heroDesc: "Comprehensive theory and dynamic interactive problem sets aligned with the latest secondary education curriculum. Solve interactive algebra and geometry exercises with real-time feedback.",
     statusActive: "ACTIVE",
     statusSoon: "COMING SOON",
     startReviewBtn: "START REVIEW",
     theoryBtn: "Theory",
     exercisesBtn: "Exercises",
-    seoOverviewTitle: "📚 Grade 7 Mathematics Curriculum: Key Topics",
-    seoCol1Title: "Arithmetic & Algebra",
-    seoCol1Text: "Comprehensive coverage of natural numbers, integers, and rational numbers, powers, order of operations, and introduction to first-degree linear equations.",
-    seoCol2Title: "Geometry & Measurement",
-    seoCol2Text: "Study of foundational figures, angles, parallel and perpendicular lines, alongside area and perimeter calculations using interactive visual tools."
+    seoOverviewTitle: "📚 Grade 7 Mathematics: Core Curriculum",
+    seoCol1Title: "Algebra & Arithmetic Exercises",
+    seoCol1Text: "Rich interactive algebra problems covering natural numbers, integers, rationals, powers, order of operations, percentages, and linear equations with step-by-step guidance.",
+    seoCol2Title: "Geometry Exercises & Geometric Tools",
+    seoCol2Text: "Interactive geometry exercises examining fundamental shapes, angle measurements, perpendicular bisectors, parallel lines, and area/perimeter calculations."
   }
 };
 
@@ -48,7 +48,9 @@ export default function AGymnasiouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/a-gymnasiou' : 'https://learnmaths.gr/a-gymnasiou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/a-gymnasiou' 
+    : 'https://learnmaths.gr/a-gymnasiou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -63,7 +65,29 @@ export default function AGymnasiouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Secondary Education (Α' Γυμνασίου)",
+      "teaches": [
+        "Ασκήσεις μαθηματικά",
+        "Ασκήσεις άλγεβρα",
+        "Ασκήσεις γεωμετρία",
+        "Φυσικοί Αριθμοί",
+        "Κλάσματα",
+        "Εξισώσεις",
+        "Γωνίες και Γεωμετρικά Σχήματα"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Theory Guide",
+      "educationalUse": "Instruction & Homework Practice",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -74,9 +98,9 @@ export default function AGymnasiouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
         {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
@@ -125,7 +149,7 @@ export default function AGymnasiouIndex() {
                     >
                       <div className="bg-indigo-600 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
                         <div className="flex items-center gap-2">
-                          <span>{chapterIcon}</span>
+                          <span aria-hidden="true">{chapterIcon}</span>
                           <span>{badgeLabel}</span>
                         </div>
                         {isItemActive && (
@@ -153,7 +177,7 @@ export default function AGymnasiouIndex() {
                                 locale={locale}
                                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 active:scale-[0.98] text-slate-950 font-black py-3 px-4 rounded-xl transition-all shadow-md text-xs sm:text-sm uppercase tracking-wider touch-manipulation cursor-pointer"
                               >
-                                <span>🎯</span>
+                                <span aria-hidden="true">🎯</span>
                                 <span>{t.startReviewBtn}</span>
                               </Link>
                             </div>
@@ -164,7 +188,7 @@ export default function AGymnasiouIndex() {
                                 locale={locale}
                                 className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                               >
-                                <span>📖</span>
+                                <span aria-hidden="true">📖</span>
                                 <span>{t.theoryBtn}</span>
                               </Link>
                               <Link
@@ -172,7 +196,7 @@ export default function AGymnasiouIndex() {
                                 locale={locale}
                                 className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                               >
-                                <span>🎯</span>
+                                <span aria-hidden="true">🎯</span>
                                 <span>{t.exercisesBtn}</span>
                               </Link>
                             </div>

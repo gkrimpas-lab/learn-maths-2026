@@ -6,38 +6,38 @@ import { B_GYMNASIOU_CHAPTERS, B_GYMNASIOU_SECTIONS } from '../../data/b-gymnasi
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά Β' Γυμνασίου (Νέα Ύλη 2027-2028): Θεωρία & Ασκήσεις | LearnMaths.gr",
-    pageDesc: "Δωρεάν διαδραστικά μαθήματα, θεωρία και ασκήσεις για τα Μαθηματικά Β' Γυμνασίου σύμφωνα με τα νέα σχολικά βιβλία 2027-2028 (Δυνάμεις, Ρίζες, Πραγματικοί Αριθμοί).",
+    pageTitle: "Ασκήσεις Μαθηματικών Β' Γυμνασίου - Πυθαγόρειο Θεώρημα & Άλγεβρα | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών Β' Γυμνασίου: ασκήσεις γεωμετρίας (Πυθαγόρειο θεώρημα, εμβαδά) και άλγεβρας (δυνάμεις, τετραγωνικές ρίζες, συναρτήσεις).",
     backText: "Αρχική",
     badgeProgram: "Β' ΓΥΜΝΑΣΙΟΥ • ΝΕΑ ΥΛΗ & ΒΙΒΛΙΑ 2027–2028",
     heroTitle: "Μαθηματικά Β' Γυμνασίου: Θεωρία & Ασκήσεις",
-    heroDesc: "Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και εξασκήσου με διαδραστικές ασκήσεις προσαρμοσμένες στη νέα σειρά διδασκαλίας 2027–2028!",
+    heroDesc: "Εξερεύνησε τη θεωρία με δυναμικά εργαστήρια και λύσε διαδραστικές ασκήσεις άλγεβρας και γεωμετρίας. Ειδική ενότητα για το Πυθαγόρειο θεώρημα, τις δυνάμεις, τις ρίζες και τις γραφικές παραστάσεις συναρτήσεων.",
     statusActive: "ΕΝΕΡΓΟ",
     statusSoon: "ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ",
     theoryBtn: "Θεωρία",
     exercisesBtn: "Ασκήσεις",
-    seoOverviewTitle: "📚 Ύλη Μαθηματικών Β' Γυμνασίου: Σύμφωνα με τα Νέα Βιβλία (2027–2028)",
-    seoCol1Title: "Δυνάμεις & Πραγματικοί Αριθμοί",
-    seoCol1Text: "Στη Β' Γυμνασίου η άλγεβρα εμβαθύνει στις δυνάμεις με εκθέτη ακέραιο (θετικό, μηδέν και αρνητικό), την τυποποιημένη μορφή πολύ μεγάλων και πολύ μικρών αριθμών και την εισαγωγή στους άρρητους αριθμούς και την τετραγωνική ρίζα.",
-    seoCol2Title: "Γεωμετρικές & Αλγεβρικές Εφαρμογές",
-    seoCol2Text: "Μέσα από τις διαδραστικές εφαρμογές του LearnMaths, οι μαθητές πειραματίζονται με την οπτικοποίηση ριζών, τις ιδιότητες των πράξεων και την προετοιμασία για το Πυθαγόρειο Θεώρημα και την Τριγωνομετρία."
+    seoOverviewTitle: "📚 Ύλη & Ασκήσεις Μαθηματικών Β' Γυμνασίου",
+    seoCol1Title: "Ασκήσεις Άλγεβρας: Δυνάμεις & Ρίζες",
+    seoCol1Text: "Πλούσιες διαδραστικές ασκήσεις άλγεβρας στις δυνάμεις με ακέραιο εκθέτη, την τυποποιημένη μορφή αριθμών, τους άρρητους αριθμούς, τον υπολογισμό τετραγωνικής ρίζας και τις συναρτήσεις με live γραφικές παραστάσεις.",
+    seoCol2Title: "Ασκήσεις Γεωμετρίας & Πυθαγόρειο Θεώρημα",
+    seoCol2Text: "Ολοκληρωμένες ασκήσεις γεωμετρίας με δυναμικούς προσομοιωτές: αναλυτική εφαρμογή στο Πυθαγόρειο θεώρημα, υπολογισμός υποτείνουσας και κάθετων πλευρών, εμβαδά επιπέδων σχημάτων και βασική τριγωνομετρία."
   },
   en: {
-    pageTitle: "Grade 8 Mathematics (Curriculum 2027-2028): Theory & Exercises | LearnMaths.gr",
-    pageDesc: "Free interactive lessons, theory, and exercises for Grade 8 Mathematics aligned with modern textbooks (Powers, Square Roots, Real Numbers).",
+    pageTitle: "Grade 8 Mathematics Exercises - Pythagorean Theorem & Algebra | LearnMaths.gr",
+    pageDesc: "Interactive math exercises for Grade 8: geometry problems (Pythagorean theorem, areas) and algebra units (powers, square roots, functions).",
     backText: "Home",
     badgeProgram: "GRADE 8 • NEW CURRICULUM 2027–2028",
     heroTitle: "Grade 8 Mathematics: Theory & Exercises",
-    heroDesc: "Explore theory through dynamic labs and practice with interactive exercises tailored to the updated 2027–2028 curriculum framework!",
+    heroDesc: "Explore theory through dynamic visual simulators and practice interactive algebra and geometry problems. Dedicated focus on the Pythagorean theorem, powers, square roots, and functions.",
     statusActive: "ACTIVE",
     statusSoon: "COMING SOON",
     theoryBtn: "Theory",
     exercisesBtn: "Exercises",
-    seoOverviewTitle: "📚 Grade 8 Mathematics Curriculum: Key Topics",
-    seoCol1Title: "Powers & Real Numbers",
-    seoCol1Text: "Grade 8 algebra deepens into integer exponents (positive, zero, and negative), scientific notation of numbers, and introduces irrational numbers and square roots.",
-    seoCol2Title: "Geometric & Algebraic Applications",
-    seoCol2Text: "Through LearnMaths interactive tools, students visualize square roots, master exponent rules, and prepare for the Pythagorean Theorem and Trigonometry."
+    seoOverviewTitle: "📚 Grade 8 Mathematics: Core Topics",
+    seoCol1Title: "Algebra Exercises: Powers & Roots",
+    seoCol1Text: "Comprehensive algebra problem sets covering integer exponents, scientific notation, irrational numbers, square root calculations, and real-time interactive function graphing.",
+    seoCol2Title: "Geometry Exercises & Pythagorean Theorem",
+    seoCol2Text: "Visual interactive geometry modules focused on applying the Pythagorean theorem, calculating hypotenuse and leg lengths, polygon areas, and introductory trigonometry."
   }
 };
 
@@ -46,7 +46,9 @@ export default function BGymnasiouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/b-gymnasiou' : 'https://learnmaths.gr/b-gymnasiou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/b-gymnasiou' 
+    : 'https://learnmaths.gr/b-gymnasiou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -61,7 +63,29 @@ export default function BGymnasiouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Secondary Education (Β' Γυμνασίου)",
+      "teaches": [
+        "Πυθαγόρειο θεώρημα",
+        "Ασκήσεις γεωμετρία",
+        "Ασκήσεις άλγεβρα",
+        "Ασκήσεις μαθηματικά",
+        "Τετραγωνική Ρίζα",
+        "Δυνάμεις Ακεραίων",
+        "Συναρτήσεις"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Theory Guide",
+      "educationalUse": "Instruction & Homework Practice",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -72,9 +96,9 @@ export default function BGymnasiouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
         {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-indigo-700/50">
@@ -123,7 +147,7 @@ export default function BGymnasiouIndex() {
                     >
                       <div className="bg-indigo-600 py-3 px-5 flex items-center justify-between text-white font-black text-sm sm:text-base">
                         <div className="flex items-center gap-2">
-                          <span>{chapterIcon}</span>
+                          <span aria-hidden="true">{chapterIcon}</span>
                           <span>{badgeLabel}</span>
                         </div>
                         {isItemActive && (
@@ -150,7 +174,7 @@ export default function BGymnasiouIndex() {
                               locale={locale}
                               className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                             >
-                              <span>📖</span>
+                              <span aria-hidden="true">📖</span>
                               <span>{t.theoryBtn}</span>
                             </Link>
                             <Link
@@ -158,7 +182,7 @@ export default function BGymnasiouIndex() {
                               locale={locale}
                               className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
                             >
-                              <span>🎯</span>
+                              <span aria-hidden="true">🎯</span>
                               <span>{t.exercisesBtn}</span>
                             </Link>
                           </div>

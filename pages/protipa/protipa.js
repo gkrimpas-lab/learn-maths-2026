@@ -5,74 +5,74 @@ import { LAYOUT } from '../../shared/layout-config';
 
 const I18N = {
   el: {
-    pageTitle: "🎯 Εισαγωγή στα Πρότυπα Σχολεία - LearnMaths.gr",
-    pageDesc: "Πλήρης προετοιμασία για τις εξετάσεις εισαγωγής στα Πρότυπα Σχολεία: Τεστ προσομοίωσης, πραγματικά θέματα εξετάσεων και δωρεάν λήψη θεμάτων & απαντήσεων σε PDF.",
+    pageTitle: "Θέματα Προτύπων & Τεστ Προσομοίωσης - LearnMaths.gr",
+    pageDesc: "Επίσημα θέματα προτύπων σχολείων προηγούμενων ετών με αναλυτικές λύσεις, διαδραστικά τεστ προσομοίωσης και δωρεάν λήψη θεμάτων σε PDF για μαθητές Δημοτικού.",
     backText: "Αρχική",
-    heroBadge: "🎯 ΕΙΔΙΚΗ ΠΡΟΕΤΟΙΜΑΣΙΑ",
-    heroTitle: "Εισαγωγή στα Πρότυπα Σχολεία",
-    heroDesc: "Κάνε τη μετάβαση από τη ΣΤ' Δημοτικού στην Α' Γυμνασίου με απόλυτη επιτυχία! Εξασκήσου με πραγματικά θέματα εξετάσεων, λύσε τεστ προσομοίωσης με αυτόματη βαθμολόγηση ή κατέβασε τα αρχεία σε PDF.",
+    heroBadge: "🎯 ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΠΡΟΤΥΠΩΝ & ΠΡΟΣΟΜΟΙΩΣΗ",
+    heroTitle: "Επίσημα Θέματα Προτύπων & Τεστ Προσομοίωσης",
+    heroDesc: "Ολοκληρωμένη προετοιμασία για τις εισαγωγικές εξετάσεις στα Πρότυπα Σχολεία (Πρότυπα Γυμνάσια). Λύσε online τα επίσημα θέματα προτύπων προηγούμενων ετών, εξασκήσου με τεστ προσομοίωσης με χρονόμετρο και αυτόματη βαθμολόγηση, ή κατέβασε δωρεάν όλα τα θέματα και τις απαντήσεις σε PDF.",
     
     // Section 1: Online Practice
-    sec1Title: "Διαδραστική Εξάσκηση Online",
-    sec1Subtitle: "Επίλεξε τρόπο εξάσκησης με άμεσο έλεγχο απαντήσεων και βαθμολογία.",
+    sec1Title: "Διαδραστική Προσομοίωση & Εξάσκηση Online",
+    sec1Subtitle: "Επίλεξε τρόπο εξάσκησης με αυτόματη βαθμολόγηση, χρονόμετρο και άμεσο έλεγχο απαντήσεων στα μαθηματικά.",
     
     // Card 1: Simulation
-    card1Badge: "ΧΡΟΝΟΜΕΤΡΟ ΚΑΙ ΒΑΘΜΟΛΟΓΙΑ",
-    card1Title: "ΤΕΣΤ ΠΡΟΣΟΜΟΙΩΣΗΣ",
-    card1Desc: "Δοκιμαστικά τεστ στα πρότυπα των πραγματικών εξετάσεων με διαβαθμισμένη δυσκολία, πολλαπλή επιλογή και άμεση αξιολόγηση.",
-    card1Btn: "🚀 Έναρξη Προσομοίωσης",
+    card1Badge: "ΧΡΟΝΟΜΕΤΡΟ & ΑΥΤΟΜΑΤΗ ΒΑΘΜΟΛΟΓΗΣΗ",
+    card1Title: "Τεστ Προσομοίωσης Προτύπων",
+    card1Desc: "Ολοκληρωμένα τεστ προσομοίωσης βασισμένα στα πραγματικά θέματα εξετάσεων με διαβαθμισμένη δυσκολία, ερωτήσεις πολλαπλής επιλογής και άμεση αξιολόγηση.",
+    card1Btn: "🚀 Έναρξη Τεστ Προσομοίωσης",
 
     // Card 2: Past Exams
-    card2Badge: "ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΥΠΟΥΡΓΕΙΟΥ",
-    card2Title: "ΠΡΑΓΜΑΤΙΚΑ ΘΕΜΑΤΑ ΕΞΕΤΑΣΕΩΝ",
-    card2Desc: "Λύσε online τα επίσημα θέματα των προηγούμενων ετών ανά χρονιά, δες τις σωστές απαντήσεις και μέτρησε τις επιδόσεις σου.",
+    card2Badge: "ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΠΡΟΗΓΟΥΜΕΝΩΝ ΕΤΩΝ",
+    card2Title: "Επίσημα Θέματα Προτύπων (Ανά Έτος)",
+    card2Desc: "Λύσε διαδραστικά όλα τα επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία ανά σχολικό έτος, έλεγξε τις λύσεις και υπολόγισε το σκορ σου.",
     card2Btn: "🔍 Επιλογή Έτους Εξετάσεων",
 
     // Section 2: PDF Downloads
-    sec2Title: "Υλικό για Εκτύπωση & Μελέτη (PDF)",
-    sec2Subtitle: "Κατέβασε δωρεάν τα επίσημα έγγραφα θεμάτων και απαντήσεων σε μορφή PDF.",
+    sec2Title: "Επίσημα Θέματα Προτύπων σε PDF (Δωρεάν Λήψη)",
+    sec2Subtitle: "Κατέβασε, εκτύπωσε και μελέτησε τα επίσημα θέματα προτύπων και τις αναλυτικές λύσεις σε μορφή PDF.",
     pdfDownloadBtn: "Λήψη PDF",
-    pdf1Title: "Πρότυπα Σχολεία 2020 - 2026",
-    pdf1Desc: "Συγκεντρωμένα όλα τα επίσημα θέματα και οι ενδεικτικές απαντήσεις των τελευταίων ετών.",
-    pdf2Title: "Μαθηματικά 2016 - 2019",
-    pdf2Desc: "Παλαιότερα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία μαζί με τις λύσεις τους.",
-    pdf3Title: "Απαντήσεις Θεμάτων",
-    pdf3Desc: "Αναλυτικές και πλήρως επεξηγημένες λύσεις όλων των θεμάτων για όλα τα έτη."
+    pdf1Title: "Θέματα Προτύπων 2020 - 2026",
+    pdf1Desc: "Συγκεντρωτικά όλα τα επίσημα θέματα εξετάσεων και οι απαντήσεις των τελευταίων ετών.",
+    pdf2Title: "Μαθηματικά Προτύπων 2016 - 2019",
+    pdf2Desc: "Παλαιότερα επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια μαζί με τις λύσεις τους.",
+    pdf3Title: "Αναλυτικές Λύσεις & Απαντήσεις",
+    pdf3Desc: "Πλήρως επεξηγημένες μαθηματικές λύσεις για όλα τα θέματα εξετάσεων όλων των ετών."
   },
   en: {
-    pageTitle: "🎯 Model & Magnet School Entrance Exams - LearnMaths.gr",
-    pageDesc: "Complete preparation for selective Model School entrance exams: Simulation tests, official past papers, and free downloadable PDF answer keys.",
+    pageTitle: "Model School Entrance Exam Papers & Simulation Tests - LearnMaths.gr",
+    pageDesc: "Official Model School past entrance exam papers with detailed solutions, timed simulation mock tests, and free downloadable PDF study guides.",
     backText: "Home",
-    heroBadge: "🎯 SPECIALIZED EXAM PREPARATION",
-    heroTitle: "Model & Magnet School Entrance",
-    heroDesc: "Bridge the transition from Grade 6 to Middle School with confidence! Practice with official past exam papers, complete timed simulation tests, or download full sets in PDF.",
+    heroBadge: "🎯 OFFICIAL EXAM PAPERS & SIMULATION",
+    heroTitle: "Model School Entrance Papers & Simulation Tests",
+    heroDesc: "Comprehensive preparation for standardized entrance examinations for selective Model Schools. Practice official past exam papers, complete timed mock simulation tests with instant scoring, or download all exam materials in PDF format.",
     
     // Section 1: Online Practice
-    sec1Title: "Interactive Online Practice",
-    sec1Subtitle: "Select your practice mode with instant scoring and detailed answer validation.",
+    sec1Title: "Interactive Online Simulation & Practice",
+    sec1Subtitle: "Select your testing mode featuring automated scoring, exam timer, and immediate answer keys.",
     
     // Card 1: Simulation
     card1Badge: "TIMER & AUTOMATED SCORING",
-    card1Title: "SIMULATION TESTS",
-    card1Desc: "Full-length trial tests structured to match official entrance exams, featuring multiple-choice questions and instant feedback.",
+    card1Title: "Model School Simulation Tests",
+    card1Desc: "Full-length mock tests modeled after real entrance exam standards, offering graded difficulty levels, multiple-choice questions, and instant analytics.",
     card1Btn: "🚀 Start Simulation Test",
 
     // Card 2: Past Exams
-    card2Badge: "OFFICIAL PAST PAPERS",
-    card2Title: "AUTHENTIC EXAM PAPERS",
-    card2Desc: "Practice official exam papers sorted by year, review step-by-step solutions, and benchmark your score.",
+    card2Badge: "OFFICIAL PAST EXAM PAPERS",
+    card2Title: "Official Exam Papers by Year",
+    card2Desc: "Solve authentic past papers from official testing cycles, review step-by-step mathematical answers, and assess your progress.",
     card2Btn: "🔍 Select Exam Year",
 
     // Section 2: PDF Downloads
-    sec2Title: "Printable Study Materials (PDF)",
-    sec2Subtitle: "Download official exam papers and explanatory solutions completely free in PDF format.",
+    sec2Title: "Download Official Exam Papers in PDF (Free)",
+    sec2Subtitle: "Download, print, and study complete official past papers and step-by-step solutions in PDF.",
     pdfDownloadBtn: "Download PDF",
     pdf1Title: "Model Schools 2020 - 2026",
-    pdf1Desc: "Consolidated volume containing official exam questions and answer keys from recent years.",
+    pdf1Desc: "Comprehensive collection containing all official examination questions and answer keys from recent years.",
     pdf2Title: "Mathematics 2016 - 2019",
-    pdf2Desc: "Past entrance exam papers and worked solutions for earlier testing periods.",
-    pdf3Title: "Comprehensive Solutions",
-    pdf3Desc: "Detailed, step-by-step mathematical explanations for all examination years."
+    pdf2Desc: "Earlier examination sets and verified step-by-step worked mathematical solutions.",
+    pdf3Title: "Complete Solutions & Explanations",
+    pdf3Desc: "Detailed, pedagogically broken-down mathematical answers for all examination years."
   }
 };
 
@@ -81,7 +81,9 @@ export default function ProtipaHubPage() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/protipa/protipa' : 'https://learnmaths.gr/protipa/protipa';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/protipa/protipa' 
+    : 'https://learnmaths.gr/protipa/protipa';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -96,7 +98,25 @@ export default function ProtipaHubPage() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Primary to Secondary Transition (ΣΤ' Δημοτικού - Α' Γυμνασίου)",
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "inLanguage": locale === 'en' ? 'en' : 'el'
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Assessment / Practice Exam",
+      "educationalUse": "Exam Preparation",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -107,9 +127,9 @@ export default function ProtipaHubPage() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className={`${LAYOUT.CONTAINER} w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-8 md:py-10 space-y-8 md:space-y-10`}>
+      <div className={`${LAYOUT.CONTAINER} w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-8 md:py-10 space-y-8 md:space-y-10`}>
 
         {/* HERO BANNER */}
         <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-6 sm:p-8 md:p-10 text-slate-950 shadow-lg relative overflow-hidden">
@@ -126,11 +146,11 @@ export default function ProtipaHubPage() {
           </div>
         </header>
 
-        {/* SECTION 1: ΔΙΑΔΡΑΣΤΙΚΗ ΕΞΑΣΚΗΣΗ */}
+        {/* SECTION 1: ΔΙΑΔΡΑΣΤΙΚΗ ΕΞΑΣΚΗΣΗ & ΠΡΟΣΟΜΟΙΩΣΗ */}
         <section className="space-y-4">
           <div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-              <span>💻</span> {t.sec1Title}
+              <span aria-hidden="true">💻</span> {t.sec1Title}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               {t.sec1Subtitle}
@@ -143,7 +163,7 @@ export default function ProtipaHubPage() {
             <article className="bg-white border-2 border-indigo-200 hover:border-indigo-400 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-5">
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-2xl font-black shadow-xs">
-                  ⏱️
+                  <span aria-hidden="true">⏱️</span>
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-wider text-indigo-600 block mb-1">
@@ -168,11 +188,11 @@ export default function ProtipaHubPage() {
               </Link>
             </article>
 
-            {/* ΚΑΡΤΑ 2: ΠΡΑΓΜΑΤΙΚΑ ΘΕΜΑΤΑ ΕΞΕΤΑΣΕΩΝ */}
+            {/* ΚΑΡΤΑ 2: ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΕΞΕΤΑΣΕΩΝ */}
             <article className="bg-white border-2 border-blue-200 hover:border-blue-400 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-5">
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-black shadow-xs">
-                  📝
+                  <span aria-hidden="true">📝</span>
                 </div>
                 <div>
                   <span className="text-[11px] font-black uppercase tracking-wider text-blue-600 block mb-1">
@@ -200,11 +220,11 @@ export default function ProtipaHubPage() {
           </div>
         </section>
 
-        {/* SECTION 2: ΛΗΨΗ ΑΡΧΕΙΩΝ PDF */}
+        {/* SECTION 2: ΛΗΨΗ ΕΠΙΣΗΜΩΝ ΘΕΜΑΤΩΝ ΣΕ PDF */}
         <section className="space-y-4 pt-4 border-t border-slate-200">
           <div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 flex items-center gap-2">
-              <span>📥</span> {t.sec2Title}
+              <span aria-hidden="true">📥</span> {t.sec2Title}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
               {t.sec2Subtitle}
@@ -216,7 +236,7 @@ export default function ProtipaHubPage() {
             {/* PDF 1: 2020 - 2026 */}
             <article className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
-                <span className="text-3xl block">📚</span>
+                <span className="text-3xl block" aria-hidden="true">📚</span>
                 <h3 className="font-black text-slate-900 text-base sm:text-lg">
                   {t.pdf1Title}
                 </h3>
@@ -229,7 +249,7 @@ export default function ProtipaHubPage() {
                 download
                 className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95 touch-manipulation"
               >
-                <span>📥</span>
+                <span aria-hidden="true">📥</span>
                 <span>{t.pdfDownloadBtn}</span>
               </a>
             </article>
@@ -237,7 +257,7 @@ export default function ProtipaHubPage() {
             {/* PDF 2: 2016 - 2019 */}
             <article className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-200 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
-                <span className="text-3xl block">📐</span>
+                <span className="text-3xl block" aria-hidden="true">📐</span>
                 <h3 className="font-black text-slate-900 text-base sm:text-lg">
                   {t.pdf2Title}
                 </h3>
@@ -250,7 +270,7 @@ export default function ProtipaHubPage() {
                 download
                 className="w-full text-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95 touch-manipulation"
               >
-                <span>📥</span>
+                <span aria-hidden="true">📥</span>
                 <span>{t.pdfDownloadBtn}</span>
               </a>
             </article>
@@ -258,7 +278,7 @@ export default function ProtipaHubPage() {
             {/* PDF 3: ΑΠΑΝΤΗΣΕΙΣ */}
             <article className="bg-emerald-50/50 rounded-3xl p-5 sm:p-6 shadow-sm border-2 border-emerald-300 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
-                <span className="text-3xl block">✅</span>
+                <span className="text-3xl block" aria-hidden="true">✅</span>
                 <h3 className="font-black text-emerald-950 text-base sm:text-lg">
                   {t.pdf3Title}
                 </h3>
@@ -271,7 +291,7 @@ export default function ProtipaHubPage() {
                 download
                 className="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl text-xs sm:text-sm transition shadow-xs flex items-center justify-center gap-1.5 active:scale-95 touch-manipulation"
               >
-                <span>📥</span>
+                <span aria-hidden="true">📥</span>
                 <span>{t.pdfDownloadBtn}</span>
               </a>
             </article>

@@ -6,36 +6,36 @@ import { ST_DIMOTIKOU_MODULES, ST_DIMOTIKOU_SECTIONS } from '../../data/st-dimot
 
 const I18N = {
   el: {
-    pageTitle: "Μαθηματικά ΣΤ' Δημοτικού: Θεωρία & Διαδραστικές Ασκήσεις (Όλα τα Κεφάλαια) | LearnMaths.gr",
-    pageDesc: "Δωρεάν διαδραστικές ασκήσεις, θεωρία και επαναληπτικά τεστ για όλα τα κεφάλαια των Μαθηματικών ΣΤ' Δημοτικού (Κλάσματα, Εξισώσεις, Ποσοστά, Γεωμετρία, Πρότυπα).",
+    pageTitle: "Ασκήσεις Μαθηματικών ΣΤ' Δημοτικού: Θεωρία, Άλγεβρα & Γεωμετρία | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών για τη ΣΤ' Δημοτικού: ασκήσεις άλγεβρας (κλάσματα, εξισώσεις, ποσοστά), ασκήσεις γεωμετρίας (κύκλος, εμβαδόν, όγκος) και προετοιμασία για τα Πρότυπα.",
     backText: "Αρχική",
     badgeProgram: "ΣΤ' ΔΗΜΟΤΙΚΟΥ • ΕΠΙΣΗΜΟ ΣΧΟΛΙΚΟ ΠΡΟΓΡΑΜΜΑ",
-    heroTitle: "Μαθηματικά ΣΤ' Δημοτικού",
-    heroDesc: "Εξερεύνησε τα 83 κεφάλαια του σχολικού βιβλίου με διαδραστικές ασκήσεις, οπτικοποίηση εννοιών και πλήρη προετοιμασία για το Γυμνάσιο και τα Πρότυπα Σχολεία!",
+    heroTitle: "Μαθηματικά ΣΤ' Δημοτικού: Θεωρία & Ασκήσεις",
+    heroDesc: "Εξερεύνησε όλα τα κεφάλαια του σχολικού βιβλίου με διαδραστικές ασκήσεις μαθηματικών, προσομοιωτές άλγεβρας και γεωμετρίας και στοχευμένη προετοιμασία για το Γυμνάσιο και τα Πρότυπα Σχολεία!",
     lessonsSuffix: "μαθήματα",
-    seoOverviewTitle: "🎒 Η Ύλη των Μαθηματικών ΣΤ' Δημοτικού: Θεμέλια για το Γυμνάσιο",
-    seoCol1Title: "Κλάσματα, ΕΚΠ & ΜΚΔ",
-    seoCol1Text: "Οι μαθητές εμπεδώνουν την ανάλυση σε πρώτους παράγοντες, τον Μέγιστο Κοινό Διαιρέτη (ΜΚΔ), το Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ) και όλες τις πράξεις με ομώνυμα και ετερώνυμα κλάσματα.",
-    seoCol2Title: "Εξισώσεις & Ποσοστά",
-    seoCol2Text: "Εισαγωγή στην άλγεβρα με τη μεταβλητή (x), επίλυση απλών εξισώσεων, κατανόηση των αναλογιών, των ανάλογων και αντιστρόφως ανάλογων ποσών και πρακτική εφαρμογή στα ποσοστά.",
-    seoCol3Title: "Γεωμετρία & Μετρήσεις",
-    seoCol3Text: "Υπολογισμός εμβαδού και όγκου (τρίγωνο, τραπέζιο, κύκλος, κύβος, κύλινδρος), μελέτη μοτίβων και στατιστικών διαγραμμάτων (ραβδογράμματα, μέσος όρος)."
+    seoOverviewTitle: "🎒 Ύλη & Ασκήσεις Μαθηματικών ΣΤ' Δημοτικού",
+    seoCol1Title: "Ασκήσεις Άλγεβρας: Κλάσματα, ΕΚΠ & ΜΚΔ",
+    seoCol1Text: "Πλούσιες διαδραστικές ασκήσεις άλγεβρας στην ανάλυση πρώτων παραγόντων, τον Μέγιστο Κοινό Διαιρέτη (ΜΚΔ), το Ελάχιστο Κοινό Πολλαπλάσιο (ΕΚΠ) και όλες τις πράξεις με ομώνυμα και ετερώνυμα κλάσματα.",
+    seoCol2Title: "Ασκήσεις σε Εξισώσεις, Αναλογίες & Ποσοστά",
+    seoCol2Text: "Εισαγωγή στην άλγεβρα με τη μεταβλητή (x), επίλυση εξισώσεων, ασκήσεις σε ανάλογα και αντιστρόφως ανάλογα ποσά, αναλογίες και πρακτικές εφαρμογές στα ποσοστά.",
+    seoCol3Title: "Ασκήσεις Γεωμετρίας & Προετοιμασία Προτύπων",
+    seoCol3Text: "Διαδραστικές ασκήσεις γεωμετρίας για τον υπολογισμό εμβαδού και όγκου (τρίγωνα, τραπέζια, κύκλοι, κύβοι, κύλινδροι) και απαιτητικές ασκήσεις για τις εξετάσεις στα Πρότυπα Σχολεία."
   },
   en: {
-    pageTitle: "Grade 6 Mathematics: Theory & Interactive Exercises (All Chapters) | LearnMaths.gr",
-    pageDesc: "Free interactive math exercises, comprehensive theory, and practice tests for all Grade 6 curriculum chapters (Fractions, Equations, Percentages, Geometry).",
+    pageTitle: "Grade 6 Mathematics Exercises: Theory, Algebra & Geometry | LearnMaths.gr",
+    pageDesc: "Interactive math exercises for Grade 6: algebra modules (fractions, equations, percentages), geometry units (circles, area, volume), and Model School entrance preparation.",
     backText: "Home",
     badgeProgram: "GRADE 6 • OFFICIAL CURRICULUM",
-    heroTitle: "Grade 6 Mathematics",
-    heroDesc: "Explore all 83 curriculum chapters with interactive exercises, visual math models, and full preparation for Middle School and advanced exams!",
+    heroTitle: "Grade 6 Mathematics: Theory & Exercises",
+    heroDesc: "Explore all curriculum chapters through dynamic math exercises, visual simulators, and comprehensive prep for Middle School and Model School entrance exams!",
     lessonsSuffix: "lessons",
-    seoOverviewTitle: "🎒 Grade 6 Mathematics Curriculum: Foundations for Middle School",
-    seoCol1Title: "Fractions, LCM & GCD",
-    seoCol1Text: "Students master prime factor decomposition, Greatest Common Divisor (GCD), Least Common Multiple (LCM), and operations with like and unlike fractions.",
-    seoCol2Title: "Equations & Percentages",
-    seoCol2Text: "Introduction to pre-algebra with variable (x), solving linear single-variable equations, direct and inverse proportion, and real-world percentage problems.",
-    seoCol3Title: "Geometry & Measurement",
-    seoCol3Text: "Area and volume computation (triangles, trapezoids, circles, cubes, cylinders), arithmetic patterns, and statistical analysis (bar charts, mean)."
+    seoOverviewTitle: "🎒 Grade 6 Mathematics: Core Curriculum",
+    seoCol1Title: "Algebra Exercises: Fractions, LCM & GCD",
+    seoCol1Text: "Comprehensive algebra exercises covering prime factor decomposition, Greatest Common Divisor (GCD), Least Common Multiple (LCM), and operations with like and unlike fractions.",
+    seoCol2Title: "Equations, Proportion & Percentages",
+    seoCol2Text: "Pre-algebra exercises with variable solving, direct and inverse proportions, ratio problems, and practical percentage computations.",
+    seoCol3Title: "Geometry Exercises & Model School Prep",
+    seoCol3Text: "Geometry modules for area and volume calculations (triangles, trapezoids, circles, cylinders) alongside advanced practice sets for competitive entrance exams."
   }
 };
 
@@ -44,7 +44,9 @@ export default function STDimotikouIndex() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const canonicalUrl = locale === 'en' ? 'https://learnmaths.gr/en/st-dimotikou' : 'https://learnmaths.gr/st-dimotikou';
+  const canonicalUrl = locale === 'en' 
+    ? 'https://learnmaths.gr/en/st-dimotikou' 
+    : 'https://learnmaths.gr/st-dimotikou';
   const homeUrl = locale === 'en' ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr/';
 
   const pageSchema = [
@@ -59,7 +61,30 @@ export default function STDimotikouIndex() {
       "@type": "Course",
       "name": t.heroTitle,
       "description": t.pageDesc,
-      "provider": { "@type": "Organization", "name": "LearnMaths.gr" }
+      "educationalLevel": "Primary Education (ΣΤ' Δημοτικού)",
+      "teaches": [
+        "Ασκήσεις μαθηματικά",
+        "Ασκήσεις μαθηματικών",
+        "Ασκήσεις άλγεβρα",
+        "Ασκήσεις γεωμετρία",
+        "Θέματα Πρότυπα",
+        "Κλάσματα και Εξισώσεις",
+        "Ποσοστά και Αναλογίες",
+        "Εμβαδόν και Όγκος Κύκλου και Στερεών"
+      ],
+      "provider": { 
+        "@type": "Organization", 
+        "name": "LearnMaths.gr",
+        "url": "https://learnmaths.gr" 
+      }
+    },
+    {
+      "@type": "LearningResource",
+      "name": t.heroTitle,
+      "description": t.pageDesc,
+      "learningResourceType": "Practice Problem Set & Interactive Modules",
+      "educationalUse": "Primary Math Practice & Middle School Prep",
+      "inLanguage": locale === 'en' ? 'en' : 'el'
     }
   ];
 
@@ -70,11 +95,11 @@ export default function STDimotikouIndex() {
       schemaData={pageSchema}
       backUrl="/"
       backText={t.backText}
-      showAds={true}
+      showAds={false}
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10">
         
-        {/* Banner Header - Cyan/Blue Theme της ΣΤ' Δημοτικού */}
+        {/* Banner Header */}
         <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-900 via-blue-900 to-indigo-900 text-white p-6 sm:p-10 lg:p-12 shadow-xl border border-cyan-700/40 text-center md:text-left">
           <div className="max-w-4xl space-y-3">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-cyan-500/30 text-cyan-200 border border-cyan-400/30">
