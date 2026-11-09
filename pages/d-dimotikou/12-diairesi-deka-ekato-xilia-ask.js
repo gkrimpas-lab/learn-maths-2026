@@ -1,7 +1,20 @@
 // pages/d-dimotikou/12-diairesi-deka-ekato-xilia-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+
+// Συνάρτηση μετατροπής σε άτονα ελληνικά κεφαλαία με εξαίρεση το "Δ'"
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
 
@@ -9,153 +22,205 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function formatNumberByLocale(num, isEn) {
+  if (num === null || num === undefined || isNaN(num)) return '';
+  return Number(num).toLocaleString(isEn ? 'en-US' : 'el-GR');
 }
+
+// Συγκεντρωτικό λεξικό μεταφράσεων i18n
+const TRANSLATIONS = {
+  el: {
+    metaTitle: "Ασκήσεις: Διαίρεση & Πολλαπλασιασμός με 10, 100, 1.000 | LearnMaths.gr",
+    metaDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού: μετακίνηση υποδιαστολής στη διαίρεση και τον πολλαπλασιασμό με 10, 100 και 1.000, εύρεση άγνωστου τελεστή και σύγκριση.",
+    backText: "Δ' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    gradeBadge: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    heroTitle: "📝 Ασκήσεις: Μετακίνηση Υποδιαστολής (10, 100, 1.000)",
+    heroDesc: "Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι πράξεις ανανεώνονται αυτόματα από τη δεξαμενή!",
+    newExercisesBtn: "🔄 Νέες Ασκήσεις",
+    checkAnswersBtn: "🎯 Έλεγχος Απαντήσεων",
+    placeholderResult: "Αποτέλεσμα",
+    divPrompt: "Υπολόγισε το αποτέλεσμα της διαίρεσης:",
+    mulPrompt: "Υπολόγισε το γινόμενο:",
+    missingFactorPrompt: "Ποιος αριθμός λείπει από την ισότητα;",
+    comparePrompt: "Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):",
+    correctAnswerIs: "Το ορθό αποτέλεσμα είναι",
+    missingNumberIs: "Ο αριθμός που λείπει είναι το",
+    correctRelationIs: "Η σωστή σχέση είναι",
+    scoreLabel: "🏆 Σκορ:",
+    successRate: "Επιτυχία:",
+    footerPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    shift1Pos: "1 θέση",
+    shift2Pos: "2 θέσεις",
+    shift3Pos: "3 θέσεις",
+    explainDiv: (factorFormatted, shift, numFormatted, correctFormatted) =>
+      `Στη διαίρεση με το ${factorFormatted}, η υποδιαστολή μετακινείται ${shift} αριστερά: ${numFormatted} : ${factorFormatted} ＝ ${correctFormatted}.`,
+    explainMul: (factorFormatted, shift, numStr, correctFormatted) =>
+      `Στον πολλαπλασιασμό με το ${factorFormatted}, η υποδιαστολή μετακινείται ${shift} δεξιά: ${numStr} · ${factorFormatted} ＝ ${correctFormatted}.`,
+    explainMissingFactor: (shift, correctText) =>
+      `Η υποδιαστολή μετακινήθηκε ${shift} αριστερά, άρα ο αριθμός διαιρέθηκε με το ${correctText}.`,
+    explainComparison: (exprA, cleanValA, exprB, cleanValB, sym) =>
+      `Υπολογίζοντας τις εκφράσεις: ${exprA} ＝ ${cleanValA} και ${exprB} ＝ ${cleanValB}, επομένως ισχύει ${exprA} ${sym} ${exprB}.`
+  },
+  en: {
+    metaTitle: "Exercises: Division & Multiplication by 10, 100, 1,000 | LearnMaths.gr",
+    metaDesc: "Interactive 4th-grade math exercises on moving the decimal point in multiplication and division by 10, 100, and 1,000, finding missing divisors, and comparisons.",
+    backText: "Grade 4",
+    theoryBtn: "Theory",
+    gradeBadge: "GRADE 4 • PRACTICE",
+    heroTitle: "📝 Exercises: Moving the Decimal Point (10, 100, 1,000)",
+    heroDesc: "By clicking \"New Exercises\", values and operations regenerate dynamically from the pool!",
+    newExercisesBtn: "🔄 New Exercises",
+    checkAnswersBtn: "🎯 Check Answers",
+    placeholderResult: "Result",
+    divPrompt: "Calculate the result of the division:",
+    mulPrompt: "Calculate the product:",
+    missingFactorPrompt: "Which number is missing from the equation?",
+    comparePrompt: "Select the appropriate comparison symbol ( ＜ , ＝ , ＞ ):",
+    correctAnswerIs: "The correct result is",
+    missingNumberIs: "The missing number is",
+    correctRelationIs: "The correct relation is",
+    scoreLabel: "🏆 Score:",
+    successRate: "Score:",
+    footerPrompt: "Fill in your answers and click \"Check Answers\"!",
+    shift1Pos: "1 place",
+    shift2Pos: "2 places",
+    shift3Pos: "3 places",
+    explainDiv: (factorFormatted, shift, numFormatted, correctFormatted) =>
+      `In division by ${factorFormatted}, the decimal point shifts ${shift} to the left: ${numFormatted} : ${factorFormatted} ＝ ${correctFormatted}.`,
+    explainMul: (factorFormatted, shift, numStr, correctFormatted) =>
+      `In multiplication by ${factorFormatted}, the decimal point shifts ${shift} to the right: ${numStr} · ${factorFormatted} ＝ ${correctFormatted}.`,
+    explainMissingFactor: (shift, correctText) =>
+      `The decimal point shifted ${shift} to the left, so the number was divided by ${correctText}.`,
+    explainComparison: (exprA, cleanValA, exprB, cleanValB, sym) =>
+      `Evaluating the expressions: ${exprA} ＝ ${cleanValA} and ${exprB} ＝ ${cleanValB}, therefore ${exprA} ${sym} ${exprB}.`
+  }
+};
 
 // 1. Άσκηση: Διαίρεση με 10, 100, 1.000 (Input)
 function makeDivisionQuestion(prevQuestion = null) {
   const factors = [10, 100, 1000];
-  let factor, num, val, correctStr;
+  let factor, num, val;
 
   while (true) {
     factor = factors[getRandomInt(0, 2)];
-    // Πιθανότητα για ακέραιο με μηδενικά ή δεκαδικό αποτέλεσμα
     const endingZeros = getRandomInt(0, 2);
     num = getRandomInt(2, 95) * Math.pow(10, endingZeros);
     val = num / factor;
-    correctStr = Number(val.toFixed(3)).toString().replace('.', ',');
 
     if (!prevQuestion || prevQuestion.num !== num || prevQuestion.factor !== factor) {
       break;
     }
   }
 
-  const shift = factor === 10 ? '1 θέση' : factor === 100 ? '2 θέσεις' : '3 θέσεις';
-
   return {
     num,
     factor,
-    correct: correctStr,
-    explainText: `Στη διαίρεση με το ${formatNumber(factor)}, η υποδιαστολή μετακινείται ${shift} αριστερά: ${formatNumber(num)} ： ${formatNumber(factor)} ＝ ${correctStr}.`
+    numericVal: val
   };
 }
 
 // 2. Άσκηση: Πολλαπλασιασμός Δεκαδικού με 10, 100, 1.000 (Input)
 function makeMultiplicationQuestion(prevQuestion = null) {
   const factors = [10, 100, 1000];
-  let factor, decVal, val, numStr, correctStr;
+  let factor, decNum, val;
 
   while (true) {
     factor = factors[getRandomInt(0, 2)];
-    decVal = (getRandomInt(1, 99) / 10).toFixed(1);
-    val = parseFloat(decVal) * factor;
-    numStr = decVal.replace('.', ',');
-    correctStr = Number(val.toFixed(2)).toString().replace('.', ',');
+    decNum = getRandomInt(1, 99) / 10;
+    val = decNum * factor;
 
-    if (!prevQuestion || prevQuestion.numStr !== numStr || prevQuestion.factor !== factor) {
+    if (!prevQuestion || prevQuestion.decNum !== decNum || prevQuestion.factor !== factor) {
       break;
     }
   }
 
-  const shift = factor === 10 ? '1 θέση' : factor === 100 ? '2 θέσεις' : '3 θέσεις';
-
   return {
-    numStr,
+    decNum,
     factor,
-    correct: correctStr,
-    explainText: `Στον πολλαπλασιασμό με το ${formatNumber(factor)}, η υποδιαστολή μετακινείται ${shift} δεξιά: ${numStr} · ${formatNumber(factor)} ＝ ${formatNumber(correctStr)}.`
+    numericVal: val
   };
 }
 
 // 3. Άσκηση: Εύρεση Άγνωστου Τελεστή :10, :100, :1.000 (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
 function makeMissingFactorQuestion(prevQuestion = null) {
   const factors = [10, 100, 1000];
-  let factor, num, res, resStr;
+  let factor, num, res;
 
   while (true) {
     factor = factors[getRandomInt(0, 2)];
     num = getRandomInt(2, 85) * (factor >= 100 ? 10 : 1);
     res = num / factor;
-    resStr = Number(res.toFixed(3)).toString().replace('.', ',');
 
     if (!prevQuestion || prevQuestion.num !== num || prevQuestion.factor !== factor) {
       break;
     }
   }
 
-  const correctText = formatNumber(factor);
-  const allChoices = ['10', '100', '1.000', '10.000'];
-  const wrongs = allChoices.filter((c) => c !== correctText);
-
-  const options = [
-    { text: correctText, isCorrect: true },
-    { text: wrongs[0], isCorrect: false },
-    { text: wrongs[1], isCorrect: false },
-    { text: wrongs[2], isCorrect: false }
-  ].sort(() => Math.random() - 0.5);
+  const allFactors = [10, 100, 1000, 10000];
+  const wrongFactors = allFactors.filter((f) => f !== factor);
+  const shuffledFactors = [...new Set([factor, ...wrongFactors])].sort(() => Math.random() - 0.5);
 
   return {
     num,
     factor,
-    resStr,
-    options,
-    correct: correctText,
-    explainText: `Η υποδιαστολή μετακινήθηκε ${factor === 10 ? '1 θέση' : factor === 100 ? '2 θέσεις' : '3 θέσεις'} αριστερά, άρα ο αριθμός διαιρέθηκε με το ${correctText}.`
+    numericRes: res,
+    options: shuffledFactors
   };
 }
 
-// 4. Άσκηση: Σύγκριση Εκφράσεων (<, =, >)
+// 4. Άσκηση: Σύγκριση Εκφράσεων (＜, ＝, ＞)
 function makeComparisonQuestion(prevQuestion = null) {
-  let exprA, exprB, valA, valB, correctSym;
+  let isMulA, factorA, baseA, valA;
+  let isMulB, factorB, baseB, valB;
+  let correctSym;
 
   while (true) {
-    const isMulA = Math.random() > 0.5;
-    const factorA = [10, 100][getRandomInt(0, 1)];
-    const baseA = getRandomInt(2, 45);
-
+    isMulA = Math.random() > 0.5;
+    factorA = [10, 100][getRandomInt(0, 1)];
+    baseA = getRandomInt(2, 45);
     valA = isMulA ? baseA * factorA : baseA / factorA;
-    const strBaseA = baseA.toString().replace('.', ',');
-    exprA = `${strBaseA} ${isMulA ? '·' : '：'} ${factorA}`;
 
-    const isMulB = Math.random() > 0.5;
-    const factorB = [10, 100][getRandomInt(0, 1)];
-    let baseB = getRandomInt(2, 45);
+    isMulB = Math.random() > 0.5;
+    factorB = [10, 100][getRandomInt(0, 1)];
+    baseB = getRandomInt(2, 45);
 
     if (Math.random() > 0.65) {
-      // Πιθανότητα για ίσο αποτέλεσμα
       valB = valA;
       baseB = isMulB ? valB / factorB : valB * factorB;
     } else {
       valB = isMulB ? baseB * factorB : baseB / factorB;
     }
 
-    const strBaseB = Number(baseB.toFixed(2)).toString().replace('.', ',');
-    exprB = `${strBaseB} ${isMulB ? '·' : '：'} ${factorB}`;
-
     correctSym = '＝';
     if (valA > valB) correctSym = '＞';
     if (valA < valB) correctSym = '＜';
 
-    if (!prevQuestion || prevQuestion.exprA !== exprA || prevQuestion.exprB !== exprB) {
+    if (
+      !prevQuestion ||
+      prevQuestion.baseA !== baseA ||
+      prevQuestion.factorA !== factorA ||
+      prevQuestion.baseB !== baseB ||
+      prevQuestion.factorB !== factorB
+    ) {
       break;
     }
   }
 
-  const cleanValA = Number(valA.toFixed(2)).toString().replace('.', ',');
-  const cleanValB = Number(valB.toFixed(2)).toString().replace('.', ',');
-
   return {
-    exprA,
-    exprB,
-    valA: cleanValA,
-    valB: cleanValB,
-    correct: correctSym,
-    explainText: `Υπολογίζοντας τις εκφράσεις: ${exprA} ＝ ${cleanValA} και ${exprB} ＝ ${cleanValB}, επομένως ισχύει ${exprA} ${correctSym} ${exprB}.`
+    isMulA,
+    factorA,
+    baseA,
+    valA,
+    isMulB,
+    factorB,
+    baseB,
+    valB,
+    correct: correctSym
   };
 }
 
-// Δημιουργία 8 Ερωτήσεων
+// Δημιουργία των 8 Ερωτήσεων
 function generateQuestions() {
   const q1 = makeDivisionQuestion();
   const q2 = makeDivisionQuestion(q1);
@@ -173,6 +238,11 @@ function generateQuestions() {
 }
 
 export default function Diairesi101001000AskPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+  const isEn = locale === 'en';
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -200,8 +270,17 @@ export default function Diairesi101001000AskPage() {
 
   const handleDecimalInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace('.', ',').replace(/[^0-9,]/g, '');
+    const clean = isEn
+      ? rawVal.replace(/[^0-9.]/g, '').slice(0, 10)
+      : rawVal.replace(/\./g, ',').replace(/[^0-9,]/g, '').slice(0, 10);
     setAnswers((prev) => ({ ...prev, [key]: clean }));
+  };
+
+  const checkDecimalEqual = (userStr, targetNumeric) => {
+    if (!userStr) return false;
+    const parsed = parseFloat(userStr.replace(',', '.'));
+    if (isNaN(parsed)) return false;
+    return Math.abs(parsed - targetNumeric) <= 0.05;
   };
 
   const handleSubmit = (e) => {
@@ -209,14 +288,13 @@ export default function Diairesi101001000AskPage() {
     if (submitted) return;
 
     let currentScore = 0;
-    const normalize = (str) => (str || '').toString().trim().replace('.', ',');
 
-    if (normalize(answers.q1) === normalize(questions.q1.correct)) currentScore += 1;
-    if (normalize(answers.q2) === normalize(questions.q2.correct)) currentScore += 1;
-    if (normalize(answers.q3) === normalize(questions.q3.correct)) currentScore += 1;
-    if (normalize(answers.q4) === normalize(questions.q4.correct)) currentScore += 1;
-    if (answers.q5 === questions.q5.correct) currentScore += 1;
-    if (answers.q6 === questions.q6.correct) currentScore += 1;
+    if (checkDecimalEqual(answers.q1, questions.q1.numericVal)) currentScore += 1;
+    if (checkDecimalEqual(answers.q2, questions.q2.numericVal)) currentScore += 1;
+    if (checkDecimalEqual(answers.q3, questions.q3.numericVal)) currentScore += 1;
+    if (checkDecimalEqual(answers.q4, questions.q4.numericVal)) currentScore += 1;
+    if (parseInt(answers.q5, 10) === questions.q5.factor) currentScore += 1;
+    if (parseInt(answers.q6, 10) === questions.q6.factor) currentScore += 1;
     if (answers.q7 === questions.q7.correct) currentScore += 1;
     if (answers.q8 === questions.q8.correct) currentScore += 1;
 
@@ -224,9 +302,22 @@ export default function Diairesi101001000AskPage() {
     setSubmitted(true);
   };
 
+  // Helper για λεκτικό θέσεων
+  const getShiftText = (factor) => {
+    if (factor === 10) return t.shift1Pos;
+    if (factor === 100) return t.shift2Pos;
+    return t.shift3Pos;
+  };
+
   // Render Q1 & Q2: Διαίρεση (Input)
   const renderDivision = (qKey, qData, numLabel) => {
-    const isCorrect = (answers[qKey] || '').toString().trim().replace('.', ',') === qData.correct;
+    const isCorrect = checkDecimalEqual(answers[qKey], qData.numericVal);
+    const numFormatted = formatNumberByLocale(qData.num, isEn);
+    const factorFormatted = formatNumberByLocale(qData.factor, isEn);
+    const correctFormatted = formatNumberByLocale(Number(qData.numericVal.toFixed(3)), isEn);
+    const shiftText = getShiftText(qData.factor);
+    const explainText = t.explainDiv(factorFormatted, shiftText, numFormatted, correctFormatted);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -238,15 +329,15 @@ export default function Diairesi101001000AskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Υπολόγισε το αποτέλεσμα της διαίρεσης: <span className="text-rose-600 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.num)} ： {formatNumber(qData.factor)} ＝ ?</span>
+            {t.divPrompt} <span className="text-rose-600 font-mono font-black text-lg sm:text-xl">{numFormatted} : {factorFormatted} ＝ ?</span>
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span>{formatNumber(qData.num)}</span>
-            <span>：</span>
-            <span>{formatNumber(qData.factor)}</span>
+            <span>{numFormatted}</span>
+            <span>:</span>
+            <span>{factorFormatted}</span>
             <span>＝</span>
             <input
               type="text"
@@ -254,7 +345,8 @@ export default function Diairesi101001000AskPage() {
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="Αποτέλεσμα"
+              placeholder={t.placeholderResult}
+              maxLength={10}
               value={answers[qKey]}
               onChange={(e) => handleDecimalInput(qKey, e.target.value)}
               disabled={submitted}
@@ -267,11 +359,11 @@ export default function Diairesi101001000AskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ορθό αποτέλεσμα είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+                {t.correctAnswerIs} <span className="font-mono font-bold text-rose-900">{correctFormatted}</span>. {explainText}
               </p>
             )}
           </div>
@@ -282,7 +374,13 @@ export default function Diairesi101001000AskPage() {
 
   // Render Q3 & Q4: Πολλαπλασιασμός (Input)
   const renderMultiplication = (qKey, qData, numLabel) => {
-    const isCorrect = (answers[qKey] || '').toString().trim().replace('.', ',') === qData.correct;
+    const isCorrect = checkDecimalEqual(answers[qKey], qData.numericVal);
+    const numStr = formatNumberByLocale(Number(qData.decNum.toFixed(1)), isEn);
+    const factorFormatted = formatNumberByLocale(qData.factor, isEn);
+    const correctFormatted = formatNumberByLocale(Number(qData.numericVal.toFixed(2)), isEn);
+    const shiftText = getShiftText(qData.factor);
+    const explainText = t.explainMul(factorFormatted, shiftText, numStr, correctFormatted);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -294,15 +392,15 @@ export default function Diairesi101001000AskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Υπολόγισε το γινόμενο: <span className="text-emerald-600 font-mono font-black text-lg sm:text-xl">{qData.numStr} · {formatNumber(qData.factor)} ＝ ?</span>
+            {t.mulPrompt} <span className="text-emerald-600 font-mono font-black text-lg sm:text-xl">{numStr} · {factorFormatted} ＝ ?</span>
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span>{qData.numStr}</span>
+            <span>{numStr}</span>
             <span>·</span>
-            <span>{formatNumber(qData.factor)}</span>
+            <span>{factorFormatted}</span>
             <span>＝</span>
             <input
               type="text"
@@ -310,7 +408,8 @@ export default function Diairesi101001000AskPage() {
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="Αποτέλεσμα"
+              placeholder={t.placeholderResult}
+              maxLength={10}
               value={answers[qKey]}
               onChange={(e) => handleDecimalInput(qKey, e.target.value)}
               disabled={submitted}
@@ -323,11 +422,11 @@ export default function Diairesi101001000AskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ορθό αποτέλεσμα είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>. {qData.explainText}
+                {t.correctAnswerIs} <span className="font-mono font-bold text-rose-900">{correctFormatted}</span>. {explainText}
               </p>
             )}
           </div>
@@ -338,7 +437,13 @@ export default function Diairesi101001000AskPage() {
 
   // Render Q5 & Q6: Άγνωστος Τελεστής (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
   const renderMissingFactor = (qKey, qData, numLabel) => {
-    const isCorrect = answers[qKey] === qData.correct;
+    const isCorrect = parseInt(answers[qKey], 10) === qData.factor;
+    const numFormatted = formatNumberByLocale(qData.num, isEn);
+    const resFormatted = formatNumberByLocale(Number(qData.numericRes.toFixed(3)), isEn);
+    const correctText = formatNumberByLocale(qData.factor, isEn);
+    const shiftText = getShiftText(qData.factor);
+    const explainText = t.explainMissingFactor(shiftText, correctText);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -350,13 +455,14 @@ export default function Diairesi101001000AskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Ποιος αριθμός λείπει από την ισότητα; <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.num)} ： [ ? ] ＝ {qData.resStr}</span>
+            {t.missingFactorPrompt} <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{numFormatted} : [ ? ] ＝ {resFormatted}</span>
           </h3>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:pl-11">
-          {qData.options.map((opt, idx) => {
-            const isSelected = answers[qKey] === opt.text;
+          {qData.options.map((fOpt, idx) => {
+            const isSelected = answers[qKey] === fOpt.toString();
+            const optionLabel = formatNumberByLocale(fOpt, isEn);
             return (
               <label
                 key={idx}
@@ -370,13 +476,15 @@ export default function Diairesi101001000AskPage() {
                   type="radio"
                   id={`${qKey}-opt-${idx}`}
                   name={qKey}
-                  value={opt.text}
+                  value={fOpt.toString()}
                   checked={isSelected}
-                  onChange={() => handleInputChange(qKey, opt.text)}
+                  onChange={() => handleInputChange(qKey, fOpt.toString())}
                   disabled={submitted}
                   className="hidden"
                 />
-                <span className="font-mono font-bold text-base leading-snug">{opt.text}</span>
+                <span className="font-mono font-bold text-base leading-snug break-words whitespace-normal text-center flex-1">
+                  {optionLabel}
+                </span>
               </label>
             );
           })}
@@ -386,11 +494,11 @@ export default function Diairesi101001000AskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Ο αριθμός που λείπει είναι το <strong className="font-mono font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+                {t.missingNumberIs} <strong className="font-mono font-bold text-rose-900">{correctText}</strong>. {explainText}
               </p>
             )}
           </div>
@@ -402,6 +510,19 @@ export default function Diairesi101001000AskPage() {
   // Render Q7 & Q8: Σύγκριση Εκφράσεων (Buttons)
   const renderComparison = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
+    const strBaseA = formatNumberByLocale(qData.baseA, isEn);
+    const strBaseB = formatNumberByLocale(Number(qData.baseB.toFixed(2)), isEn);
+    const factorAFormatted = formatNumberByLocale(qData.factorA, isEn);
+    const factorBFormatted = formatNumberByLocale(qData.factorB, isEn);
+
+    const exprA = `${strBaseA} ${qData.isMulA ? '·' : ':'} ${factorAFormatted}`;
+    const exprB = `${strBaseB} ${qData.isMulB ? '·' : ':'} ${factorBFormatted}`;
+
+    const cleanValA = formatNumberByLocale(Number(qData.valA.toFixed(2)), isEn);
+    const cleanValB = formatNumberByLocale(Number(qData.valB.toFixed(2)), isEn);
+
+    const explainText = t.explainComparison(exprA, cleanValA, exprB, cleanValB, qData.correct);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -413,13 +534,13 @@ export default function Diairesi101001000AskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):
+            {t.comparePrompt}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-4">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-lg sm:text-xl font-mono font-black text-slate-800 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-            <span>{qData.exprA}</span>
+            <span>{exprA}</span>
 
             <div className="flex gap-2">
               {['＜', '＝', '＞'].map((sym) => (
@@ -443,7 +564,7 @@ export default function Diairesi101001000AskPage() {
               ))}
             </div>
 
-            <span>{qData.exprB}</span>
+            <span>{exprB}</span>
           </div>
         </div>
 
@@ -451,11 +572,11 @@ export default function Diairesi101001000AskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή σχέση είναι <span className="font-mono font-bold text-rose-900">{qData.exprA} {qData.correct} {qData.exprB}</span>. {qData.explainText}
+                {t.correctRelationIs} <span className="font-mono font-bold text-rose-900">{exprA} {qData.correct} {exprB}</span>. {explainText}
               </p>
             )}
           </div>
@@ -466,32 +587,32 @@ export default function Diairesi101001000AskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Διαίρεση & Πολλαπλασιασμός με 10, 100, 1.000 | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού: μετακίνηση υποδιαστολής στη διαίρεση και τον πολλαπλασιασμό με 10, 100 και 1.000, εύρεση άγνωστου τελεστή και σύγκριση."
+      title={t.metaTitle}
+      description={t.metaDesc}
       backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/d-dimotikou/12-diairesi-deka-ekato-xilia"
           className="bg-blue-100 hover:bg-blue-200 text-blue-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.gradeBadge)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Μετακίνηση Υποδιαστολής (10, 100, 1.000)
+              {t.heroTitle}
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm md:text-base">
-              Πατώντας «Νέες Ασκήσεις», οι αριθμοί και οι πράξεις ανανεώνονται αυτόματα από τη δεξαμενή!
+              {t.heroDesc}
             </p>
           </div>
 
@@ -499,12 +620,12 @@ export default function Diairesi101001000AskPage() {
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-blue-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            {t.newExercisesBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderDivision('q1', questions.q1, 1)}
           {renderDivision('q2', questions.q2, 2)}
 
@@ -524,24 +645,24 @@ export default function Diairesi101001000AskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                {t.checkAnswersBtn}
               </button>
             </div>
           )}
         </form>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      {/* ΣΤΑΘΕΡΟ ΚΑΤΩ FOOTER (STICKY FOOTER BAR) */}
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
+              <span>{t.scoreLabel}</span>
               <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -552,11 +673,11 @@ export default function Diairesi101001000AskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                {t.newExercisesBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.footerPrompt}
               </p>
             )}
           </div>

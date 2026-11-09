@@ -1,13 +1,150 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Α')/g);
+  return parts
+    .map((part) => {
+      if (part === "Α'") return "Α'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+const translations = {
+  el: {
+    metaTitle: "Ακέραιοι Αριθμοί | Α' Γυμνασίου",
+    metaDescription: "Θεωρία, απόλυτη τιμή, αντίθετοι αριθμοί και διαδραστικός άξονας για τους ακέραιους αριθμούς της Α' Γυμνασίου.",
+    backText: "Α' Γυμνασίου",
+    exercisesBtn: "ΑΣΚΗΣΕΙΣ",
+    gradeBadge: "Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ",
+    mainTitle: "Η Έννοια των Ακέραιων Αριθμών",
+    heroDesc: "Γνωρίζουμε τους θετικούς και αρνητικούς αριθμούς, την τοποθέτησή τους στον προσανατολισμένο άξονα, την έννοια της απόλυτης τιμής και τους αντίθετους αριθμούς.",
+    sec1Title: "Θετικοί, Αρνητικοί Αριθμοί & Το Σύνολο ℤ",
+    sec1P1: "Στην καθημερινή ζωή συναντάμε μεγέθη με δύο αντίθετες κατευθύνσεις: θερμοκρασία (πάνω ή κάτω από το 0), υψόμετρο (πάνω ή κάτω από την επιφάνεια της θάλασσας), οικονομικές καταστάσεις (κέρδος ή ζημιά).",
+    positiveNums: "Θετικοί αριθμοί:",
+    positiveNumsDesc: "Βρίσκονται δεξιά από το 0 και γράφονται με πρόσημο ＋ (ή χωρίς πρόσημο): ＋1, ＋2, ＋3...",
+    negativeNums: "Αρνητικοί αριθμοί:",
+    negativeNumsDesc: "Βρίσκονται αριστερά από το 0 και γράφονται υποχρεωτικά με πρόσημο －: －1, －2, －3...",
+    zeroNum: "Το μηδέν (0):",
+    zeroNumDesc: "Δεν είναι ούτε θετικός ούτε αρνητικός αριθμός. Είναι το ουδέτερο σημείο αναφοράς.",
+    realLifeExamplesTitle: "ΠΑΡΑΔΕΙΓΜΑΤΑ ΣΤΗΝ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑ",
+    tempTitle: "🌡️ Θερμοκρασία",
+    tempBelow: "5 βαθμοί υπό το μηδέν:",
+    tempAbove: "22 βαθμοί πάνω από το μηδέν:",
+    altitudeTitle: "🏔️ Υψόμετρο",
+    altPeak: "Κορυφή βουνού:",
+    altSea: "Βυθός θάλασσας:",
+    financeTitle: "💶 Οικονομικά",
+    finDeposit: "Κατάθεση / Κέρδος:",
+    finWithdrawal: "Ανάληψη / Χρέος:",
+    sec2Title: "Απόλυτη Τιμή & Αντίθετοι Αριθμοί",
+    distConceptBadge: "ΓΕΩΜΕΤΡΙΚΗ ΕΝΝΟΙΑ ΑΠΟΣΤΑΣΗΣ",
+    absTitle: "Απόλυτη Τιμή Ακέραιου (|α|)",
+    absDesc1: "Απόλυτη τιμή ενός αριθμού α ονομάζεται η απόσταση του σημείου που τον παριστάνει στον άξονα από την αρχή Ο(0).",
+    absDist5: "απόσταση 5 μονάδες",
+    absNote: "Η απόλυτη τιμή εκφράζει απόσταση, επομένως είναι πάντοτε θετικός αριθμός ή μηδέν (|α| ≥ 0).",
+    symmConceptBadge: "ΣΥΜΜΕΤΡΙΑ ΩΣ ΠΡΟΣ ΤΟ ΜΗΔΕΝ",
+    oppTitle: "Αντίθετοι Αριθμοί",
+    oppDesc1: "Δύο αριθμοί που έχουν διαφορετικό πρόσημο αλλά την ίδια απόλυτη τιμή ονομάζονται αντίθετοι.",
+    oppOf7: "Αντίθετος του ＋7 είναι ο －7",
+    oppOfNeg12: "Αντίθετος του －12 είναι ο ＋12",
+    oppOfZero: "Αντίθετος του 0 είναι το 0",
+    oppNote: "Οι αντίθετοι αριθμοί βρίσκονται σε ίσες αποστάσεις εκατέρωθεν του μηδενός και το άθροισμά τους είναι πάντα μηδέν:",
+    compRulesTitle: "Κανόνες Σύγκρισης Ακεραίων",
+    compPosNegTitle: "Θετικός με Αρνητικό",
+    compPosNegDesc: "Κάθε θετικός αριθμός είναι μεγαλύτερος από κάθε αρνητικό αριθμό:",
+    compZeroTitle: "Σύγκριση με το 0",
+    compZeroDesc: "Κάθε θετικός είναι ＞ 0, ενώ κάθε αρνητικός είναι ＜ 0:",
+    compTwoNegTitle: "Δύο Αρνητικοί",
+    compTwoNegDesc: "Μεγαλύτερος είναι αυτός που έχει τη μικρότερη απόλυτη τιμή (πιο κοντά στο 0):",
+    sec3Title: "Διαδραστικό Εργαστήριο: Ολοκληρωμένος Άξονας Ακεραίων",
+    pointAControl: "ΣΗΜΕΙΟ Α (ΑΚΕΡΑΙΟΣ α)",
+    pointBControl: "ΣΗΜΕΙΟ Β (ΑΚΕΡΑΙΟΣ β)",
+    relationsLabel: "ΣΧΕΣΕΙΣ:",
+    comparisonLabel: "Σύγκριση:",
+    distanceLabel: "Απόσταση (Α, Β) ＝",
+    unitsLabel: "μονάδες",
+    axisNote: "Κάθε σημείο στον άξονα αντιστοιχεί μονοσήμαντα σε έναν ακέραιο αριθμό (τετμημένη).",
+    charPointA: "ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ ΣΗΜΕΙΟΥ Α:",
+    charPointB: "ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ ΣΗΜΕΙΟΥ Β:",
+    valLabel: "Τιμή:",
+    absValLabel: "Απόλυτη Τιμή:",
+    oppLabel: "Αντίθετος Αριθμός:"
+  },
+  en: {
+    metaTitle: "Integers | 7th Grade Mathematics",
+    metaDescription: "Theory, absolute value, opposite numbers and interactive number line for 7th grade integers.",
+    backText: "7th Grade",
+    exercisesBtn: "EXERCISES",
+    gradeBadge: "GRADE 7 • THEORY & LAB",
+    mainTitle: "The Concept of Integers",
+    heroDesc: "Explore positive and negative numbers, their placement on the directed number line, the concept of absolute value, and opposite numbers.",
+    sec1Title: "Positive, Negative Numbers & The Set ℤ",
+    sec1P1: "In daily life we encounter quantities with two opposite directions: temperature (above or below 0), elevation (above or below sea level), financial states (profit or loss).",
+    positiveNums: "Positive numbers:",
+    positiveNumsDesc: "Located to the right of 0 and written with a ＋ sign (or without a sign): ＋1, ＋2, ＋3...",
+    negativeNums: "Negative numbers:",
+    negativeNumsDesc: "Located to the left of 0 and strictly written with a － sign: －1, －2, －3...",
+    zeroNum: "Zero (0):",
+    zeroNumDesc: "Neither positive nor negative. It acts as the neutral reference origin.",
+    realLifeExamplesTitle: "REAL-WORLD APPLICATIONS",
+    tempTitle: "🌡️ Temperature",
+    tempBelow: "5 degrees below zero:",
+    tempAbove: "22 degrees above zero:",
+    altitudeTitle: "🏔️ Elevation",
+    altPeak: "Mountain summit:",
+    altSea: "Ocean depth:",
+    financeTitle: "💶 Finances",
+    finDeposit: "Deposit / Profit:",
+    finWithdrawal: "Withdrawal / Debt:",
+    sec2Title: "Absolute Value & Opposite Numbers",
+    distConceptBadge: "GEOMETRIC CONCEPT OF DISTANCE",
+    absTitle: "Absolute Value of an Integer (|a|)",
+    absDesc1: "The absolute value of a number a is defined as the distance between the point representing it on the number line and the origin O(0).",
+    absDist5: "distance of 5 units",
+    absNote: "Absolute value represents distance, hence it is always non-negative (|a| ≥ 0).",
+    symmConceptBadge: "SYMMETRY ABOUT ZERO",
+    oppTitle: "Opposite Numbers",
+    oppDesc1: "Two numbers that have different signs but the exact same absolute value are called opposite numbers.",
+    oppOf7: "Opposite of ＋7 is －7",
+    oppOfNeg12: "Opposite of －12 is ＋12",
+    oppOfZero: "Opposite of 0 is 0",
+    oppNote: "Opposite numbers are equidistant from zero and their sum is always zero:",
+    compRulesTitle: "Integer Comparison Rules",
+    compPosNegTitle: "Positive vs Negative",
+    compPosNegDesc: "Every positive number is strictly greater than every negative number:",
+    compZeroTitle: "Comparison with 0",
+    compZeroDesc: "Every positive is ＞ 0, while every negative is ＜ 0:",
+    compTwoNegTitle: "Two Negative Numbers",
+    compTwoNegDesc: "The greater number is the one with the smaller absolute value (closer to 0):",
+    sec3Title: "Interactive Lab: The Complete Integer Line",
+    pointAControl: "POINT A (INTEGER a)",
+    pointBControl: "POINT B (INTEGER b)",
+    relationsLabel: "RELATIONSHIPS:",
+    comparisonLabel: "Comparison:",
+    distanceLabel: "Distance (A, B) ＝",
+    unitsLabel: "units",
+    axisNote: "Every point on the axis corresponds uniquely to a real integer coordinate.",
+    charPointA: "POINT A PROPERTIES:",
+    charPointB: "POINT B PROPERTIES:",
+    valLabel: "Value:",
+    absValLabel: "Absolute Value:",
+    oppLabel: "Opposite Number:"
+  }
+};
+
 export default function AkeraioiTheoria() {
-  // State για δύο ακεραίους στο διαδραστικό εργαστήριο
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
   const [numA, setNumA] = useState(-4);
   const [numB, setNumB] = useState(6);
 
-  // Stepper handlers
   const handleStep = (setter, val, min, max, e) => {
     if (e) {
       e.preventDefault();
@@ -16,110 +153,114 @@ export default function AkeraioiTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  // Υπολογισμοί
   const absA = useMemo(() => Math.abs(numA), [numA]);
   const absB = useMemo(() => Math.abs(numB), [numB]);
-  const oppositeA = useMemo(() => -numA, [numA]);
-  const oppositeB = useMemo(() => -numB, [numB]);
+  const oppositeA = useMemo(() => (numA === 0 ? 0 : -numA), [numA]);
+  const oppositeB = useMemo(() => (numB === 0 ? 0 : -numB), [numB]);
   const distanceAB = useMemo(() => Math.abs(numA - numB), [numA, numB]);
 
-  // Σύγκριση
   const comparisonSymbol = useMemo(() => {
     if (numA < numB) return '＜';
     if (numA > numB) return '＞';
     return '＝';
   }, [numA, numB]);
 
-  // Μετατροπή τιμής [-10, 10] σε συντεταγμένη X στο SVG (viewBox 0 έως 700)
-  // Κέντρο (0) στο x = 350, κάθε μονάδα = 28px
+  const formatSigned = (val) => {
+    if (val > 0) return `＋${val}`;
+    if (val < 0) return `－${Math.abs(val)}`;
+    return '0';
+  };
+
   const getSvgX = (val) => 350 + val * 28;
 
   return (
     <Layout
-      title="Ακέραιοι Αριθμοί | Α' Γυμνασίου"
-      description="Θεωρία, απόλυτη τιμή, αντίθετοι αριθμοί και διαδραστικός άξονας για τους ακέραιους αριθμούς της Α' Γυμνασίου."
+      title={t.metaTitle}
+      description={t.metaDescription}
       backUrl="/a-gymnasiou"
-      backText="Α' Γυμνασίου"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/a-gymnasiou/05-akeraioi-ask"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs sm:text-sm md:text-base transition-all shadow-md shrink-0 touch-manipulation"
         >
           <span>🎯</span>
-          <span>ΑΣΚΗΣΕΙΣ</span>
+          <span>{toCleanUppercase(t.exercisesBtn)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden box-border space-y-8 sm:space-y-12">
         {/* Banner Header */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
-          <div className="max-w-4xl space-y-4">
-            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-5 sm:p-8 lg:p-12 shadow-xl border border-indigo-700/50">
+          <div className="max-w-4xl space-y-3 sm:space-y-4">
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] sm:text-xs md:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(t.gradeBadge)}
             </span>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Η Έννοια των Ακέραιων Αριθμών
+            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white break-words [overflow-wrap:anywhere]">
+              {t.mainTitle}
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Γνωρίζουμε τους θετικούς και αρνητικούς αριθμούς, την τοποθέτησή τους στον προσανατολισμένο άξονα, την έννοια της απόλυτης τιμής και τους αντίθετους αριθμούς.
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-indigo-100/90 leading-relaxed break-words [overflow-wrap:anywhere]">
+              {t.heroDesc}
             </p>
           </div>
         </section>
 
         {/* 1. ΕΙΣΑΓΩΓΗ ΣΤΟΥΣ ΑΚΕΡΑΙΟΥΣ ΑΡΙΘΜΟΥΣ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
+        <section className="bg-white rounded-3xl p-4 sm:p-7 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-sm sm:text-lg shrink-0">
                 1
               </span>
-              Θετικοί, Αρνητικοί Αριθμοί & Το Σύνολο ℤ
+              <span>{t.sec1Title}</span>
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 text-slate-700 text-xs sm:text-sm md:text-base leading-relaxed">
             <div className="space-y-4">
-              <p>
-                Στην καθημερινή ζωή συναντάμε μεγέθη με δύο αντίθετες κατευθύνσεις: θερμοκρασία (πάνω ή κάτω από το 0), υψόμετρο (πάνω ή κάτω από την επιφάνεια της θάλασσας), οικονομικές καταστάσεις (κέρδος ή ζημιά).
+              <p className="break-words [overflow-wrap:anywhere]">
+                {t.sec1P1}
               </p>
-              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-950 font-semibold text-center text-sm sm:text-base font-mono">
+              <div className="p-3 sm:p-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-950 font-semibold text-center text-xs sm:text-sm md:text-base font-mono break-words [overflow-wrap:anywhere]">
                 ℤ ＝ {'{'} ... , －3, －2, －1, 0, ＋1, ＋2, ＋3, ... {'}'}
               </div>
-              <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-slate-600">
-                <li>
-                  <strong>Θετικοί αριθμοί:</strong> Βρίσκονται δεξιά από το 0 και γράφονται με πρόσημο ＋ (ή χωρίς πρόσημο): ＋1, ＋2, ＋3...
+              <ul className="list-disc list-inside space-y-2 text-slate-600">
+                <li className="break-words [overflow-wrap:anywhere]">
+                  <strong>{t.positiveNums}</strong> {t.positiveNumsDesc}
                 </li>
-                <li>
-                  <strong>Αρνητικοί αριθμοί:</strong> Βρίσκονται αριστερά από το 0 και γράφονται υποχρεωτικά με πρόσημο －: －1, －2, －3...
+                <li className="break-words [overflow-wrap:anywhere]">
+                  <strong>{t.negativeNums}</strong> {t.negativeNumsDesc}
                 </li>
-                <li>
-                  <strong>Το μηδέν (0):</strong> Δεν είναι ούτε θετικός ούτε αρνητικός αριθμός. Είναι το ουδέτερο σημείο αναφοράς.
+                <li className="break-words [overflow-wrap:anywhere]">
+                  <strong>{t.zeroNum}</strong> {t.zeroNumDesc}
                 </li>
               </ul>
             </div>
 
             {/* Πρακτικές Εφαρμογές */}
-            <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-3">
-              <div className="text-xs font-bold uppercase text-slate-500">
-                ΠΑΡΑΔΕΙΓΜΑΤΑ ΣΤΗΝ ΚΑΘΗΜΕΡΙΝΟΤΗΤΑ
+            <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-3">
+              <div className="text-[11px] sm:text-xs font-bold uppercase text-slate-500 tracking-wider">
+                {toCleanUppercase(t.realLifeExamplesTitle)}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
                 <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
-                  <div className="font-bold text-indigo-900">🌡️ Θερμοκρασία</div>
-                  <div className="text-slate-600">5 βαθμοί υπό το μηδέν: <strong>－5 °C</strong></div>
-                  <div className="text-slate-600">22 βαθμοί πάνω από το μηδέν: <strong>＋22 °C</strong></div>
+                  <div className="font-bold text-indigo-900">{t.tempTitle}</div>
+                  <div className="text-slate-600 break-words [overflow-wrap:anywhere]">{t.tempBelow} <strong>－5 °C</strong></div>
+                  <div className="text-slate-600 break-words [overflow-wrap:anywhere]">{t.tempAbove} <strong>＋22 °C</strong></div>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1">
-                  <div className="font-bold text-indigo-900">🏔️ Υψόμετρο</div>
-                  <div className="text-slate-600">Κορυφή βουνού: <strong>＋1.200 m</strong></div>
-                  <div className="text-slate-600">Βυθός θάλασσας: <strong>－350 m</strong></div>
+                  <div className="font-bold text-indigo-900">{t.altitudeTitle}</div>
+                  <div className="text-slate-600 break-words [overflow-wrap:anywhere]">{t.altPeak} <strong>＋1.200 m</strong></div>
+                  <div className="text-slate-600 break-words [overflow-wrap:anywhere]">{t.altSea} <strong>－350 m</strong></div>
                 </div>
 
                 <div className="p-3 bg-white rounded-xl border border-slate-200 space-y-1 sm:col-span-2">
-                  <div className="font-bold text-indigo-900">💶 Οικονομικά</div>
-                  <div className="text-slate-600">Κατάθεση / Κέρδος: <strong>＋150 €</strong> | Ανάληψη / Χρέος: <strong>－80 €</strong></div>
+                  <div className="font-bold text-indigo-900">{t.financeTitle}</div>
+                  <div className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                    {t.finDeposit} <strong>＋150 €</strong> | {t.finWithdrawal} <strong>－80 €</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -127,119 +268,127 @@ export default function AkeraioiTheoria() {
         </section>
 
         {/* 2. ΑΠΟΛΥΤΗ ΤΙΜΗ & ΑΝΤΙΘΕΤΟΙ ΑΡΙΘΜΟΙ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <section className="bg-white rounded-3xl p-4 sm:p-7 lg:p-10 shadow-sm border border-slate-200/80 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-sm sm:text-lg shrink-0">
                 2
               </span>
-              Απόλυτη Τιμή & Αντίθετοι Αριθμοί
+              <span>{t.sec2Title}</span>
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-700 text-sm sm:text-base leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-slate-700 text-xs sm:text-sm md:text-base leading-relaxed">
             {/* Απόλυτη Τιμή */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-3">
-                <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΓΕΩΜΕΤΡΙΚΗ ΕΝΝΟΙΑ ΑΠΟΣΤΑΣΗΣ
+                <div className="text-[11px] sm:text-xs font-bold text-indigo-600 uppercase tracking-wider">
+                  {toCleanUppercase(t.distConceptBadge)}
                 </div>
-                <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Απόλυτη Τιμή Ακέραιου (|α|)
+                <h3 className="font-bold text-slate-900 text-sm sm:text-lg md:text-xl">
+                  {t.absTitle}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  <strong>Απόλυτη τιμή</strong> ενός αριθμού α ονομάζεται η <strong>απόσταση</strong> του σημείου που τον παριστάνει στον άξονα από την αρχή Ο(0).
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.absDesc1}
                 </p>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
-                  <div>|＋5| ＝ 5  (απόσταση 5 μονάδες)</div>
-                  <div>|－5| ＝ 5  (απόσταση 5 μονάδες)</div>
-                  <div>|0| ＝ 0</div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1.5">
+                  <div className="break-words [overflow-wrap:anywhere]">|＋5| ＝ 5 ({t.absDist5})</div>
+                  <div className="break-words [overflow-wrap:anywhere]">|－5| ＝ 5 ({t.absDist5})</div>
+                  <div className="break-words [overflow-wrap:anywhere]">|0| ＝ 0</div>
                 </div>
-                <p className="text-xs text-slate-500">
-                  Η απόλυτη τιμή εκφράζει απόσταση, επομένως είναι <strong>πάντοτε θετικός αριθμός ή μηδέν</strong> (|α| ≥ 0).
+                <p className="text-slate-500 text-[11px] sm:text-xs break-words [overflow-wrap:anywhere]">
+                  {t.absNote}
                 </p>
               </div>
             </div>
 
             {/* Αντίθετοι Αριθμοί */}
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-3">
-                <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΣΥΜΜΕΤΡΙΑ ΩΣ ΠΡΟΣ ΤΟ ΜΗΔΕΝ
+                <div className="text-[11px] sm:text-xs font-bold text-indigo-600 uppercase tracking-wider">
+                  {toCleanUppercase(t.symmConceptBadge)}
                 </div>
-                <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Αντίθετοι Αριθμοί
+                <h3 className="font-bold text-slate-900 text-sm sm:text-lg md:text-xl">
+                  {t.oppTitle}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  Δύο αριθμοί που έχουν <strong>διαφορετικό πρόσημο</strong> αλλά την <strong>ίδια απόλυτη τιμή</strong> ονομάζονται <strong>αντίθετοι</strong>.
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.oppDesc1}
                 </p>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1">
-                  <div>Αντίθετος του ＋7 είναι ο －7</div>
-                  <div>Αντίθετος του －12 είναι ο ＋12</div>
-                  <div>Αντίθετος του 0 είναι το 0</div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950 space-y-1.5">
+                  <div className="break-words [overflow-wrap:anywhere]">{t.oppOf7}</div>
+                  <div className="break-words [overflow-wrap:anywhere]">{t.oppOfNeg12}</div>
+                  <div className="break-words [overflow-wrap:anywhere]">{t.oppOfZero}</div>
                 </div>
-                <p className="text-xs text-slate-500">
-                  Οι αντίθετοι αριθμοί βρίσκονται σε ίσες αποστάσεις εκατέρωθεν του μηδενός και το άθροισμά τους είναι πάντα μηδέν: <strong>α ＋ (－α) ＝ 0</strong>.
+                <p className="text-slate-500 text-[11px] sm:text-xs break-words [overflow-wrap:anywhere]">
+                  {t.oppNote} <strong>α ＋ (－α) ＝ 0</strong>.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Κανόνες Σύγκρισης & Διάταξης */}
-          <div className="p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-3 text-xs sm:text-sm text-slate-700">
+          <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100 space-y-3 text-xs sm:text-sm text-slate-700">
             <h3 className="font-bold text-indigo-950 text-sm sm:text-base">
-              Κανόνες Σύγκρισης Ακεραίων
+              {t.compRulesTitle}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3 bg-white rounded-xl border border-indigo-100">
-                <div className="font-bold text-indigo-900">Θετικός με Αρνητικό</div>
-                <p className="text-slate-600 mt-1">Κάθε θετικός αριθμός είναι μεγαλύτερος από κάθε αρνητικό αριθμό: <strong>＋3 ＞ －8</strong>.</p>
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 space-y-1">
+                <div className="font-bold text-indigo-900">{t.compPosNegTitle}</div>
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.compPosNegDesc} <strong>＋3 ＞ －8</strong>.
+                </p>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-indigo-100">
-                <div className="font-bold text-indigo-900">Σύγκριση με το 0</div>
-                <p className="text-slate-600 mt-1">Κάθε θετικός είναι ＞ 0, ενώ κάθε αρνητικός είναι ＜ 0: <strong>－4 ＜ 0 ＜ ＋2</strong>.</p>
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 space-y-1">
+                <div className="font-bold text-indigo-900">{t.compZeroTitle}</div>
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.compZeroDesc} <strong>－4 ＜ 0 ＜ ＋2</strong>.
+                </p>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-indigo-100">
-                <div className="font-bold text-indigo-900">Δύο Αρνητικοί</div>
-                <p className="text-slate-600 mt-1">Μεγαλύτερος είναι αυτός που έχει τη <strong>μικρότερη απόλυτη τιμή</strong> (πιο κοντά στο 0): <strong>－2 ＞ －7</strong>.</p>
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 space-y-1">
+                <div className="font-bold text-indigo-900">{t.compTwoNegTitle}</div>
+                <p className="text-slate-600 break-words [overflow-wrap:anywhere]">
+                  {t.compTwoNegDesc} <strong>－2 ＞ －7</strong>.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ: ΑΡΙΘΜΗΤΙΚΟΣ ΑΞΟΝΑΣ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <section className="bg-white rounded-3xl p-4 sm:p-7 lg:p-10 shadow-sm border border-slate-200/80 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-sm sm:text-lg shrink-0">
                 3
               </span>
-              Διαδραστικό Εργαστήριο: Ολοκληρωμένος Άξονας Ακεραίων
+              <span>{t.sec3Title}</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Steppers Ελέγχου για Σημείο A και Σημείο B */}
-            <div className="space-y-5 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <div className="space-y-4 sm:space-y-5 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 w-full min-w-0">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                  Σημείο Α (Ακέραιος α)
+                <label className="block text-[11px] sm:text-xs font-bold text-slate-600 uppercase mb-1.5 break-words [overflow-wrap:anywhere]">
+                  {toCleanUppercase(t.pointAControl)}
                 </label>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[38px_1fr_38px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumA, -1, -10, 10, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Decrease Point A"
                   >
                     －
                   </button>
-                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-indigo-900 font-black text-lg font-mono whitespace-nowrap px-2">
-                    α ＝ {numA > 0 ? `＋${numA}` : numA}
+                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-indigo-900 font-black text-sm sm:text-base font-mono whitespace-nowrap px-1 overflow-hidden">
+                    α ＝ {formatSigned(numA)}
                   </div>
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumA, 1, -10, 10, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Increase Point A"
                   >
                     ＋
                   </button>
@@ -247,24 +396,26 @@ export default function AkeraioiTheoria() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">
-                  Σημείο Β (Ακέραιος β)
+                <label className="block text-[11px] sm:text-xs font-bold text-slate-600 uppercase mb-1.5 break-words [overflow-wrap:anywhere]">
+                  {toCleanUppercase(t.pointBControl)}
                 </label>
-                <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
+                <div className="grid grid-cols-[38px_1fr_38px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumB, -1, -10, 10, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Decrease Point B"
                   >
                     －
                   </button>
-                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-amber-900 font-black text-lg font-mono whitespace-nowrap px-2">
-                    β ＝ {numB > 0 ? `＋${numB}` : numB}
+                  <div className="h-full flex items-center justify-center bg-white rounded-xl border border-slate-200 text-amber-900 font-black text-sm sm:text-base font-mono whitespace-nowrap px-1 overflow-hidden">
+                    β ＝ {formatSigned(numB)}
                   </div>
                   <button
                     type="button"
                     onClick={(e) => handleStep(setNumB, 1, -10, 10, e)}
                     className="w-full h-full flex items-center justify-center rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-lg hover:bg-slate-100 active:scale-95 touch-manipulation transition shadow-sm"
+                    aria-label="Increase Point B"
                   >
                     ＋
                   </button>
@@ -272,24 +423,26 @@ export default function AkeraioiTheoria() {
               </div>
 
               {/* Σύγκριση και Απόσταση */}
-              <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs space-y-1.5 font-mono">
-                <div className="text-slate-500 font-sans font-bold">ΣΧΕΣΕΙΣ:</div>
-                <div className="text-slate-900 font-bold">
-                  Σύγκριση: {numA > 0 ? `＋${numA}` : numA} {comparisonSymbol} {numB > 0 ? `＋${numB}` : numB}
+              <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
+                <div className="text-slate-500 font-sans font-bold text-[11px] sm:text-xs">
+                  {toCleanUppercase(t.relationsLabel)}
                 </div>
-                <div className="text-slate-900">
-                  Απόσταση (Α, Β) ＝ {distanceAB} μονάδες
+                <div className="text-slate-900 font-bold break-words [overflow-wrap:anywhere]">
+                  {t.comparisonLabel} {formatSigned(numA)} {comparisonSymbol} {formatSigned(numB)}
+                </div>
+                <div className="text-slate-900 break-words [overflow-wrap:anywhere]">
+                  {t.distanceLabel} {distanceAB} {t.unitsLabel}
                 </div>
               </div>
             </div>
 
             {/* Οπτική Απεικόνιση στον Άξονα (SVG Responsive) */}
-            <div className="lg:col-span-2 space-y-4">
-              <div className="bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center">
+            <div className="lg:col-span-2 space-y-4 w-full min-w-0">
+              <div className="bg-slate-900 p-3 sm:p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center w-full min-w-0 overflow-x-hidden">
                 <div className="w-full max-w-[700px]">
                   <svg
                     viewBox="0 0 700 130"
-                    className="w-full h-auto"
+                    className="w-full h-auto max-w-full block"
                     preserveAspectRatio="xMidYMid meet"
                   >
                     {/* Κύριος Άξονας x'Ox */}
@@ -362,25 +515,41 @@ export default function AkeraioiTheoria() {
                     </g>
                   </svg>
                 </div>
-                <div className="text-slate-400 text-xs mt-2 text-center">
-                  Κάθε σημείο στον άξονα αντιστοιχεί μονοσήμαντα σε έναν ακέραιο αριθμό (τετμημένη).
+                <div className="text-slate-400 text-[11px] sm:text-xs mt-2 text-center break-words [overflow-wrap:anywhere]">
+                  {t.axisNote}
                 </div>
               </div>
 
               {/* Κάρτες Ιδιοτήτων A & B */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 space-y-1 font-mono">
-                  <div className="text-indigo-900 font-sans font-bold">ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ ΣΗΜΕΙΟΥ Α:</div>
-                  <div>Τιμή: <strong>{numA > 0 ? `＋${numA}` : numA}</strong></div>
-                  <div>Απόλυτη Τιμή: |{numA}| ＝ <strong>{absA}</strong></div>
-                  <div>Αντίθετος Αριθμός: <strong>{oppositeA > 0 ? `＋${oppositeA}` : oppositeA}</strong></div>
+                <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 space-y-1.5 font-mono">
+                  <div className="text-indigo-900 font-sans font-bold text-xs sm:text-sm break-words [overflow-wrap:anywhere]">
+                    {toCleanUppercase(t.charPointA)}
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.valLabel} <strong>{formatSigned(numA)}</strong>
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.absValLabel} |{numA}| ＝ <strong>{absA}</strong>
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.oppLabel} <strong>{formatSigned(oppositeA)}</strong>
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-1 font-mono">
-                  <div className="text-amber-900 font-sans font-bold">ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ ΣΗΜΕΙΟΥ Β:</div>
-                  <div>Τιμή: <strong>{numB > 0 ? `＋${numB}` : numB}</strong></div>
-                  <div>Απόλυτη Τιμή: |{numB}| ＝ <strong>{absB}</strong></div>
-                  <div>Αντίθετος Αριθμός: <strong>{oppositeB > 0 ? `＋${oppositeB}` : oppositeB}</strong></div>
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 space-y-1.5 font-mono">
+                  <div className="text-amber-900 font-sans font-bold text-xs sm:text-sm break-words [overflow-wrap:anywhere]">
+                    {toCleanUppercase(t.charPointB)}
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.valLabel} <strong>{formatSigned(numB)}</strong>
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.absValLabel} |{numB}| ＝ <strong>{absB}</strong>
+                  </div>
+                  <div className="break-words [overflow-wrap:anywhere]">
+                    {t.oppLabel} <strong>{formatSigned(oppositeB)}</strong>
+                  </div>
                 </div>
               </div>
             </div>

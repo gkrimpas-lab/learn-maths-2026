@@ -1,9 +1,209 @@
 // pages/e-dimotikou/02-isodinama.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Ε')/g);
+  return parts
+    .map((part) => {
+      if (part === "Ε'") return "Ε'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+// Επαναχρησιμοποιήσιμο component για κανονική κατακόρυφη μορφή κλάσματος
+function Fraction({ num, den, className = '', size = 'md' }) {
+  const sizeClasses = {
+    xs: 'text-[11px] 2xl:text-xs',
+    sm: 'text-xs 2xl:text-sm',
+    md: 'text-sm sm:text-base 2xl:text-lg',
+    lg: 'text-base sm:text-xl 2xl:text-2xl',
+    xl: 'text-xl sm:text-2xl 2xl:text-3xl'
+  };
+
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono font-bold leading-none select-none ${sizeClasses[size] || sizeClasses.md} ${className}`}>
+      <span className="px-1 text-center leading-tight">{num}</span>
+      <span className="w-full min-w-[0.9em] h-[1.5px] bg-current my-[1px] rounded-full"></span>
+      <span className="px-1 text-center leading-tight">{den}</span>
+    </span>
+  );
+}
+
+const translations = {
+  el: {
+    pageTitle: "Ισοδύναμα Κλάσματα - Ε' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Πλήρης θεωρία με παραδείγματα για τα ισοδύναμα κλάσματα, διαπλάτυνση, απλοποίηση, ανάγωγα κλάσματα και διαδραστικό εργαστήριο για την Ε' Δημοτικού.",
+    backText: "Ε' Δημοτικού",
+    exercisesBtn: "Ασκήσεις",
+    headerBadge: "ΚΕΦΑΛΑΙΟ 2 • Ε' ΔΗΜΟΤΙΚΟΥ",
+    headerTitle: "Ισοδύναμα Κλάσματα",
+    headerDesc: "Ανακαλύπτουμε πώς διαφορετικά κλάσματα μπορούν να εκφράζουν ακριβώς την ίδια ποσότητα! Μαθαίνουμε τη διαπλάτυνση, την απλοποίηση, το ανάγωγο κλάσμα και τον έλεγχο ισοδυναμίας με χιαστί γινόμενα.",
+    interactiveTag: "Θεωρία & Διαδραστική Σύγκριση",
+    tryExercises: "Δοκίμασε τις Ασκήσεις",
+
+    stepsTitle: "Βασικές Έννοιες σε 4 Βήματα",
+    stepsDesc: "Οι δύο θεμελιώδεις μέθοδοι και οι κανόνες ελέγχου των ισοδύναμων κλασμάτων.",
+
+    // Βήμα 1
+    step1Badge: "ΒΗΜΑ 1",
+    step1Sub: "Έννοια & Ορισμός",
+    step1Title: "Τι είναι τα Ισοδύναμα Κλάσματα;",
+    step1Text: "Ισοδύναμα (ή ίσα) λέγονται τα κλάσματα που έχουν διαφορετικούς όρους, αλλά εκφράζουν ακριβώς το ίδιο μέρος της ίδιας ποσότητας.",
+    step1ExampleText: "Αν φάμε τα μέρη μιας σοκολάτας:",
+    step1ExampleEnd: "έχουμε καταναλώσει την ίδια ακριβώς ποσότητα!",
+    step1Note: "Παρόλο που κόβουμε τη μονάδα σε περισσότερα κομμάτια, παίρνουμε αναλογικά περισσότερα, οπότε η ποσότητα δεν αλλάζει.",
+
+    // Βήμα 2
+    step2Badge: "ΒΗΜΑ 2",
+    step2Sub: "Πολλαπλασιασμός",
+    step2Title: "Διαπλάτυνση Κλάσματος",
+    step2Text: "Διαπλάτυνση είναι η διαδικασία κατά την οποία πολλαπλασιάζουμε και τον αριθμητή και τον παρονομαστή με τον ίδιο φυσικό αριθμό (διάφορο του 0 και του 1).",
+    step2ExamplePrefix: "Παράδειγμα: Διαπλάτυνση του",
+    step2ExampleSuffix: "με το 4",
+    step2Therefore: "Επομένως:",
+    step2Warning: "Προσοχή: Πολλαπλασιάζουμε ΠΑΝΤΑ και τους δύο όρους με τον ίδιο ακριβώς αριθμό!",
+
+    // Βήμα 3
+    step3Badge: "ΒΗΜΑ 3",
+    step3Sub: "Διαίρεση & Απλοποίηση",
+    step3Title: "Απλοποίηση & Ανάγωγο Κλάσμα",
+    step3Text: "Απλοποίηση είναι η αντίστροφη διαδικασία: διαιρούμε και τους δύο όρους με έναν κοινό διαιρέτη τους.",
+    step3ExamplePrefix: "Παράδειγμα: Απλοποίηση του",
+    step3ExampleSuffix: "με το 6",
+    step3Irreducible1: "Το κλάσμα",
+    step3Irreducible2: "δεν απλοποιείται άλλο. Ονομάζεται ανάγωγο (Μ.Κ.Δ. αριθμητή και παρονομαστή είναι το 1).",
+    step3Goal: "Στόχος: Σε κάθε άσκηση προσπαθούμε να φτάσουμε το κλάσμα στην ανάγωγη μορφή του.",
+
+    // Βήμα 4
+    step4Badge: "ΒΗΜΑ 4",
+    step4Sub: "Κριτήριο Ισοδυναμίας",
+    step4Title: "Έλεγχος με Χιαστί Γινόμενα",
+    step4Text: "Δύο κλάσματα είναι ισοδύναμα αν και μόνο αν τα χιαστί γινόμενά τους είναι ίσα:",
+    step4FormulaText: "α · δ ＝ β · γ",
+    step4CheckQuestion: "Έλεγχος: Είναι τα παρακάτω κλάσματα ισοδύναμα;",
+    step4CheckSuccess: "36 ＝ 36 ➔ Τα κλάσματα είναι ισοδύναμα!",
+    step4Useful: "Χρήσιμο: Τα χιαστί γινόμενα μάς επιτρέπουν να βρίσκουμε αμέσως έναν άγνωστο όρο σε δύο ίσα κλάσματα.",
+
+    // Εργαστήριο
+    labBadge: "ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Εξερεύνηση Ισοδυναμίας σε Πραγματικό Χρόνο",
+    labDesc: "Άλλαξε το αρχικό κλάσμα και επίλεξε τον πολλαπλασιαστή διαπλάτυνσης για να δεις πώς μετασχηματίζεται το σχήμα διατηρώντας την ίδια επιφάνεια.",
+    viewPies: "🍕 Κυκλικοί Δίσκοι",
+    viewBars: "🍫 Ορθογώνιες Ράβδοι",
+    settingsTitle: "ΡΥΘΜΙΣΕΙΣ ΚΛΑΣΜΑΤΟΣ",
+    numSetting: "Αρχικός Αριθμητής:",
+    denSetting: "Αρχικός Παρονομαστής:",
+    multSetting: "Πολλαπλασιαστής ( · k ):",
+    mathActionTitle: "ΜΑΘΗΜΑΤΙΚΗ ΠΡΑΞΗ",
+    decimalValueLabel: "Δεκαδική τιμή:",
+    comparisonTitle: "ΠΑΡΑΛΛΗΛΗ ΟΠΤΙΚΗ ΣΥΓΚΡΙΣΗ",
+    sameAreaBadge: "Ίδια επιφάνεια",
+    initialFractionBadge: "ΑΡΧΙΚΟ ΚΛΑΣΜΑ",
+    equivalentFractionBadge: "ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ",
+    partsOfTotal: "από τα",
+    equalPartsSuffix: "ίσα μέρη",
+    calloutInsight: "📢 Παρατήρησε τα δύο σχήματα: Αν και το δεύτερο είναι κομμένο σε περισσότερα κομμάτια, η χρωματισμένη επιφάνεια παραμένει ακριβώς η ίδια!",
+
+    // Callout & Footer
+    calloutTitle: "Ώρα για Εξάσκηση στα Ισοδύναμα!",
+    calloutDesc: "Έλεγξε τις γνώσεις σου με απαιτητικές ασκήσεις διαπλάτυνσης, εύρεσης αγνώστου με χιαστί γινόμενα και απλοποίησης σε ανάγωγα κλάσματα.",
+    calloutBtn: "Έναρξη Ασκήσεων",
+    bottomFooterText: "Κεφάλαιο 2 • Ισοδύναμα Κλάσματα",
+    bottomFooterBtn: "Μετάβαση στις Ασκήσεις"
+  },
+  en: {
+    pageTitle: "Equivalent Fractions - Grade 5 | LearnMaths.gr",
+    pageDesc: "Complete theory with examples on equivalent fractions, expansion, simplification, irreducible fractions, and an interactive lab for Grade 5.",
+    backText: "Grade 5",
+    exercisesBtn: "Exercises",
+    headerBadge: "CHAPTER 2 • GRADE 5",
+    headerTitle: "Equivalent Fractions",
+    headerDesc: "Discover how different fractions can represent the exact same quantity! Master fraction expansion, simplification, irreducible forms, and cross-multiplication checks.",
+    interactiveTag: "Theory & Interactive Comparison",
+    tryExercises: "Try the Exercises",
+
+    stepsTitle: "Core Concepts in 4 Steps",
+    stepsDesc: "The two fundamental operations and the verification rules of equivalent fractions.",
+
+    // Step 1
+    step1Badge: "STEP 1",
+    step1Sub: "Concept & Definition",
+    step1Title: "What are Equivalent Fractions?",
+    step1Text: "Fractions with different terms that represent the exact same portion of a whole are called equivalent (or equal) fractions.",
+    step1ExampleText: "If we eat these portions of a chocolate bar:",
+    step1ExampleEnd: "we have consumed the exact same amount of chocolate!",
+    step1Note: "Even though we partition the unit into more pieces, we take proportionally more, so the total amount stays identical.",
+
+    // Step 2
+    step2Badge: "STEP 2",
+    step2Sub: "Multiplication",
+    step2Title: "Fraction Expansion",
+    step2Text: "Expansion is the process where we multiply both the numerator and the denominator by the same non-zero whole number (different from 1).",
+    step2ExamplePrefix: "Example: Expanding",
+    step2ExampleSuffix: "by 4",
+    step2Therefore: "Therefore:",
+    step2Warning: "Warning: ALWAYS multiply BOTH terms by the exact same number!",
+
+    // Step 3
+    step3Badge: "STEP 3",
+    step3Sub: "Division & Simplification",
+    step3Title: "Simplification & Irreducible Fractions",
+    step3Text: "Simplification is the reverse process: we divide both terms by their common divisor.",
+    step3ExamplePrefix: "Example: Simplifying",
+    step3ExampleSuffix: "by 6",
+    step3Irreducible1: "The fraction",
+    step3Irreducible2: "cannot be simplified further. It is called irreducible (GCD of numerator and denominator is 1).",
+    step3Goal: "Goal: In every exercise, we strive to express the fraction in its irreducible form.",
+
+    // Step 4
+    step4Badge: "STEP 4",
+    step4Sub: "Equivalence Criterion",
+    step4Title: "Cross-Multiplication Check",
+    step4Text: "Two fractions are equivalent if and only if their cross products are equal:",
+    step4FormulaText: "a · d ＝ b · c",
+    step4CheckQuestion: "Check: Are the following fractions equivalent?",
+    step4CheckSuccess: "36 ＝ 36 ➔ The fractions are equivalent!",
+    step4Useful: "Helpful: Cross multiplication enables us to instantly calculate an unknown term in two equal fractions.",
+
+    // Lab
+    labBadge: "INTERACTIVE LAB",
+    labTitle: "Real-Time Equivalence Exploration",
+    labDesc: "Adjust the original fraction and select the expansion multiplier to observe how the visual partitions transform while preserving the exact same shaded area.",
+    viewPies: "🍕 Circular Discs",
+    viewBars: "🍫 Rectangular Bars",
+    settingsTitle: "FRACTION CONTROLS",
+    numSetting: "Initial Numerator:",
+    denSetting: "Initial Denominator:",
+    multSetting: "Multiplier ( · k ):",
+    mathActionTitle: "MATHEMATICAL OPERATION",
+    decimalValueLabel: "Decimal value:",
+    comparisonTitle: "SIDE-BY-SIDE VISUAL COMPARISON",
+    sameAreaBadge: "Equal Area",
+    initialFractionBadge: "INITIAL FRACTION",
+    equivalentFractionBadge: "EQUIVALENT FRACTION",
+    partsOfTotal: "out of",
+    equalPartsSuffix: "equal parts",
+    calloutInsight: "📢 Notice both diagrams: Although the second shape is sliced into more pieces, the total colored area remains identical!",
+
+    // Callout & Footer
+    calloutTitle: "Time to Practice Equivalence!",
+    calloutDesc: "Test your skills with challenging exercises covering expansion, solving for unknown terms via cross products, and simplifying to irreducible fractions.",
+    calloutBtn: "Start Exercises",
+    bottomFooterText: "Chapter 2 • Equivalent Fractions",
+    bottomFooterBtn: "Go to Exercises"
+  }
+};
+
 export default function IsodinamaTheoryPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
   // Αρχικό Κλάσμα
   const [num, setNum] = useState(2);
   const [den, setDen] = useState(3);
@@ -104,47 +304,47 @@ export default function IsodinamaTheoryPage() {
 
   return (
     <Layout
-      title="Ισοδύναμα Κλάσματα - Έ Δημοτικού | LearnMaths.gr"
-      description="Πλήρης θεωρία με παραδείγματα για τα ισοδύναμα κλάσματα, διαπλάτυνση, απλοποίηση, ανάγωγα κλάσματα και διαδραστικό εργαστήριο για την Έ Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/e-dimotikou"
-      backText="Έ Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/e-dimotikou/02-isodinama-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>🎯 {t.exercisesBtn}</span>
         </Link>
       }
     >
-      {/* Full-width container για 2K & 4K με πλήρη απόκριση σε κινητά */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24">
+      {/* Container πλήρους εύρους για 2K & 4K */}
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 space-y-10 2xl:space-y-14 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 2 • Έ ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{toCleanUppercase(t.headerBadge)}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ισοδύναμα Κλάσματα
+              {t.headerTitle}
             </h1>
             <p className="text-sky-100 text-sm sm:text-lg 2xl:text-2xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε πώς διαφορετικά κλάσματα μπορούν να εκφράζουν ακριβώς την ίδια ποσότητα! Μαθαίνουμε τη διαπλάτυνση, την απλοποίηση, το ανάγωγο κλάσμα και τον έλεγχο ισοδυναμίας με χιαστί γινόμενα.
+              {t.headerDesc}
             </p>
           </div>
 
           <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία &amp; Διαδραστική Σύγκριση</span>
+              <span>{t.interactiveTag}</span>
             </div>
             <Link
               href="/e-dimotikou/02-isodinama-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 2xl:px-7 2xl:py-3.5 rounded-xl shadow-md transition active:scale-95 text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.tryExercises}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -154,10 +354,10 @@ export default function IsodinamaTheoryPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες σε 4 Βήματα
+              {t.stepsTitle}
             </h2>
             <p className="text-slate-600 text-sm sm:text-base 2xl:text-xl mt-1">
-              Οι δύο θεμελιώδεις μέθοδοι και οι κανόνες ελέγχου των ισοδύναμων κλασμάτων.
+              {t.stepsDesc}
             </p>
           </div>
 
@@ -167,37 +367,40 @@ export default function IsodinamaTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {toCleanUppercase(t.step1Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Έννοια &amp; Ορισμός</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">{t.step1Sub}</span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Τι είναι τα Ισοδύναμα Κλάσματα;
+                  {t.step1Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  <strong>Ισοδύναμα</strong> (ή ίσα) λέγονται τα κλάσματα που έχουν διαφορετικούς όρους, αλλά εκφράζουν <strong>ακριβώς το ίδιο μέρος</strong> της ίδιας ποσότητας.
+                  {t.step1Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm 2xl:text-base">
                   <p className="text-slate-700">
-                    Αν φάμε τα <span className="font-mono font-bold text-blue-600">1/2</span> μιας σοκολάτας ή τα <span className="font-mono font-bold text-emerald-600">2/4</span> ή τα <span className="font-mono font-bold text-indigo-600">4/8</span>, έχουμε καταναλώσει την ίδια ακριβώς σοκολάτα!
+                    {t.step1ExampleText}
                   </p>
                   <div className="py-2 flex items-center justify-center">
-                    <div className="inline-flex flex-wrap items-center justify-center gap-2 font-mono font-black text-slate-900 text-sm sm:text-base 2xl:text-xl bg-white px-4 py-2 rounded-xl border border-slate-300 shadow-inner">
-                      <span>1/2</span>
+                    <div className="inline-flex flex-wrap items-center justify-center gap-2 font-mono font-black text-slate-900 text-sm sm:text-base 2xl:text-xl bg-white px-4 py-2.5 rounded-xl border border-slate-300 shadow-inner">
+                      <Fraction num={1} den={2} size="md" className="text-blue-600" />
                       <span>＝</span>
-                      <span>2/4</span>
+                      <Fraction num={2} den={4} size="md" className="text-emerald-600" />
                       <span>＝</span>
-                      <span>4/8</span>
+                      <Fraction num={4} den={8} size="md" className="text-indigo-600" />
                       <span>＝</span>
-                      <span>0,5</span>
+                      <span>{locale === 'el' ? '0,5' : '0.5'}</span>
                     </div>
                   </div>
+                  <p className="text-slate-500 text-xs 2xl:text-sm text-center">
+                    {t.step1ExampleEnd}
+                  </p>
                 </div>
               </div>
 
               <div className="p-3.5 bg-blue-50 rounded-2xl border border-blue-200 text-xs 2xl:text-sm text-blue-950 font-medium">
-                💡 Παρόλο που κόβουμε τη μονάδα σε περισσότερα κομμάτια, παίρνουμε αναλογικά περισσότερα, οπότε η ποσότητα δεν αλλάζει.
+                💡 {t.step1Note}
               </div>
             </article>
 
@@ -206,44 +409,41 @@ export default function IsodinamaTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {toCleanUppercase(t.step2Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Πολλαπλασιασμός</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">{t.step2Sub}</span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Διαπλάτυνση Κλάσματος
+                  {t.step2Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  <strong>Διαπλάτυνση</strong> είναι η διαδικασία κατά την οποία πολλαπλασιάζουμε <strong>και τον αριθμητή και τον παρονομαστή</strong> με τον ίδιο φυσικό αριθμό (διάφορο του 0 και του 1).
+                  {t.step2Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm 2xl:text-base">
-                  <p className="text-slate-700 font-semibold">
-                    Παράδειγμα: Διαπλάτυνση του 2/3 με το 4
+                  <p className="text-slate-700 font-semibold flex items-center flex-wrap gap-1">
+                    <span>{t.step2ExamplePrefix}</span>
+                    <Fraction num={2} den={3} size="sm" className="text-blue-600" />
+                    <span>{t.step2ExampleSuffix}</span>
                   </p>
                   <div className="py-2 flex items-center justify-center font-mono">
                     <div className="inline-flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-slate-300 shadow-inner text-sm sm:text-base 2xl:text-lg">
-                      <span className="flex flex-col items-center leading-none">
-                        <span className="text-blue-600 font-bold">2 · 4</span>
-                        <span className="w-12 h-0.5 bg-slate-800 my-1"></span>
-                        <span className="text-blue-600 font-bold">3 · 4</span>
-                      </span>
+                      <Fraction num="2 · 4" den="3 · 4" size="md" className="text-blue-600" />
                       <span className="font-sans">＝</span>
-                      <span className="flex flex-col items-center leading-none">
-                        <span className="text-emerald-600 font-black">8</span>
-                        <span className="w-8 h-0.5 bg-slate-800 my-1"></span>
-                        <span className="text-emerald-600 font-black">12</span>
-                      </span>
+                      <Fraction num={8} den={12} size="md" className="text-emerald-600" />
                     </div>
                   </div>
-                  <p className="text-slate-500 text-xs 2xl:text-sm">
-                    Επομένως: <span className="font-mono font-bold text-slate-900">2/3 ＝ 8/12</span>.
+                  <p className="text-slate-500 text-xs 2xl:text-sm flex items-center justify-center gap-1">
+                    <span>{t.step2Therefore}</span>
+                    <Fraction num={2} den={3} size="sm" />
+                    <span>＝</span>
+                    <Fraction num={8} den={12} size="sm" />.
                   </p>
                 </div>
               </div>
 
               <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                <strong>Προσοχή:</strong> Πολλαπλασιάζουμε <strong>ΠΑΝΤΑ</strong> και τους δύο όρους με τον ίδιο ακριβώς αριθμό!
+                {t.step2Warning}
               </div>
             </article>
 
@@ -252,44 +452,40 @@ export default function IsodinamaTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {toCleanUppercase(t.step3Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Διαίρεση &amp; Απλοποίηση</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">{t.step3Sub}</span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Απλοποίηση &amp; Ανάγωγο Κλάσμα
+                  {t.step3Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  <strong>Απλοποίηση</strong> είναι η αντίστροφη διαδικασία: διαιρούμε και τους δύο όρους με έναν <strong>κοινό διαιρέτη</strong> τους.
+                  {t.step3Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm 2xl:text-base">
-                  <p className="text-slate-700 font-semibold">
-                    Παράδειγμα: Απλοποίηση του 12/18 με το 6
+                  <p className="text-slate-700 font-semibold flex items-center flex-wrap gap-1">
+                    <span>{t.step3ExamplePrefix}</span>
+                    <Fraction num={12} den={18} size="sm" className="text-rose-600" />
+                    <span>{t.step3ExampleSuffix}</span>
                   </p>
                   <div className="py-2 flex items-center justify-center font-mono">
                     <div className="inline-flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl border border-slate-300 shadow-inner text-sm sm:text-base 2xl:text-lg">
-                      <span className="flex flex-col items-center leading-none">
-                        <span className="text-rose-600 font-bold">12 ： 6</span>
-                        <span className="w-14 h-0.5 bg-slate-800 my-1"></span>
-                        <span className="text-rose-600 font-bold">18 ： 6</span>
-                      </span>
+                      <Fraction num="12 : 6" den="18 : 6" size="md" className="text-rose-600" />
                       <span className="font-sans">＝</span>
-                      <span className="flex flex-col items-center leading-none">
-                        <span className="text-indigo-600 font-black">2</span>
-                        <span className="w-8 h-0.5 bg-slate-800 my-1"></span>
-                        <span className="text-indigo-600 font-black">3</span>
-                      </span>
+                      <Fraction num={2} den={3} size="md" className="text-indigo-600" />
                     </div>
                   </div>
-                  <p className="text-slate-600 text-xs 2xl:text-sm">
-                    Το κλάσμα <span className="font-mono font-bold text-indigo-700">2/3</span> δεν απλοποιείται άλλο. Ονομάζεται <strong>ανάγωγο</strong> (ΜΚΔ αριθμητή και παρονομαστή είναι το 1).
+                  <p className="text-slate-600 text-xs 2xl:text-sm flex items-center flex-wrap gap-1">
+                    <span>{t.step3Irreducible1}</span>
+                    <Fraction num={2} den={3} size="sm" className="text-indigo-700" />
+                    <span>{t.step3Irreducible2}</span>
                   </p>
                 </div>
               </div>
 
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 <strong>Στόχος:</strong> Σε κάθε άσκηση προσπαθούμε να φτάσουμε το κλάσμα στην ανάγωγη μορφή του.
+                🎯 {t.step3Goal}
               </div>
             </article>
 
@@ -298,34 +494,40 @@ export default function IsodinamaTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-purple-100 text-purple-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 4
+                    {toCleanUppercase(t.step4Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Κριτήριο Ισοδυναμίας</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">{t.step4Sub}</span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Έλεγχος με Χιαστί Γινόμενα
+                  {t.step4Title}
                 </h3>
-                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Δύο κλάσματα <span className="font-mono font-bold">α/β</span> και <span className="font-mono font-bold">γ/δ</span> είναι ισοδύναμα αν και μόνο αν τα <strong>χιαστί γινόμενά</strong> τους είναι ίσα:
+                <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed flex items-center flex-wrap gap-1">
+                  <span>{t.step4Text}</span>
+                  <Fraction num="α" den="β" size="sm" />
+                  <span>και</span>
+                  <Fraction num="γ" den="δ" size="sm" />:
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm 2xl:text-base text-center">
                   <div className="p-3 bg-white rounded-xl border border-slate-300 font-mono font-black text-base 2xl:text-lg text-slate-900 shadow-inner">
-                    α · δ ＝ β · γ
+                    {t.step4FormulaText}
                   </div>
-                  <p className="text-slate-700 text-left">
-                    Έλεγχος: Είναι τα <span className="font-mono font-bold text-blue-600">3/4</span> και <span className="font-mono font-bold text-emerald-600">9/12</span> ισοδύναμα;
+                  <p className="text-slate-700 text-left flex items-center flex-wrap gap-1">
+                    <span>{t.step4CheckQuestion}</span>
+                    <Fraction num={3} den={4} size="sm" className="text-blue-600" />
+                    <span>και</span>
+                    <Fraction num={9} den={12} size="sm" className="text-emerald-600" />
                   </p>
                   <div className="font-mono text-xs sm:text-sm text-left space-y-1 bg-white p-3 rounded-xl border border-slate-200">
-                    <div>• 3 · 12 ＝ <strong className="text-slate-900">36</strong></div>
-                    <div>• 4 · 9 ＝ <strong className="text-slate-900">36</strong></div>
-                    <div className="text-emerald-700 font-bold pt-1">36 ＝ 36 ➔ Τα κλάσματα είναι ισοδύναμα!</div>
+                    <div>3 · 12 ＝ <strong className="text-slate-900">36</strong></div>
+                    <div>4 · 9 ＝ <strong className="text-slate-900">36</strong></div>
+                    <div className="text-emerald-700 font-bold pt-1">{t.step4CheckSuccess}</div>
                   </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-purple-50 rounded-2xl border border-purple-200 text-xs 2xl:text-sm text-purple-950 font-medium">
-                ⚡ <strong>Χρήσιμο:</strong> Τα χιαστί γινόμενα μάς επιτρέπουν να βρίσκουμε αμέσως έναν άγνωστο όρο σε δύο ίσα κλάσματα.
+                ⚡ {t.step4Useful}
               </div>
             </article>
           </div>
@@ -336,13 +538,13 @@ export default function IsodinamaTheoryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>🔬 {toCleanUppercase(t.labBadge)}</span>
               </div>
               <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Εξερεύνηση Ισοδυναμίας σε Πραγματικό Χρόνο
+                {t.labTitle}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Άλλαξε το αρχικό κλάσμα και επίλεξε τον πολλαπλασιαστή διαπλάτυνσης για να δεις πώς μετασχηματίζεται το σχήμα διατηρώντας την ίδια επιφάνεια.
+                {t.labDesc}
               </p>
             </div>
 
@@ -357,7 +559,7 @@ export default function IsodinamaTheoryPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🍕 Κυκλικοί Δίσκοι
+                {t.viewPies}
               </button>
               <button
                 type="button"
@@ -368,7 +570,7 @@ export default function IsodinamaTheoryPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🍫 Ορθογώνιες Ράβδοι
+                {t.viewBars}
               </button>
             </div>
           </div>
@@ -376,14 +578,14 @@ export default function IsodinamaTheoryPage() {
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
             {/* Αριστερή Στήλη: Χειριστήρια & Μαθηματική Εξίσωση */}
             <div className="xl:col-span-5 2xl:col-span-4 space-y-6 bg-slate-50 p-6 sm:p-7 2xl:p-9 rounded-3xl border border-slate-200">
-              <h4 className="text-xs 2xl:text-sm font-black tracking-wider text-slate-500">
-                ΡΥΘΜΙΣΕΙΣ ΚΛΑΣΜΑΤΟΣ
+              <h4 className="text-xs 2xl:text-sm font-black tracking-wider text-slate-500 uppercase">
+                {toCleanUppercase(t.settingsTitle)}
               </h4>
 
               {/* Stepper Αριθμητή */}
               <div className="space-y-2">
                 <div className="h-8 flex items-center justify-between text-left">
-                  <span className="text-sm 2xl:text-base font-bold text-slate-800">Αρχικός Αριθμητής:</span>
+                  <span className="text-sm 2xl:text-base font-bold text-slate-800">{t.numSetting}</span>
                   <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-lg 2xl:text-xl text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
                     {num}
                   </span>
@@ -392,7 +594,7 @@ export default function IsodinamaTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση αριθμητή κατά 1"
+                    aria-label="Decrease numerator by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -411,13 +613,13 @@ export default function IsodinamaTheoryPage() {
                     step={1}
                     value={num}
                     onChange={(e) => setNum(Number(e.target.value))}
-                    aria-label="Αριθμητής"
+                    aria-label="Numerator"
                     className="w-full min-w-0 max-w-full accent-blue-600 cursor-pointer"
                   />
 
                   <button
                     type="button"
-                    aria-label="Αύξηση αριθμητή κατά 1"
+                    aria-label="Increase numerator by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -434,7 +636,7 @@ export default function IsodinamaTheoryPage() {
               {/* Stepper Παρονομαστή */}
               <div className="space-y-2 pt-3 border-t border-slate-200">
                 <div className="h-8 flex items-center justify-between text-left">
-                  <span className="text-sm 2xl:text-base font-bold text-slate-800">Αρχικός Παρονομαστής:</span>
+                  <span className="text-sm 2xl:text-base font-bold text-slate-800">{t.denSetting}</span>
                   <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-lg 2xl:text-xl text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-200">
                     {den}
                   </span>
@@ -443,7 +645,7 @@ export default function IsodinamaTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση παρονομαστή κατά 1"
+                    aria-label="Decrease denominator by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -468,13 +670,13 @@ export default function IsodinamaTheoryPage() {
                       setDen(nextDen);
                       if (num >= nextDen) setNum(nextDen - 1);
                     }}
-                    aria-label="Παρονομαστής"
+                    aria-label="Denominator"
                     className="w-full min-w-0 max-w-full accent-indigo-600 cursor-pointer"
                   />
 
                   <button
                     type="button"
-                    aria-label="Αύξηση παρονομαστή κατά 1"
+                    aria-label="Increase denominator by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -492,7 +694,7 @@ export default function IsodinamaTheoryPage() {
               <div className="space-y-2 pt-3 border-t border-slate-200">
                 <div className="h-8 flex items-center justify-between text-left">
                   <span className="text-sm 2xl:text-base font-bold text-slate-800">
-                    Πολλαπλασιαστής ( · k ):
+                    {t.multSetting}
                   </span>
                   <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-lg 2xl:text-xl text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
                     · {multiplier}
@@ -502,7 +704,7 @@ export default function IsodinamaTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση πολλαπλασιαστή κατά 1"
+                    aria-label="Decrease multiplier by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -521,13 +723,13 @@ export default function IsodinamaTheoryPage() {
                     step={1}
                     value={multiplier}
                     onChange={(e) => setMultiplier(Number(e.target.value))}
-                    aria-label="Πολλαπλασιαστής"
+                    aria-label="Multiplier"
                     className="w-full min-w-0 max-w-full accent-amber-500 cursor-pointer"
                   />
 
                   <button
                     type="button"
-                    aria-label="Αύξηση πολλαπλασιαστή κατά 1"
+                    aria-label="Increase multiplier by 1"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -543,36 +745,20 @@ export default function IsodinamaTheoryPage() {
 
               {/* Μαθηματική Εξίσωση Διαπλάτυνσης */}
               <div className="p-4 2xl:p-6 bg-white rounded-2xl border border-slate-200 space-y-3 shadow-sm">
-                <div className="text-xs 2xl:text-sm font-bold text-slate-500 tracking-wider">
-                  ΜΑΘΗΜΑΤΙΚΗ ΠΡΑΞΗ
+                <div className="text-xs 2xl:text-sm font-bold text-slate-500 tracking-wider uppercase">
+                  {toCleanUppercase(t.mathActionTitle)}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-3 font-mono">
-                  <div className="flex flex-col items-center leading-none">
-                    <span className="text-blue-600 font-black text-xl 2xl:text-2xl">{num}</span>
-                    <span className="w-8 h-0.5 bg-slate-800 my-1"></span>
-                    <span className="text-blue-600 font-black text-xl 2xl:text-2xl">{den}</span>
-                  </div>
-
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 font-mono">
+                  <Fraction num={num} den={den} size="xl" className="text-blue-600" />
                   <span className="font-sans text-slate-400 text-lg">＝</span>
-
-                  <div className="flex flex-col items-center leading-none text-amber-600 font-bold text-sm 2xl:text-base">
-                    <span>{num} · {multiplier}</span>
-                    <span className="w-14 h-0.5 bg-slate-800 my-1"></span>
-                    <span>{den} · {multiplier}</span>
-                  </div>
-
+                  <Fraction num={`${num} · ${multiplier}`} den={`${den} · ${multiplier}`} size="md" className="text-amber-600" />
                   <span className="font-sans text-slate-400 text-lg">＝</span>
-
-                  <div className="flex flex-col items-center leading-none">
-                    <span className="text-emerald-600 font-black text-xl 2xl:text-2xl">{isoNum}</span>
-                    <span className="w-8 h-0.5 bg-slate-800 my-1"></span>
-                    <span className="text-emerald-600 font-black text-xl 2xl:text-2xl">{isoDen}</span>
-                  </div>
+                  <Fraction num={isoNum} den={isoDen} size="xl" className="text-emerald-600" />
                 </div>
 
                 <div className="pt-2 border-t border-slate-100 text-xs 2xl:text-sm text-slate-600 text-center font-mono">
-                  Δεκαδική τιμή: {(num / den).toLocaleString('el-GR', { maximumFractionDigits: 3 })}
+                  {t.decimalValueLabel} {(num / den).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US', { maximumFractionDigits: 3 })}
                 </div>
               </div>
             </div>
@@ -580,8 +766,8 @@ export default function IsodinamaTheoryPage() {
             {/* Δεξιά Στήλη: Παράλληλη Οπτική Σύγκριση (Αρχικό vs Ισοδύναμο) */}
             <div className="xl:col-span-7 2xl:col-span-8 bg-slate-50 p-6 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 flex flex-col items-center justify-center min-h-[380px] 2xl:min-h-[500px] space-y-6">
               <div className="w-full flex items-center justify-between text-xs sm:text-sm 2xl:text-base font-bold text-slate-500 px-2">
-                <span>ΠΑΡΑΛΛΗΛΗ ΟΠΤΙΚΗ ΣΥΓΚΡΙΣΗ</span>
-                <span className="font-mono text-emerald-600 font-bold">Ίδια επιφάνεια</span>
+                <span>{toCleanUppercase(t.comparisonTitle)}</span>
+                <span className="font-mono text-emerald-600 font-bold">{t.sameAreaBadge}</span>
               </div>
 
               {/* Πλέγμα 2 στηλών για τα δύο κλάσματα */}
@@ -589,69 +775,61 @@ export default function IsodinamaTheoryPage() {
                 {/* Κάρτα Αρχικού Κλάσματος */}
                 <div className="w-full max-w-[280px] 2xl:max-w-[340px] bg-white p-5 2xl:p-7 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center space-y-4">
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-xs 2xl:text-sm font-black tracking-wider">
-                    ΑΡΧΙΚΟ ΚΛΑΣΜΑ
+                    {toCleanUppercase(t.initialFractionBadge)}
                   </div>
 
-                  <div className="flex flex-col items-center leading-none font-mono font-black text-2xl 2xl:text-3xl text-blue-600">
-                    <span>{num}</span>
-                    <span className="w-10 h-0.5 bg-slate-800 my-1"></span>
-                    <span>{den}</span>
-                  </div>
+                  <Fraction num={num} den={den} size="xl" className="text-blue-600" />
 
                   {viewType === 'pie' ? (
                     <div className="w-full aspect-square max-w-[190px] 2xl:max-w-[240px]">
-                      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm">
+                      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm" aria-label="Initial pie visual">
                         {renderPieSlices(num, den, 'fill-blue-500')}
                       </svg>
                     </div>
                   ) : (
                     <div className="w-full aspect-[300/120] max-w-[240px] 2xl:max-w-[280px]">
-                      <svg viewBox="0 0 300 120" className="w-full h-full drop-shadow-sm">
+                      <svg viewBox="0 0 300 120" className="w-full h-full drop-shadow-sm" aria-label="Initial bar visual">
                         {renderBarParts(num, den, 'fill-blue-500')}
                       </svg>
                     </div>
                   )}
 
                   <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
-                    {num} από τα {den} ίσα μέρη
+                    {num} {t.partsOfTotal} {den} {t.equalPartsSuffix}
                   </span>
                 </div>
 
                 {/* Κάρτα Ισοδύναμου Κλάσματος */}
                 <div className="w-full max-w-[280px] 2xl:max-w-[340px] bg-white p-5 2xl:p-7 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center space-y-4">
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg text-xs 2xl:text-sm font-black tracking-wider">
-                    ΙΣΟΔΥΝΑΜΟ ΚΛΑΣΜΑ
+                    {toCleanUppercase(t.equivalentFractionBadge)}
                   </div>
 
-                  <div className="flex flex-col items-center leading-none font-mono font-black text-2xl 2xl:text-3xl text-emerald-600">
-                    <span>{isoNum}</span>
-                    <span className="w-10 h-0.5 bg-slate-800 my-1"></span>
-                    <span>{isoDen}</span>
-                  </div>
+                  <Fraction num={isoNum} den={isoDen} size="xl" className="text-emerald-600" />
 
                   {viewType === 'pie' ? (
                     <div className="w-full aspect-square max-w-[190px] 2xl:max-w-[240px]">
-                      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm">
+                      <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-sm" aria-label="Equivalent pie visual">
                         {renderPieSlices(isoNum, isoDen, 'fill-emerald-500')}
                       </svg>
                     </div>
                   ) : (
                     <div className="w-full aspect-[300/120] max-w-[240px] 2xl:max-w-[280px]">
-                      <svg viewBox="0 0 300 120" className="w-full h-full drop-shadow-sm">
+                      <svg viewBox="0 0 300 120" className="w-full h-full drop-shadow-sm" aria-label="Equivalent bar visual">
                         {renderBarParts(isoNum, isoDen, 'fill-emerald-500')}
                       </svg>
                     </div>
                   )}
 
                   <span className="text-xs 2xl:text-sm text-slate-500 font-medium">
-                    {isoNum} από τα {isoDen} ίσα μέρη
+                    {isoNum} {t.partsOfTotal} {isoDen} {t.equalPartsSuffix}
                   </span>
                 </div>
               </div>
 
               {/* Επεξηγηματικό Callout Συμπεράσματος */}
               <div className="p-4 bg-emerald-600 text-white rounded-2xl text-center font-bold text-xs sm:text-sm 2xl:text-base shadow-sm max-w-xl">
-                📢 Παρατήρησε τα δύο σχήματα: Αν και το δεύτερο είναι κομμένο σε περισσότερα κομμάτια, η χρωματισμένη επιφάνεια παραμένει ακριβώς η ίδια!
+                {t.calloutInsight}
               </div>
             </div>
           </div>
@@ -661,10 +839,10 @@ export default function IsodinamaTheoryPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στα Ισοδύναμα!
+              {t.calloutTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Έλεγξε τις γνώσεις σου με απαιτητικές ασκήσεις διαπλάτυνσης, εύρεσης αγνώστου με χιαστί γινόμενα και απλοποίησης σε ανάγωγα κλάσματα.
+              {t.calloutDesc}
             </p>
           </div>
 
@@ -672,12 +850,29 @@ export default function IsodinamaTheoryPage() {
             href="/e-dimotikou/02-isodinama-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span>🎯 {t.calloutBtn}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>
 
       </div>
+
+      {/* Σταθερό κάτω Footer */}
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3 px-4 sm:px-8">
+        <div className="max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs sm:text-sm 2xl:text-base text-slate-300">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="font-semibold">{t.bottomFooterText}</span>
+          </div>
+          <Link
+            href="/e-dimotikou/02-isodinama-ask"
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base transition active:scale-95 shadow-md"
+          >
+            <span>🎯 {t.bottomFooterBtn}</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </footer>
     </Layout>
   );
 }

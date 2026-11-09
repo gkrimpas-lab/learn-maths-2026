@@ -1,9 +1,9 @@
-// pages/st-dimotikou/03-arithmoi-dekadika-klasmata.js
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// Βοηθητικο component εμφανισης κλασματος με οριζοντια γραμμη (καθαρο JSX, οχι LaTeX)
+// Βοηθητικό component εμφάνισης κλάσματος με οριζόντια γραμμή (καθαρό JSX)
 function Fraction({ num, den, className = '' }) {
   return (
     <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
@@ -17,29 +17,174 @@ function Fraction({ num, den, className = '' }) {
   );
 }
 
-// Μορφοποιηση αριθμου (ακεραιος η δεκαδικος με κομμα)
-function formatNum(val, decimals = 3) {
+// Μορφοποίηση αριθμού
+function formatNum(val, locale = 'el', decimals = 3) {
   if (Number.isInteger(val)) return String(val);
   const rounded = Number(val.toFixed(decimals));
-  return String(rounded).replace('.', ',');
+  return locale === 'en' ? String(rounded) : String(rounded).replace('.', ',');
 }
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Μετατροπή Δεκαδικών και Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDescription: "Μάθε πώς κάθε δεκαδικός αριθμός γράφεται ως δεκαδικό κλάσμα και το αντίστροφο για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    exercisesBtn: "🎯 Ασκήσεις",
+    badgeChapter: "ΚΕΦΑΛΑΙΟ 3 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "Μετατροπή Δεκαδικών & Κλασμάτων",
+    heroDesc: "Μάθε πώς κάθε δεκαδικός αριθμός γράφεται ως δεκαδικό κλάσμα και το αντίστροφο, ανακαλύπτοντας τον κανόνα των μηδενικών και της υποδιαστολής!",
+    heroPills: "Θεωρία, Κανόνες Μετατροπής & Διαδραστικό Γεωμετρικό Πλέγμα Μονάδας",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Κανόνες Μετατροπής σε 3 Βήματα",
+    theorySubtitle: "Η άμεση σχέση μεταξύ των δεκαδικών ψηφίων και των μηδενικών του παρονομαστή.",
+    steps: [
+      {
+        badge: "ΒΗΜΑ 1",
+        sub: "Δεκαδικός σε Κλάσμα",
+        title: "Από Δεκαδικό σε Κλάσμα",
+        body: "Στον αριθμητή γράφουμε τον αριθμό χωρίς την υποδιαστολή. Στον παρονομαστή βάζουμε το 1 με τόσα μηδενικά όσα τα δεκαδικά ψηφία.",
+        tip: "💡 2 δεκαδικά ψηφία σημαίνουν παρονομαστή το 100 (εκατοστά)."
+      },
+      {
+        badge: "ΒΗΜΑ 2",
+        sub: "Κλάσμα σε Δεκαδικό",
+        title: "Από Κλάσμα σε Δεκαδικό",
+        body: "Γράφουμε τον αριθμητή και χωρίζουμε με υποδιαστολή από δεξιά προς τα αριστερά τόσα ψηφία όσα είναι τα μηδενικά του παρονομαστή (10, 100, 1.000).",
+        tip: "⚡ Αν δεν φτάνουν τα ψηφία του αριθμητή, προσθέτουμε μηδενικά στα αριστερά!"
+      },
+      {
+        badge: "ΒΗΜΑ 3",
+        sub: "Η Ακέραιη Μονάδα",
+        title: "Μονάδα & Υποδιαιρέσεις",
+        body: "Το δεκαδικό κλάσμα δείχνει σε πόσα ίσα μέρη χωρίστηκε η ακέραιη μονάδα (10, 100 ή 1.000) και πόσα από αυτά πήραμε.",
+        unitLabel: "1 Μονάδα ＝",
+        tip: "🎯 Όταν αριθμητής και παρονομαστής είναι ίσοι, το κλάσμα ισούται ακριβώς με 1."
+      }
+    ],
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Διαδραστικός Μετατροπέας Δεκαδικών & Κλασμάτων",
+    labDesc: "Επίλεξε κατεύθυνση μετατροπής, δοκίμασε αριθμούς και παρατήρησε το δυναμικό πλέγμα της μονάδας!",
+    tabToKlasma: "🔢 Δεκαδικός ➔ Κλάσμα",
+    tabToDekadiko: "🍕 Κλάσμα ➔ Δεκαδικός",
+    inputLabelDec: "ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΔΕΚΑΔΙΚΟ (0 ΕΩΣ 1):",
+    inputBadgeDec: "έως 3 δεκαδικά",
+    inputPlaceholderDec: "π.χ. 0,45",
+    numeratorLabel: "ΑΡΙΘΜΗΤΗΣ:",
+    denominatorLabel: "ΠΑΡΟΝΟΜΑΣΤΗΣ:",
+    resultBadge: "✨ ΑΠΟΤΕΛΕΣΜΑ ΜΕΤΑΤΡΟΠΗΣ:",
+    explanationDecToFrac: (digits) => `${digits} δεκαδικά ψηφία ➔ ${digits} μηδενικά στον παρονομαστή`,
+    explanationFracToDec: (zeros) => `${zeros} μηδενικά ➔ ${zeros} δεκαδικά ψηφία`,
+    gridTitle: "📊 ΓΕΩΜΕΤΡΙΚΟ ΠΛΕΓΜΑ ΑΚΕΡΑΙΑΣ ΜΟΝΑΔΑΣ",
+    gridSub: (den, label) => `Η ακέραιη μονάδα (τετράγωνο) χωρισμένη σε ${den} ίσα μέρη (${label}).`,
+    gridCovered: "Καλύφθηκαν:",
+    gridFooter: "🔍 Παρατήρησε πώς αλλάζει το μέγεθος των υποδιαιρέσεων ανάλογα με τον παρονομαστή.",
+    stepRulesTitle: "🧬 ΒΗΜΑ-ΒΗΜΑ ΜΑΘΗΜΑΤΙΚΟΣ ΚΑΝΟΝΑΣ ΜΕΤΑΤΡΟΠΗΣ",
+    stepRulesBadge: "Πλήρης Εμφάνιση",
+    rule1Title: "1. Από Δεκαδικό σε Κλάσμα:",
+    rule2Title: "2. Από Κλάσμα σε Δεκαδικό:",
+    gridLabels: {
+      10: 'δέκατα',
+      100: 'εκατοστά',
+      1000: 'χιλιοστά'
+    },
+    presets: [
+      { label: '🥛 0,5 λ. (Γάλα)', val: '0,5' },
+      { label: '💶 0,75 € (Τιμή)', val: '0,75' },
+      { label: '📏 0,125 μ. (Μήκος)', val: '0,125' },
+      { label: '⚖️ 0,8 κιλά (Μέλι)', val: '0,8' }
+    ],
+    ctaTitle: "Ώρα για Εξάσκηση στα Δεκαδικά Κλάσματα!",
+    ctaDesc: "Κατανόησες τη σχέση δεκαδικών αριθμών και δεκαδικών κλασμάτων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "🎯 Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "Converting Decimals and Fractions - Grade 6 | LearnMaths.gr",
+    pageDescription: "Learn how every decimal number can be expressed as a decimal fraction and vice versa for Grade 6.",
+    backText: "Grade 6",
+    exercisesBtn: "🎯 Exercises",
+    badgeChapter: "CHAPTER 3 • GRADE 6",
+    heroTitle: "Converting Decimals & Fractions",
+    heroDesc: "Discover how every decimal number is written as a decimal fraction and vice versa, mastering the rule of zeros and the decimal point!",
+    heroPills: "Theory, Conversion Rules & Interactive Geometric Unit Grid",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Conversion Rules in 3 Steps",
+    theorySubtitle: "The direct relationship between decimal digits and the zeros of the denominator.",
+    steps: [
+      {
+        badge: "STEP 1",
+        sub: "Decimal to Fraction",
+        title: "From Decimal to Fraction",
+        body: "In the numerator, write the number without the decimal point. In the denominator, write 1 followed by as many zeros as there are decimal places.",
+        tip: "💡 2 decimal digits mean a denominator of 100 (hundredths)."
+      },
+      {
+        badge: "STEP 2",
+        sub: "Fraction to Decimal",
+        title: "From Fraction to Decimal",
+        body: "Write the numerator and move the decimal point from right to left by as many places as there are zeros in the denominator (10, 100, 1,000).",
+        tip: "⚡ If there are not enough digits in the numerator, add zeros to the left!"
+      },
+      {
+        badge: "STEP 3",
+        sub: "The Whole Unit",
+        title: "Whole Unit & Subdivisions",
+        body: "A decimal fraction shows how many equal parts the whole unit was divided into (10, 100, or 1,000) and how many parts we took.",
+        unitLabel: "1 Whole Unit ＝",
+        tip: "🎯 When numerator and denominator are equal, the fraction is exactly equal to 1."
+      }
+    ],
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: "Interactive Decimal & Fraction Converter",
+    labDesc: "Choose conversion direction, test numbers, and observe the dynamic unit grid in real time!",
+    tabToKlasma: "🔢 Decimal ➔ Fraction",
+    tabToDekadiko: "🍕 Fraction ➔ Decimal",
+    inputLabelDec: "ENTER DECIMAL (0 TO 1):",
+    inputBadgeDec: "up to 3 decimal places",
+    inputPlaceholderDec: "e.g. 0.45",
+    numeratorLabel: "NUMERATOR:",
+    denominatorLabel: "DENOMINATOR:",
+    resultBadge: "✨ CONVERSION RESULT:",
+    explanationDecToFrac: (digits) => `${digits} decimal places ➔ ${digits} zeros in denominator`,
+    explanationFracToDec: (zeros) => `${zeros} zeros ➔ ${zeros} decimal places`,
+    gridTitle: "📊 GEOMETRIC UNIT GRID",
+    gridSub: (den, label) => `The whole unit (square) divided into ${den} equal parts (${label}).`,
+    gridCovered: "Covered:",
+    gridFooter: "🔍 Observe how the size of subdivisions changes depending on the denominator.",
+    stepRulesTitle: "🧬 STEP-BY-STEP CONVERSION RULES",
+    stepRulesBadge: "Complete View",
+    rule1Title: "1. Decimal to Fraction:",
+    rule2Title: "2. Fraction to Decimal:",
+    gridLabels: {
+      10: 'tenths',
+      100: 'hundredths',
+      1000: 'thousandths'
+    },
+    presets: [
+      { label: '🥛 0.5 L (Milk)', val: '0.5' },
+      { label: '💶 0.75 € (Price)', val: '0.75' },
+      { label: '📏 0.125 m (Length)', val: '0.125' },
+      { label: '⚖️ 0.8 kg (Honey)', val: '0.8' }
+    ],
+    ctaTitle: "Time to Practice Decimal Fractions!",
+    ctaDesc: "Understood the link between decimals and decimal fractions? Test your skills with 10 interactive questions with detailed explanations!",
+    ctaBtn: "🎯 Start Exercises"
+  }
+};
+
 export default function MetatropiDekadikaKlasmataPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const isEn = locale === 'en';
+  const t = TRANSLATIONS[locale];
+
   const [activeTab, setActiveTab] = useState('toKlasma'); // 'toKlasma' ή 'toDekadiko'
   
   // Κατάσταση για Δεκαδικός -> Κλάσμα
-  const [dekadikos, setDekadikos] = useState('0,45');
+  const [dekadikos, setDekadikos] = useState(isEn ? '0.45' : '0,45');
   
   // Κατάσταση για Κλάσμα -> Δεκαδικός
   const [arithmitis, setArithmitis] = useState(45);
   const [paronomastis, setParonomastis] = useState(100); // 10, 100, 1000
-
-  const presetsDekadikos = [
-    { label: '🥛 0,5 λ. (Γάλα)', val: '0,5' },
-    { label: '💶 0,75 € (Τιμή)', val: '0,75' },
-    { label: '📏 0,125 μ. (Μήκος)', val: '0,125' },
-    { label: '⚖️ 0,8 κιλά (Μέλι)', val: '0,8' }
-  ];
 
   // Υπολογισμοί για Δεκαδικό -> Κλάσμα
   const sanitizedDekadikos = dekadikos.replace(',', '.');
@@ -120,24 +265,23 @@ export default function MetatropiDekadikaKlasmataPage() {
   };
 
   const getGridLabel = () => {
-    if (currentDenominator === 10) return 'δέκατα';
-    if (currentDenominator === 100) return 'εκατοστά';
-    return 'χιλιοστά';
+    return t.gridLabels[currentDenominator] || t.gridLabels[100];
   };
 
   return (
     <Layout
-      title="Μετατροπή Δεκαδικών και Κλασμάτων - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μάθε πώς κάθε δεκαδικός αριθμός γράφεται ως δεκαδικό κλάσμα και το αντίστροφο για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDescription}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/03-arithmoi-dekadika-klasmata-ask"
+          locale={locale}
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.exercisesBtn}</span>
         </Link>
       }
     >
@@ -147,26 +291,27 @@ export default function MetatropiDekadikaKlasmataPage() {
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 3 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.badgeChapter}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Μετατροπή Δεκαδικών &amp; Κλασμάτων
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε πώς κάθε δεκαδικός αριθμός γράφεται ως <strong>δεκαδικό κλάσμα</strong> και το αντίστροφο, ανακαλύπτοντας τον κανόνα των μηδενικών και της υποδιαστολής!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Κανόνες Μετατροπής &amp; Διαδραστικό Γεωμετρικό Πλέγμα Μονάδας</span>
+              <span>{t.heroPills}</span>
             </div>
             <Link
               href="/st-dimotikou/03-arithmoi-dekadika-klasmata-ask"
+              locale={locale}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -176,31 +321,32 @@ export default function MetatropiDekadikaKlasmataPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Κανόνες Μετατροπής σε 3 Βήματα
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Η άμεση σχέση μεταξύ των δεκαδικών ψηφίων και των μηδενικών του παρονομαστή.
+              {t.theorySubtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
+            {/* Βήμα 1 */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {t.steps[0].badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Δεκαδικός σε Κλάσμα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.steps[0].sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Από Δεκαδικό σε Κλάσμα
+                  {t.steps[0].title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Στον <strong>αριθμητή</strong> γράφουμε τον αριθμό χωρίς την υποδιαστολή. Στον <strong>παρονομαστή</strong> βάζουμε το 1 με τόσα μηδενικά όσα τα δεκαδικά ψηφία.
+                  {t.steps[0].body}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center flex items-center justify-center gap-3 font-bold">
-                  <span className="text-blue-700 text-base">0,75</span>
+                  <span className="text-blue-700 text-base">{isEn ? '0.75' : '0,75'}</span>
                   <span className="text-slate-400">➔</span>
                   <div className="flex items-center text-emerald-800 text-base">
                     <Fraction num="75" den="100" />
@@ -209,23 +355,24 @@ export default function MetatropiDekadikaKlasmataPage() {
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 2 δεκαδικά ψηφία σημαίνουν παρονομαστή το 100 (εκατοστά).
+                {t.steps[0].tip}
               </div>
             </article>
 
+            {/* Βήμα 2 */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {t.steps[1].badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Κλάσμα σε Δεκαδικό</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.steps[1].sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Από Κλάσμα σε Δεκαδικό
+                  {t.steps[1].title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Γράφουμε τον αριθμητή και χωρίζουμε με <strong>υποδιαστολή από δεξιά προς τα αριστερά</strong> τόσα ψηφία όσα είναι τα μηδενικά του παρονομαστή (10, 100, 1.000).
+                  {t.steps[1].body}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center flex items-center justify-center gap-3 font-bold">
@@ -233,42 +380,43 @@ export default function MetatropiDekadikaKlasmataPage() {
                     <Fraction num="6" den="100" />
                   </div>
                   <span className="text-slate-400">➔</span>
-                  <span className="text-indigo-700 text-base">0,06</span>
+                  <span className="text-indigo-700 text-base">{isEn ? '0.06' : '0,06'}</span>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ Αν δεν φτάνουν τα ψηφία του αριθμητή, προσθέτουμε μηδενικά στα αριστερά!
+                {t.steps[1].tip}
               </div>
             </article>
 
+            {/* Βήμα 3 */}
             <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {t.steps[2].badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Η Ακέραιη Μονάδα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.steps[2].sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Μονάδα &amp; Υποδιαιρέσεις
+                  {t.steps[2].title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Το δεκαδικό κλάσμα δείχνει σε πόσα ίσα μέρη χωρίστηκε η ακέραιη μονάδα (10, 100 ή 1.000) και πόσα από αυτά πήραμε.
+                  {t.steps[2].body}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm text-slate-800 font-mono text-center font-bold flex flex-wrap items-center justify-center gap-1.5">
-                  <span>1 Μονάδα ＝</span>
+                  <span>{t.steps[2].unitLabel}</span>
                   <Fraction num="10" den="10" />
                   <span>＝</span>
                   <Fraction num="100" den="100" />
                   <span>＝</span>
-                  <Fraction num="1.000" den="1.000" />
+                  <Fraction num={isEn ? "1,000" : "1.000"} den={isEn ? "1,000" : "1.000"} />
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                🎯 Όταν αριθμητής και παρονομαστής είναι ίσοι, το κλάσμα ισούται ακριβώς με 1.
+                {t.steps[2].tip}
               </div>
             </article>
           </div>
@@ -279,13 +427,13 @@ export default function MetatropiDekadikaKlasmataPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>{t.labBadge}</span>
               </div>
               <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Διαδραστικός Μετατροπέας Δεκαδικών &amp; Κλασμάτων
+                {t.labTitle}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Επίλεξε κατεύθυνση μετατροπής, δοκίμασε αριθμούς και παρατήρησε το δυναμικό πλέγμα της μονάδας!
+                {t.labDesc}
               </p>
             </div>
 
@@ -294,20 +442,20 @@ export default function MetatropiDekadikaKlasmataPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab('toKlasma')}
-                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center touch-manipulation active:scale-95 ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center touch-manipulation active:scale-95 cursor-pointer ${
                   activeTab === 'toKlasma' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🔢 Δεκαδικός ➔ Κλάσμα
+                {t.tabToKlasma}
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('toDekadiko')}
-                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center touch-manipulation active:scale-95 ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all text-center touch-manipulation active:scale-95 cursor-pointer ${
                   activeTab === 'toDekadiko' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🍕 Κλάσμα ➔ Δεκαδικός
+                {t.tabToDekadiko}
               </button>
             </div>
           </div>
@@ -322,10 +470,10 @@ export default function MetatropiDekadikaKlasmataPage() {
                   <>
                     <div className="flex justify-between items-center">
                       <label className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block">
-                        Πληκτρολογησε Δεκαδικο (0 εως 1):
+                        {t.inputLabelDec}
                       </label>
                       <span className="text-[11px] sm:text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                        έως 3 δεκαδικά
+                        {t.inputBadgeDec}
                       </span>
                     </div>
                     <input
@@ -333,10 +481,13 @@ export default function MetatropiDekadikaKlasmataPage() {
                       inputMode="decimal"
                       value={dekadikos}
                       onChange={(e) => {
-                        let val = e.target.value.replace(/\./g, ',').replace(/[^0-9,]/g, '');
-                        if (val.startsWith(',')) val = '0' + val;
-                        const commaParts = val.split(',');
-                        if ((val.match(/,/g) || []).length <= 1 && (!commaParts[1] || commaParts[1].length <= 3)) {
+                        let val = isEn
+                          ? e.target.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')
+                          : e.target.value.replace(/\./g, ',').replace(/[^0-9,]/g, '');
+                        const sep = isEn ? '.' : ',';
+                        if (val.startsWith(sep)) val = '0' + val;
+                        const sepParts = val.split(sep);
+                        if ((val.match(new RegExp(`\\${sep}`, 'g')) || []).length <= 1 && (!sepParts[1] || sepParts[1].length <= 3)) {
                           const numCheck = parseFloat(val.replace(',', '.'));
                           if (isNaN(numCheck) || numCheck <= 1) {
                             setDekadikos(val);
@@ -344,15 +495,15 @@ export default function MetatropiDekadikaKlasmataPage() {
                         }
                       }}
                       className="text-xl sm:text-2xl md:text-3xl font-black text-center p-3 bg-white border-2 border-blue-200 rounded-2xl shadow-sm focus:border-blue-500 outline-none transition-all w-full tracking-wider text-blue-600 font-mono"
-                      placeholder="π.χ. 0,45"
+                      placeholder={t.inputPlaceholderDec}
                     />
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      {presetsDekadikos.map((p, idx) => (
+                      {t.presets.map((p, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => setDekadikos(p.val)}
-                          className="bg-white hover:bg-blue-50 hover:text-blue-700 text-slate-700 text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 transition shadow-sm touch-manipulation active:scale-95"
+                          className="bg-white hover:bg-blue-50 hover:text-blue-700 text-slate-700 text-[11px] sm:text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-200 transition shadow-sm touch-manipulation active:scale-95 cursor-pointer"
                         >
                           {p.label}
                         </button>
@@ -363,13 +514,13 @@ export default function MetatropiDekadikaKlasmataPage() {
                   <>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between flex-wrap gap-2">
-                        <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">Αριθμητης:</span>
+                        <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">{t.numeratorLabel}</span>
                         <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-44 gap-2">
                           <button
                             type="button"
-                            aria-label="Μείωση αριθμητή"
+                            aria-label="Decrease numerator"
                             onClick={() => setArithmitis(Math.max(0, arithmitis - 1))}
-                            className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                            className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base cursor-pointer"
                           >
                             －
                           </button>
@@ -389,9 +540,9 @@ export default function MetatropiDekadikaKlasmataPage() {
                           />
                           <button
                             type="button"
-                            aria-label="Αύξηση αριθμητή"
+                            aria-label="Increase numerator"
                             onClick={() => setArithmitis(Math.min(paronomastis, arithmitis + 1))}
-                            className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
+                            className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base cursor-pointer"
                           >
                             ＋
                           </button>
@@ -399,7 +550,7 @@ export default function MetatropiDekadikaKlasmataPage() {
                       </div>
 
                       <div className="flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-slate-200">
-                        <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">Παρονομαστης:</span>
+                        <span className="text-xs 2xl:text-sm font-black text-slate-600 uppercase tracking-wider">{t.denominatorLabel}</span>
                         <div className="flex gap-2">
                           {[10, 100, 1000].map((den) => (
                             <button
@@ -409,13 +560,13 @@ export default function MetatropiDekadikaKlasmataPage() {
                                 setParonomastis(den);
                                 if (arithmitis > den) setArithmitis(den);
                               }}
-                              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all touch-manipulation active:scale-95 ${
+                              className={`px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all touch-manipulation active:scale-95 cursor-pointer ${
                                 paronomastis === den
                                   ? 'bg-blue-600 text-white shadow-sm'
                                   : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
                               }`}
                             >
-                              {den}
+                              {den.toLocaleString(isEn ? 'en-US' : 'el-GR')}
                             </button>
                           ))}
                         </div>
@@ -428,7 +579,7 @@ export default function MetatropiDekadikaKlasmataPage() {
               {/* 2. DYNAMIC READOUT */}
               <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl space-y-3 shadow-md flex flex-col justify-center items-center text-center">
                 <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider block">
-                  ✨ Αποτελεσμα Μετατροπης:
+                  {t.resultBadge}
                 </span>
                 
                 {activeTab === 'toKlasma' ? (
@@ -438,38 +589,38 @@ export default function MetatropiDekadikaKlasmataPage() {
                     </span>
                     <span className="text-amber-400">➔</span>
                     <div className="inline-flex items-center bg-white/10 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-xl text-emerald-400">
-                      <Fraction num={dynamicNum} den={dynamicDen} />
+                      <Fraction num={dynamicNum} den={dynamicDen.toLocaleString(isEn ? 'en-US' : 'el-GR')} />
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-3 sm:gap-4 text-xl sm:text-2xl md:text-3xl font-black font-mono flex-wrap">
                     <div className="inline-flex items-center bg-white/10 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-xl text-emerald-400">
-                      <Fraction num={arithmitis} den={paronomastis} />
+                      <Fraction num={arithmitis} den={paronomastis.toLocaleString(isEn ? 'en-US' : 'el-GR')} />
                     </div>
                     <span className="text-amber-400">➔</span>
                     <span className="bg-amber-400 text-slate-900 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-md">
-                      {formatNum(arithmitis / paronomastis, paronomastis === 10 ? 1 : paronomastis === 100 ? 2 : 3)}
+                      {formatNum(arithmitis / paronomastis, locale, paronomastis === 10 ? 1 : paronomastis === 100 ? 2 : 3)}
                     </span>
                   </div>
                 )}
 
                 <p className="text-xs sm:text-sm text-blue-100 font-medium leading-relaxed">
                   {activeTab === 'toKlasma' 
-                    ? `${numDigits} δεκαδικά ψηφία ➔ ${numDigits} μηδενικά στον παρονομαστή`
-                    : `${paronomastis.toString().length - 1} μηδενικά ➔ ${paronomastis.toString().length - 1} δεκαδικά ψηφία`}
+                    ? t.explanationDecToFrac(numDigits)
+                    : t.explanationFracToDec(paronomastis.toString().length - 1)}
                 </p>
               </div>
 
             </div>
 
-            {/* ROW 2: DYNAMIC SVG UNIT GRID - 100% FLUID ΧΩΡΙΣ SCROLL */}
+            {/* ROW 2: DYNAMIC SVG UNIT GRID */}
             <div className="bg-slate-50 border border-slate-200 p-4 sm:p-6 rounded-2xl flex flex-col items-center justify-between space-y-4 sm:space-y-6">
               <div className="text-center space-y-1">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                  📊 Γεωμετρικο Πλεγμα Ακεραιας Μοναδας
+                  {t.gridTitle}
                 </span>
                 <p className="text-xs sm:text-sm text-slate-500">
-                  Η ακέραιη μονάδα (τετράγωνο) χωρισμένη σε <strong className="text-slate-800">{currentDenominator}</strong> ίσα μέρη ({getGridLabel()}).
+                  {t.gridSub(currentDenominator.toLocaleString(isEn ? 'en-US' : 'el-GR'), getGridLabel())}
                 </p>
               </div>
 
@@ -484,12 +635,12 @@ export default function MetatropiDekadikaKlasmataPage() {
 
               <div className="bg-white border border-slate-200 px-4 sm:px-6 py-2.5 rounded-xl shadow-sm text-center">
                 <span className="text-xs sm:text-sm md:text-base font-black text-slate-800 tabular-nums">
-                  Καλύφθηκαν: <span className="text-amber-600 font-mono text-base sm:text-lg">{currentNumerator}</span> / {currentDenominator} {getGridLabel()}
+                  {t.gridCovered} <span className="text-amber-600 font-mono text-base sm:text-lg">{currentNumerator}</span> / {currentDenominator.toLocaleString(isEn ? 'en-US' : 'el-GR')} {getGridLabel()}
                 </span>
               </div>
 
               <div className="text-center text-[11px] sm:text-xs font-bold text-slate-400 pt-1">
-                <span>🔍 Παρατήρησε πώς αλλάζει το μέγεθος των υποδιαιρέσεων ανάλογα με τον παρονομαστή.</span>
+                <span>{t.gridFooter}</span>
               </div>
             </div>
 
@@ -497,33 +648,45 @@ export default function MetatropiDekadikaKlasmataPage() {
             <div className="bg-white border border-slate-200 p-4 sm:p-5 rounded-2xl space-y-4 shadow-sm">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-700 flex items-center gap-1.5 uppercase">
-                  🧬 Βημα-Βημα Μαθηματικος Κανονας Μετατροπης
+                  {t.stepRulesTitle}
                 </span>
                 <span className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full">
-                  Πλήρης Εμφάνιση
+                  {t.stepRulesBadge}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs sm:text-sm text-blue-800 uppercase tracking-wider block">
-                    1. Απο Δεκαδικο σε Κλασμα:
+                    {t.rule1Title}
                   </span>
                   <ul className="text-xs sm:text-sm text-slate-600 space-y-1.5">
-                    <li>• <strong>0,8</strong> (1 ψηφίο) ➔ <Fraction num="8" den="10" className="text-xs" /> (δέκατα)</li>
-                    <li>• <strong>0,45</strong> (2 ψηφία) ➔ <Fraction num="45" den="100" className="text-xs" /> (εκατοστά)</li>
-                    <li>• <strong>0,125</strong> (3 ψηφία) ➔ <Fraction num="125" den="1.000" className="text-xs" /> (χιλιοστά)</li>
+                    <li>
+                      <strong>{isEn ? '0.8' : '0,8'}</strong> ({isEn ? '1 digit' : '1 ψηφίο'}) ➔ <Fraction num="8" den="10" className="text-xs" /> ({isEn ? 'tenths' : 'δέκατα'})
+                    </li>
+                    <li>
+                      <strong>{isEn ? '0.45' : '0,45'}</strong> ({isEn ? '2 digits' : '2 ψηφία'}) ➔ <Fraction num="45" den="100" className="text-xs" /> ({isEn ? 'hundredths' : 'εκατοστά'})
+                    </li>
+                    <li>
+                      <strong>{isEn ? '0.125' : '0,125'}</strong> ({isEn ? '3 digits' : '3 ψηφία'}) ➔ <Fraction num="125" den={isEn ? "1,000" : "1.000"} className="text-xs" /> ({isEn ? 'thousandths' : 'χιλιοστά'})
+                    </li>
                   </ul>
                 </div>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
                   <span className="font-black text-xs sm:text-sm text-emerald-800 uppercase tracking-wider block">
-                    2. Απο Κλασμα σε Δεκαδικο:
+                    {t.rule2Title}
                   </span>
                   <ul className="text-xs sm:text-sm text-slate-600 space-y-1.5">
-                    <li>• <Fraction num="5" den="10" className="text-xs" /> (1 μηδενικό) ➔ <strong>0,5</strong></li>
-                    <li>• <Fraction num="7" den="100" className="text-xs" /> (2 μηδενικά) ➔ <strong>0,07</strong> (προσθήκη μηδενικού)</li>
-                    <li>• <Fraction num="34" den="1.000" className="text-xs" /> (3 μηδενικά) ➔ <strong>0,034</strong></li>
+                    <li>
+                      <Fraction num="5" den="10" className="text-xs" /> ({isEn ? '1 zero' : '1 μηδενικό'}) ➔ <strong>{isEn ? '0.5' : '0,5'}</strong>
+                    </li>
+                    <li>
+                      <Fraction num="7" den="100" className="text-xs" /> ({isEn ? '2 zeros' : '2 μηδενικά'}) ➔ <strong>{isEn ? '0.07' : '0,07'}</strong> ({isEn ? 'add leading zero' : 'προσθήκη μηδενικού'})
+                    </li>
+                    <li>
+                      <Fraction num="34" den={isEn ? "1,000" : "1.000"} className="text-xs" /> ({isEn ? '3 zeros' : '3 μηδενικά'}) ➔ <strong>{isEn ? '0.034' : '0,034'}</strong>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -536,18 +699,19 @@ export default function MetatropiDekadikaKlasmataPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στα Δεκαδικά Κλάσματα!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Κατανόησες τη σχέση δεκαδικών αριθμών και δεκαδικών κλασμάτων; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              {t.ctaDesc}
             </p>
           </div>
 
           <Link
             href="/st-dimotikou/03-arithmoi-dekadika-klasmata-ask"
+            locale={locale}
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span>{t.ctaBtn}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

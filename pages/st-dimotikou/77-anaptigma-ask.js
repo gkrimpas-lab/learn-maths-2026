@@ -1,19 +1,22 @@
 // pages/st-dimotikou/77-anaptigma-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // -------------------------------------------------------------
-// DEFENSIVE UTILITY FUNCTIONS
+// DEFENSIVE UTILITY FUNCTIONS & TYPOGRAPHY
 // -------------------------------------------------------------
 
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 function randInt(min, max) {
@@ -29,9 +32,20 @@ function shuffle(array) {
   return arr;
 }
 
-function formatNum(val) {
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  const loc = locale === 'el' ? 'el-GR' : 'en-US';
+  return Number(val).toLocaleString(loc, { maximumFractionDigits: 4 });
+}
+
+// Visual Fraction component: αριθμητής πάνω, κλασματική γραμμή, παρονομαστής κάτω
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-0.5 sm:mx-1 text-center font-mono leading-none text-[0.85em] sm:text-[0.9em] shrink-0 max-w-full ${className}`}>
+      <span className="border-b border-current pb-0.5 px-0.5 sm:px-1 break-all">{num}</span>
+      <span className="pt-0.5 px-0.5 sm:px-1 break-all">{den}</span>
+    </span>
+  );
 }
 
 // Διασφάλιση ακριβώς 4 μοναδικών επιλογών για ερωτήσεις MCQ
@@ -46,10 +60,18 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
     }
   }
 
-  let counter = 1;
+  let offset = 6;
   while (optionsSet.size < 4) {
-    optionsSet.add(`${correctText} (${counter})`);
-    counter++;
+    const numPart = parseFloat(String(correctText).replace(/[^0-9.,]/g, '').replace(',', '.'));
+    if (!isNaN(numPart)) {
+      const unit = String(correctText).replace(/[0-9.,\s]/g, '');
+      const fakeNum = Math.round(numPart + offset);
+      const fakeOpt = unit ? `${fakeNum} ${unit}` : `${fakeNum}`;
+      optionsSet.add(fakeOpt);
+      offset += 6;
+    } else {
+      optionsSet.add(`${correctText} · ${optionsSet.size}`);
+    }
   }
 
   return shuffle([...optionsSet]);
@@ -62,134 +84,141 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 // POOL ΓΙΑ Q9: Ολική Επιφάνεια Αναπτύγματος Κύβου [Ε ＝ 6 · α²]
 const PROBLEM_POOL_Q9 = [
   // 1. Κατασκευή κύβου από χαρτόνι
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const a = randInt(4, 12);
     const faceArea = a * a;
     const totalArea = 6 * faceArea;
-    const correct = `${formatNum(totalArea)} cm²`;
+    const correct = `${formatNum(totalArea, locale)} cm²`;
+    const edgeSym = isEl ? 'α' : 'a';
     return {
-      title: 'ΚΑΤΑΣΚΕΥΗ ΚΥΒΟΥ',
-      prompt: `Ένας μαθητής σχεδιάζει το ανάπτυγμα ενός κύβου με ακμή ${a} cm. Πόσο χαρτόνι σε cm² θα καταλαμβάνει το ανάπτυγμα του κύβου;`,
+      title: isEl ? 'ΚΑΤΑΣΚΕΥΗ ΚΥΒΟΥ' : 'CUBE CONSTRUCTION',
+      prompt: isEl
+        ? `Ένας μαθητής σχεδιάζει το ανάπτυγμα ενός κύβου με ακμή ${formatNum(a, locale)} cm. Πόσο χαρτόνι σε cm² θα καταλαμβάνει το ανάπτυγμα του κύβου;`
+        : `A student designs the net of a cube with edge length ${formatNum(a, locale)} cm. How much cardboard in cm² will the net occupy?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(faceArea)} cm²`,
-        `${formatNum(totalArea + 24)} cm²`,
-        `${formatNum(totalArea - 24 > 0 ? totalArea - 24 : totalArea + 48)} cm²`,
-        `${formatNum(4 * faceArea)} cm²`
+        `${formatNum(faceArea, locale)} cm²`,
+        `${formatNum(totalArea + 24, locale)} cm²`,
+        `${formatNum(totalArea > 24 ? totalArea - 24 : totalArea + 48, locale)} cm²`,
+        `${formatNum(4 * faceArea, locale)} cm²`
       ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: 'Ακμή κύβου (α)', value: `${a} cm` },
-        { label: 'Εμβαδόν 1 έδρας (τετράγωνο)', value: `${a} · ${a} ＝ ${faceArea} cm²` },
-        { label: 'Πλήθος εδρών', value: '6 ίσες έδρες' },
-        { label: 'Ολικό εμβαδόν αναπτύγματος', value: `6 · ${faceArea} ＝ ${formatNum(totalArea)} cm²` }
+        { label: isEl ? `Ακμή κύβου (${edgeSym})` : `Cube edge (${edgeSym})`, value: `${formatNum(a, locale)} cm` },
+        {
+          label: isEl ? 'Εμβαδόν 1 έδρας (τετράγωνο)' : 'Area of 1 face (square)',
+          valueNode: (
+            <span>
+              {edgeSym}<sup>2</sup> ＝ {formatNum(a, locale)} · {formatNum(a, locale)} ＝ {formatNum(faceArea, locale)} cm²
+            </span>
+          )
+        },
+        { label: isEl ? 'Πλήθος εδρών' : 'Number of faces', value: isEl ? '6 ίσες έδρες' : '6 congruent faces' },
+        {
+          label: isEl ? 'Ολικό εμβαδόν αναπτύγματος' : 'Total net area',
+          valueNode: (
+            <span>
+              6 · {formatNum(faceArea, locale)} ＝ {formatNum(totalArea, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `Ο κύβος έχει 6 ίσες τετράγωνες έδρες. Κάθε έδρα έχει εμβαδόν ${a} · ${a} ＝ ${faceArea} cm². Το ανάπτυγμα καλύπτει: 6 · ${faceArea} ＝ ${formatNum(totalArea)} cm².`
+      explanation: isEl
+        ? `Ο κύβος έχει 6 ίσες τετράγωνες έδρες. Κάθε έδρα έχει εμβαδόν ${formatNum(a, locale)} · ${formatNum(a, locale)} ＝ ${formatNum(faceArea, locale)} cm². Το ανάπτυγμα καλύπτει: 6 · ${formatNum(faceArea, locale)} ＝ ${formatNum(totalArea, locale)} cm².`
+        : `The cube has 6 congruent square faces. Each face has an area of ${formatNum(a, locale)} · ${formatNum(a, locale)} ＝ ${formatNum(faceArea, locale)} cm². The net occupies: 6 · ${formatNum(faceArea, locale)} ＝ ${formatNum(totalArea, locale)} cm².`
     };
   },
   // 2. Ξύλινο κουτί κύβος
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const a = randInt(15, 25);
     const faceArea = a * a;
     const totalArea = 6 * faceArea;
-    const correct = `${formatNum(totalArea)} cm²`;
+    const correct = `${formatNum(totalArea, locale)} cm²`;
+    const edgeSym = isEl ? 'α' : 'a';
     return {
-      title: 'ΞΥΛΙΝΟ ΚΟΥΤΙ ΚΥΒΟΣ',
-      prompt: `Ένα ξύλινο κουτί σε σχήμα κύβου έχει ακμή ${a} cm. Πόση είναι η συνολική επιφάνεια και των 6 εξωτερικών του εδρών;`,
+      title: isEl ? 'ΞΥΛΙΝΟ ΚΟΥΤΙ ΚΥΒΟΣ' : 'WOODEN CUBE BOX',
+      prompt: isEl
+        ? `Ένα ξύλινο κουτί σε σχήμα κύβου έχει ακμή ${formatNum(a, locale)} cm. Πόση είναι η συνολική επιφάνεια και των 6 εξωτερικών του εδρών;`
+        : `A wooden box in the shape of a cube has an edge length of ${formatNum(a, locale)} cm. What is the total surface area of all 6 outer faces?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(faceArea)} cm²`,
-        `${formatNum(totalArea + 150)} cm²`,
-        `${formatNum(totalArea - 150 > 0 ? totalArea - 150 : totalArea + 300)} cm²`,
-        `${formatNum(a * 12)} cm²`
+        `${formatNum(faceArea, locale)} cm²`,
+        `${formatNum(totalArea + 150, locale)} cm²`,
+        `${formatNum(totalArea > 150 ? totalArea - 150 : totalArea + 300, locale)} cm²`,
+        `${formatNum(a * 12, locale)} cm²`
       ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: 'Ακμή (α)', value: `${a} cm` },
-        { label: 'Εμβαδόν 1 έδρας', value: `${faceArea} cm²` },
-        { label: 'Πράξη (6 · α²)', value: `6 · ${faceArea} ＝ ${formatNum(totalArea)} cm²` }
+        { label: isEl ? `Ακμή (${edgeSym})` : `Edge (${edgeSym})`, value: `${formatNum(a, locale)} cm` },
+        { label: isEl ? 'Εμβαδόν 1 έδρας' : 'Area of 1 face', value: `${formatNum(faceArea, locale)} cm²` },
+        {
+          label: isEl ? `Πράξη (6 · ${edgeSym}²)` : `Formula (6 · ${edgeSym}²)`,
+          valueNode: (
+            <span>
+              6 · {formatNum(faceArea, locale)} ＝ {formatNum(totalArea, locale)} cm²
+            </span>
+          )
+        }
       ],
-      explanation: `Εολ ＝ 6 · α² ＝ 6 · (${a} · ${a}) ＝ 6 · ${faceArea} ＝ ${formatNum(totalArea)} cm².`
+      explanation: isEl
+        ? `Εολ ＝ 6 · ${edgeSym}² ＝ 6 · (${formatNum(a, locale)} · ${formatNum(a, locale)}) ＝ 6 · ${formatNum(faceArea, locale)} ＝ ${formatNum(totalArea, locale)} cm².`
+        : `Atot ＝ 6 · ${edgeSym}² ＝ 6 · (${formatNum(a, locale)} · ${formatNum(a, locale)}) ＝ 6 · ${formatNum(faceArea, locale)} ＝ ${formatNum(totalArea, locale)} cm².`
     };
   },
-  // 3. Μεγάλο ζάρι
-  () => {
-    const a = 10;
-    const faceArea = 100;
-    const totalArea = 600;
-    const correct = '600 cm²';
+  // 3. Μεγάλο διακοσμητικό ζάρι
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(600, locale)} cm²`;
     return {
-      title: 'ΜΕΓΑΛΟ ΖΑΡΙ',
-      prompt: `Ένα διακοσμητικό ζάρι σε σχήμα κύβου έχει ακμή 10 cm. Πόσο είναι το συνολικό εμβαδόν των 6 εδρών του;`,
-      options: ensureFourUniqueOptions(correct, () => ['100 cm²', '400 cm²', '360 cm²', '1.000 cm²']),
+      title: isEl ? 'ΜΕΓΑΛΟ ΖΑΡΙ' : 'LARGE DIE',
+      prompt: isEl
+        ? 'Ένα διακοσμητικό ζάρι σε σχήμα κύβου έχει ακμή 10 cm. Πόσο είναι το συνολικό εμβαδόν των 6 εδρών του;'
+        : 'A decorative cube die has an edge of 10 cm. What is the total area of its 6 faces?',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(100, locale)} cm²`,
+        `${formatNum(400, locale)} cm²`,
+        `${formatNum(360, locale)} cm²`,
+        `${formatNum(1000, locale)} cm²`
+      ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: 'Ακμή', value: '10 cm' },
-        { label: '1 έδρα', value: '10 · 10 ＝ 100 cm²' },
-        { label: '6 έδρες', value: '6 · 100 ＝ 600 cm²' }
+        { label: isEl ? 'Ακμή' : 'Edge', value: '10 cm' },
+        { label: isEl ? '1 έδρα' : '1 face', value: '10 · 10 ＝ 100 cm²' },
+        { label: isEl ? '6 έδρες' : '6 faces', value: '6 · 100 ＝ 600 cm²' }
       ],
-      explanation: `6 · (10 · 10) ＝ 6 · 100 ＝ 600 cm².`
+      explanation: isEl
+        ? '6 · (10 · 10) ＝ 6 · 100 ＝ 600 cm².'
+        : '6 · (10 · 10) ＝ 6 · 100 ＝ 600 cm².'
     };
   },
-  // 4. Κύβος με ακμή 5 cm
-  () => {
-    const a = 5;
-    const faceArea = 25;
-    const totalArea = 150;
-    const correct = '150 cm²';
+  // 4. Κυβική δεξαμενή σε μέτρα
+  (locale) => {
+    const isEl = locale === 'el';
+    const correct = `${formatNum(24, locale)} m²`;
     return {
-      title: 'ΕΜΒΑΔΟΝ ΑΝΑΠΤΥΓΜΑΤΟΣ ΚΥΒΟΥ',
-      prompt: `Πόσο είναι το εμβαδόν του αναπτύγματος ενός κύβου με ακμή 5 cm;`,
-      options: ensureFourUniqueOptions(correct, () => ['25 cm²', '125 cm²', '100 cm²', '180 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Ακμή (α)', value: '5 cm' },
-        { label: 'Εμβαδόν 1 έδρας', value: '5 · 5 ＝ 25 cm²' },
-        { label: 'Ολικό εμβαδόν', value: '6 · 25 ＝ 150 cm²' }
-      ],
-      explanation: `6 · 25 ＝ 150 cm².`
-    };
-  },
-  // 5. Κύβος σε μέτρα
-  () => {
-    const a = 2; // m
-    const faceArea = 4;
-    const totalArea = 24;
-    const correct = '24 m²';
-    return {
-      title: 'ΚΥΒΙΚΗ ΔΕΞΑΜΕΝΗ',
-      prompt: `Μια κλειστή δεξαμενή έχει σχήμα κύβου με ακμή 2 m. Πόσα τετραγωνικά μέτρα (m²) λαμαρίνας χρειάστηκαν για την κατασκευή και των 6 εδρών της;`,
-      options: ensureFourUniqueOptions(correct, () => ['8 m²', '12 m²', '16 m²', '36 m²']),
+      title: isEl ? 'ΚΥΒΙΚΗ ΔΕΞΑΜΕΝΗ' : 'CUBICAL TANK',
+      prompt: isEl
+        ? 'Μια κλειστή δεξαμενή έχει σχήμα κύβου με ακμή 2 m. Πόσα τετραγωνικά μέτρα (m²) λαμαρίνας χρειάστηκαν για την κατασκευή και των 6 εδρών της;'
+        : 'A closed storage tank is in the shape of a cube with an edge of 2 m. How many square meters (m²) of sheet metal were needed to construct all 6 faces?',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(8, locale)} m²`,
+        `${formatNum(12, locale)} m²`,
+        `${formatNum(16, locale)} m²`,
+        `${formatNum(36, locale)} m²`
+      ]),
       correctAnswer: correct,
       unit: 'm²',
       tableData: [
-        { label: 'Ακμή', value: '2 m' },
-        { label: '1 έδρα', value: '2 · 2 ＝ 4 m²' },
-        { label: '6 έδρες', value: '6 · 4 ＝ 24 m²' }
+        { label: isEl ? 'Ακμή' : 'Edge', value: '2 m' },
+        { label: isEl ? '1 έδρα' : '1 face', value: '2 · 2 ＝ 4 m²' },
+        { label: isEl ? '6 έδρες' : '6 faces', value: '6 · 4 ＝ 24 m²' }
       ],
-      explanation: `6 · (2 · 2) ＝ 6 · 4 ＝ 24 m².`
-    };
-  },
-  // 6. Κύβος με ακμή 20 cm
-  () => {
-    const a = 20;
-    const faceArea = 400;
-    const totalArea = 2400;
-    const correct = `${formatNum(totalArea)} cm²`;
-    return {
-      title: 'ΚΟΥΤΙ ΑΠΟΘΗΚΕΥΣΗΣ',
-      prompt: `Ένα κουτί αποθήκευσης έχει σχήμα κύβου με ακμή 20 cm. Πόσα cm² είναι το εμβαδόν του αναπτύγματός του;`,
-      options: ensureFourUniqueOptions(correct, () => ['400 cm²', '1.600 cm²', '2.000 cm²', '3.600 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Ακμή', value: '20 cm' },
-        { label: '1 έδρα', value: '20 · 20 ＝ 400 cm²' },
-        { label: '6 έδρες', value: '6 · 400 ＝ 2.400 cm²' }
-      ],
-      explanation: `6 · 400 ＝ 2.400 cm².`
+      explanation: isEl
+        ? '6 · (2 · 2) ＝ 6 · 4 ＝ 24 m².'
+        : '6 · (2 · 2) ＝ 6 · 4 ＝ 24 m².'
     };
   }
 ];
@@ -197,7 +226,8 @@ const PROBLEM_POOL_Q9 = [
 // POOL ΓΙΑ Q10: Ολική Επιφάνεια Ορθογωνίου Παραλληλεπιπέδου
 const PROBLEM_POOL_Q10 = [
   // 1. Κουτί δώρου
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const l = randInt(15, 25);
     const w = randInt(10, 14);
     const h = randInt(6, 10);
@@ -205,127 +235,87 @@ const PROBLEM_POOL_Q10 = [
     const f2 = w * h;
     const f3 = l * h;
     const total = 2 * (f1 + f2 + f3);
-    const correct = `${formatNum(total)} cm²`;
+    const correct = `${formatNum(total, locale)} cm²`;
     return {
-      title: 'ΚΟΥΤΙ ΔΩΡΟΥ',
-      prompt: `Ένα κουτί δώρου σε σχήμα ορθογωνίου παραλληλεπιπέδου έχει μήκος ${l} cm, πλάτος ${w} cm και ύψος ${h} cm. Πόσο χαρτί περιτυλίγματος σε cm² απαιτείται για να καλυφθούν ακριβώς οι 6 έδρες του;`,
+      title: isEl ? 'ΚΟΥΤΙ ΔΩΡΟΥ' : 'GIFT BOX',
+      prompt: isEl
+        ? `Ένα κουτί δώρου σε σχήμα ορθογωνίου παραλληλεπιπέδου έχει μήκος ${formatNum(l, locale)} cm, πλάτος ${formatNum(w, locale)} cm και ύψος ${formatNum(h, locale)} cm. Πόσο χαρτί περιτυλίγματος σε cm² απαιτείται για να καλυφθούν ακριβώς οι 6 έδρες του;`
+        : `A gift box in the shape of a rectangular prism has length ${formatNum(l, locale)} cm, width ${formatNum(w, locale)} cm, and height ${formatNum(h, locale)} cm. How much wrapping paper in cm² is needed to cover all 6 faces?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(f1 + f2 + f3)} cm²`,
-        `${formatNum(total + 50)} cm²`,
-        `${formatNum(total - 50 > 0 ? total - 50 : total + 100)} cm²`,
-        `${formatNum(l * w * h)} cm²`
+        `${formatNum(f1 + f2 + f3, locale)} cm²`,
+        `${formatNum(total + 50, locale)} cm²`,
+        `${formatNum(total > 50 ? total - 50 : total + 100, locale)} cm²`,
+        `${formatNum(l * w * h, locale)} cm²`
       ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: '2 έδρες (μήκος · πλάτος)', value: `2 · (${l} · ${w}) ＝ ${2 * f1} cm²` },
-        { label: '2 έδρες (πλάτος · ύψος)', value: `2 · (${w} · ${h}) ＝ ${2 * f2} cm²` },
-        { label: '2 έδρες (μήκος · ύψος)', value: `2 · (${l} · ${h}) ＝ ${2 * f3} cm²` },
-        { label: 'Ολική επιφάνεια (6 έδρες)', value: `${2 * f1} ＋ ${2 * f2} ＋ ${2 * f3} ＝ ${formatNum(total)} cm²` }
+        { label: isEl ? '2 έδρες (μήκος · πλάτος)' : '2 faces (length · width)', value: `2 · (${formatNum(l, locale)} · ${formatNum(w, locale)}) ＝ ${formatNum(2 * f1, locale)} cm²` },
+        { label: isEl ? '2 έδρες (πλάτος · ύψος)' : '2 faces (width · height)', value: `2 · (${formatNum(w, locale)} · ${formatNum(h, locale)}) ＝ ${formatNum(2 * f2, locale)} cm²` },
+        { label: isEl ? '2 έδρες (μήκος · ύψος)' : '2 faces (length · height)', value: `2 · (${formatNum(l, locale)} · ${formatNum(h, locale)}) ＝ ${formatNum(2 * f3, locale)} cm²` },
+        { label: isEl ? 'Ολική επιφάνεια (6 έδρες)' : 'Total surface area (6 faces)', value: `${formatNum(2 * f1, locale)} ＋ ${formatNum(2 * f2, locale)} ＋ ${formatNum(2 * f3, locale)} ＝ ${formatNum(total, locale)} cm²` }
       ],
-      explanation: `Υπολογίζουμε τα 3 ζεύγη ίσων εδρών: 2 · (${l} · ${w} ＋ ${w} · ${h} ＋ ${l} · ${h}) ＝ ${formatNum(total)} cm².`
+      explanation: isEl
+        ? `Υπολογίζουμε τα 3 ζεύγη ίσων εδρών: 2 · (${formatNum(l, locale)} · ${formatNum(w, locale)} ＋ ${formatNum(w, locale)} · ${formatNum(h, locale)} ＋ ${formatNum(l, locale)} · ${formatNum(h, locale)}) ＝ ${formatNum(total, locale)} cm².`
+        : `Calculate the 3 pairs of congruent faces: 2 · (${formatNum(l, locale)} · ${formatNum(w, locale)} ＋ ${formatNum(w, locale)} · ${formatNum(h, locale)} ＋ ${formatNum(l, locale)} · ${formatNum(h, locale)}) ＝ ${formatNum(total, locale)} cm².`
     };
   },
   // 2. Κουτί παπουτσιών
-  () => {
-    const l = 30;
-    const w = 20;
-    const h = 10;
-    const total = 2 * (30 * 20 + 20 * 10 + 30 * 10); // 2 * (600 + 200 + 300) = 2.200
-    const correct = `${formatNum(total)} cm²`;
+  (locale) => {
+    const isEl = locale === 'el';
+    const total = 2 * (30 * 20 + 20 * 10 + 30 * 10); // 2.200 cm²
+    const correct = `${formatNum(total, locale)} cm²`;
+    const num1200 = isEl ? '1.200' : '1,200';
+    const num2200 = isEl ? '2.200' : '2,200';
     return {
-      title: 'ΚΟΥΤΙ ΠΑΠΟΥΤΣΙΩΝ',
-      prompt: `Ένα κουτί παπουτσιών έχει διαστάσεις 30 cm, 20 cm και 10 cm. Πόσα cm² χαρτονιού χρειάστηκαν για την κατασκευή του αναπτύγματός του;`,
-      options: ensureFourUniqueOptions(correct, () => ['1.100 cm²', '6.000 cm²', '2.000 cm²', '2.400 cm²']),
+      title: isEl ? 'ΚΟΥΤΙ ΠΑΠΟΥΤΣΙΩΝ' : 'SHOE BOX',
+      prompt: isEl
+        ? 'Ένα κουτί παπουτσιών έχει διαστάσεις 30 cm, 20 cm και 10 cm. Πόσα cm² χαρτονιού χρειάστηκαν για την κατασκευή του αναπτύγματός του;'
+        : 'A shoebox has dimensions 30 cm, 20 cm, and 10 cm. How many cm² of cardboard were needed to construct its net?',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(1100, locale)} cm²`,
+        `${formatNum(6000, locale)} cm²`,
+        `${formatNum(2000, locale)} cm²`,
+        `${formatNum(2400, locale)} cm²`
+      ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: 'Βάση και καπάκι', value: '2 · (30 · 20) ＝ 1.200 cm²' },
-        { label: 'Πλαϊνές έδρες', value: '2 · (20 · 10) ＝ 400 cm²' },
-        { label: 'Εμπρός και πίσω', value: '2 · (30 · 10) ＝ 600 cm²' },
-        { label: 'Σύνολο', value: '1.200 ＋ 400 ＋ 600 ＝ 2.200 cm²' }
+        { label: isEl ? 'Βάση και καπάκι' : 'Base and top lid', value: `2 · (30 · 20) ＝ ${num1200} cm²` },
+        { label: isEl ? 'Πλαϊνές έδρες' : 'Side faces', value: '2 · (20 · 10) ＝ 400 cm²' },
+        { label: isEl ? 'Εμπρός και πίσω' : 'Front and back', value: '2 · (30 · 10) ＝ 600 cm²' },
+        { label: isEl ? 'Σύνολο' : 'Total', value: `${num1200} ＋ 400 ＋ 600 ＝ ${num2200} cm²` }
       ],
-      explanation: `2 · (600 ＋ 200 ＋ 300) ＝ 2 · 1.100 ＝ 2.200 cm².`
+      explanation: isEl
+        ? '2 · (600 ＋ 200 ＋ 300) ＝ 2 · 1.100 ＝ 2.200 cm².'
+        : '2 · (600 ＋ 200 ＋ 300) ＝ 2 · 1,100 ＝ 2,200 cm².'
     };
   },
   // 3. Σπιρτόκουτο
-  () => {
-    const l = 5;
-    const w = 4;
-    const h = 2;
-    const total = 2 * (5 * 4 + 4 * 2 + 5 * 2); // 2 * (20 + 8 + 10) = 76
+  (locale) => {
+    const isEl = locale === 'el';
+    const total = 2 * (5 * 4 + 4 * 2 + 5 * 2); // 76 cm²
     const correct = `${total} cm²`;
     return {
-      title: 'ΣΠΙΡΤΟΚΟΥΤΟ',
-      prompt: `Ένα σπιρτόκουτο έχει μήκος 5 cm, πλάτος 4 cm και ύψος 2 cm. Πόση είναι η ολική εξωτερική επιφάνεια του κουτιού;`,
-      options: ensureFourUniqueOptions(correct, () => ['38 cm²', '40 cm²', '80 cm²', '60 cm²']),
+      title: isEl ? 'ΣΠΙΡΤΟΚΟΥΤΟ' : 'MATCHBOX',
+      prompt: isEl
+        ? 'Ένα σπιρτόκουτο έχει μήκος 5 cm, πλάτος 4 cm και ύψος 2 cm. Πόση είναι η ολική εξωτερική επιφάνεια του κουτιού;'
+        : 'A matchbox has length 5 cm, width 4 cm, and height 2 cm. What is the total external surface area of the box?',
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(38, locale)} cm²`,
+        `${formatNum(40, locale)} cm²`,
+        `${formatNum(80, locale)} cm²`,
+        `${formatNum(60, locale)} cm²`
+      ]),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: 'Διαστάσεις', value: '5 cm, 4 cm, 2 cm' },
-        { label: 'Πράξη', value: '2 · (20 ＋ 8 ＋ 10) ＝ 2 · 38 ＝ 76 cm²' }
+        { label: isEl ? 'Διαστάσεις' : 'Dimensions', value: '5 cm, 4 cm, 2 cm' },
+        { label: isEl ? 'Πράξη' : 'Calculation', value: '2 · (20 ＋ 8 ＋ 10) ＝ 2 · 38 ＝ 76 cm²' }
       ],
-      explanation: `2 · (5 · 4 ＋ 4 · 2 ＋ 5 · 2) ＝ 2 · 38 ＝ 76 cm².`
-    };
-  },
-  // 4. Κουτί δημητριακών
-  () => {
-    const l = 20;
-    const w = 8;
-    const h = 25;
-    const total = 2 * (20 * 8 + 8 * 25 + 20 * 25); // 2 * (160 + 200 + 500) = 2 * 860 = 1720
-    const correct = `${formatNum(total)} cm²`;
-    return {
-      title: 'ΚΟΥΤΙ ΔΗΜΗΤΡΙΑΚΩΝ',
-      prompt: `Ένα κουτί δημητριακών έχει μήκος 20 cm, πλάτος 8 cm και ύψος 25 cm. Πόσο είναι το εμβαδόν του αναπτύγματός του;`,
-      options: ensureFourUniqueOptions(correct, () => ['860 cm²', '4.000 cm²', '1.500 cm²', '1.800 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: '3 επιμέρους εμβαδά', value: '160 cm², 200 cm², 500 cm² (άθροισμα 860 cm²)' },
-        { label: 'Ολικό εμβαδόν', value: '2 · 860 ＝ 1.720 cm²' }
-      ],
-      explanation: `2 · (160 ＋ 200 ＋ 500) ＝ 2 · 860 ＝ 1.720 cm².`
-    };
-  },
-  // 5. Ενυδρείο (κλειστό με καπάκι)
-  () => {
-    const l = 50;
-    const w = 30;
-    const h = 40;
-    const total = 2 * (50 * 30 + 30 * 40 + 50 * 40); // 2 * (1500 + 1200 + 2000) = 2 * 4700 = 9400
-    const correct = `${formatNum(total)} cm²`;
-    return {
-      title: 'ΚΛΕΙΣΤΟ ΕΝΥΔΡΕΙΟ',
-      prompt: `Ένα κλειστό γυάλινο ενυδρείο έχει μήκος 50 cm, πλάτος 30 cm και ύψος 40 cm. Πόσα cm² γυαλιού χρειάστηκαν για τις 6 έδρες του;`,
-      options: ensureFourUniqueOptions(correct, () => ['4.700 cm²', '60.000 cm²', '9.000 cm²', '8.400 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Ζεύγη εδρών', value: '3.000 cm² ＋ 2.400 cm² ＋ 4.000 cm²' },
-        { label: 'Σύνολο', value: '9.400 cm²' }
-      ],
-      explanation: `2 · (1.500 ＋ 1.200 ＋ 2.000) ＝ 9.400 cm².`
-    };
-  },
-  // 6. Κουτί συσκευασίας
-  () => {
-    const l = 10;
-    const w = 5;
-    const h = 4;
-    const total = 2 * (10 * 5 + 5 * 4 + 10 * 4); // 2 * (50 + 20 + 40) = 220
-    const correct = '220 cm²';
-    return {
-      title: 'ΜΙΚΡΟ ΚΟΥΤΙ ΣΥΣΚΕΥΑΣΙΑΣ',
-      prompt: `Ένα κουτί έχει μήκος 10 cm, πλάτος 5 cm και ύψος 4 cm. Πόσο είναι το ολικό εμβαδόν των εδρών του;`,
-      options: ensureFourUniqueOptions(correct, () => ['110 cm²', '200 cm²', '240 cm²', '180 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: '3 έδρες', value: '50 ＋ 20 ＋ 40 ＝ 110 cm²' },
-        { label: 'Ολικό εμβαδόν', value: '2 · 110 ＝ 220 cm²' }
-      ],
-      explanation: `2 · (50 ＋ 20 ＋ 40) ＝ 220 cm².`
+      explanation: isEl
+        ? '2 · (5 · 4 ＋ 4 · 2 ＋ 5 · 2) ＝ 2 · 38 ＝ 76 cm².'
+        : '2 · (5 · 4 ＋ 4 · 2 ＋ 5 · 2) ＝ 2 · 38 ＝ 76 cm².'
     };
   }
 ];
@@ -333,106 +323,103 @@ const PROBLEM_POOL_Q10 = [
 // POOL ΓΙΑ Q11: Αντίστροφο Πρόβλημα Κύβου (Εύρεση Ακμής από την Επιφάνεια)
 const PROBLEM_POOL_Q11 = [
   // 1. Εύρεση ακμής κύβου με Εολ = 96 cm²
-  () => {
-    const a = 4; // 6 * 16 = 96
+  (locale) => {
+    const isEl = locale === 'el';
     const correct = '4 cm';
+    const edgeSym = isEl ? 'α' : 'a';
     return {
-      title: 'ΕΥΡΕΣΗ ΑΚΜΗΣ ΚΥΒΟΥ',
-      prompt: `Το ολικό εμβαδόν του αναπτύγματος ενός κύβου είναι 96 cm². Πόσο είναι το μήκος της ακμής του κύβου;`,
+      title: isEl ? 'ΕΥΡΕΣΗ ΑΚΜΗΣ ΚΥΒΟΥ' : 'FINDING CUBE EDGE',
+      prompt: isEl
+        ? 'Το ολικό εμβαδόν του αναπτύγματος ενός κύβου είναι 96 cm². Πόσο είναι το μήκος της ακμής του κύβου;'
+        : 'The total surface area of a cube net is 96 cm². What is the edge length of the cube?',
       options: ensureFourUniqueOptions(correct, () => ['16 cm', '6 cm', '8 cm', '5 cm']),
       correctAnswer: correct,
       unit: 'cm',
       tableData: [
-        { label: 'Ολικό εμβαδόν (6 έδρες)', value: '96 cm²' },
-        { label: 'Εμβαδόν 1 έδρας (: 6)', value: '96 : 6 ＝ 16 cm²' },
-        { label: 'Μήκος ακμής (α · α ＝ 16)', value: 'α ＝ 4 cm' }
+        { label: isEl ? 'Ολικό εμβαδόν (6 έδρες)' : 'Total area (6 faces)', value: '96 cm²' },
+        {
+          label: isEl ? 'Εμβαδόν 1 έδρας' : 'Area of 1 face',
+          valueNode: (
+            <span className="inline-flex items-center">
+              <Fraction num="96" den="6" />
+              <span>＝ 16 cm²</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? `Μήκος ακμής (${edgeSym} · ${edgeSym} ＝ 16)` : `Edge length (${edgeSym} · ${edgeSym} ＝ 16)`,
+          value: `${edgeSym} ＝ 4 cm`
+        }
       ],
-      explanation: `Διαιρούμε το ολικό εμβαδόν με το 6 για να βρούμε την επιφάνεια της μίας έδρας: 96 : 6 ＝ 16 cm². Αφού η έδρα είναι τετράγωνο, ψάχνουμε ποιος αριθμός πολλαπλασιασμένος με τον εαυτό του δίνει 16: 4 · 4 ＝ 16, άρα η ακμή είναι 4 cm.`
+      explanation: isEl
+        ? 'Διαιρούμε το ολικό εμβαδόν με το 6 για να βρούμε την επιφάνεια της μίας έδρας: 96 : 6 ＝ 16 cm². Αφού η έδρα είναι τετράγωνο: 4 · 4 ＝ 16, άρα η ακμή είναι 4 cm.'
+        : 'Divide total area by 6 to find one face area: 96 : 6 ＝ 16 cm². Since the face is a square: 4 · 4 ＝ 16, so edge length is 4 cm.'
     };
   },
   // 2. Εύρεση ακμής κύβου με Εολ = 150 cm²
-  () => {
-    const a = 5; // 6 * 25 = 150
+  (locale) => {
+    const isEl = locale === 'el';
     const correct = '5 cm';
+    const edgeSym = isEl ? 'α' : 'a';
     return {
-      title: 'ΑΚΜΗ ΚΥΒΟΥ ΑΠΟ ΤΟ ΕΜΒΑΔΟΝ',
-      prompt: `Το ανάπτυγμα ενός κύβου καταλαμβάνει επιφάνεια 150 cm². Πόσο μετράει η ακμή του κύβου;`,
+      title: isEl ? 'ΑΚΜΗ ΚΥΒΟΥ ΑΠΟ ΤΟ ΕΜΒΑΔΟΝ' : 'CUBE EDGE FROM AREA',
+      prompt: isEl
+        ? 'Το ανάπτυγμα ενός κύβου καταλαμβάνει επιφάνεια 150 cm². Πόσο μετράει η ακμή του κύβου;'
+        : 'The net of a cube occupies an area of 150 cm². What is the edge length of the cube?',
       options: ensureFourUniqueOptions(correct, () => ['25 cm', '6 cm', '10 cm', '4 cm']),
       correctAnswer: correct,
       unit: 'cm',
       tableData: [
-        { label: 'Εμβαδόν 1 έδρας', value: '150 : 6 ＝ 25 cm²' },
-        { label: 'Ακμή (α · α ＝ 25)', value: 'α ＝ 5 cm' }
+        {
+          label: isEl ? 'Εμβαδόν 1 έδρας' : 'Area of 1 face',
+          valueNode: (
+            <span className="inline-flex items-center">
+              <Fraction num="150" den="6" />
+              <span>＝ 25 cm²</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? `Ακμή (${edgeSym} · ${edgeSym} ＝ 25)` : `Edge (${edgeSym} · ${edgeSym} ＝ 25)`,
+          value: `${edgeSym} ＝ 5 cm`
+        }
       ],
-      explanation: `150 : 6 ＝ 25 cm². Επειδή 5 · 5 ＝ 25, η ακμή είναι 5 cm.`
+      explanation: isEl
+        ? '150 : 6 ＝ 25 cm². Επειδή 5 · 5 ＝ 25, η ακμή είναι 5 cm.'
+        : '150 : 6 ＝ 25 cm². Because 5 · 5 ＝ 25, the edge length is 5 cm.'
     };
   },
   // 3. Εύρεση ακμής κύβου με Εολ = 216 cm²
-  () => {
-    const a = 6; // 6 * 36 = 216
+  (locale) => {
+    const isEl = locale === 'el';
     const correct = '6 cm';
+    const edgeSym = isEl ? 'α' : 'a';
     return {
-      title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΚΜΗΣ ΚΥΒΟΥ',
-      prompt: `Ένας κύβος έχει ολική επιφάνεια 216 cm². Πόσο είναι το μήκος κάθε ακμής του;`,
+      title: isEl ? 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΚΜΗΣ ΚΥΒΟΥ' : 'CALCULATING CUBE EDGE',
+      prompt: isEl
+        ? 'Ένας κύβος έχει ολική επιφάνεια 216 cm². Πόσο είναι το μήκος κάθε ακμής του;'
+        : 'A cube has a total surface area of 216 cm². What is the length of each edge?',
       options: ensureFourUniqueOptions(correct, () => ['36 cm', '8 cm', '12 cm', '4 cm']),
       correctAnswer: correct,
       unit: 'cm',
       tableData: [
-        { label: '1 έδρα', value: '216 : 6 ＝ 36 cm²' },
-        { label: 'Ακμή', value: '6 · 6 ＝ 36, άρα α ＝ 6 cm' }
+        {
+          label: isEl ? '1 έδρα' : '1 face',
+          valueNode: (
+            <span className="inline-flex items-center">
+              <Fraction num="216" den="6" />
+              <span>＝ 36 cm²</span>
+            </span>
+          )
+        },
+        {
+          label: isEl ? 'Ακμή' : 'Edge',
+          value: isEl ? `6 · 6 ＝ 36, άρα ${edgeSym} ＝ 6 cm` : `6 · 6 ＝ 36, so ${edgeSym} ＝ 6 cm`
+        }
       ],
-      explanation: `216 : 6 ＝ 36 cm². 6 · 6 ＝ 36, άρα α ＝ 6 cm.`
-    };
-  },
-  // 4. Εύρεση ακμής κύβου με Εολ = 384 cm²
-  () => {
-    const a = 8; // 6 * 64 = 384
-    const correct = '8 cm';
-    return {
-      title: 'ΜΗΚΟΣ ΑΚΜΗΣ ΑΠΟ ΤΗΝ ΕΠΙΦΑΝΕΙΑ',
-      prompt: `Το ανάπτυγμα ενός ζαριού έχει εμβαδόν 384 cm². Πόσα εκατοστόμετρα (cm) είναι η ακμή του ζαριού;`,
-      options: ensureFourUniqueOptions(correct, () => ['64 cm', '7 cm', '9 cm', '6 cm']),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: '1 έδρα', value: '384 : 6 ＝ 64 cm²' },
-        { label: 'Ακμή', value: '8 · 8 ＝ 64, άρα α ＝ 8 cm' }
-      ],
-      explanation: `384 : 6 ＝ 64 cm². 8 · 8 ＝ 64, άρα α ＝ 8 cm.`
-    };
-  },
-  // 5. Εύρεση ακμής κύβου με Εολ = 24 cm²
-  () => {
-    const a = 2; // 6 * 4 = 24
-    const correct = '2 cm';
-    return {
-      title: 'ΜΙΚΡΟΣ ΚΥΒΟΣ',
-      prompt: `Ένας μικρός κύβος έχει συνολικό εμβαδόν αναπτύγματος 24 cm². Πόσο είναι το μήκος της ακμής του;`,
-      options: ensureFourUniqueOptions(correct, () => ['4 cm', '3 cm', '6 cm', '1 cm']),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: '1 έδρα', value: '24 : 6 ＝ 4 cm²' },
-        { label: 'Ακμή', value: '2 · 2 ＝ 4, άρα α ＝ 2 cm' }
-      ],
-      explanation: `24 : 6 ＝ 4 cm². 2 · 2 ＝ 4, άρα α ＝ 2 cm.`
-    };
-  },
-  // 6. Εύρεση ακμής κύβου με Εολ = 54 cm²
-  () => {
-    const a = 3; // 6 * 9 = 54
-    const correct = '3 cm';
-    return {
-      title: 'ΑΚΜΗ ΚΥΒΟΥ 54 CM²',
-      prompt: `Ένας κύβος έχει ολική επιφάνεια 54 cm². Πόσο είναι το μήκος της ακμής του;`,
-      options: ensureFourUniqueOptions(correct, () => ['9 cm', '6 cm', '4 cm', '2 cm']),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: '1 έδρα', value: '54 : 6 ＝ 9 cm²' },
-        { label: 'Ακμή', value: '3 · 3 ＝ 9, άρα α ＝ 3 cm' }
-      ],
-      explanation: `54 : 6 ＝ 9 cm². 3 · 3 ＝ 9, άρα α ＝ 3 cm.`
+      explanation: isEl
+        ? '216 : 6 ＝ 36 cm². 6 · 6 ＝ 36, άρα α ＝ 6 cm.'
+        : '216 : 6 ＝ 36 cm². 6 · 6 ＝ 36, so a ＝ 6 cm.'
     };
   }
 ];
@@ -440,128 +427,76 @@ const PROBLEM_POOL_Q11 = [
 // POOL ΓΙΑ Q12: Συνολικό Μήκος Ακμών & Σύνθετοι Υπολογισμοί
 const PROBLEM_POOL_Q12 = [
   // 1. Συρμάτινος σκελετός κύβου (12 ακμές)
-  () => {
+  (locale) => {
+    const isEl = locale === 'el';
     const a = randInt(5, 15);
     const totalWire = 12 * a;
-    const correct = `${totalWire} cm`;
+    const correct = `${formatNum(totalWire, locale)} cm`;
     return {
-      title: 'ΣΥΡΜΑΤΙΝΟΣ ΣΚΕΛΕΤΟΣ ΚΥΒΟΥ',
-      prompt: `Θέλουμε να κατασκευάσουμε έναν σκελετό κύβου από σύρμα με μήκος ακμής ${a} cm. Πόσο σύρμα σε cm θα χρειαστεί για να φτιαχτούν όλες οι ακμές του κύβου;`,
+      title: isEl ? 'ΣΥΡΜΑΤΙΝΟΣ ΣΚΕΛΕΤΟΣ ΚΥΒΟΥ' : 'WIRE CUBE FRAME',
+      prompt: isEl
+        ? `Θέλουμε να κατασκευάσουμε έναν σκελετό κύβου από σύρμα με μήκος ακμής ${formatNum(a, locale)} cm. Πόσο σύρμα σε cm θα χρειαστεί για να φτιαχτούν όλες οι ακμές του κύβου;`
+        : `We want to construct a wire cube frame with edge length ${formatNum(a, locale)} cm. How much wire in cm will be required to form all its edges?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${6 * a} cm`,
-        `${8 * a} cm`,
-        `${totalWire + 12} cm`,
-        `${totalWire - 12 > 0 ? totalWire - 12 : totalWire + 24} cm`
+        `${formatNum(6 * a, locale)} cm`,
+        `${formatNum(8 * a, locale)} cm`,
+        `${formatNum(totalWire + 12, locale)} cm`,
+        `${formatNum(totalWire > 12 ? totalWire - 12 : totalWire + 24, locale)} cm`
       ]),
       correctAnswer: correct,
       unit: 'cm',
       tableData: [
-        { label: 'Μήκος 1 ακμής', value: `${a} cm` },
-        { label: 'Συνολικό πλήθος ακμών κύβου', value: '12 ακμές' },
-        { label: 'Συνολικό μήκος σύρματος', value: `12 · ${a} ＝ ${totalWire} cm` }
+        { label: isEl ? 'Μήκος 1 ακμής' : 'Length of 1 edge', value: `${formatNum(a, locale)} cm` },
+        { label: isEl ? 'Συνολικό πλήθος ακμών κύβου' : 'Total cube edges', value: isEl ? '12 ακμές' : '12 edges' },
+        { label: isEl ? 'Συνολικό μήκος σύρματος' : 'Total wire length', value: `12 · ${formatNum(a, locale)} ＝ ${formatNum(totalWire, locale)} cm` }
       ],
-      explanation: `Ο κύβος έχει 12 ίσες ακμές. Επομένως, το συνολικό μήκος του σύρματος είναι: 12 · ${a} ＝ ${totalWire} cm.`
+      explanation: isEl
+        ? `Ο κύβος έχει 12 ίσες ακμές. Επομένως, το συνολικό μήκος του σύρματος είναι: 12 · ${formatNum(a, locale)} ＝ ${formatNum(totalWire, locale)} cm.`
+        : `A cube has 12 congruent edges. Thus, the total wire length required is: 12 · ${formatNum(a, locale)} ＝ ${formatNum(totalWire, locale)} cm.`
     };
   },
   // 2. Συρμάτινος σκελετός ορθογωνίου παραλληλεπιπέδου
-  () => {
-    const l = 10;
-    const w = 6;
-    const h = 4;
-    const totalWire = 4 * (l + w + h); // 4 * 20 = 80 cm
+  (locale) => {
+    const isEl = locale === 'el';
+    const totalWire = 4 * (10 + 6 + 4); // 80 cm
     const correct = '80 cm';
     return {
-      title: 'ΣΚΕΛΕΤΟΣ ΟΡΘΟΓΩΝΙΟΥ ΠΑΡΑΛΛΗΛΕΠΙΠΕΔΟΥ',
-      prompt: `Κατασκευάζουμε τον σκελετό ενός ορθογωνίου παραλληλεπιπέδου με σύρμα. Αν οι διαστάσεις του είναι 10 cm, 6 cm και 4 cm, πόσο σύρμα χρειάζεται για τις 12 ακμές του;`,
+      title: isEl ? 'ΣΚΕΛΕΤΟΣ ΟΡΘΟΓΩΝΙΟΥ ΠΑΡΑΛΛΗΛΕΠΙΠΕΔΟΥ' : 'RECTANGULAR PRISM WIRE FRAME',
+      prompt: isEl
+        ? 'Κατασκευάζουμε τον σκελετό ενός ορθογωνίου παραλληλεπιπέδου με σύρμα. Αν οι διαστάσεις του είναι 10 cm, 6 cm και 4 cm, πόσο σύρμα χρειάζεται για τις 12 ακμές του;'
+        : 'We build a wire frame for a rectangular prism. If its dimensions are 10 cm, 6 cm, and 4 cm, how much wire is needed for its 12 edges?',
       options: ensureFourUniqueOptions(correct, () => ['20 cm', '40 cm', '100 cm', '60 cm']),
       correctAnswer: correct,
       unit: 'cm',
       tableData: [
-        { label: 'Ομάδες ακμών', value: '4 μήκη, 4 πλάτη, 4 ύψη' },
-        { label: 'Πράξη', value: '4 · (10 ＋ 6 ＋ 4) ＝ 4 · 20 ＝ 80 cm' }
+        { label: isEl ? 'Ομάδες ακμών' : 'Edge sets', value: isEl ? '4 μήκη, 4 πλάτη, 4 ύψη' : '4 lengths, 4 widths, 4 heights' },
+        { label: isEl ? 'Πράξη' : 'Calculation', value: '4 · (10 ＋ 6 ＋ 4) ＝ 4 · 20 ＝ 80 cm' }
       ],
-      explanation: `Το ορθογώνιο παραλληλεπίπεδο έχει 4 ακμές από κάθε διάσταση: 4 · (10 ＋ 6 ＋ 4) ＝ 4 · 20 ＝ 80 cm.`
+      explanation: isEl
+        ? 'Το ορθογώνιο παραλληλεπίπεδο έχει 4 ακμές από κάθε διάσταση: 4 · (10 ＋ 6 ＋ 4) ＝ 4 · 20 ＝ 80 cm.'
+        : 'A rectangular prism has 4 edges for each dimension: 4 · (10 ＋ 6 ＋ 4) ＝ 4 · 20 ＝ 80 cm.'
     };
   },
-  // 3. Μετατροπή ολικού εμβαδού σε dm²
-  () => {
-    const a = 10;
-    const totalCm2 = 6 * 100; // 600 cm²
-    const totalDm2 = 6; // 6 dm²
-    const correct = '6 dm²';
-    return {
-      title: 'ΕΠΙΦΑΝΕΙΑ ΣΕ DM²',
-      prompt: `Το ανάπτυγμα ενός κύβου με ακμή 10 cm έχει εμβαδόν 600 cm². Πόσα τετραγωνικά δεκατόμετρα (dm²) είναι το εμβαδόν του αναπτύγματος;`,
-      options: ensureFourUniqueOptions(correct, () => ['60 dm²', '0,6 dm²', '600 dm²', '6.000 dm²']),
-      correctAnswer: correct,
-      unit: 'dm²',
-      tableData: [
-        { label: 'Εμβαδόν σε cm²', value: '600 cm²' },
-        { label: 'Σχέση cm²/dm²', value: '1 dm² ＝ 100 cm²' },
-        { label: 'Πράξη (: 100)', value: '600 : 100 ＝ 6 dm²' }
-      ],
-      explanation: `600 : 100 ＝ 6 dm².`
-    };
-  },
-  // 4. Ανοιχτό κουτί (χωρίς καπάκι - 5 έδρες)
-  () => {
-    const a = 5;
-    const face = 25;
-    const openBoxArea = 5 * face; // 125 cm²
+  // 3. Ανοιχτό κουτί (5 έδρες)
+  (locale) => {
+    const isEl = locale === 'el';
     const correct = '125 cm²';
     return {
-      title: 'ΑΝΟΙΧΤΟ ΚΟΥΤΙ ΧΩΡΙΣ ΚΑΠΑΚΙ',
-      prompt: `Θέλουμε να φτιάξουμε ένα ανοιχτό κυβικό κουτί (χωρίς καπάκι στο πάνω μέρος) με ακμή 5 cm. Πόσο χαρτόνι σε cm² θα χρειαστούμε για τις 5 έδρες του;`,
+      title: isEl ? 'ΑΝΟΙΧΤΟ ΚΟΥΤΙ ΧΩΡΙΣ ΚΑΠΑΚΙ' : 'OPEN BOX WITHOUT LID',
+      prompt: isEl
+        ? 'Θέλουμε να φτιάξουμε ένα ανοιχτό κυβικό κουτί (χωρίς καπάκι στο πάνω μέρος) με ακμή 5 cm. Πόσο χαρτόνι σε cm² θα χρειαστούμε για τις 5 έδρες του;'
+        : 'We want to make an open cubical box (without a top lid) with edge 5 cm. How much cardboard in cm² will we need for its 5 faces?',
       options: ensureFourUniqueOptions(correct, () => ['150 cm²', '100 cm²', '75 cm²', '120 cm²']),
       correctAnswer: correct,
       unit: 'cm²',
       tableData: [
-        { label: '1 έδρα', value: '5 · 5 ＝ 25 cm²' },
-        { label: 'Πλήθος εδρών χωρίς καπάκι', value: '5 έδρες' },
-        { label: 'Πράξη', value: '5 · 25 ＝ 125 cm²' }
+        { label: isEl ? '1 έδρα' : '1 face', value: '5 · 5 ＝ 25 cm²' },
+        { label: isEl ? 'Πλήθος εδρών χωρίς καπάκι' : 'Faces without lid', value: isEl ? '5 έδρες' : '5 faces' },
+        { label: isEl ? 'Πράξη' : 'Calculation', value: '5 · 25 ＝ 125 cm²' }
       ],
-      explanation: `Αφού το κουτί δεν έχει καπάκι, αποτελείται από 5 μόνο έδρες: 5 · 25 ＝ 125 cm² (αντί για 6 · 25 ＝ 150 cm²).`
-    };
-  },
-  // 5. Διπλασιασμός ακμής κύβου (επιφάνεια x4)
-  () => {
-    const correct = '4 φορές μεγαλύτερο (τετραπλασιάζεται)';
-    return {
-      title: 'ΜΕΤΑΒΟΛΗ ΑΚΜΗΣ ΚΥΒΟΥ',
-      prompt: `Αν διπλασιάσουμε το μήκος της ακμής ενός κύβου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του αναπτύγματός του;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        '2 φορές μεγαλύτερο (διπλασιάζεται)',
-        '6 φορές μεγαλύτερο',
-        '8 φορές μεγαλύτερο'
-      ]),
-      correctAnswer: correct,
-      unit: 'απάντηση',
-      tableData: [
-        { label: 'Αρχική επιφάνεια', value: 'Ε₁ ＝ 6 · α²' },
-        { label: 'Νέα επιφάνεια', value: 'Ε₂ ＝ 6 · (2α)² ＝ 6 · 4α² ＝ 4 · Ε₁' }
-      ],
-      explanation: `Επειδή η ακμή υψώνεται στο τετράγωνο (α²), ο διπλασιασμός της ακμής τετραπλασιάζει το εμβαδόν της επιφάνειας: 2 · 2 ＝ 4 φορές μεγαλύτερο.`
-    };
-  },
-  // 6. Πόσα διαφορετικά αναπτύγματα έχει ο κύβος
-  () => {
-    const correct = '11 διαφορετικά αναπτύγματα';
-    return {
-      title: 'ΠΛΗΘΟΣ ΑΝΑΠΤΥΓΜΑΤΩΝ ΚΥΒΟΥ',
-      prompt: `Πόσα διαφορετικά δυνατά επίπεδα αναπτύγματα υπάρχουν συνολικά για τον κύβο;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        '6 διαφορετικά αναπτύγματα',
-        '8 διαφορετικά αναπτύγματα',
-        '12 διαφορετικά αναπτύγματα',
-        'Άπειρα αναπτύγματα'
-      ]),
-      correctAnswer: correct,
-      unit: 'αναπτύγματα',
-      tableData: [
-        { label: 'Σχήμα', value: 'Κύβος (6 ίσα τετράγωνα)' },
-        { label: 'Μαθηματικό πλήθος', value: 'Ακριβώς 11 δυνατά αναπτύγματα' }
-      ],
-      explanation: `Υπάρχουν ακριβώς 11 γεωμετρικά διαφορετικά αναπτύγματα από 6 συνδεδεμένα τετράγωνα που μπορούν να διπλωθούν σχηματίζοντας κύβο.`
+      explanation: isEl
+        ? 'Αφού το κουτί δεν έχει καπάκι, αποτελείται από 5 μόνο έδρες: 5 · 25 ＝ 125 cm² (αντί για 6 · 25 ＝ 150 cm²).'
+        : 'Since the box has no lid, it consists of only 5 faces: 5 · 25 ＝ 125 cm² (rather than 6 · 25 ＝ 150 cm²).'
     };
   }
 ];
@@ -570,77 +505,102 @@ const PROBLEM_POOL_Q12 = [
 // ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
-function generateQuestionsSet() {
+function generateQuestionsSet(locale = 'el') {
+  const isEl = locale === 'el';
+  const edgeSym = isEl ? 'α' : 'a';
   const qs = [];
 
-  // Q1: Στοιχεία κύβου (True/False)
+  // Q1: Στοιχεία κύβου (Boolean)
   const isQ1True = Math.random() < 0.5;
   qs.push({
     id: 1,
     type: 'boolean',
-    title: 'ΣΤΟΙΧΕΙΑ ΚΥΒΟΥ',
-    prompt: isQ1True
-      ? 'Ο κύβος και το ορθογώνιο παραλληλεπίπεδο έχουν ακριβώς 6 έδρες, 12 ακμές και 8 κορυφές.'
-      : 'Ο κύβος έχει 6 έδρες, 8 ακμές και 12 κορυφές.',
+    title: isEl ? 'ΣΤΟΙΧΕΙΑ ΚΥΒΟΥ' : 'CUBE ELEMENTS',
+    prompt: isEl
+      ? (isQ1True
+          ? 'Ο κύβος και το ορθογώνιο παραλληλεπίπεδο έχουν ακριβώς 6 έδρες, 12 ακμές και 8 κορυφές.'
+          : 'Ο κύβος έχει 6 έδρες, 8 ακμές και 12 κορυφές.')
+      : (isQ1True
+          ? 'Both the cube and the rectangular prism have exactly 6 faces, 12 edges, and 8 vertices.'
+          : 'A cube has 6 faces, 8 edges, and 12 vertices.'),
     correctAnswer: isQ1True,
     tableData: [
-      { label: 'Έδρες', value: '6 επίπεδες επιφάνειες' },
-      { label: 'Ακμές', value: '12 ευθύγραμμα τμήματα' },
-      { label: 'Κορυφές', value: '8 γωνιακά σημεία' }
+      { label: isEl ? 'Έδρες' : 'Faces', value: isEl ? '6 επίπεδες επιφάνειες' : '6 flat surfaces' },
+      { label: isEl ? 'Ακμές' : 'Edges', value: isEl ? '12 ευθύγραμμα τμήματα' : '12 straight line segments' },
+      { label: isEl ? 'Κορυφές' : 'Vertices', value: isEl ? '8 γωνιακά σημεία' : '8 corner points' }
     ],
-    explanation: isQ1True
-      ? 'Τόσο ο κύβος όσο και το ορθογώνιο παραλληλεπίπεδο έχουν 6 έδρες, 12 ακμές και 8 κορυφές.'
-      : 'Ο κύβος έχει 12 ακμές και 8 κορυφές (και όχι 8 ακμές και 12 κορυφές).'
+    explanation: isEl
+      ? (isQ1True
+          ? 'Τόσο ο κύβος όσο και το ορθογώνιο παραλληλεπίπεδο έχουν 6 έδρες, 12 ακμές και 8 κορυφές.'
+          : 'Ο κύβος έχει 12 ακμές και 8 κορυφές (και όχι 8 ακμές και 12 κορυφές).')
+      : (isQ1True
+          ? 'Both the cube and the rectangular prism have 6 faces, 12 edges, and 8 vertices.'
+          : 'A cube has 12 edges and 8 vertices (not 8 edges and 12 vertices).')
   });
 
   // Q2: Τι είναι ανάπτυγμα (MCQ)
+  const q2Correct = isEl
+    ? 'Το επίπεδο σχήμα που προκύπτει αν ανοίξουμε όλες τις έδρες του στερεού πάνω σε μία επιφάνεια'
+    : 'The flat shape obtained by opening all faces of the solid onto a single surface';
   qs.push({
     id: 2,
     type: 'mcq',
-    title: 'ΕΝΝΟΙΑ ΑΝΑΠΤΥΓΜΑΤΟΣ',
-    prompt: 'Τι ονομάζεται ανάπτυγμα ενός γεωμετρικού στερεού;',
-    options: ensureFourUniqueOptions(
-      'Το επίπεδο σχήμα που προκύπτει αν ανοίξουμε όλες τις έδρες του στερεού πάνω σε μία επιφάνεια',
-      () => [
-        'Το βάρος του στερεού σε γραμμάρια',
-        'Ο όγκος του νερού που χωράει μέσα στο κουτί',
-        'Το μήκος της μεγαλύτερης ακμής του'
-      ]
-    ),
-    correctAnswer: 'Το επίπεδο σχήμα που προκύπτει αν ανοίξουμε όλες τις έδρες του στερεού πάνω σε μία επιφάνεια',
+    title: isEl ? 'ΕΝΝΟΙΑ ΑΝΑΠΤΥΓΜΑΤΟΣ' : 'CONCEPT OF GEOMETRIC NET',
+    prompt: isEl
+      ? 'Τι ονομάζεται ανάπτυγμα ενός γεωμετρικού στερεού;'
+      : 'What is meant by the net of a geometric solid?',
+    options: ensureFourUniqueOptions(q2Correct, () => [
+      isEl ? 'Το βάρος του στερεού σε γραμμάρια' : 'The solid weight in grams',
+      isEl ? 'Ο όγκος του νερού που χωράει μέσα στο κουτί' : 'The volume of water the box holds',
+      isEl ? 'Το μήκος της μεγαλύτερης ακμής του' : 'The length of its longest edge'
+    ]),
+    correctAnswer: q2Correct,
     tableData: [
-      { label: 'Ορισμός', value: 'Επίπεδη διάταξη όλων των συνδεδεμένων εδρών του στερεού' }
+      { label: isEl ? 'Ορισμός' : 'Definition', value: isEl ? 'Επίπεδη διάταξη όλων των συνδεδεμένων εδρών του στερεού' : 'Flat arrangement of all connected faces of the solid' }
     ],
-    explanation: 'Ανάπτυγμα είναι το επίπεδο σχήμα από χαρτόνι που αν διπλωθεί στις ακμές του, σχηματίζει το στερεό.'
+    explanation: isEl
+      ? 'Ανάπτυγμα είναι το επίπεδο σχήμα από χαρτόνι που αν διπλωθεί στις ακμές του, σχηματίζει το στερεό.'
+      : 'A net is the flat cardboard pattern that folds along its edges to form the 3D solid.'
   });
 
   // Q3: Ποιες έδρες είναι ίσες στο ορθογώνιο παραλληλεπίπεδο (MCQ)
+  const q3Correct = isEl
+    ? 'Οι απέναντι έδρες είναι ανά 2 ίσες (3 ζεύγη ίσων εδρών)'
+    : 'Opposite faces are congruent in pairs (3 pairs of equal faces)';
   qs.push({
     id: 3,
     type: 'mcq',
-    title: 'ΕΔΡΕΣ ΟΡΘΟΓΩΝΙΟΥ ΠΑΡΑΛΛΗΛΕΠΙΠΕΔΟΥ',
-    prompt: 'Ποιες έδρες είναι ίσες μεταξύ τους σε ένα ορθογώνιο παραλληλεπίπεδο;',
-    options: ensureFourUniqueOptions('Οι απέναντι έδρες είναι ανά 2 ίσες (3 ζεύγη ίσων εδρών)', () => [
-      'Και οι 6 έδρες είναι υποχρεωτικά ίσες μεταξύ τους',
-      'Όλες οι έδρες έχουν διαφορετικό μέγεθος',
-      'Μόνο η πάνω και η κάτω έδρα είναι ίσες'
+    title: isEl ? 'ΕΔΡΕΣ ΟΡΘΟΓΩΝΙΟΥ ΠΑΡΑΛΛΗΛΕΠΙΠΕΔΟΥ' : 'RECTANGULAR PRISM FACES',
+    prompt: isEl
+      ? 'Ποιες έδρες είναι ίσες μεταξύ τους σε ένα ορθογώνιο παραλληλεπίπεδο;'
+      : 'Which faces are congruent to each other in a rectangular prism?',
+    options: ensureFourUniqueOptions(q3Correct, () => [
+      isEl ? 'Και οι 6 έδρες είναι υποχρεωτικά ίσες μεταξύ τους' : 'All 6 faces are necessarily identical',
+      isEl ? 'Όλες οι έδρες έχουν διαφορετικό μέγεθος' : 'All faces have different dimensions',
+      isEl ? 'Μόνο η πάνω και η κάτω έδρα είναι ίσες' : 'Only the top and bottom faces are equal'
     ]),
-    correctAnswer: 'Οι απέναντι έδρες είναι ανά 2 ίσες (3 ζεύγη ίσων εδρών)',
+    correctAnswer: q3Correct,
     tableData: [
-      { label: '3 ζεύγη εδρών', value: '2 βάσεις (α · β), 2 πλαϊνές (β · γ), 2 εμπρός/πίσω (α · γ)' }
+      { label: isEl ? '3 ζεύγη εδρών' : '3 face pairs', value: isEl ? '2 βάσεις (α · β), 2 πλαϊνές (β · γ), 2 εμπρός/πίσω (α · γ)' : '2 bases (a · b), 2 sides (b · c), 2 front/back (a · c)' }
     ],
-    explanation: 'Στο ορθογώνιο παραλληλεπίπεδο οι απέναντι έδρες είναι παράλληλες και ίσες ανά δύο (3 ζεύγη).'
+    explanation: isEl
+      ? 'Στο ορθογώνιο παραλληλεπίπεδο οι απέναντι έδρες είναι παράλληλες και ίσες ανά δύο (3 ζεύγη).'
+      : 'In a rectangular prism, opposite faces are parallel and congruent in pairs (3 pairs).'
   });
 
   // Q4: Οπτική αναγνώριση έγκυρου αναπτύγματος κύβου (SVG - No Giveaway)
+  const q4Correct = isEl
+    ? 'Ναι, είναι το κλασικό έγκυρο ανάπτυγμα κύβου σε σχήμα σταυρού'
+    : 'Yes, it is the classic valid cross net of a cube';
   qs.push({
     id: 4,
     type: 'mcq',
-    title: 'ΑΝΑΓΝΩΡΙΣΗ ΕΓΚΥΡΟΥ ΑΝΑΠΤΥΓΜΑΤΟΣ',
-    prompt: 'Παρατηρήστε το παρακάτω σχήμα 6 τετραγώνων (σε μορφή σταυρού). Μπορεί να διπλωθεί σχηματίζοντας κύβο;',
+    title: isEl ? 'ΑΝΑΓΝΩΡΙΣΗ ΕΓΚΥΡΟΥ ΑΝΑΠΤΥΓΜΑΤΟΣ' : 'VALID NET IDENTIFICATION',
+    prompt: isEl
+      ? 'Παρατηρήστε το παρακάτω σχήμα 6 τετραγώνων (σε μορφή σταυρού). Μπορεί να διπλωθεί σχηματίζοντας κύβο;'
+      : 'Look at the arrangement of 6 squares below (cross pattern). Can it fold into a complete cube?',
     svg: (
-      <svg viewBox="0 0 160 120" className="w-40 h-28 mx-auto my-2 select-none drop-shadow-sm">
-        {/* Σταυρός: κεντρική στήλη 4 τετράγωνα x=60, y=10,35,60,85. Πτερύγια x=35, y=35 και x=85, y=35 */}
+      <svg viewBox="0 0 160 120" className="w-full max-w-[160px] h-auto mx-auto my-2 select-none drop-shadow-sm">
         <rect x="60" y="10" width="25" height="25" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="1.5" />
         <rect x="35" y="35" width="25" height="25" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="1.5" />
         <rect x="60" y="35" width="25" height="25" fill="#c7d2fe" stroke="#4f46e5" strokeWidth="1.5" />
@@ -649,102 +609,138 @@ function generateQuestionsSet() {
         <rect x="60" y="85" width="25" height="25" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="1.5" />
       </svg>
     ),
-    options: ensureFourUniqueOptions('Ναι, είναι το κλασικό έγκυρο ανάπτυγμα κύβου σε σχήμα σταυρού', () => [
-      'Όχι, γιατί έχει πάρα πολλά τετράγωνα',
-      'Όχι, γιατί θα επικαλυφθούν δύο έδρες',
-      'Όχι, διπλώνει μόνο σε ορθογώνιο παραλληλεπίπεδο'
+    options: ensureFourUniqueOptions(q4Correct, () => [
+      isEl ? 'Όχι, γιατί έχει πάρα πολλά τετράγωνα' : 'No, because it has too many squares',
+      isEl ? 'Όχι, γιατί θα επικαλυφθούν δύο έδρες' : 'No, because two faces will overlap',
+      isEl ? 'Όχι, διπλώνει μόνο σε ορθογώνιο παραλληλεπίπεδο' : 'No, it only folds into a prism'
     ]),
-    correctAnswer: 'Ναι, είναι το κλασικό έγκυρο ανάπτυγμα κύβου σε σχήμα σταυρού',
+    correctAnswer: q4Correct,
     tableData: [
-      { label: 'Σχήμα σταυρού', value: '4 τετράγωνα σε στήλη και 2 πλαϊνά πτερύγια εκατέρωθεν' },
-      { label: 'Αποτέλεσμα', value: 'Διπλώνει άψογα σε κύβο' }
+      { label: isEl ? 'Σχήμα σταυρού' : 'Cross shape', value: isEl ? '4 τετράγωνα σε στήλη και 2 πλαϊνά πτερύγια εκατέρωθεν' : '4 squares in a column and 2 lateral flaps on either side' },
+      { label: isEl ? 'Αποτέλεσμα' : 'Result', value: isEl ? 'Διπλώνει άψογα σε κύβο' : 'Folds perfectly into a cube' }
     ],
-    explanation: 'Το σχήμα του σταυρού (διάταξη 1-4-1) είναι το πιο κλασικό έγκυρο ανάπτυγμα κύβου.'
+    explanation: isEl
+      ? 'Το σχήμα του σταυρού (διάταξη 1-4-1) είναι το πιο κλασικό έγκυρο ανάπτυγμα κύβου.'
+      : 'The cross pattern (1-4-1 arrangement) is the most standard valid net of a cube.'
   });
 
-  // Q5: Υπολογισμός εμβαδού αναπτύγματος κύβου με ακμή 6 cm (Input αριθμού)
-  const a5 = 6;
-  const area5 = 6 * a5 * a5; // 216
+  // Q5: Υπολογισμός εμβαδού αναπτύγματος κύβου με ακμή 6 cm (Input)
   qs.push({
     id: 5,
     type: 'input',
-    title: 'ΕΜΒΑΔΟΝ ΑΝΑΠΤΥΓΜΑΤΟΣ ΚΥΒΟΥ (Α = 6 CM)',
-    prompt: `Πόσα cm² είναι το εμβαδόν του αναπτύγματος ενός κύβου με ακμή 6 cm; (Γράψτε μόνο τον αριθμό)`,
-    correctAnswer: String(area5),
+    title: isEl ? `ΕΜΒΑΔΟΝ ΑΝΑΠΤΥΓΜΑΤΟΣ ΚΥΒΟΥ (${toCleanUppercase(edgeSym)} ＝ 6 CM)` : `CUBE NET AREA (${edgeSym.toUpperCase()} ＝ 6 CM)`,
+    prompt: isEl
+      ? `Πόσα cm² είναι το εμβαδόν του αναπτύγματος ενός κύβου με ακμή 6 cm; (Γράψτε μόνο τον αριθμό)`
+      : `What is the area in cm² of the net of a cube with edge 6 cm? (Enter number only)`,
+    correctAnswer: '216',
     tableData: [
-      { label: 'Ακμή (α)', value: '6 cm' },
-      { label: '1 έδρα (α²)', value: '6 · 6 ＝ 36 cm²' },
-      { label: '6 έδρες (6 · α²)', value: '6 · 36 ＝ 216 cm²' }
+      { label: isEl ? `Ακμή (${edgeSym})` : `Edge (${edgeSym})`, value: '6 cm' },
+      {
+        label: isEl ? '1 έδρα' : '1 face',
+        valueNode: (
+          <span>
+            {edgeSym}<sup>2</sup> ＝ 6 · 6 ＝ 36 cm²
+          </span>
+        )
+      },
+      {
+        label: isEl ? '6 έδρες' : '6 faces',
+        valueNode: (
+          <span>
+            6 · {edgeSym}<sup>2</sup> ＝ 6 · 36 ＝ 216 cm²
+          </span>
+        )
+      }
     ],
-    explanation: `Εολ ＝ 6 · α² ＝ 6 · (6 · 6) ＝ 6 · 36 ＝ 216 cm².`
+    explanation: isEl
+      ? `Εολ ＝ 6 · ${edgeSym}² ＝ 6 · (6 · 6) ＝ 6 · 36 ＝ 216 cm².`
+      : `Atot ＝ 6 · ${edgeSym}² ＝ 6 · (6 · 6) ＝ 6 · 36 ＝ 216 cm².`
   });
 
-  // Q6: Πλήθος ακμών ορθογωνίου παραλληλεπιπέδου (Input αριθμού)
+  // Q6: Πλήθος ακμών ορθογωνίου παραλληλεπιπέδου (Input)
   qs.push({
     id: 6,
     type: 'input',
-    title: 'ΠΛΗΘΟΣ ΑΚΜΩΝ ΣΤΕΡΕΟΥ',
-    prompt: 'Πόσες ακμές έχει συνολικά ένα ορθογώνιο παραλληλεπίπεδο; (Γράψτε μόνο τον αριθμό)',
+    title: isEl ? 'ΠΛΗΘΟΣ ΑΚΜΩΝ ΣΤΕΡΕΟΥ' : 'SOLID EDGE COUNT',
+    prompt: isEl
+      ? 'Πόσες ακμές έχει συνολικά ένα ορθογώνιο παραλληλεπίπεδο; (Γράψτε μόνο τον αριθμό)'
+      : 'How many edges does a rectangular prism have in total? (Enter number only)',
     correctAnswer: '12',
     tableData: [
-      { label: 'Στερεό', value: 'Ορθογώνιο παραλληλεπίπεδο' },
-      { label: 'Πλήθος ακμών', value: '12 ακμές (4 μήκη, 4 πλάτη, 4 ύψη)' }
+      { label: isEl ? 'Στερεό' : 'Solid', value: isEl ? 'Ορθογώνιο παραλληλεπίπεδο' : 'Rectangular prism' },
+      { label: isEl ? 'Πλήθος ακμών' : 'Edge count', value: isEl ? '12 ακμές (4 μήκη, 4 πλάτη, 4 ύψη)' : '12 edges (4 lengths, 4 widths, 4 heights)' }
     ],
-    explanation: 'Το ορθογώνιο παραλληλεπίπεδο έχει 12 ακμές.'
+    explanation: isEl
+      ? 'Το ορθογώνιο παραλληλεπίπεδο έχει 12 ακμές.'
+      : 'A rectangular prism has 12 edges.'
   });
 
   // Q7: Άκυρο ανάπτυγμα κύβου (MCQ)
+  const q7Correct = isEl
+    ? 'Μια διάταξη όπου 4 τετράγωνα σχηματίζουν ένα μεγάλο μπλοκ 2 × 2'
+    : 'An arrangement where 4 squares form a 2 × 2 block';
   qs.push({
     id: 7,
     type: 'mcq',
-    title: 'ΚΑΝΟΝΑΣ ΑΠΟΡΡΙΨΗΣ ΑΝΑΠΤΥΓΜΑΤΟΣ',
-    prompt: 'Ποια από τις παρακάτω διατάξεις 6 τετραγώνων ΔΕΝ μπορεί ποτέ να διπλωθεί σε κύβο;',
-    options: ensureFourUniqueOptions('Μια διάταξη όπου 4 τετράγωνα σχηματίζουν ένα μεγάλο μπλοκ 2 × 2', () => [
-      'Μια διάταξη σε σχήμα σταυρού',
-      'Μια διάταξη σε σχήμα Τ',
-      'Μια διάταξη με 4 τετράγωνα σε σειρά και 2 εκατέρωθεν'
+    title: isEl ? 'ΚΑΝΟΝΑΣ ΑΠΟΡΡΙΨΗΣ ΑΝΑΠΤΥΓΜΑΤΟΣ' : 'NET REJECTION RULE',
+    prompt: isEl
+      ? 'Ποια από τις παρακάτω διατάξεις 6 τετραγώνων ΔΕΝ μπορεί ποτέ να διπλωθεί σε κύβο;'
+      : 'Which arrangement of 6 squares can NEVER fold into a cube?',
+    options: ensureFourUniqueOptions(q7Correct, () => [
+      isEl ? 'Μια διάταξη σε σχήμα σταυρού' : 'A cross pattern',
+      isEl ? 'Μια διάταξη σε σχήμα Τ' : 'A T-shaped pattern',
+      isEl ? 'Μια διάταξη με 4 τετράγωνα σε σειρά και 2 εκατέρωθεν' : 'A row of 4 squares with 2 flaps on opposite sides'
     ]),
-    correctAnswer: 'Μια διάταξη όπου 4 τετράγωνα σχηματίζουν ένα μεγάλο μπλοκ 2 × 2',
+    correctAnswer: q7Correct,
     tableData: [
-      { label: 'Μπλοκ 2 × 2', value: 'Σχηματίζει γωνία 4 τετραγώνων όπου οι έδρες επικαλύπτονται' },
-      { label: 'Κανόνας', value: 'Κανένα έγκυρο ανάπτυγμα κύβου δεν περιέχει μπλοκ 2 × 2' }
+      { label: isEl ? 'Μπλοκ 2 × 2' : '2 × 2 block', value: isEl ? 'Σχηματίζει γωνία 4 τετραγώνων όπου οι έδρες επικαλύπτονται' : 'Forms a 4-square corner where faces overlap' },
+      { label: isEl ? 'Κανόνας' : 'Rule', value: isEl ? 'Κανένα έγκυρο ανάπτυγμα κύβου δεν περιέχει μπλοκ 2 × 2' : 'No valid cube net contains a 2 × 2 block' }
     ],
-    explanation: 'Αν υπάρχουν 4 τετράγωνα σε μπλοκ 2 × 2, κάποιες έδρες θα επικαλυφθούν και το κουτί θα μείνει ανοιχτό από την άλλη πλευρά.'
+    explanation: isEl
+      ? 'Αν υπάρχουν 4 τετράγωνα σε μπλοκ 2 × 2, κάποιες έδρες θα επικαλυφθούν και το κουτί θα μείνει ανοιχτό από την άλλη πλευρά.'
+      : 'If 4 squares form a 2 × 2 block, faces will overlap upon folding, leaving the solid open on another side.'
   });
 
   // Q8: Τύπος ολικής επιφάνειας ορθογωνίου παραλληλεπιπέδου (MCQ)
+  const q8Correct = isEl
+    ? 'Εολ ＝ 2 · (α · β ＋ β · γ ＋ α · γ)'
+    : 'Atot ＝ 2 · (a · b ＋ b · c ＋ a · c)';
   qs.push({
     id: 8,
     type: 'mcq',
-    title: 'ΤΥΠΟΣ ΕΠΙΦΑΝΕΙΑΣ ΟΡΘΟΓΩΝΙΟΥ',
-    prompt: 'Πώς υπολογίζουμε το εμβαδόν του αναπτύγματος ενός ορθογωνίου παραλληλεπιπέδου με διαστάσεις α, β και γ;',
-    options: ensureFourUniqueOptions('Εολ ＝ 2 · (α · β ＋ β · γ ＋ α · γ)', () => [
-      'Εολ ＝ α · β · γ',
-      'Εολ ＝ 6 · (α ＋ β ＋ γ)',
-      'Εολ ＝ 4 · α · β'
+    title: isEl ? 'ΤΥΠΟΣ ΕΠΙΦΑΝΕΙΑΣ ΟΡΘΟΓΩΝΙΟΥ' : 'PRISM SURFACE FORMULA',
+    prompt: isEl
+      ? 'Πώς υπολογίζουμε το εμβαδόν του αναπτύγματος ενός ορθογωνίου παραλληλεπιπέδου με διαστάσεις α, β και γ;'
+      : 'How do we calculate the net area of a rectangular prism with dimensions a, b, and c?',
+    options: ensureFourUniqueOptions(q8Correct, () => [
+      isEl ? 'Εολ ＝ α · β · γ' : 'Atot ＝ a · b · c',
+      isEl ? 'Εολ ＝ 6 · (α ＋ β ＋ γ)' : 'Atot ＝ 6 · (a ＋ b ＋ c)',
+      isEl ? 'Εολ ＝ 4 · α · β' : 'Atot ＝ 4 · a · b'
     ]),
-    correctAnswer: 'Εολ ＝ 2 · (α · β ＋ β · γ ＋ α · γ)',
+    correctAnswer: q8Correct,
     tableData: [
-      { label: '3 ζεύγη εδρών', value: '2 · (α · β) ＋ 2 · (β · γ) ＋ 2 · (α · γ)' },
-      { label: 'Τελικός τύπος', value: '2 · (α · β ＋ β · γ ＋ α · γ)' }
+      { label: isEl ? '3 ζεύγη εδρών' : '3 face pairs', value: isEl ? '2 · (α · β) ＋ 2 · (β · γ) ＋ 2 · (α · γ)' : '2 · (a · b) ＋ 2 · (b · c) ＋ 2 · (a · c)' },
+      { label: isEl ? 'Τελικός τύπος' : 'Final formula', value: q8Correct }
     ],
-    explanation: 'Προσθέτουμε τα εμβαδά των 3 διαφορετικών εδρών και διπλασιάζουμε το αποτέλεσμα, αφού υπάρχουν 2 έδρες από κάθε είδος.'
+    explanation: isEl
+      ? 'Προσθέτουμε τα εμβαδά των 3 διαφορετικών εδρών και διπλασιάζουμε το αποτέλεσμα, αφού υπάρχουν 2 έδρες από κάθε είδος.'
+      : 'Add the areas of the 3 distinct rectangular faces and double the sum, since each face occurs in a pair.'
   });
 
   // Q9: Πρόβλημα από PROBLEM_POOL_Q9
-  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)](locale);
   qs.push({ id: 9, type: 'mcq', ...p9 });
 
   // Q10: Πρόβλημα από PROBLEM_POOL_Q10
-  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)](locale);
   qs.push({ id: 10, type: 'mcq', ...p10 });
 
   // Q11: Πρόβλημα από PROBLEM_POOL_Q11
-  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
+  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)](locale);
   qs.push({ id: 11, type: 'mcq', ...p11 });
 
   // Q12: Πρόβλημα από PROBLEM_POOL_Q12
-  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
+  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)](locale);
   qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
@@ -755,16 +751,20 @@ function generateQuestionsSet() {
 // -------------------------------------------------------------
 
 export default function AnaptigmaAskiseisPage() {
+  const router = useRouter();
+  const { locale = 'el' } = router;
+  const isEl = locale === 'el';
+
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     loadNewSet();
-  }, []);
+  }, [locale]);
 
   function loadNewSet() {
-    const newQs = generateQuestionsSet();
+    const newQs = generateQuestionsSet(locale);
     setQuestions(newQs);
     setUserAnswers({});
     setSubmitted(false);
@@ -818,48 +818,80 @@ export default function AnaptigmaAskiseisPage() {
   const totalCount = questions.length || 12;
   const percentage = Math.round((score / totalCount) * 100);
 
+  // Στατικά μεταφραστικά strings UI
+  const ui = {
+    metaTitle: isEl
+      ? "Ασκήσεις: Αναπτύγματα Στερεών & Επιφάνειες - ΣΤ' Δημοτικού | LearnMaths.gr"
+      : "Exercises: Solid Nets & Surfaces - 6th Grade | LearnMaths.gr",
+    metaDesc: isEl
+      ? "Διαδραστικές ασκήσεις στα αναπτύγματα κύβου και ορθογωνίου παραλληλεπιπέδου, έδρες, ακμές, κορυφές και ολική επιφάνεια για τη ΣΤ' Δημοτικού."
+      : "Interactive exercises on cube and rectangular prism nets, faces, edges, vertices, and total surface area for 6th Grade.",
+    backText: isEl ? "Θεωρία Κεφ. 77" : "Theory Ch. 77",
+    actionTheory: isEl ? "📖 Θεωρία" : "📖 Theory",
+    chapterBadge: isEl ? "ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 77 • ΣΤ' ΔΗΜΟΤΙΚΟΥ" : "EXERCISES • CHAPTER 77 • 6TH GRADE",
+    heroTitle: isEl ? "Ασκήσεις: Αναπτύγματα Κύβου και Ορθογωνίου" : "Exercises: Cube & Prism Nets",
+    heroDesc: isEl
+      ? "Εξασκηθείτε στα στοιχεία των στερεών (έδρες, ακμές, κορυφές), στα έγκυρα αναπτύγματα και στον υπολογισμό της ολικής επιφάνειας μέσα από 12 δυναμικές ερωτήσεις."
+      : "Practice solid elements (faces, edges, vertices), valid net patterns, and total surface area calculations across 12 dynamic questions.",
+    heroFeature: isEl
+      ? "12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση & Αναλυτική Επεξήγηση"
+      : "12 Dynamic Exercises with Automatic Grading & Detailed Explanation",
+    btnNewSet: isEl ? "Νέες Ασκήσεις" : "New Exercises",
+    btnSubmit: isEl ? "Έλεγχος Απαντήσεων" : "Check Answers",
+    lblTrue: isEl ? "ΣΩΣΤΟ" : "TRUE",
+    lblFalse: isEl ? "ΛΑΘΟΣ" : "FALSE",
+    lblCorrectBadge: isEl ? "ΣΩΣΤΟ" : "CORRECT",
+    lblWrongBadge: isEl ? "ΛΑΘΟΣ" : "INCORRECT",
+    inputPlaceholder: isEl ? "Απάντηση..." : "Answer...",
+    answered: isEl ? "ΑΠΑΝΤΗΘΗΚΑΝ:" : "ANSWERED:",
+    score: isEl ? "ΣΚΟΡ:" : "SCORE:",
+    percentage: isEl ? "ΠΟΣΟΣΤΟ:" : "PERCENTAGE:",
+    feedbackCorrect: isEl ? "✓ Σωστή απάντηση!" : "✓ Correct answer!",
+    feedbackWrongPrefix: isEl ? "✗ Λάθος. Η σωστή απάντηση είναι: " : "✗ Incorrect. The correct answer is: "
+  };
+
   return (
     <Layout
-      title="Ασκήσεις: Αναπτύγματα Στερεών &amp; Επιφάνειες - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις στα αναπτύγματα κύβου και ορθογωνίου παραλληλεπιπέδου, έδρες, ακμές, κορυφές και ολική επιφάνεια για τη ΣΤ' Δημοτικού."
+      title={ui.metaTitle}
+      description={ui.metaDesc}
       backUrl="/st-dimotikou/77-anaptigma"
-      backText="Θεωρία Κεφ. 77"
+      backText={ui.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/77-anaptigma"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>{ui.actionTheory}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 77 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{ui.chapterBadge}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              {toCleanUppercase('Ασκησεις: Αναπτυγματα Κυβου και Ορθογωνιου')}
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(ui.heroTitle)}
             </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στα στοιχεία των στερεών (έδρες, ακμές, κορυφές), στα έγκυρα αναπτύγματα και στον υπολογισμό της ολικής επιφάνειας μέσα από 12 δυναμικές ερωτήσεις.
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl break-words [overflow-wrap:anywhere]">
+              {ui.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
+              <span className="break-words">{ui.heroFeature}</span>
             </div>
             <button
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base shrink-0"
             >
-              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
+              <span>🔄 {toCleanUppercase(ui.btnNewSet)}</span>
             </button>
           </div>
         </section>
@@ -883,34 +915,34 @@ export default function AnaptigmaAskiseisPage() {
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
                 <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150 shrink-0">
                       {index + 1}
                     </span>
-                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider">
-                      {toCleanUppercase(q.title || `ΕΡΩΤΗΣΗ ${index + 1}`)}
+                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider truncate">
+                      {toCleanUppercase(q.title || `${isEl ? 'ΕΡΩΤΗΣΗ' : 'QUESTION'} ${index + 1}`)}
                     </h2>
                   </div>
 
                   {submitted && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider ${
+                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider shrink-0 ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                      {isCorrect ? toCleanUppercase(ui.lblCorrectBadge) : toCleanUppercase(ui.lblWrongBadge)}
                     </span>
                   )}
                 </div>
 
                 {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY: ΟΥΔΕΙΣ ΠΙΝΑΚΑΣ ΕΔΩ) */}
                 <div className="mb-6 space-y-3">
-                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed break-words [overflow-wrap:anywhere]">
                     {q.prompt}
                   </p>
-                  {q.svg && <div className="py-2">{q.svg}</div>}
+                  {q.svg && <div className="py-2 flex justify-center max-w-full overflow-hidden">{q.svg}</div>}
                 </div>
 
                 {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
@@ -932,14 +964,14 @@ export default function AnaptigmaAskiseisPage() {
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
-                            {val ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                            {val ? toCleanUppercase(ui.lblTrue) : toCleanUppercase(ui.lblFalse)}
                           </button>
                         );
                       })}
                     </div>
                   )}
 
-                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ) */}
+                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ ΧΩΡΙΣ TRUNCATE) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {q.options.map((opt, optIdx) => {
@@ -957,7 +989,7 @@ export default function AnaptigmaAskiseisPage() {
                             }`}
                           >
                             <span
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                                 isSelected
                                   ? 'bg-white text-indigo-700'
                                   : 'bg-white text-slate-500 border border-slate-200'
@@ -965,7 +997,7 @@ export default function AnaptigmaAskiseisPage() {
                             >
                               {String.fromCharCode(65 + optIdx)}
                             </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1">
+                            <span className="break-words whitespace-normal leading-snug flex-1 [overflow-wrap:anywhere]">
                               {opt}
                             </span>
                           </button>
@@ -982,12 +1014,12 @@ export default function AnaptigmaAskiseisPage() {
                         inputMode="decimal"
                         maxLength={10}
                         disabled={submitted}
-                        placeholder="Απάντηση..."
+                        placeholder={ui.inputPlaceholder}
                         value={userAns || ''}
                         onChange={(e) => {
                           const cleaned = e.target.value
                             .replace(/[^0-9.,]/g, '')
-                            .replace(/\./g, ',');
+                            .replace(/\./g, isEl ? ',' : '.');
                           handleAnswerChange(q.id, cleaned);
                         }}
                         className="w-full px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all disabled:opacity-80"
@@ -999,9 +1031,9 @@ export default function AnaptigmaAskiseisPage() {
                 {/* FEEDBACK & EXPLANATION (ΑΠΟΚΛΕΙΣΤΙΚΑ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
                 {submitted && (
                   <div className="mt-6 pt-5 border-t border-slate-150 space-y-4">
-                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΕΔΩ */}
+                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΣΤΟ FEEDBACK */}
                     {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
+                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1 w-full block">
                         <table className="w-full text-left text-xs sm:text-sm">
                           <tbody>
                             {q.tableData.map((row, rIdx) => (
@@ -1009,11 +1041,11 @@ export default function AnaptigmaAskiseisPage() {
                                 key={rIdx}
                                 className={rIdx !== q.tableData.length - 1 ? 'border-b border-slate-200/60' : ''}
                               >
-                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3">
+                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3 break-words">
                                   {row.label}
                                 </td>
-                                <td className="py-2.5 px-3 font-semibold text-slate-800">
-                                  {row.value}
+                                <td className="py-2.5 px-3 font-semibold text-slate-800 break-words">
+                                  {row.valueNode || row.value}
                                 </td>
                               </tr>
                             ))}
@@ -1022,9 +1054,9 @@ export default function AnaptigmaAskiseisPage() {
                       </div>
                     )}
 
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ (ΚΑΘΑΡΟΣ ΤΙΤΛΟΣ ΧΩΡΙΣ ΠΕΡΙΤΤΑ ΛΑΘΟΣ/ΣΩΣΤΟ) */}
+                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
                     <div
-                      className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
+                      className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed break-words [overflow-wrap:anywhere] ${
                         isCorrect
                           ? 'bg-emerald-50 text-emerald-950 border border-emerald-200'
                           : 'bg-rose-50 text-rose-950 border border-rose-200'
@@ -1032,12 +1064,12 @@ export default function AnaptigmaAskiseisPage() {
                     >
                       <p className="font-bold mb-1">
                         {isCorrect
-                          ? 'Σωστή απάντηση!'
-                          : `Η σωστή απάντηση είναι: ${
+                          ? ui.feedbackCorrect
+                          : `${ui.feedbackWrongPrefix}${
                               q.type === 'boolean'
                                 ? q.correctAnswer
-                                  ? 'Σωστό'
-                                  : 'Λάθος'
+                                  ? (isEl ? 'Σωστό' : 'True')
+                                  : (isEl ? 'Λάθος' : 'False')
                                 : q.correctAnswer
                             }`}
                       </p>
@@ -1051,12 +1083,12 @@ export default function AnaptigmaAskiseisPage() {
         </div>
 
         {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 sm:gap-8">
               {!submitted ? (
                 <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                  <span>{toCleanUppercase('ΑΠΑΝΤΗΘΗΚΑΝ:')} </span>
+                  <span>{toCleanUppercase(ui.answered)} </span>
                   <span className="font-black text-indigo-400 text-sm sm:text-base">
                     {answeredCount} / {totalCount}
                   </span>
@@ -1064,13 +1096,13 @@ export default function AnaptigmaAskiseisPage() {
               ) : (
                 <div className="flex items-center gap-4 sm:gap-6">
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΣΚΟΡ:')} </span>
+                    <span>{toCleanUppercase(ui.score)} </span>
                     <span className="font-black text-emerald-400 text-sm sm:text-base">
                       {score} / {totalCount}
                     </span>
                   </div>
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΠΟΣΟΣΤΟ:')} </span>
+                    <span>{toCleanUppercase(ui.percentage)} </span>
                     <span className="font-black text-amber-400 text-sm sm:text-base">
                       {percentage}%
                     </span>
@@ -1089,18 +1121,18 @@ export default function AnaptigmaAskiseisPage() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm shrink-0"
                 >
-                  {toCleanUppercase('ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ')}
+                  {toCleanUppercase(ui.btnSubmit)}
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={loadNewSet}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2 shrink-0"
                 >
                   <span>🔄</span>
-                  <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
+                  <span>{toCleanUppercase(ui.btnNewSet)}</span>
                 </button>
               )}
             </div>

@@ -1,19 +1,306 @@
 // pages/d-dimotikou/8-mikos-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΚΑΘΑΡΙΣΜΟΥ & ΤΥΠΟΓΡΑΦΙΑΣ --- //
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function formatNumberLocale(num, locale = 'el', options = {}) {
+  if (num === null || num === undefined || isNaN(num)) return '';
+  return num.toLocaleString(locale === 'en' ? 'en-US' : 'el-GR', options);
 }
 
-// 1. Άσκηση: Μετατροπή από Μεγαλύτερη σε Μικρότερη Μονάδα (Input)
+// Component για κανονική μαθηματική γραφή κλασμάτων (κατακόρυφη διάταξη)
+const Fraction = ({ num, den, inline = false }) => (
+  <span
+    className={`${
+      inline ? 'inline-flex' : 'flex'
+    } flex-col items-center justify-center align-middle mx-1 font-mono font-bold leading-none select-none`}
+  >
+    <span className="px-1.5 pb-0.5 text-center text-xs sm:text-sm border-b-2 border-current">
+      {num}
+    </span>
+    <span className="px-1.5 pt-0.5 text-center text-xs sm:text-sm">
+      {den}
+    </span>
+  </span>
+);
+
+// --- ΣΥΓΚΕΝΤΡΩΤΙΚΟ ΛΕΞΙΚΟ i18n --- //
+const translations = {
+  el: {
+    metaTitle: "Ασκήσεις: Μέτρηση Μήκους & Μετατροπές | LearnMaths.gr",
+    metaDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στις μονάδες μήκους: μετατροπές από μέτρα σε εκατοστά, χιλιόμετρα, επιλογή κατάλληλης μονάδας και σύγκριση.",
+    backUrl: "/d-dimotikou",
+    backText: "Δ' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    theoryUrl: "/d-dimotikou/8-mikos",
+    badge: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    title: "Ασκήσεις: Μέτρηση Μήκους",
+    subtitle: "Πατώντας «Νέες Ασκήσεις», οι τιμές και τα ερωτήματα ανανεώνονται αυτόματα από τη δεξαμενή!",
+    newQuestionsBtn: "Νέες Ασκήσεις",
+    submitBtn: "Έλεγχος Απαντήσεων",
+    scoreLabel: "Σκορ:",
+    successRate: "Επιτυχία:",
+    bottomPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    // Q1 & Q2
+    q1Prompt: "Μετάτρεψε τη μονάδα μέτρησης:",
+    q1FbSuccess: "Για να μετατρέψουμε από {from} σε {to}, πολλαπλασιάζουμε με το {factor}: {val} · {factor} ＝ {correct} {to}.",
+    q1FbErrorLead: "Η σωστή απάντηση είναι",
+    // Q3 & Q4
+    q3Prompt: "Μετάτρεψε τη μονάδα μέτρησης:",
+    q3FbSuccessLead: "Για να μετατρέψουμε από {from} σε {to}, διαιρούμε με το {factor}:",
+    q3FbErrorLead: "Η σωστή απάντηση είναι",
+    // Q5 & Q6
+    q5PromptPrefix: "Με ποια μονάδα μέτρησης είναι πιο κατάλληλο να εκφράσουμε",
+    q5FbSuccess: "Για να μετρήσουμε {factorDesc}, η πλέον κατάλληλη μονάδα είναι τα {correct}.",
+    q5FbErrorLead: "Η πλέον κατάλληλη μονάδα είναι:",
+    // Q7 & Q8
+    q7Prompt: "Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):",
+    q7FbEqual: "Μετατρέποντας στην ίδια μονάδα: {valA} {unitA} ＝ {valAConverted} {unitB}, επομένως ισχύει {valA} {unitA} {sym} {valB} {unitB}.",
+    q7FbDiff: "Μετατρέποντας στην ίδια μονάδα: {valA} {unitA} ＝ {valAConverted} {unitB}, επομένως ισχύει {valA} {unitA} {sym} {valB} {unitB}.",
+    q7FbErrorLead: "Η ορθή σχέση είναι"
+  },
+  en: {
+    metaTitle: "Exercises: Length Measurement & Conversions | LearnMaths.gr",
+    metaDesc: "Interactive math exercises for 4th Grade on units of length: converting metres to centimetres, kilometres, selecting suitable units, and comparing lengths.",
+    backUrl: "/en/d-dimotikou",
+    backText: "4th Grade",
+    theoryBtn: "Theory",
+    theoryUrl: "/en/d-dimotikou/8-mikos",
+    badge: "4TH GRADE • PRACTICE",
+    title: "Exercises: Length Measurement",
+    subtitle: "Clicking 'New Exercises' generates new values and questions automatically from the pool!",
+    newQuestionsBtn: "New Exercises",
+    submitBtn: "Check Answers",
+    scoreLabel: "Score:",
+    successRate: "Success Rate:",
+    bottomPrompt: "Complete all questions and click 'Check Answers'!",
+    // Q1 & Q2
+    q1Prompt: "Convert the unit of measurement:",
+    q1FbSuccess: "To convert from {from} to {to}, we multiply by {factor}: {val} · {factor} ＝ {correct} {to}.",
+    q1FbErrorLead: "The correct answer is",
+    // Q3 & Q4
+    q3Prompt: "Convert the unit of measurement:",
+    q3FbSuccessLead: "To convert from {from} to {to}, we divide by {factor}:",
+    q3FbErrorLead: "The correct answer is",
+    // Q5 & Q6
+    q5PromptPrefix: "Which measurement unit is most suitable to express",
+    q5FbSuccess: "To measure {factorDesc}, the most suitable unit is {correct}.",
+    q5FbErrorLead: "The most suitable unit is:",
+    // Q7 & Q8
+    q7Prompt: "Select the appropriate comparison sign ( ＜ , ＝ , ＞ ):",
+    q7FbEqual: "Converting to the same unit: {valA} {unitA} ＝ {valAConverted} {unitB}, therefore {valA} {unitA} {sym} {valB} {unitB}.",
+    q7FbDiff: "Converting to the same unit: {valA} {unitA} ＝ {valAConverted} {unitB}, therefore {valA} {unitA} {sym} {valB} {unitB}.",
+    q7FbErrorLead: "The correct comparison is"
+  }
+};
+
+// Δεξαμενή κατάλληλων μονάδων μέτρησης (el / en)
+const SUITABLE_UNITS_POOL = [
+  // Κm
+  {
+    qEl: 'την απόσταση μεταξύ δύο πόλεων (π.χ. Αθήνα – Θεσσαλονίκη)',
+    qEn: 'the distance between two cities (e.g. Athens – Thessaloniki)',
+    correctEl: 'Χιλιόμετρα (km)',
+    correctEn: 'Kilometres (km)',
+    descEl: 'μεγάλες γεωγραφικές αποστάσεις',
+    descEn: 'large geographical distances'
+  },
+  {
+    qEl: 'το συνολικό μήκος ενός αυτοκινητοδρόμου',
+    qEn: 'the total length of a highway',
+    correctEl: 'Χιλιόμετρα (km)',
+    correctEn: 'Kilometres (km)',
+    descEl: 'μεγάλες οδικές αποστάσεις',
+    descEn: 'long roadway distances'
+  },
+  {
+    qEl: 'την απόσταση που διανύει ένα αεροπλάνο σε μια πτήση',
+    qEn: 'the distance an airplane travels during a flight',
+    correctEl: 'Χιλιόμετρα (km)',
+    correctEn: 'Kilometres (km)',
+    descEl: 'μεγάλες αποστάσεις πτήσεων',
+    descEn: 'long flight distances'
+  },
+  {
+    qEl: 'το μήκος μιας διαδρομής μαραθωνίου δρόμου (42 km)',
+    qEn: 'the length of a marathon route (42 km)',
+    correctEl: 'Χιλιόμετρα (km)',
+    correctEn: 'Kilometres (km)',
+    descEl: 'μεγάλες αθλητικές διαδρομές',
+    descEn: 'long athletic routes'
+  },
+  {
+    qEl: 'την απόσταση ενός χωριού από την πλησιέστερη πόλη',
+    qEn: 'the distance from a village to the nearest town',
+    correctEl: 'Χιλιόμετρα (km)',
+    correctEn: 'Kilometres (km)',
+    descEl: 'μεγάλες αποστάσεις μεταξύ οικισμών',
+    descEn: 'large distances between towns'
+  },
+
+  // m
+  {
+    qEl: 'το μήκος μιας πισίνας ολυμπιακών διαστάσεων',
+    qEn: 'the length of an Olympic-size swimming pool',
+    correctEl: 'Μέτρα (m)',
+    correctEn: 'Metres (m)',
+    descEl: 'διαστάσεις αθλητικών εγκαταστάσεων',
+    descEn: 'dimensions of athletic facilities'
+  },
+  {
+    qEl: 'το ύψος ενός πολυώροφου κτιρίου',
+    qEn: 'the height of a multi-storey building',
+    correctEl: 'Μέτρα (m)',
+    correctEn: 'Metres (m)',
+    descEl: 'ύψη κτιρίων',
+    descEn: 'building heights'
+  },
+  {
+    qEl: 'το μήκος ενός γηπέδου ποδοσφαίρου',
+    qEn: 'the length of a football pitch',
+    correctEl: 'Μέτρα (m)',
+    correctEn: 'Metres (m)',
+    descEl: 'αθλητικούς χώρους',
+    descEn: 'sports fields'
+  },
+  {
+    qEl: 'το ύψος μιας σχολικής αίθουσας',
+    qEn: 'the height of a school classroom',
+    correctEl: 'Μέτρα (m)',
+    correctEn: 'Metres (m)',
+    descEl: 'διαστάσεις δωματίων',
+    descEn: 'room dimensions'
+  },
+  {
+    qEl: 'το μήκος ενός αστικού λεωφορείου',
+    qEn: 'the length of a city bus',
+    correctEl: 'Μέτρα (m)',
+    correctEn: 'Metres (m)',
+    descEl: 'διαστάσεις μεγάλων οχημάτων',
+    descEn: 'large vehicle lengths'
+  },
+
+  // cm
+  {
+    qEl: 'το μήκος ενός μολυβιού ή ενός στυλό',
+    qEn: 'the length of a pencil or pen',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'αντικείμενα καθημερινής χρήσης',
+    descEn: 'everyday small objects'
+  },
+  {
+    qEl: 'το πλάτος ενός σχολικού βιβλίου ή τετραδίου',
+    qEn: 'the width of a school textbook or notebook',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'διαστάσεις εντύπων',
+    descEn: 'book dimensions'
+  },
+  {
+    qEl: 'το μήκος της οθόνης ενός κινητού τηλεφώνου',
+    qEn: 'the length of a mobile phone screen',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'διαστάσεις ηλεκτρονικών συσκευών',
+    descEn: 'device screen dimensions'
+  },
+  {
+    qEl: 'το μήκος του πέλματος ενός παπουτσιού',
+    qEn: 'the length of a shoe sole',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'διαστάσεις ένδυσης/υπόδησης',
+    descEn: 'footwear sizes'
+  },
+  {
+    qEl: 'το μήκος ενός συνηθισμένου σχολικού χάρακα',
+    qEn: 'the length of a standard school ruler',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'όργανα σχεδίασης',
+    descEn: 'drawing rulers'
+  },
+  {
+    qEl: 'το πλάτος μιας τραπεζικής κάρτας',
+    qEn: 'the width of a bank credit card',
+    correctEl: 'Εκατοστά (cm)',
+    correctEn: 'Centimetres (cm)',
+    descEl: 'μικρά επίπεδα αντικείμενα',
+    descEn: 'flat cards'
+  },
+
+  // mm
+  {
+    qEl: 'το πάχος ενός νομίσματος των 2 ευρώ',
+    qEn: 'the thickness of a 2-euro coin',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'πολύ μικρά πάχη αντικειμένων',
+    descEn: 'very thin object thickness'
+  },
+  {
+    qEl: 'το πάχος μιας πιστωτικής κάρτας',
+    qEn: 'the thickness of a plastic card',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'πολύ λεπτά πάχη',
+    descEn: 'extremely thin surfaces'
+  },
+  {
+    qEl: 'το μήκος ενός μικρού μυρμηγκιού',
+    qEn: 'the length of a small ant',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'πολύ μικρά έντομα',
+    descEn: 'tiny insects'
+  },
+  {
+    qEl: 'το πάχος του τζαμιού ενός παραθύρου',
+    qEn: 'the thickness of window glass',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'πάχη υλικών',
+    descEn: 'glass thickness'
+  },
+  {
+    qEl: 'τη διάμετρο της μύτης ενός μηχανικού μολυβιού (π.χ. 0,5 ή 0,7)',
+    qEn: 'the lead diameter of a mechanical pencil (e.g. 0.5 or 0.7)',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'λεπτές ακίδες',
+    descEn: 'pencil lead tips'
+  },
+  {
+    qEl: 'το πάχος ενός φύλλου χαρτιού σχεδίασης',
+    qEn: 'the thickness of a sheet of paper',
+    correctEl: 'Χιλιοστά (mm)',
+    correctEn: 'Millimetres (mm)',
+    descEl: 'ελάχιστα πάχη επιφανειών',
+    descEn: 'minimal sheet thickness'
+  }
+];
+
+// --- ΓΕΝΝΗΤΡΙΕΣ ΕΡΩΤΗΣΕΩΝ --- //
+
 function makeBigToSmallQuestion(prevQuestion = null) {
   const types = [
     { from: 'm', to: 'cm', factor: 100, min: 1, max: 15 },
@@ -40,12 +327,10 @@ function makeBigToSmallQuestion(prevQuestion = null) {
     from: chosen.from,
     to: chosen.to,
     factor: chosen.factor,
-    correct,
-    explainText: `Για να μετατρέψουμε από ${chosen.from} σε ${chosen.to}, πολλαπλασιάζουμε με το ${formatNumber(chosen.factor)}: ${val} · ${formatNumber(chosen.factor)} ＝ ${formatNumber(correct)} ${chosen.to}.`
+    correct
   };
 }
 
-// 2. Άσκηση: Μετατροπή από Μικρότερη σε Μεγαλύτερη Μονάδα (Input)
 function makeSmallToBigQuestion(prevQuestion = null) {
   const types = [
     { from: 'cm', to: 'm', factor: 100, min: 1, max: 12 },
@@ -72,73 +357,42 @@ function makeSmallToBigQuestion(prevQuestion = null) {
     from: chosen.from,
     to: chosen.to,
     factor: chosen.factor,
-    correct,
-    explainText: `Για να μετατρέψουμε από ${chosen.from} σε ${chosen.to}, διαιρούμε με το ${formatNumber(chosen.factor)}: ${formatNumber(val)} ： ${formatNumber(chosen.factor)} ＝ ${correct} ${chosen.to}.`
+    correct
   };
 }
 
-// 3. Άσκηση: Επιλογή Κατάλληλης Μονάδας (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
-const SUITABLE_UNITS_POOL = [
-  // ΧΙΛΙΟΜΕΤΡΑ (km)
-  { q: 'την απόσταση μεταξύ δύο πόλεων (π.χ. Αθήνα – Θεσσαλονίκη)', correct: 'Χιλιόμετρα (km)', factorDesc: 'μεγάλες γεωγραφικές αποστάσεις' },
-  { q: 'το συνολικό μήκος ενός αυτοκινητοδρόμου', correct: 'Χιλιόμετρα (km)', factorDesc: 'μεγάλες οδικές αποστάσεις' },
-  { q: 'την απόσταση που διανύει ένα αεροπλάνο σε μια πτήση', correct: 'Χιλιόμετρα (km)', factorDesc: 'μεγάλες αποστάσεις πτήσεων' },
-  { q: 'το μήκος μιας διαδρομής μαραθωνίου δρόμου (42 km)', correct: 'Χιλιόμετρα (km)', factorDesc: 'μεγάλες αθλητικές διαδρομές' },
-  { q: 'την απόσταση του χωριού σου από την πλησιέστερη πόλη', correct: 'Χιλιόμετρα (km)', factorDesc: 'μεγάλες αποστάσεις μεταξύ οικισμών' },
-
-  // ΜΕΤΡΑ (m)
-  { q: 'το μήκος μιας πισίνας ολυμπιακών διαστάσεων', correct: 'Μέτρα (m)', factorDesc: 'διαστάσεις αθλητικών εγκαταστάσεων' },
-  { q: 'το ύψος ενός πολυώροφου κτιρίου', correct: 'Μέτρα (m)', factorDesc: 'ύψη κτιρίων' },
-  { q: 'το μήκος ενός γηπέδου ποδοσφαίρου', correct: 'Μέτρα (m)', factorDesc: 'αθλητικούς χώρους' },
-  { q: 'το ύψος μιας σχολικής αίθουσας', correct: 'Μέτρα (m)', factorDesc: 'διαστάσεις δωματίων' },
-  { q: 'το μήκος ενός αστικού λεωφορείου', correct: 'Μέτρα (m)', factorDesc: 'διαστάσεις μεγάλων οχημάτων' },
-
-  // ΕΚΑΤΟΣΤΑ (cm)
-  { q: 'το μήκος ενός μολυβιού ή ενός στυλό', correct: 'Εκατοστά (cm)', factorDesc: 'αντικείμενα καθημερινής χρήσης' },
-  { q: 'το πλάτος ενός σχολικού βιβλίου ή τετραδίου', correct: 'Εκατοστά (cm)', factorDesc: 'διαστάσεις εντύπων' },
-  { q: 'το μήκος της οθόνης ενός κινητού τηλεφώνου', correct: 'Εκατοστά (cm)', factorDesc: 'διαστάσεις ηλεκτρονικών συσκευών' },
-  { q: 'το μήκος του πέλματος ενός παπουτσιού', correct: 'Εκατοστά (cm)', factorDesc: 'διαστάσεις ένδυσης/υπόδησης' },
-  { q: 'το μήκος ενός συνηθισμένου σχολικού χάρακα', correct: 'Εκατοστά (cm)', factorDesc: 'όργανα σχεδίασης' },
-  { q: 'το πλάτος μιας τραπεζικής κάρτας', correct: 'Εκατοστά (cm)', factorDesc: 'μικρά επίπεδα αντικείμενα' },
-
-  // ΧΙΛΙΟΣΤΑ (mm)
-  { q: 'το πάχος ενός νομίσματος των 2 ευρώ', correct: 'Χιλιοστά (mm)', factorDesc: 'πολύ μικρά πάχη αντικειμένων' },
-  { q: 'το πάχος μιας πιστωτικής κάρτας', correct: 'Χιλιοστά (mm)', factorDesc: 'πολύ λεπτά πάχη' },
-  { q: 'το μήκος ενός μικρού μυρμηγκιού', correct: 'Χιλιοστά (mm)', factorDesc: 'πολύ μικρά έντομα' },
-  { q: 'το πάχος του τζαμιού ενός παραθύρου', correct: 'Χιλιοστά (mm)', factorDesc: 'πάχη υλικών' },
-  { q: 'τη διάμετρο της μύτης ενός μηχανικού μολυβιού (π.χ. 0,5 ή 0,7)', correct: 'Χιλιοστά (mm)', factorDesc: 'λεπτές ακίδες' },
-  { q: 'το πάχος ενός φύλλου χαρτιού σχεδίασης', correct: 'Χιλιοστά (mm)', factorDesc: 'ελάχιστα πάχη επιφανειών' }
-];
-
-function makeSuitableUnitQuestion(prevQuestion = null) {
+function makeSuitableUnitQuestion(locale, prevQuestion = null) {
   let selected;
 
   while (true) {
     selected = SUITABLE_UNITS_POOL[getRandomInt(0, SUITABLE_UNITS_POOL.length - 1)];
-    if (!prevQuestion || prevQuestion.qText !== selected.q) {
+    const qText = locale === 'en' ? selected.qEn : selected.qEl;
+    if (!prevQuestion || prevQuestion.qText !== qText) {
       break;
     }
   }
 
-  const allUnits = ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'];
-  const wrongs = allUnits.filter((u) => u !== selected.correct);
+  const allUnitsEl = ['Χιλιόμετρα (km)', 'Μέτρα (m)', 'Εκατοστά (cm)', 'Χιλιοστά (mm)'];
+  const allUnitsEn = ['Kilometres (km)', 'Metres (m)', 'Centimetres (cm)', 'Millimetres (mm)'];
 
-  const options = [
-    { text: selected.correct, isCorrect: true },
-    { text: wrongs[0], isCorrect: false },
-    { text: wrongs[1], isCorrect: false },
-    { text: wrongs[2], isCorrect: false }
-  ].sort(() => Math.random() - 0.5);
+  const allUnits = locale === 'en' ? allUnitsEn : allUnitsEl;
+  const correctText = locale === 'en' ? selected.correctEn : selected.correctEl;
+  const factorDesc = locale === 'en' ? selected.descEn : selected.descEl;
+  const qText = locale === 'en' ? selected.qEn : selected.qEl;
+
+  const wrongs = allUnits.filter((u) => u !== correctText);
+
+  const rawOptions = [correctText, wrongs[0], wrongs[1], wrongs[2]];
+  const uniqueOptions = [...new Set(rawOptions)].sort(() => Math.random() - 0.5);
 
   return {
-    qText: selected.q,
-    options,
-    correct: selected.correct,
-    explainText: `Για να μετρήσουμε ${selected.factorDesc}, η πλέον κατάλληλη μονάδα είναι τα ${selected.correct}.`
+    qText,
+    options: uniqueOptions,
+    correct: correctText,
+    factorDesc
   };
 }
 
-// 4. Άσκηση: Σύγκριση Μηκών (<, =, >)
 function makeComparisonQuestion(prevQuestion = null) {
   const pairs = [
     { unitA: 'm', unitB: 'cm', factorA: 100 },
@@ -176,21 +430,21 @@ function makeComparisonQuestion(prevQuestion = null) {
     unitA: pair.unitA,
     valB,
     unitB: pair.unitB,
-    correct: correctSym,
-    explainText: `Μετατρέποντας στην ίδια μονάδα: ${valA} ${pair.unitA} ＝ ${formatNumber(valA * pair.factorA)} ${pair.unitB}, επομένως ισχύει ${valA} ${pair.unitA} ${correctSym} ${formatNumber(valB)} ${pair.unitB}.`
+    factorA: pair.factorA,
+    valAConverted: valA * pair.factorA,
+    correct: correctSym
   };
 }
 
-// Δημιουργία 8 Ερωτήσεων με Εγγυημένη Μοναδικότητα
-function generateQuestions() {
+function generateQuestions(locale) {
   const q1 = makeBigToSmallQuestion();
   const q2 = makeBigToSmallQuestion(q1);
 
   const q3 = makeSmallToBigQuestion();
   const q4 = makeSmallToBigQuestion(q3);
 
-  const q5 = makeSuitableUnitQuestion();
-  const q6 = makeSuitableUnitQuestion(q5);
+  const q5 = makeSuitableUnitQuestion(locale);
+  const q6 = makeSuitableUnitQuestion(locale, q5);
 
   const q7 = makeComparisonQuestion();
   const q8 = makeComparisonQuestion(q7);
@@ -199,6 +453,11 @@ function generateQuestions() {
 }
 
 export default function MikosAskPage() {
+  const router = useRouter();
+  const rawLocale = router.locale || router.query.locale;
+  const currentLocale = rawLocale === 'en' ? 'en' : 'el';
+  const t = translations[currentLocale];
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -207,7 +466,7 @@ export default function MikosAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(currentLocale));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -215,7 +474,7 @@ export default function MikosAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [currentLocale]);
 
   if (!questions) return null;
 
@@ -226,7 +485,7 @@ export default function MikosAskPage() {
 
   const handleNumericInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace(/\D/g, '');
+    const clean = rawVal.replace(/[^0-9]/g, '').slice(0, 10);
     setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
@@ -249,6 +508,8 @@ export default function MikosAskPage() {
     setSubmitted(true);
   };
 
+  const totalQuestions = 8;
+
   // Render Q1 & Q2: Μεγάλη ➔ Μικρή Μονάδα (Input)
   const renderBigToSmall = (qKey, qData, numLabel) => {
     const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
@@ -263,18 +524,26 @@ export default function MikosAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Μετάτρεψε τη μονάδα μέτρησης: <span className="text-cyan-600 font-mono font-black text-lg sm:text-xl">{qData.val} {qData.from}</span> ＝ <span className="text-cyan-600 font-mono font-black text-lg sm:text-xl">? {qData.to}</span>
+            {t.q1Prompt}{' '}
+            <span className="text-cyan-600 font-mono font-black text-lg sm:text-xl">
+              {formatNumberLocale(qData.val, currentLocale)} {qData.from}
+            </span>{' '}
+            ＝{' '}
+            <span className="text-cyan-600 font-mono font-black text-lg sm:text-xl">
+              ? {qData.to}
+            </span>
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span>{qData.val} {qData.from}</span>
+            <span>{formatNumberLocale(qData.val, currentLocale)} {qData.from}</span>
             <span>＝</span>
             <input
               type="text"
               inputMode="numeric"
               autoComplete="off"
+              maxLength={10}
               id={`input-${qKey}`}
               name={`input-${qKey}`}
               placeholder="?"
@@ -291,11 +560,25 @@ export default function MikosAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {t.q1FbSuccess
+                  .replace(/\{from\}/g, qData.from)
+                  .replace(/\{to\}/g, qData.to)
+                  .replace(/\{factor\}/g, formatNumberLocale(qData.factor, currentLocale))
+                  .replace(/\{val\}/g, formatNumberLocale(qData.val, currentLocale))
+                  .replace(/\{correct\}/g, formatNumberLocale(qData.correct, currentLocale))}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)} {qData.to}</span>. {qData.explainText}
+                {t.q1FbErrorLead}{' '}
+                <span className="font-mono font-bold text-rose-900">
+                  {formatNumberLocale(qData.correct, currentLocale)} {qData.to}
+                </span>.{' '}
+                {t.q1FbSuccess
+                  .replace(/\{from\}/g, qData.from)
+                  .replace(/\{to\}/g, qData.to)
+                  .replace(/\{factor\}/g, formatNumberLocale(qData.factor, currentLocale))
+                  .replace(/\{val\}/g, formatNumberLocale(qData.val, currentLocale))
+                  .replace(/\{correct\}/g, formatNumberLocale(qData.correct, currentLocale))}
               </p>
             )}
           </div>
@@ -304,7 +587,7 @@ export default function MikosAskPage() {
     );
   };
 
-  // Render Q3 & Q4: Μικρή ➔ Μεγάλη Μονάδα (Input)
+  // Render Q3 & Q4: Μικρή ➔ Μεγάλη Μονάδα (Input με Fraction)
   const renderSmallToBig = (qKey, qData, numLabel) => {
     const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
     return (
@@ -318,18 +601,26 @@ export default function MikosAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Μετάτρεψε τη μονάδα μέτρησης: <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.val)} {qData.from}</span> ＝ <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">? {qData.to}</span>
+            {t.q3Prompt}{' '}
+            <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">
+              {formatNumberLocale(qData.val, currentLocale)} {qData.from}
+            </span>{' '}
+            ＝{' '}
+            <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">
+              ? {qData.to}
+            </span>
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span>{formatNumber(qData.val)} {qData.from}</span>
+            <span>{formatNumberLocale(qData.val, currentLocale)} {qData.from}</span>
             <span>＝</span>
             <input
               type="text"
               inputMode="numeric"
               autoComplete="off"
+              maxLength={10}
               id={`input-${qKey}`}
               name={`input-${qKey}`}
               placeholder="?"
@@ -345,13 +636,45 @@ export default function MikosAskPage() {
         {submitted && (
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
-              <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
-              </p>
+              <div className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60 flex flex-wrap items-center gap-1.5">
+                <span>
+                  {t.q3FbSuccessLead
+                    .replace('{from}', qData.from)
+                    .replace('{to}', qData.to)
+                    .replace('{factor}', formatNumberLocale(qData.factor, currentLocale))}
+                </span>
+                <Fraction
+                  num={formatNumberLocale(qData.val, currentLocale)}
+                  den={formatNumberLocale(qData.factor, currentLocale)}
+                  inline={true}
+                />
+                <span>＝</span>
+                <span className="font-mono font-bold">
+                  {formatNumberLocale(qData.correct, currentLocale)} {qData.to}
+                </span>.
+              </div>
             ) : (
-              <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{qData.correct} {qData.to}</span>. {qData.explainText}
-              </p>
+              <div className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60 flex flex-wrap items-center gap-1.5">
+                <span>{t.q3FbErrorLead}</span>
+                <span className="font-mono font-bold text-rose-900">
+                  {formatNumberLocale(qData.correct, currentLocale)} {qData.to}
+                </span>.
+                <span>
+                  {t.q3FbSuccessLead
+                    .replace('{from}', qData.from)
+                    .replace('{to}', qData.to)
+                    .replace('{factor}', formatNumberLocale(qData.factor, currentLocale))}
+                </span>
+                <Fraction
+                  num={formatNumberLocale(qData.val, currentLocale)}
+                  den={formatNumberLocale(qData.factor, currentLocale)}
+                  inline={true}
+                />
+                <span>＝</span>
+                <span className="font-mono font-bold">
+                  {formatNumberLocale(qData.correct, currentLocale)} {qData.to}
+                </span>.
+              </div>
             )}
           </div>
         )}
@@ -373,13 +696,13 @@ export default function MikosAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Με ποια μονάδα μέτρησης είναι πιο κατάλληλο να εκφράσουμε <span className="text-indigo-600 font-extrabold">{qData.qText}</span>;
+            {t.q5PromptPrefix} <span className="text-indigo-600 font-extrabold">{qData.qText}</span>;
           </h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:pl-11">
           {qData.options.map((opt, idx) => {
-            const isSelected = answers[qKey] === opt.text;
+            const isSelected = answers[qKey] === opt;
             return (
               <label
                 key={idx}
@@ -393,13 +716,15 @@ export default function MikosAskPage() {
                   type="radio"
                   id={`${qKey}-opt-${idx}`}
                   name={qKey}
-                  value={opt.text}
+                  value={opt}
                   checked={isSelected}
-                  onChange={() => handleInputChange(qKey, opt.text)}
+                  onChange={() => handleInputChange(qKey, opt)}
                   disabled={submitted}
                   className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 shrink-0"
                 />
-                <span className="leading-snug">{opt.text}</span>
+                <span className="leading-snug break-words whitespace-normal flex-1">
+                  {opt}
+                </span>
               </label>
             );
           })}
@@ -409,11 +734,16 @@ export default function MikosAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {t.q5FbSuccess
+                  .replace('{factorDesc}', qData.factorDesc)
+                  .replace('{correct}', qData.correct)}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η πλέον κατάλληλη μονάδα είναι: <strong className="font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+                {t.q5FbErrorLead} <strong className="font-bold text-rose-900">{qData.correct}</strong>.{' '}
+                {t.q5FbSuccess
+                  .replace('{factorDesc}', qData.factorDesc)
+                  .replace('{correct}', qData.correct)}
               </p>
             )}
           </div>
@@ -425,6 +755,22 @@ export default function MikosAskPage() {
   // Render Q7 & Q8: Σύγκριση (Buttons)
   const renderComparison = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
+    const fbText = qData.valAConverted === qData.valB
+      ? t.q7FbEqual
+          .replace('{valA}', formatNumberLocale(qData.valA, currentLocale))
+          .replace('{unitA}', qData.unitA)
+          .replace('{valAConverted}', formatNumberLocale(qData.valAConverted, currentLocale))
+          .replace('{unitB}', qData.unitB)
+          .replace('{sym}', qData.correct)
+          .replace('{valB}', formatNumberLocale(qData.valB, currentLocale))
+      : t.q7FbDiff
+          .replace('{valA}', formatNumberLocale(qData.valA, currentLocale))
+          .replace('{unitA}', qData.unitA)
+          .replace('{valAConverted}', formatNumberLocale(qData.valAConverted, currentLocale))
+          .replace('{unitB}', qData.unitB)
+          .replace('{sym}', qData.correct)
+          .replace('{valB}', formatNumberLocale(qData.valB, currentLocale));
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -436,13 +782,13 @@ export default function MikosAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):
+            {t.q7Prompt}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-4">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-lg sm:text-2xl font-mono font-black text-slate-800 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-            <span>{qData.valA} {qData.unitA}</span>
+            <span>{formatNumberLocale(qData.valA, currentLocale)} {qData.unitA}</span>
 
             <div className="flex gap-2">
               {['＜', '＝', '＞'].map((sym) => (
@@ -466,7 +812,7 @@ export default function MikosAskPage() {
               ))}
             </div>
 
-            <span>{formatNumber(qData.valB)} {qData.unitB}</span>
+            <span>{formatNumberLocale(qData.valB, currentLocale)} {qData.unitB}</span>
           </div>
         </div>
 
@@ -474,11 +820,15 @@ export default function MikosAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {fbText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η ορθή σχέση είναι <span className="font-mono font-bold text-rose-900">{qData.valA} {qData.unitA} {qData.correct} {formatNumber(qData.valB)} {qData.unitB}</span>. {qData.explainText}
+                {t.q7FbErrorLead}{' '}
+                <span className="font-mono font-bold text-rose-900">
+                  {formatNumberLocale(qData.valA, currentLocale)} {qData.unitA} {qData.correct} {formatNumberLocale(qData.valB, currentLocale)} {qData.unitB}
+                </span>.{' '}
+                {fbText}
               </p>
             )}
           </div>
@@ -489,45 +839,46 @@ export default function MikosAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Μέτρηση Μήκους & Μετατροπές | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στις μονάδες μήκους: μετατροπές από μέτρα σε εκατοστά, χιλιόμετρα, επιλογή κατάλληλης μονάδας και σύγκριση."
-      backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      title={t.metaTitle}
+      description={t.metaDesc}
+      backUrl={t.backUrl}
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
-          href="/d-dimotikou/8-mikos"
+          href={t.theoryUrl}
           className="bg-cyan-100 hover:bg-cyan-200 text-cyan-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-cyan-600 via-teal-600 to-indigo-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badge)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Μέτρηση Μήκους
+              📝 {t.title}
             </h1>
             <p className="text-cyan-100 text-xs sm:text-sm md:text-base">
-              Πατώντας «Νέες Ασκήσεις», οι τιμές και τα ερωτήματα ανανεώνονται αυτόματα από τη δεξαμενή!
+              {t.subtitle}
             </p>
           </div>
 
           <button
+            type="button"
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-cyan-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            🔄 {t.newQuestionsBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderBigToSmall('q1', questions.q1, 1)}
           {renderBigToSmall('q2', questions.q2, 2)}
 
@@ -547,7 +898,7 @@ export default function MikosAskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                🎯 {t.submitBtn}
               </button>
             </div>
           )}
@@ -555,16 +906,16 @@ export default function MikosAskPage() {
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
-              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
+              <span>🏆 {t.scoreLabel}</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / {totalQuestions}</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / totalQuestions) * 100)}%</span>
               </span>
             )}
           </div>
@@ -572,14 +923,15 @@ export default function MikosAskPage() {
           <div className="flex items-center gap-3">
             {submitted ? (
               <button
+                type="button"
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                <span>🔄</span> {t.newQuestionsBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.bottomPrompt}
               </p>
             )}
           </div>

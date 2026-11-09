@@ -1,8 +1,134 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
+// Καθαρισμός τόνων στα κεφαλαία με εξαίρεση το "Α'"
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Α')/g);
+  return parts
+    .map((part) => {
+      if (part === "Α'") return "Α'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+const translations = {
+  el: {
+    metaTitle: "Συστήματα Αρίθμησης (Δεκαδικό, Δυαδικό, Οκταδικό) | Α' Γυμνασίου",
+    metaDescription: "Θεωρία, κανόνες θέσης και διαδραστικά εργαστήρια μετατροπής για το Δεκαδικό, το Δυαδικό και το Οκταδικό σύστημα αρίθμησης.",
+    backText: "Α' Γυμνασίου",
+    actionButton: "ΑΣΚΗΣΕΙΣ",
+    badge: "Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ",
+    mainTitle: "Συστήματα Αρίθμησης",
+    mainSubtitle: "Ανακαλύπτουμε τη θεσιακή αξία των αριθμών, το Δεκαδικό σύστημα της καθημερινότητάς μας, το Δυαδικό σύστημα των υπολογιστών και το Οκταδικό σύστημα.",
+
+    // Ενότητα 1
+    sec1Title: "Θεσιακά Συστήματα & Το Δεκαδικό Σύστημα (Βάση 10)",
+    sec1Intro: "Στα θεσιακά συστήματα αρίθμησης, η αξία ενός ψηφίου εξαρτάται άμεσα από τη θέση στην οποία βρίσκεται μέσα στον αριθμό.",
+    sec1BoxTitle: "ΤΟ ΔΕΚΑΔΙΚΟ ΣΥΣΤΗΜΑ",
+    sec1Base: "Βάση: Το 10.",
+    sec1Digits: "Ψηφία: 10 ψηφία: { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.",
+    sec1PlaceValue: "Κάθε θέση προς τα αριστερά έχει 10 φορές μεγαλύτερη αξία (μονάδες, δεκάδες, εκατοντάδες, χιλιάδες).",
+    exampleDecTitle: "ΠΑΡΑΔΕΙΓΜΑ ΑΝΑΠΤΥΓΜΑΤΟΣ ΣΕ ΔΥΝΑΜΕΙΣ ΤΟΥ 10",
+    exampleDecIntro: "Ο αριθμός 3.524 αναλύεται ως άθροισμα γινομένων με δυνάμεις της βάσης 10:",
+
+    // Ενότητα 2
+    sec2Title: "Δυαδικό (Βάση 2) & Οκταδικό (Βάση 8) Σύστημα",
+    binBadge: "ΒΑΣΗ 2 • Η ΓΛΩΣΣΑ ΤΩΝ ΥΠΟΛΟΓΙΣΤΩΝ",
+    binTitle: "Το Δυαδικό Σύστημα (Binary)",
+    binDesc: "Χρησιμοποιεί μόνο δύο ψηφία: το 0 και το 1 (bits). Κάθε θέση αντιστοιχεί σε διαδοχική δύναμη του 2 (1, 2, 4, 8, 16, 32, 64, 128...).",
+    octBadge: "ΒΑΣΗ 8 • ΣΥΝΤΟΜΟΓΡΑΦΙΑ ΔΥΑΔΙΚΩΝ",
+    octTitle: "Το Οκταδικό Σύστημα (Octal)",
+    octDesc: "Χρησιμοποιεί οκτώ ψηφία: { 0, 1, 2, 3, 4, 5, 6, 7 }. Κάθε θέση αντιστοιχεί σε διαδοχική δύναμη του 8 (8⁰ ＝ 1, 8¹ ＝ 8, 8² ＝ 64, 8³ ＝ 512...).",
+    tableHeading: "Πίνακας Αντιστοιχίας Πρώτων Αριθμών",
+    colDec: "Δεκαδικό (Βάση 10)",
+    colBin: "Δυαδικό (Βάση 2)",
+    colOct: "Οκταδικό (Βάση 8)",
+    shortDec: "Δεκ (10)",
+    shortBin: "Δυαδ (2)",
+    shortOct: "Οκτ (8)",
+
+    // Εργαστήριο 1
+    lab1Title: "Διαδραστικός Μετατροπέας & Πολυωνυμική Ανάλυση",
+    decInputLabel: "Δεκαδικός Αριθμός (0 έως 9999)",
+    quickExamples: "ΓΡΗΓΟΡΑ ΠΑΡΑΔΕΙΓΜΑΤΑ",
+    decCardTitle: "ΔΕΚΑΔΙΚΟ (ΒΑΣΗ 10)",
+    binCardTitle: "ΔΥΑΔΙΚΟ (ΒΑΣΗ 2)",
+    octCardTitle: "ΟΚΤΑΔΙΚΟ (ΒΑΣΗ 8)",
+    expansionsHeading: "ΠΟΛΥΩΝΥΜΙΚΕΣ ΑΝΑΛΥΣΕΙΣ ΣΤΙΣ ΑΝΤΙΣΤΟΙΧΕΣ ΒΑΣΕΙΣ",
+    base10Label: "Βάση 10:",
+    base2Label: "Βάση 2:",
+    base8Label: "Βάση 8:",
+
+    // Εργαστήριο 2
+    lab2Title: "Διαδραστικό Εργαστήριο: 8-bit Byte Register (Κατασκευή Δυαδικού)",
+    lab2Intro: "Πάτησε πάνω σε κάθε bit για να το ενεργοποιήσεις (1) ή να το απενεργοποιήσεις (0) και παρακολούθησε ζωντανά πώς προστίθεται η θεσιακή του αξία:",
+    formedBinaryTitle: "ΣΧΗΜΑΤΙΣΜΕΝΟΣ ΔΥΑΔΙΚΟΣ ΑΡΙΘΜΟΣ",
+    decimalValueTitle: "ΔΕΚΑΔΙΚΗ ΑΞΙΑ (SUM)",
+  },
+  en: {
+    metaTitle: "Numeral Systems (Decimal, Binary, Octal) | 7th Grade",
+    metaDescription: "Theory, place value rules, and interactive conversion labs for Decimal, Binary, and Octal numeral systems.",
+    backText: "7th Grade",
+    actionButton: "EXERCISES",
+    badge: "7TH GRADE • THEORY & LAB",
+    mainTitle: "Numeral Systems",
+    mainSubtitle: "Discover positional place value, the everyday Decimal system, the Binary system used by computers, and the Octal system.",
+
+    // Section 1
+    sec1Title: "Positional Systems & The Decimal System (Base 10)",
+    sec1Intro: "In positional numeral systems, the value of a digit depends directly on its position within the number.",
+    sec1BoxTitle: "THE DECIMAL SYSTEM",
+    sec1Base: "Base: 10.",
+    sec1Digits: "Digits: 10 digits: { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }.",
+    sec1PlaceValue: "Each position to the left has 10 times greater value (ones, tens, hundreds, thousands).",
+    exampleDecTitle: "EXPANSION EXAMPLE IN POWERS OF 10",
+    exampleDecIntro: "The number 3,524 is expanded as a sum of products with powers of base 10:",
+
+    // Section 2
+    sec2Title: "Binary (Base 2) & Octal (Base 8) Systems",
+    binBadge: "BASE 2 • THE LANGUAGE OF COMPUTERS",
+    binTitle: "The Binary System",
+    binDesc: "Uses only two digits: 0 and 1 (bits). Each position corresponds to consecutive powers of 2 (1, 2, 4, 8, 16, 32, 64, 128...).",
+    octBadge: "BASE 8 • SHORTHAND FOR BINARY",
+    octTitle: "The Octal System",
+    octDesc: "Uses eight digits: { 0, 1, 2, 3, 4, 5, 6, 7 }. Each position corresponds to consecutive powers of 8 (8⁰ ＝ 1, 8¹ ＝ 8, 8² ＝ 64, 8³ ＝ 512...).",
+    tableHeading: "Equivalence Table of First Numbers",
+    colDec: "Decimal (Base 10)",
+    colBin: "Binary (Base 2)",
+    colOct: "Octal (Base 8)",
+    shortDec: "Dec (10)",
+    shortBin: "Bin (2)",
+    shortOct: "Oct (8)",
+
+    // Lab 1
+    lab1Title: "Interactive Converter & Polynomial Expansion",
+    decInputLabel: "Decimal Number (0 to 9999)",
+    quickExamples: "QUICK EXAMPLES",
+    decCardTitle: "DECIMAL (BASE 10)",
+    binCardTitle: "BINARY (BASE 2)",
+    octCardTitle: "OCTAL (BASE 8)",
+    expansionsHeading: "POLYNOMIAL EXPANSIONS IN RESPECTIVE BASES",
+    base10Label: "Base 10:",
+    base2Label: "Base 2:",
+    base8Label: "Base 8:",
+
+    // Lab 2
+    lab2Title: "Interactive Lab: 8-bit Byte Register (Binary Construction)",
+    lab2Intro: "Click each bit to toggle it on (1) or off (0) and observe in real time how its positional weight adds up:",
+    formedBinaryTitle: "FORMED BINARY NUMBER",
+    decimalValueTitle: "DECIMAL VALUE (SUM)",
+  },
+};
+
 export default function SistimaArithmisisTheoria() {
+  const router = useRouter();
+  const locale = router?.locale || 'el';
+  const t = translations[locale] || translations.el;
+
   // State ως string για ακριβή έλεγχο πληκτρολόγησης
   const [decStr, setDecStr] = useState('42');
 
@@ -15,8 +141,7 @@ export default function SistimaArithmisisTheoria() {
     return parseInt(decStr, 10) || 0;
   }, [decStr]);
 
-  // Input handler: μόνο 0-9, αυστηρό όριο 4 ψηφίων (0 - 9999).
-  // Αν έχει ήδη 4 ψηφία και πληκτρολογηθεί κι άλλο, δεν γίνεται τίποτα.
+  // Input handler: μόνο 0-9, αυστηρό όριο 4 ψηφίων (0 - 9999)
   const handleInputChange = (e) => {
     const clean = e.target.value.replace(/[^0-9]/g, '');
     if (clean.length <= 4) {
@@ -84,12 +209,14 @@ export default function SistimaArithmisisTheoria() {
     return bits.reduce((acc, bit, idx) => acc + bit * Math.pow(2, 7 - idx), 0);
   }, [bits]);
 
+  const numList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
   return (
     <Layout
-      title="Συστήματα Αρίθμησης (Δεκαδικό, Δυαδικό, Οκταδικό) | Α' Γυμνασίου"
-      description="Θεωρία, κανόνες θέσης και διαδραστικά εργαστήρια μετατροπής για το Δεκαδικό, το Δυαδικό και το Οκταδικό σύστημα αρίθμησης."
+      title={t.metaTitle}
+      description={t.metaDescription}
       backUrl="/a-gymnasiou"
-      backText="Α' Γυμνασίου"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
@@ -97,22 +224,23 @@ export default function SistimaArithmisisTheoria() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
         >
           <span>🎯</span>
-          <span>ΑΣΚΗΣΕΙΣ</span>
+          <span>{toCleanUppercase(t.actionButton)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-10 sm:space-y-16">
+        
         {/* Banner Header - Ενιαίο Indigo Theme χωρίς τόνους στα κεφαλαία */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
           <div className="max-w-4xl space-y-4">
             <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+              {toCleanUppercase(t.badge)}
             </span>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Συστήματα Αρίθμησης
+              {t.mainTitle}
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Ανακαλύπτουμε τη θεσιακή αξία των αριθμών, το Δεκαδικό σύστημα της καθημερινότητάς μας, το Δυαδικό σύστημα των υπολογιστών και το Οκταδικό σύστημα.
+              {t.mainSubtitle}
             </p>
           </div>
         </section>
@@ -124,37 +252,35 @@ export default function SistimaArithmisisTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 1
               </span>
-              Θεσιακά Συστήματα & Το Δεκαδικό Σύστημα (Βάση 10)
+              {t.sec1Title}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed">
             <div className="space-y-4">
-              <p>
-                Στα <strong>θεσιακά συστήματα αρίθμησης</strong>, η αξία ενός ψηφίου εξαρτάται άμεσα από τη <strong>θέση</strong> στην οποία βρίσκεται μέσα στον αριθμό.
-              </p>
+              <p>{t.sec1Intro}</p>
               <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 space-y-2">
                 <div className="text-xs font-bold uppercase text-indigo-800 tracking-wider">
-                  ΤΟ ΔΕΚΑΔΙΚΟ ΣΥΣΤΗΜΑ
+                  {toCleanUppercase(t.sec1BoxTitle)}
                 </div>
                 <ul className="text-xs sm:text-sm space-y-1.5 text-slate-700">
-                  <li>• <strong>Βάση:</strong> Το <strong>10</strong>.</li>
-                  <li>• <strong>Ψηφία:</strong> 10 ψηφία: {'{'} 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 {'}'}.</li>
-                  <li>• Κάθε θέση προς τα αριστερά έχει <strong>10 φορές</strong> μεγαλύτερη αξία (μονάδες, δεκάδες, εκατοντάδες, χιλιάδες).</li>
+                  <li><strong>{t.sec1Base}</strong></li>
+                  <li><strong>{t.sec1Digits}</strong></li>
+                  <li>{t.sec1PlaceValue}</li>
                 </ul>
               </div>
             </div>
 
             <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200 space-y-3">
               <div className="text-xs font-bold uppercase text-slate-500">
-                ΠΑΡΑΔΕΙΓΜΑ ΑΝΑΠΤΥΓΜΑΤΟΣ ΣΕ ΔΥΝΑΜΕΙΣ ΤΟΥ 10
+                {toCleanUppercase(t.exampleDecTitle)}
               </div>
               <p className="text-xs sm:text-sm text-slate-600">
-                Ο αριθμός <strong>3.524</strong> αναλύεται ως άθροισμα γινομένων με δυνάμεις της βάσης 10:
+                {t.exampleDecIntro}
               </p>
               <div className="p-3.5 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-slate-900 leading-loose">
-                3.524 ＝ 3 · 10<sup>3</sup> ＋ 5 · 10<sup>2</sup> ＋ 2 · 10<sup>1</sup> ＋ 4 · 10<sup>0</sup><br />
-                3.524 ＝ 3 · 1.000 ＋ 5 · 100 ＋ 2 · 10 ＋ 4 · 1
+                {locale === 'el' ? '3.524' : '3,524'} ＝ 3 · 10<sup>3</sup> ＋ 5 · 10<sup>2</sup> ＋ 2 · 10<sup>1</sup> ＋ 4 · 10<sup>0</sup><br />
+                {locale === 'el' ? '3.524' : '3,524'} ＝ 3 · 1.000 ＋ 5 · 100 ＋ 2 · 10 ＋ 4 · 1
               </div>
             </div>
           </div>
@@ -167,7 +293,7 @@ export default function SistimaArithmisisTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 2
               </span>
-              Δυαδικό (Βάση 2) & Οκταδικό (Βάση 8) Σύστημα
+              {t.sec2Title}
             </h2>
           </div>
 
@@ -176,13 +302,13 @@ export default function SistimaArithmisisTheoria() {
             <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΒΑΣΗ 2 • Η ΓΛΩΣΣΑ ΤΩΝ ΥΠΟΛΟΓΙΣΤΩΝ
+                  {toCleanUppercase(t.binBadge)}
                 </div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Το Δυαδικό Σύστημα (Binary)
+                  {t.binTitle}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600">
-                  Χρησιμοποιεί μόνο <strong>δύο ψηφία</strong>: το <strong>0</strong> και το <strong>1</strong> (bits). Κάθε θέση αντιστοιχεί σε διαδοχική δύναμη του 2 (1, 2, 4, 8, 16, 32, 64, 128...).
+                  {t.binDesc}
                 </p>
                 <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950">
                   1101<sub>(2)</sub> ＝ 1 · 2<sup>3</sup> ＋ 1 · 2<sup>2</sup> ＋ 0 · 2<sup>1</sup> ＋ 1 · 2<sup>0</sup><br />
@@ -195,13 +321,13 @@ export default function SistimaArithmisisTheoria() {
             <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <div className="text-xs font-bold text-indigo-600 uppercase">
-                  ΒΑΣΗ 8 • ΣΥΝΤΟΜΟΓΡΑΦΙΑ ΔΥΑΔΙΚΩΝ
+                  {toCleanUppercase(t.octBadge)}
                 </div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-xl">
-                  Το Οκταδικό Σύστημα (Octal)
+                  {t.octTitle}
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600">
-                  Χρησιμοποιεί <strong>οκτώ ψηφία</strong>: {'{'} 0, 1, 2, 3, 4, 5, 6, 7 {'}'}. Κάθε θέση αντιστοιχεί σε διαδοχική δύναμη του 8 (8⁰ ＝ 1, 8¹ ＝ 8, 8² ＝ 64, 8³ ＝ 512...).
+                  {t.octDesc}
                 </p>
                 <div className="p-3 bg-white rounded-xl border border-slate-200 font-mono text-xs sm:text-sm text-indigo-950">
                   35<sub>(8)</sub> ＝ 3 · 8<sup>1</sup> ＋ 5 · 8<sup>0</sup><br />
@@ -211,31 +337,56 @@ export default function SistimaArithmisisTheoria() {
             </div>
           </div>
 
-          {/* Συγκριτικός Πίνακας Πρώτων Αριθμών */}
+          {/* Αντιστοιχία Πρώτων Αριθμών: ZERO-SCROLL ΣΕ ΚΙΝΗΤΑ */}
           <div className="space-y-3">
             <h3 className="text-base sm:text-lg font-bold text-slate-900">
-              Πίνακας Αντιστοιχίας Πρώτων Αριθμών
+              {t.tableHeading}
             </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-center text-xs sm:text-sm border-collapse bg-white rounded-xl overflow-hidden border border-slate-200">
+
+            {/* Mobile View: Compact Grid Cards (Καμία οριζόντια κύλιση) */}
+            <div className="grid grid-cols-2 xs:grid-cols-3 gap-2 sm:hidden">
+              {numList.map((n) => (
+                <div
+                  key={n}
+                  className="bg-slate-50 border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between space-y-1 text-xs"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-1">
+                    <span className="font-bold text-slate-500 uppercase text-[10px]">{t.shortDec}</span>
+                    <span className="font-black text-slate-900 font-mono text-sm">{n}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sky-900 font-mono">
+                    <span className="text-[10px] text-sky-700 font-sans font-bold">{t.shortBin}:</span>
+                    <span className="font-bold">{n.toString(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-purple-900 font-mono">
+                    <span className="text-[10px] text-purple-700 font-sans font-bold">{t.shortOct}:</span>
+                    <span className="font-bold">{n.toString(8)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop View: Πλήρης Πίνακας για sm και άνω */}
+            <div className="hidden sm:block overflow-hidden rounded-xl border border-slate-200">
+              <table className="w-full text-center text-xs sm:text-sm border-collapse bg-white">
                 <thead className="bg-indigo-900 text-white font-bold">
                   <tr>
-                    <th className="py-2.5 px-3 border border-indigo-800">Δεκαδικό (Βάση 10)</th>
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+                    <th className="py-2.5 px-3 border border-indigo-800 whitespace-nowrap">{t.colDec}</th>
+                    {numList.map((n) => (
                       <th key={n} className="py-2.5 px-2 border border-indigo-800">{n}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 font-mono text-slate-800">
                   <tr className="hover:bg-slate-50">
-                    <td className="py-2 px-3 font-sans font-bold text-indigo-900 border">Δυαδικό (Βάση 2)</td>
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+                    <td className="py-2 px-3 font-sans font-bold text-indigo-900 border whitespace-nowrap">{t.colBin}</td>
+                    {numList.map((n) => (
                       <td key={n} className="py-2 px-2 border">{n.toString(2)}</td>
                     ))}
                   </tr>
                   <tr className="hover:bg-slate-50">
-                    <td className="py-2 px-3 font-sans font-bold text-indigo-900 border">Οκταδικό (Βάση 8)</td>
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => (
+                    <td className="py-2 px-3 font-sans font-bold text-indigo-900 border whitespace-nowrap">{t.colOct}</td>
+                    {numList.map((n) => (
                       <td key={n} className="py-2 px-2 border">{n.toString(8)}</td>
                     ))}
                   </tr>
@@ -252,7 +403,7 @@ export default function SistimaArithmisisTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 3
               </span>
-              Διαδραστικός Μετατροπέας & Πολυωνυμική Ανάλυση
+              {t.lab1Title}
             </h2>
           </div>
 
@@ -260,7 +411,7 @@ export default function SistimaArithmisisTheoria() {
             {/* Επιλογή / Πληκτρολόγηση Αριθμού */}
             <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
               <label className="block text-xs font-bold text-slate-600 uppercase">
-                Δεκαδικός Αριθμός (0 έως 9999)
+                {t.decInputLabel}
               </label>
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
@@ -290,7 +441,9 @@ export default function SistimaArithmisisTheoria() {
 
               {/* Γρήγορα κουμπιά επιλογής */}
               <div className="pt-2">
-                <div className="text-[11px] font-bold text-slate-500 uppercase mb-2">Γρηγορα παραδειγματα</div>
+                <div className="text-[11px] font-bold text-slate-500 uppercase mb-2">
+                  {toCleanUppercase(t.quickExamples)}
+                </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[7, 13, 42, 64, 127, 255].map((val) => (
                     <button
@@ -310,37 +463,55 @@ export default function SistimaArithmisisTheoria() {
             <div className="lg:col-span-2 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 text-center">
-                  <div className="text-[11px] font-bold uppercase text-indigo-700">Δεκαδικο (Βαση 10)</div>
-                  <div className="text-2xl sm:text-3xl font-black font-mono text-indigo-950 mt-1">{decValue}</div>
+                  <div className="text-[11px] font-bold uppercase text-indigo-700">
+                    {toCleanUppercase(t.decCardTitle)}
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-indigo-950 mt-1">
+                    {decValue}
+                  </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-sky-50 border border-sky-100 text-center">
-                  <div className="text-[11px] font-bold uppercase text-sky-700">Δυαδικο (Βαση 2)</div>
-                  <div className="text-2xl sm:text-3xl font-black font-mono text-sky-950 mt-1 break-words">{binValue}</div>
+                  <div className="text-[11px] font-bold uppercase text-sky-700">
+                    {toCleanUppercase(t.binCardTitle)}
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-sky-950 mt-1 break-words">
+                    {binValue}
+                  </div>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-purple-50 border border-purple-100 text-center">
-                  <div className="text-[11px] font-bold uppercase text-purple-700">Οκταδικο (Βαση 8)</div>
-                  <div className="text-2xl sm:text-3xl font-black font-mono text-purple-950 mt-1">{octValue}</div>
+                  <div className="text-[11px] font-bold uppercase text-purple-700">
+                    {toCleanUppercase(t.octCardTitle)}
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-purple-950 mt-1">
+                    {octValue}
+                  </div>
                 </div>
               </div>
 
               {/* Αναλυτικά Πολυώνυμα */}
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs sm:text-sm">
                 <div className="text-xs font-bold uppercase text-slate-500">
-                  ΠΟΛΥΩΝΥΜΙΚΕΣ ΑΝΑΛΥΣΕΙΣ ΣΤΙΣ ΑΝΤΙΣΤΟΙΧΕΣ ΒΑΣΕΙΣ
+                  {toCleanUppercase(t.expansionsHeading)}
                 </div>
                 <div className="space-y-2 font-mono text-slate-800">
                   <div className="p-2.5 bg-white rounded-xl border border-slate-200">
-                    <span className="font-bold text-indigo-900 block sm:inline mr-2">Βάση 10:</span>
+                    <span className="font-bold text-indigo-900 block sm:inline mr-2">
+                      {t.base10Label}
+                    </span>
                     <span dangerouslySetInnerHTML={{ __html: decExpansion }} />
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-slate-200">
-                    <span className="font-bold text-sky-900 block sm:inline mr-2">Βάση 2:</span>
+                    <span className="font-bold text-sky-900 block sm:inline mr-2">
+                      {t.base2Label}
+                    </span>
                     <span className="break-words" dangerouslySetInnerHTML={{ __html: binExpansion }} />
                   </div>
                   <div className="p-2.5 bg-white rounded-xl border border-slate-200">
-                    <span className="font-bold text-purple-900 block sm:inline mr-2">Βάση 8:</span>
+                    <span className="font-bold text-purple-900 block sm:inline mr-2">
+                      {t.base8Label}
+                    </span>
                     <span dangerouslySetInnerHTML={{ __html: octExpansion }} />
                   </div>
                 </div>
@@ -356,12 +527,12 @@ export default function SistimaArithmisisTheoria() {
               <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
                 4
               </span>
-              Διαδραστικό Εργαστήριο: 8-bit Byte Register (Κατασκευή Δυαδικού)
+              {t.lab2Title}
             </h2>
           </div>
 
           <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
-            Πάτησε πάνω σε κάθε bit για να το ενεργοποιήσεις (1) ή να το απενεργοποιήσεις (0) και παρακολούθησε ζωντανά πώς προστίθεται η θεσιακή του αξία:
+            {t.lab2Intro}
           </p>
 
           <div className="bg-slate-900 p-5 sm:p-8 rounded-3xl text-white space-y-6">
@@ -399,7 +570,7 @@ export default function SistimaArithmisisTheoria() {
             <div className="p-4 sm:p-6 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
               <div>
                 <div className="text-xs uppercase tracking-wider text-sky-300 font-bold">
-                  ΣΧΗΜΑΤΙΣΜΕΝΟΣ ΔΥΑΔΙΚΟΣ ΑΡΙΘΜΟΣ
+                  {toCleanUppercase(t.formedBinaryTitle)}
                 </div>
                 <div className="text-2xl sm:text-3xl font-black font-mono mt-0.5 text-white">
                   {bits.join('')}<sub>(2)</sub>
@@ -408,7 +579,7 @@ export default function SistimaArithmisisTheoria() {
 
               <div className="text-center sm:text-right">
                 <div className="text-xs uppercase tracking-wider text-amber-300 font-bold">
-                  ΔΕΚΑΔΙΚΗ ΑΞΙΑ (SUM)
+                  {toCleanUppercase(t.decimalValueTitle)}
                 </div>
                 <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400 mt-0.5">
                   {registerDecValue}<sub>(10)</sub>
@@ -417,6 +588,7 @@ export default function SistimaArithmisisTheoria() {
             </div>
           </div>
         </section>
+
       </div>
     </Layout>
   );

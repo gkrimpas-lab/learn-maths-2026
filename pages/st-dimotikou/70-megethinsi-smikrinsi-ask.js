@@ -1,19 +1,22 @@
 // pages/st-dimotikou/70-megethinsi-smikrinsi-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // -------------------------------------------------------------
-// DEFENSIVE UTILITY FUNCTIONS
+// DEFENSIVE UTILITY FUNCTIONS & TYPOGRAPHY
 // -------------------------------------------------------------
 
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 function randInt(min, max) {
@@ -24,14 +27,28 @@ function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [arr[j], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
-function formatNum(val) {
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  return Number(val).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
+}
+
+// Component κανονικής μορφής κλάσματος (Mobile Responsive & Overflow-Safe)
+function Fraction({ n, d, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full ${className}`}>
+      <span className="border-b border-current px-1 pb-0.5 font-bold break-all">
+        {n}
+      </span>
+      <span className="pt-0.5 px-1 font-bold break-all">
+        {d}
+      </span>
+    </span>
+  );
 }
 
 // Διασφάλιση ακριβώς 4 μοναδικών επιλογών για ερωτήσεις MCQ
@@ -56,595 +73,426 @@ function ensureFourUniqueOptions(correctText, distractorsGen) {
 }
 
 // -------------------------------------------------------------
-// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q9, Q10, Q11, Q12
+// ΔΕΞΑΜΕΝΕΣ ΠΡΟΒΛΗΜΑΤΩΝ (POOLS) ΓΙΑ Q7, Q8, Q9, Q10
 // -------------------------------------------------------------
 
-// POOL ΓΙΑ Q9: Κλίμακα Χάρτη & Πραγματικές Αποστάσεις σε km
-const PROBLEM_POOL_Q9 = [
-  // 1. Κλίμακα 1 : 200.000
-  () => {
+// POOL ΓΙΑ Q7: Κλίμακα Χάρτη & Πραγματικές Αποστάσεις σε km
+const PROBLEM_POOL_Q7 = [
+  (loc) => {
     const cm = randInt(3, 8);
     const scale = 200000;
     const km = (cm * scale) / 100000;
-    const correct = `${formatNum(km)} km`;
+    const correct = `${formatNum(km, loc)} km`;
     return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 200.000',
-      prompt: `Σε έναν οδικό χάρτη με κλίμακα 1 : 200.000, η απόσταση ανάμεσα σε δύο χωριά είναι ${cm} cm. Πόσα χιλιόμετρα (km) απέχουν τα δύο χωριά στην πραγματικότητα;`,
+      title: loc === 'el' ? 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 200.000' : 'DISTANCE ON MAP 1 : 200,000',
+      prompt: loc === 'el'
+        ? `Σε έναν οδικό χάρτη με κλίμακα 1 : 200.000, η απόσταση ανάμεσα σε δύο χωριά είναι ${formatNum(cm, loc)} cm. Πόσα χιλιόμετρα (km) απέχουν τα δύο χωριά στην πραγματικότητα;`
+        : `On a road map with scale 1 : 200,000, the distance between two villages is ${formatNum(cm, loc)} cm. How many kilometers (km) apart are they in reality?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(km + 4)} km`,
-        `${formatNum(km - 2 > 0 ? km - 2 : km + 8)} km`,
-        `${formatNum(km * 2)} km`,
-        `${formatNum(km / 2)} km`
+        `${formatNum(km + 4, loc)} km`,
+        `${formatNum(km - 2 > 0 ? km - 2 : km + 8, loc)} km`,
+        `${formatNum(km * 2, loc)} km`,
+        `${formatNum(km / 2, loc)} km`
       ]),
       correctAnswer: correct,
       unit: 'km',
-      tableData: [
-        { label: 'Απόσταση στον χάρτη', value: `${cm} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Απόσταση στον χάρτη', value: `${formatNum(cm, loc)} cm` },
         { label: 'Κλίμακα', value: '1 : 200.000' },
-        { label: 'Πραγματική απόσταση σε cm', value: `${cm} · 200.000 ＝ ${formatNum(cm * scale)} cm` },
-        { label: 'Μετατροπή σε km (: 100.000)', value: `${formatNum(km)} km` }
+        { label: 'Πραγματική απόσταση σε cm', value: `${formatNum(cm, loc)} · 200.000 ＝ ${formatNum(cm * scale, loc)} cm` },
+        { label: 'Μετατροπή σε km (: 100.000)', value: `${formatNum(km, loc)} km` }
+      ] : [
+        { label: 'Map distance', value: `${formatNum(cm, loc)} cm` },
+        { label: 'Scale', value: '1 : 200,000' },
+        { label: 'Actual distance in cm', value: `${formatNum(cm, loc)} · 200,000 ＝ ${formatNum(cm * scale, loc)} cm` },
+        { label: 'Converted to km (: 100,000)', value: `${formatNum(km, loc)} km` }
       ],
-      explanation: `Πολλαπλασιάζουμε με την κλίμακα: ${cm} · 200.000 ＝ ${formatNum(cm * scale)} cm. Διαιρούμε με το 100.000 για να βρούμε τα χιλιόμετρα: ${formatNum(km)} km.`
+      fractionData: { n: `${formatNum(cm * scale, loc)} cm`, d: loc === 'el' ? '100.000' : '100,000', res: `${formatNum(km, loc)} km` },
+      explanation: loc === 'el'
+        ? `Πολλαπλασιάζουμε με την κλίμακα: ${formatNum(cm, loc)} · 200.000 ＝ ${formatNum(cm * scale, loc)} cm. Διαιρούμε με το 100.000: ${formatNum(km, loc)} km.`
+        : `Multiply by scale: ${formatNum(cm, loc)} · 200,000 ＝ ${formatNum(cm * scale, loc)} cm. Divide by 100,000: ${formatNum(km, loc)} km.`
     };
   },
-  // 2. Κλίμακα 1 : 50.000
-  () => {
+  (loc) => {
     const cm = randInt(4, 12);
     const scale = 50000;
     const km = (cm * scale) / 100000;
-    const correct = `${formatNum(km)} km`;
+    const correct = `${formatNum(km, loc)} km`;
     return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΠΕΖΟΠΟΡΙΚΟ ΧΑΡΤΗ 1 : 50.000',
-      prompt: `Σε έναν πεζοπορικό χάρτη με κλίμακα 1 : 50.000, ένα μονοπάτι έχει μήκος ${cm} cm. Πόσα χιλιόμετρα είναι το πραγματικό μήκος του μονοπατιού;`,
+      title: loc === 'el' ? 'ΑΠΟΣΤΑΣΗ ΣΕ ΠΕΖΟΠΟΡΙΚΟ ΧΑΡΤΗ 1 : 50.000' : 'DISTANCE ON HIKING MAP 1 : 50,000',
+      prompt: loc === 'el'
+        ? `Σε έναν πεζοπορικό χάρτη με κλίμακα 1 : 50.000, ένα μονοπάτι έχει μήκος ${formatNum(cm, loc)} cm. Πόσα χιλιόμετρα είναι το πραγματικό μήκος του μονοπατιού;`
+        : `On a hiking map with scale 1 : 50,000, a trail measures ${formatNum(cm, loc)} cm. How many kilometers long is the trail in reality?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(km + 1)} km`,
-        `${formatNum(km - 1 > 0 ? km - 1 : km + 3)} km`,
-        `${formatNum(km * 10)} km`,
-        `${formatNum(km + 2.5)} km`
+        `${formatNum(km + 1, loc)} km`,
+        `${formatNum(km - 1 > 0 ? km - 1 : km + 3, loc)} km`,
+        `${formatNum(km * 2, loc)} km`,
+        `${formatNum(km + 2.5, loc)} km`
       ]),
       correctAnswer: correct,
       unit: 'km',
-      tableData: [
-        { label: 'Μήκος στον χάρτη', value: `${cm} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Μήκος στον χάρτη', value: `${formatNum(cm, loc)} cm` },
         { label: 'Κλίμακα', value: '1 : 50.000' },
-        { label: 'Πραγματικό μήκος σε cm', value: `${cm} · 50.000 ＝ ${formatNum(cm * scale)} cm` },
-        { label: 'Μετατροπή σε km (: 100.000)', value: `${formatNum(km)} km` }
+        { label: 'Πραγματικό μήκος σε cm', value: `${formatNum(cm, loc)} · 50.000 ＝ ${formatNum(cm * scale, loc)} cm` },
+        { label: 'Μετατροπή σε km (: 100.000)', value: `${formatNum(km, loc)} km` }
+      ] : [
+        { label: 'Map length', value: `${formatNum(cm, loc)} cm` },
+        { label: 'Scale', value: '1 : 50,000' },
+        { label: 'Actual length in cm', value: `${formatNum(cm, loc)} · 50,000 ＝ ${formatNum(cm * scale, loc)} cm` },
+        { label: 'Converted to km (: 100,000)', value: `${formatNum(km, loc)} km` }
       ],
-      explanation: `${cm} · 50.000 ＝ ${formatNum(cm * scale)} cm ＝ ${formatNum(km)} km.`
+      fractionData: { n: `${formatNum(cm * scale, loc)} cm`, d: loc === 'el' ? '100.000' : '100,000', res: `${formatNum(km, loc)} km` },
+      explanation: loc === 'el'
+        ? `${formatNum(cm, loc)} · 50.000 ＝ ${formatNum(cm * scale, loc)} cm ＝ ${formatNum(km, loc)} km.`
+        : `${formatNum(cm, loc)} · 50,000 ＝ ${formatNum(cm * scale, loc)} cm ＝ ${formatNum(km, loc)} km.`
     };
   },
-  // 3. Κλίμακα 1 : 1.000.000
-  () => {
+  (loc) => {
     const cm = randInt(3, 9);
     const km = cm * 10;
-    const correct = `${km} km`;
+    const correct = `${formatNum(km, loc)} km`;
     return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΓΕΩΓΡΑΦΙΚΟ ΧΑΡΤΗ 1 : 1.000.000',
-      prompt: `Σε έναν γεωγραφικό χάρτη της Ελλάδας με κλίμακα 1 : 1.000.000, δύο πόλεις απέχουν ${cm} cm. Πόση είναι η πραγματική τους απόσταση σε km;`,
+      title: loc === 'el' ? 'ΑΠΟΣΤΑΣΗ ΣΕ ΓΕΩΓΡΑΦΙΚΟ ΧΑΡΤΗ 1 : 1.000.000' : 'DISTANCE ON MAP 1 : 1,000,000',
+      prompt: loc === 'el'
+        ? `Σε έναν γεωγραφικό χάρτη με κλίμακα 1 : 1.000.000, δύο πόλεις απέχουν ${formatNum(cm, loc)} cm. Πόση είναι η πραγματική τους απόσταση σε km;`
+        : `On a geographic map with scale 1 : 1,000,000, two cities are ${formatNum(cm, loc)} cm apart. What is their real distance in km?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${km + 20} km`,
-        `${km - 10 > 0 ? km - 10 : km + 30} km`,
-        `${km * 2} km`,
-        `${cm} km`
+        `${formatNum(km + 20, loc)} km`,
+        `${formatNum(km - 10 > 0 ? km - 10 : km + 30, loc)} km`,
+        `${formatNum(km * 2, loc)} km`,
+        `${formatNum(cm, loc)} km`
       ]),
       correctAnswer: correct,
       unit: 'km',
-      tableData: [
-        { label: 'Απόσταση στον χάρτη', value: `${cm} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Απόσταση στον χάρτη', value: `${formatNum(cm, loc)} cm` },
         { label: 'Κλίμακα', value: '1 : 1.000.000 (1 cm ＝ 10 km)' },
-        { label: 'Πράξη', value: `${cm} · 10 km` },
-        { label: 'Πραγματική απόσταση', value: `${km} km` }
+        { label: 'Πράξη', value: `${formatNum(cm, loc)} · 10 km` },
+        { label: 'Πραγματική απόσταση', value: `${formatNum(km, loc)} km` }
+      ] : [
+        { label: 'Map distance', value: `${formatNum(cm, loc)} cm` },
+        { label: 'Scale', value: '1 : 1,000,000 (1 cm ＝ 10 km)' },
+        { label: 'Calculation', value: `${formatNum(cm, loc)} · 10 km` },
+        { label: 'Actual distance', value: `${formatNum(km, loc)} km` }
       ],
-      explanation: `Στην κλίμακα 1 : 1.000.000, κάθε 1 cm στον χάρτη αντιστοιχεί σε 10 km. Επομένως: ${cm} · 10 ＝ ${km} km.`
-    };
-  },
-  // 4. Κλίμακα 1 : 100.000
-  () => {
-    const cm = randInt(5, 15);
-    const km = cm;
-    const correct = `${km} km`;
-    return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 100.000',
-      prompt: `Σε έναν χάρτη με κλίμακα 1 : 100.000, η ευθεία απόσταση ανάμεσα σε δύο λιμάνια είναι ${cm} cm. Πόσα km απέχουν στην πραγματικότητα;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${km * 10} km`,
-        `${km + 5} km`,
-        `${km - 3 > 0 ? km - 3 : km + 8} km`,
-        `${formatNum(km / 10)} km`
-      ]),
-      correctAnswer: correct,
-      unit: 'km',
-      tableData: [
-        { label: 'Απόσταση στον χάρτη', value: `${cm} cm` },
-        { label: 'Κλίμακα', value: '1 : 100.000 (1 cm ＝ 1 km)' },
-        { label: 'Πράξη', value: `${cm} · 1 km` },
-        { label: 'Πραγματική απόσταση', value: `${km} km` }
-      ],
-      explanation: `Επειδή 100.000 cm ＝ 1 km, κάθε 1 cm στον χάρτη αντιστοιχεί σε 1 km. Άρα η απόσταση είναι ${kmQ6 ? km : cm} km.`
-    };
-  },
-  // 5. Κλίμακα 1 : 400.000
-  () => {
-    const cm = randInt(2, 6);
-    const scale = 400000;
-    const km = (cm * scale) / 100000;
-    const correct = `${km} km`;
-    return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΧΑΡΤΗ 1 : 400.000',
-      prompt: `Σε έναν χάρτη με κλίμακα 1 : 400.000, η απόσταση ανάμεσα σε δύο νησιά είναι ${cm} cm. Πόση είναι η πραγματική τους απόσταση σε km;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${km + 8} km`,
-        `${km - 4 > 0 ? km - 4 : km + 12} km`,
-        `${km * 2} km`,
-        `${cm * 10} km`
-      ]),
-      correctAnswer: correct,
-      unit: 'km',
-      tableData: [
-        { label: 'Απόσταση στον χάρτη', value: `${cm} cm` },
-        { label: 'Κλίμακα', value: '1 : 400.000' },
-        { label: 'Πράξη σε cm', value: `${cm} · 400.000 ＝ ${formatNum(cm * scale)} cm` },
-        { label: 'Σε χιλιόμετρα', value: `${km} km` }
-      ],
-      explanation: `${cm} · 400.000 cm ＝ ${formatNum(cm * scale)} cm ＝ ${km} km.`
-    };
-  },
-  // 6. Κλίμακα 1 : 25.000
-  () => {
-    const cm = randInt(4, 16);
-    const scale = 25000;
-    const km = (cm * scale) / 100000;
-    const correct = `${formatNum(km)} km`;
-    return {
-      title: 'ΑΠΟΣΤΑΣΗ ΣΕ ΤΟΠΟΓΡΑΦΙΚΟ ΧΑΡΤΗ 1 : 25.000',
-      prompt: `Σε έναν τοπογραφικό χάρτη με κλίμακα 1 : 25.000, η απόσταση δύο καταφυγίων είναι ${cm} cm. Πόσα χιλιόμετρα είναι η πραγματική απόσταση;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(km + 1.5)} km`,
-        `${formatNum(km - 0.5 > 0 ? km - 0.5 : km + 2.5)} km`,
-        `${formatNum(km * 4)} km`,
-        `${formatNum(km / 2)} km`
-      ]),
-      correctAnswer: correct,
-      unit: 'km',
-      tableData: [
-        { label: 'Απόσταση στον χάρτη', value: `${cm} cm` },
-        { label: 'Κλίμακα', value: '1 : 25.000' },
-        { label: 'Πράξη σε cm', value: `${cm} · 25.000 ＝ ${formatNum(cm * scale)} cm` },
-        { label: 'Σε χιλιόμετρα', value: `${formatNum(km)} km` }
-      ],
-      explanation: `${cm} · 25.000 cm ＝ ${formatNum(cm * scale)} cm ＝ ${formatNum(km)} km.`
+      explanation: loc === 'el'
+        ? `Στην κλίμακα 1 : 1.000.000, κάθε 1 cm στον χάρτη αντιστοιχεί σε 10 km: ${formatNum(cm, loc)} · 10 ＝ ${formatNum(km, loc)} km.`
+        : `At scale 1 : 1,000,000, every 1 cm on the map equals 10 km: ${formatNum(cm, loc)} · 10 ＝ ${formatNum(km, loc)} km.`
     };
   }
 ];
 
-// POOL ΓΙΑ Q10: Αρχιτεκτονικά Σχέδια & Κάτοψη Κατοικίας σε m
-const PROBLEM_POOL_Q10 = [
-  // 1. Κάτοψη 1 : 50
-  () => {
+// POOL ΓΙΑ Q8: Αρχιτεκτονικά Σχέδια & Κάτοψη Κατοικίας σε m
+const PROBLEM_POOL_Q8 = [
+  (loc) => {
     const wCm = randInt(6, 12);
     const realM = (wCm * 50) / 100;
-    const correct = `${formatNum(realM)} m`;
+    const correct = `${formatNum(realM, loc)} m`;
     return {
-      title: 'ΜΗΚΟΣ ΤΟΙΧΟΥ ΣΕ ΚΑΤΟΨΗ 1 : 50',
-      prompt: `Στο αρχιτεκτονικό σχέδιο ενός σπιτιού με κλίμακα 1 : 50, ένας τοίχος έχει μήκος ${wCm} cm. Πόσα μέτρα (m) είναι το πραγματικό μήκος του τοίχου;`,
+      title: loc === 'el' ? 'ΜΗΚΟΣ ΤΟΙΧΟΥ ΣΕ ΚΑΤΟΨΗ 1 : 50' : 'WALL LENGTH IN FLOOR PLAN 1 : 50',
+      prompt: loc === 'el'
+        ? `Στο αρχιτεκτονικό σχέδιο ενός σπιτιού με κλίμακα 1 : 50, ένας τοίχος έχει μήκος ${formatNum(wCm, loc)} cm. Πόσα μέτρα (m) είναι το πραγματικό μήκος του τοίχου;`
+        : `On an architectural floor plan with scale 1 : 50, a wall measures ${formatNum(wCm, loc)} cm. How many meters (m) long is the wall in reality?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(realM + 1.5)} m`,
-        `${formatNum(realM - 1 > 0 ? realM - 1 : realM + 3)} m`,
-        `${formatNum(realM * 2)} m`,
-        `${formatNum(wCm)} m`
+        `${formatNum(realM + 1.5, loc)} m`,
+        `${formatNum(realM - 1 > 0 ? realM - 1 : realM + 3, loc)} m`,
+        `${formatNum(realM * 2, loc)} m`,
+        `${formatNum(wCm, loc)} m`
       ]),
       correctAnswer: correct,
       unit: 'm',
-      tableData: [
-        { label: 'Μήκος στο σχέδιο', value: `${wCm} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Μήκος στο σχέδιο', value: `${formatNum(wCm, loc)} cm` },
         { label: 'Κλίμακα', value: '1 : 50' },
-        { label: 'Πραγματικό μήκος σε cm', value: `${wCm} · 50 ＝ ${wCm * 50} cm` },
-        { label: 'Μετατροπή σε m (: 100)', value: `${formatNum(realM)} m` }
+        { label: 'Πραγματικό μήκος σε cm', value: `${formatNum(wCm, loc)} · 50 ＝ ${formatNum(wCm * 50, loc)} cm` },
+        { label: 'Μετατροπή σε m (: 100)', value: `${formatNum(realM, loc)} m` }
+      ] : [
+        { label: 'Plan length', value: `${formatNum(wCm, loc)} cm` },
+        { label: 'Scale', value: '1 : 50' },
+        { label: 'Actual length in cm', value: `${formatNum(wCm, loc)} · 50 ＝ ${formatNum(wCm * 50, loc)} cm` },
+        { label: 'Converted to m (: 100)', value: `${formatNum(realM, loc)} m` }
       ],
-      explanation: `${wCm} · 50 ＝ ${wCm * 50} cm ＝ ${formatNum(realM)} m.`
+      fractionData: { n: `${formatNum(wCm * 50, loc)} cm`, d: '100', res: `${formatNum(realM, loc)} m` },
+      explanation: loc === 'el'
+        ? `${formatNum(wCm, loc)} · 50 ＝ ${formatNum(wCm * 50, loc)} cm ＝ ${formatNum(realM, loc)} m.`
+        : `${formatNum(wCm, loc)} · 50 ＝ ${formatNum(wCm * 50, loc)} cm ＝ ${formatNum(realM, loc)} m.`
     };
   },
-  // 2. Κάτοψη 1 : 100
-  () => {
+  (loc) => {
     const wCm = randInt(5, 14);
     const realM = wCm;
-    const correct = `${realM} m`;
+    const correct = `${formatNum(realM, loc)} m`;
     return {
-      title: 'ΔΙΑΣΤΑΣΗ ΣΕ ΚΑΤΟΨΗ 1 : 100',
-      prompt: `Στην κάτοψη ενός οικοπέδου με κλίμακα 1 : 100, η πρόσοψη σχεδιάστηκε με μήκος ${wCm} cm. Πόσα μέτρα (m) είναι η πραγματική πρόσοψη;`,
+      title: loc === 'el' ? 'ΔΙΑΣΤΑΣΗ ΣΕ ΚΑΤΟΨΗ 1 : 100' : 'DIMENSION IN FLOOR PLAN 1 : 100',
+      prompt: loc === 'el'
+        ? `Στην κάτοψη ενός οικοπέδου με κλίμακα 1 : 100, η πρόσοψη σχεδιάστηκε με μήκος ${formatNum(wCm, loc)} cm. Πόσα μέτρα (m) είναι η πραγματική πρόσοψη;`
+        : `On a site plan with scale 1 : 100, the frontage is drawn as ${formatNum(wCm, loc)} cm. How many meters (m) is the real frontage?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${realM * 10} m`,
-        `${realM + 4} m`,
-        `${realM - 2 > 0 ? realM - 2 : realM + 6} m`,
-        `${formatNum(realM / 10)} m`
+        `${formatNum(realM * 2, loc)} m`,
+        `${formatNum(realM + 4, loc)} m`,
+        `${formatNum(realM - 2 > 0 ? realM - 2 : realM + 6, loc)} m`,
+        `${formatNum(realM / 10, loc)} m`
       ]),
       correctAnswer: correct,
       unit: 'm',
-      tableData: [
-        { label: 'Μήκος στο σχέδιο', value: `${wCm} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Μήκος στο σχέδιο', value: `${formatNum(wCm, loc)} cm` },
         { label: 'Κλίμακα', value: '1 : 100 (1 cm ＝ 1 m)' },
-        { label: 'Πράξη', value: `${wCm} · 1 m` },
-        { label: 'Πραγματικό μήκος', value: `${realM} m` }
+        { label: 'Πράξη', value: `${formatNum(wCm, loc)} · 1 m` },
+        { label: 'Πραγματικό μήκος', value: `${formatNum(realM, loc)} m` }
+      ] : [
+        { label: 'Plan length', value: `${formatNum(wCm, loc)} cm` },
+        { label: 'Scale', value: '1 : 100 (1 cm ＝ 1 m)' },
+        { label: 'Calculation', value: `${formatNum(wCm, loc)} · 1 m` },
+        { label: 'Actual length', value: `${formatNum(realM, loc)} m` }
       ],
-      explanation: `Στην κλίμακα 1 : 100, κάθε 1 cm στο χαρτί αντιστοιχεί σε 100 cm (1 m). Άρα: ${realM} m.`
+      explanation: loc === 'el'
+        ? `Στην κλίμακα 1 : 100, κάθε 1 cm στο σχέδιο ισούται με 1 m: ${formatNum(realM, loc)} m.`
+        : `At scale 1 : 100, every 1 cm on the drawing represents 1 m: ${formatNum(realM, loc)} m.`
     };
   },
-  // 3. Εμβαδόν δωματίου από σχέδιο 1 : 50
-  () => {
+  (loc) => {
     const lCm = 8;
     const wCm = 6;
     const realL = (lCm * 50) / 100;
     const realW = (wCm * 50) / 100;
     const area = realL * realW;
-    const correct = `${area} m²`;
+    const correct = `${formatNum(area, loc)} m²`;
     return {
-      title: 'ΕΜΒΑΔΟΝ ΔΩΜΑΤΙΟΥ ΑΠΟ ΚΑΤΟΨΗ 1 : 50',
-      prompt: `Στην κάτοψη με κλίμακα 1 : 50, ένα δωμάτιο έχει διαστάσεις 8 cm και 6 cm. Πόσο είναι το πραγματικό εμβαδόν του δωματίου σε m²;`,
-      options: ensureFourUniqueOptions(correct, () => ['24 m²', '48 m²', '16 m²', '10 m²']),
+      title: loc === 'el' ? 'ΕΜΒΑΔΟΝ ΔΩΜΑΤΙΟΥ ΑΠΟ ΚΑΤΟΨΗ 1 : 50' : 'ROOM AREA FROM PLAN 1 : 50',
+      prompt: loc === 'el'
+        ? `Στην κάτοψη με κλίμακα 1 : 50, ένα δωμάτιο έχει διαστάσεις ${formatNum(lCm, loc)} cm και ${formatNum(wCm, loc)} cm. Πόσο είναι το πραγματικό εμβαδόν του δωματίου σε m²;`
+        : `On a floor plan with scale 1 : 50, a room measures ${formatNum(lCm, loc)} cm by ${formatNum(wCm, loc)} cm. What is the real area of the room in m²?`,
+      options: ensureFourUniqueOptions(correct, () => [
+        `${formatNum(area * 2, loc)} m²`,
+        `${formatNum(area * 4, loc)} m²`,
+        `${formatNum(area + 4, loc)} m²`,
+        `${formatNum(Math.max(2, area - 4), loc)} m²`
+      ]),
       correctAnswer: correct,
       unit: 'm²',
-      tableData: [
-        { label: 'Πραγματικό μήκος', value: '8 cm · 50 ＝ 400 cm ＝ 4 m' },
-        { label: 'Πραγματικό πλάτος', value: '6 cm · 50 ＝ 300 cm ＝ 3 m' },
+      tableData: loc === 'el' ? [
+        { label: 'Πραγματικό μήκος', value: `${formatNum(lCm, loc)} cm · 50 ＝ 400 cm ＝ 4 m` },
+        { label: 'Πραγματικό πλάτος', value: `${formatNum(wCm, loc)} cm · 50 ＝ 300 cm ＝ 3 m` },
         { label: 'Πράξη εμβαδού', value: '4 m · 3 m' },
-        { label: 'Πραγματικό εμβαδόν', value: `${area} m²` }
+        { label: 'Πραγματικό εμβαδόν', value: `${formatNum(area, loc)} m²` }
+      ] : [
+        { label: 'Actual length', value: `${formatNum(lCm, loc)} cm · 50 ＝ 400 cm ＝ 4 m` },
+        { label: 'Actual width', value: `${formatNum(wCm, loc)} cm · 50 ＝ 300 cm ＝ 3 m` },
+        { label: 'Area calculation', value: '4 m · 3 m' },
+        { label: 'Actual area', value: `${formatNum(area, loc)} m²` }
       ],
-      explanation: `Βρίσκουμε πρώτα τις πραγματικές διαστάσεις: 4 m και 3 m. Εμβαδόν: 4 · 3 ＝ 12 m².`
-    };
-  },
-  // 4. Σχέδιο σχολικής αίθουσας 1 : 200
-  () => {
-    const cm = randInt(3, 7);
-    const realM = (cm * 200) / 100;
-    const correct = `${formatNum(realM)} m`;
-    return {
-      title: 'ΣΧΕΔΙΟ ΣΧΟΛΙΚΗΣ ΑΙΘΟΥΣΑΣ 1 : 200',
-      prompt: `Στο γενικό σχέδιο ενός σχολείου με κλίμακα 1 : 200, το πλάτος μιας αίθουσας είναι ${cm} cm. Πόσα μέτρα (m) είναι το πραγματικό της πλάτος;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${formatNum(realM + 2)} m`,
-        `${formatNum(realM - 2 > 0 ? realM - 2 : realM + 4)} m`,
-        `${formatNum(realM * 2)} m`,
-        `${formatNum(cm)} m`
-      ]),
-      correctAnswer: correct,
-      unit: 'm',
-      tableData: [
-        { label: 'Πλάτος σχεδίου', value: `${cm} cm` },
-        { label: 'Κλίμακα', value: '1 : 200' },
-        { label: 'Σε εκατοστά', value: `${cm} · 200 ＝ ${cm * 200} cm` },
-        { label: 'Σε μέτρα', value: `${formatNum(realM)} m` }
-      ],
-      explanation: `${cm} · 200 cm ＝ ${cm * 200} cm ＝ ${formatNum(realM)} m.`
-    };
-  },
-  // 5. Ύψος κτιρίου σε σχέδιο 1 : 100
-  () => {
-    const cm = randInt(8, 16);
-    const realM = cm;
-    const correct = `${realM} m`;
-    return {
-      title: 'ΥΨΟΣ ΚΤΙΡΙΟΥ ΣΕ ΤΟΜΗ 1 : 100',
-      prompt: `Στην κατακόρυφη τομή μιας πολυκατοικίας με κλίμακα 1 : 100, το συνολικό ύψος σχεδιάστηκε ίσο με ${cm} cm. Πόσα μέτρα (m) είναι το πραγματικό ύψος του κτιρίου;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${realM * 10} m`,
-        `${realM + 5} m`,
-        `${realM - 3 > 0 ? realM - 3 : realM + 6} m`,
-        `${formatNum(realM / 10)} m`
-      ]),
-      correctAnswer: correct,
-      unit: 'm',
-      tableData: [
-        { label: 'Ύψος σχεδίου', value: `${cm} cm` },
-        { label: 'Κλίμακα', value: '1 : 100' },
-        { label: 'Πραγματικό ύψος', value: `${cm} · 1 m ＝ ${realM} m` }
-      ],
-      explanation: `1 cm στο σχέδιο ισούται με 1 m στην πραγματικότητα: ${realM} m.`
-    };
-  },
-  // 6. Πισίνα σε σχέδιο 1 : 50
-  () => {
-    const cm = 16;
-    const realM = (cm * 50) / 100;
-    const correct = `${realM} m`;
-    return {
-      title: 'ΜΗΚΟΣ ΠΙΣΙΝΑΣ ΣΕ ΣΧΕΔΙΟ 1 : 50',
-      prompt: `Το μήκος μιας πισίνας σε σχέδιο με κλίμακα 1 : 50 είναι 16 cm. Πόσα μέτρα είναι το πραγματικό μήκος της πισίνας;`,
-      options: ensureFourUniqueOptions(correct, () => ['12 m', '10 m', '6 m', '16 m']),
-      correctAnswer: correct,
-      unit: 'm',
-      tableData: [
-        { label: 'Μήκος σχεδίου', value: '16 cm' },
-        { label: 'Κλίμακα', value: '1 : 50' },
-        { label: 'Πράξη', value: '16 · 50 ＝ 800 cm ＝ 8 m' }
-      ],
-      explanation: `16 · 50 cm ＝ 800 cm ＝ 8 m.`
+      explanation: loc === 'el'
+        ? `Βρίσκουμε πρώτα τις πραγματικές διαστάσεις (4 m και 3 m). Εμβαδόν: 4 · 3 ＝ ${formatNum(area, loc)} m².`
+        : `First calculate real dimensions (4 m and 3 m). Area: 4 · 3 ＝ ${formatNum(area, loc)} m².`
     };
   }
 ];
 
-// POOL ΓΙΑ Q11: Μεταβολή Περιμέτρου & Διαστάσεων Σχημάτων
-const PROBLEM_POOL_Q11 = [
-  // 1. Τριπλασιασμός πλευράς τετραγώνου
-  () => {
+// POOL ΓΙΑ Q9: Μεταβολή Περιμέτρου & Διαστάσεων Σχημάτων
+const PROBLEM_POOL_Q9 = [
+  (loc) => {
     const s = randInt(4, 9);
     const p1 = 4 * s;
     const p2 = 3 * p1;
-    const correct = `${p2} cm`;
+    const correct = `${formatNum(p2, loc)} cm`;
     return {
-      title: 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΤΕΤΡΑΓΩΝΟΥ',
-      prompt: `Ένα τετράγωνο έχει πλευρά ${s} cm. Αν τριπλασιάσουμε το μήκος της πλευράς του (μεγέθυνση με συντελεστή 3), πόση θα γίνει η νέα περίμετρος;`,
+      title: loc === 'el' ? 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΤΕΤΡΑΓΩΝΟΥ' : 'TRIPLING SQUARE PERIMETER',
+      prompt: loc === 'el'
+        ? `Ένα τετράγωνο έχει πλευρά ${formatNum(s, loc)} cm. Αν τριπλασιάσουμε το μήκος της πλευράς του (μεγέθυνση με συντελεστή 3), πόση θα γίνει η νέα περίμετρος;`
+        : `A square has a side of ${formatNum(s, loc)} cm. If we triple its side length (scale factor 3), what will the new perimeter be?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${p1} cm`,
-        `${p2 + 12} cm`,
-        `${p2 - 12} cm`,
-        `${4 * s * 9} cm`
+        `${formatNum(p1, loc)} cm`,
+        `${formatNum(p2 + 12, loc)} cm`,
+        `${formatNum(p2 - 12 > 0 ? p2 - 12 : p2 + 24, loc)} cm`,
+        `${formatNum(p1 * 4, loc)} cm`
       ]),
       correctAnswer: correct,
       unit: 'cm',
-      tableData: [
-        { label: 'Αρχική περίμετρος', value: `4 · ${s} ＝ ${p1} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Αρχική περίμετρος', value: `4 · ${formatNum(s, loc)} ＝ ${formatNum(p1, loc)} cm` },
         { label: 'Συντελεστής μεγέθυνσης', value: '3' },
-        { label: 'Νέα περίμετρος', value: `3 · ${p1} ＝ ${p2} cm (ή 4 · ${3 * s} ＝ ${p2} cm)` }
+        { label: 'Νέα περίμετρος', value: `3 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm` }
+      ] : [
+        { label: 'Initial perimeter', value: `4 · ${formatNum(s, loc)} ＝ ${formatNum(p1, loc)} cm` },
+        { label: 'Scale factor', value: '3' },
+        { label: 'New perimeter', value: `3 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm` }
       ],
-      explanation: `Όταν τριπλασιάζεται η πλευρά, τριπλασιάζεται και η περίμετρος: 3 · ${p1} cm ＝ ${p2} cm.`
+      explanation: loc === 'el'
+        ? `Όταν τριπλασιάζεται η πλευρά, τριπλασιάζεται και η περίμετρος: 3 · ${formatNum(p1, loc)} cm ＝ ${formatNum(p2, loc)} cm.`
+        : `When side length triples, perimeter also triples: 3 · ${formatNum(p1, loc)} cm ＝ ${formatNum(p2, loc)} cm.`
     };
   },
-  // 2. Διπλασιασμός διαστάσεων ορθογωνίου
-  () => {
+  (loc) => {
     const w = randInt(3, 6);
     const l = randInt(7, 10);
     const p1 = 2 * (w + l);
     const p2 = 2 * p1;
-    const correct = `${p2} cm`;
+    const correct = `${formatNum(p2, loc)} cm`;
     return {
-      title: 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΟΡΘΟΓΩΝΙΟΥ',
-      prompt: `Ένα ορθογώνιο έχει διαστάσεις ${w} cm και ${l} cm. Αν διπλασιάσουμε όλες τις πλευρές του, πόση θα είναι η περίμετρος του νέου ορθογωνίου;`,
+      title: loc === 'el' ? 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΟΡΘΟΓΩΝΙΟΥ' : 'DOUBLING RECTANGLE PERIMETER',
+      prompt: loc === 'el'
+        ? `Ένα ορθογώνιο έχει διαστάσεις ${formatNum(w, loc)} cm και ${formatNum(l, loc)} cm. Αν διπλασιάσουμε όλες τις πλευρές του, πόση θα είναι η περίμετρος του νέου ορθογωνίου;`
+        : `A rectangle has dimensions ${formatNum(w, loc)} cm by ${formatNum(l, loc)} cm. If we double all its sides, what will the perimeter of the new rectangle be?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${p1} cm`,
-        `${p2 + 8} cm`,
-        `${p2 - 6} cm`,
-        `${4 * p1} cm`
+        `${formatNum(p1, loc)} cm`,
+        `${formatNum(p2 + 8, loc)} cm`,
+        `${formatNum(p2 - 6 > 0 ? p2 - 6 : p2 + 16, loc)} cm`,
+        `${formatNum(p1 * 4, loc)} cm`
       ]),
       correctAnswer: correct,
       unit: 'cm',
-      tableData: [
-        { label: 'Αρχική περίμετρος', value: `2 · (${w} ＋ ${l}) ＝ ${p1} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Αρχική περίμετρος', value: `2 · (${formatNum(w, loc)} ＋ ${formatNum(l, loc)}) ＝ ${formatNum(p1, loc)} cm` },
         { label: 'Συντελεστής', value: '2' },
-        { label: 'Νέα περίμετρος', value: `2 · ${p1} ＝ ${p2} cm` }
+        { label: 'Νέα περίμετρος', value: `2 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm` }
+      ] : [
+        { label: 'Initial perimeter', value: `2 · (${formatNum(w, loc)} ＋ ${formatNum(l, loc)}) ＝ ${formatNum(p1, loc)} cm` },
+        { label: 'Scale factor', value: '2' },
+        { label: 'New perimeter', value: `2 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm` }
       ],
-      explanation: `Όταν διπλασιάζονται οι πλευρές, η περίμετρος διπλασιάζεται: 2 · ${p1} ＝ ${p2} cm.`
+      explanation: loc === 'el'
+        ? `Όταν διπλασιάζονται οι πλευρές, η περίμετρος διπλασιάζεται: 2 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm.`
+        : `When sides are doubled, perimeter doubles: 2 · ${formatNum(p1, loc)} ＝ ${formatNum(p2, loc)} cm.`
     };
   },
-  // 3. Σμίκρυνση στο 1/2
-  () => {
+  (loc) => {
     const s = randInt(10, 20) * 2;
     const newS = s / 2;
-    const correct = `${newS} cm`;
+    const correct = `${formatNum(newS, loc)} cm`;
     return {
-      title: 'ΣΜΙΚΡΥΝΣΗ ΠΛΕΥΡΑΣ ΣΤΟ ΜΙΣΟ',
-      prompt: `Ένα κανονικό εξάγωνο έχει πλευρά ${s} cm. Αν το σμικρύνουμε στο μισό (συντελεστής 0,5), πόσο θα είναι το μήκος της πλευράς του νέου εξαγώνου;`,
+      title: loc === 'el' ? 'ΣΜΙΚΡΥΝΣΗ ΠΛΕΥΡΑΣ ΣΤΟ ΜΙΣΟ' : 'HALVING SIDE LENGTH',
+      prompt: loc === 'el'
+        ? `Ένα κανονικό εξάγωνο έχει πλευρά ${formatNum(s, loc)} cm. Αν το σμικρύνουμε στο μισό (συντελεστής 0,5), πόσο θα είναι το μήκος της πλευράς του νέου εξαγώνου;`
+        : `A regular hexagon has a side of ${formatNum(s, loc)} cm. If we scale it down by half (factor 0.5), what will the side length of the new hexagon be?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${newS + 4} cm`,
-        `${newS - 3 > 0 ? newS - 3 : newS + 6} cm`,
-        `${s} cm`,
-        `${s * 2} cm`
+        `${formatNum(newS + 4, loc)} cm`,
+        `${formatNum(newS - 3 > 0 ? newS - 3 : newS + 6, loc)} cm`,
+        `${formatNum(s, loc)} cm`,
+        `${formatNum(s * 2, loc)} cm`
       ]),
       correctAnswer: correct,
       unit: 'cm',
-      tableData: [
-        { label: 'Αρχική πλευρά', value: `${s} cm` },
+      tableData: loc === 'el' ? [
+        { label: 'Αρχική πλευρά', value: `${formatNum(s, loc)} cm` },
         { label: 'Σμίκρυνση', value: 'Στο μισό (: 2)' },
-        { label: 'Νέα πλευρά', value: `${s} : 2 ＝ ${newS} cm` }
+        { label: 'Νέα πλευρά', value: `${formatNum(s, loc)} : 2 ＝ ${formatNum(newS, loc)} cm` }
+      ] : [
+        { label: 'Initial side', value: `${formatNum(s, loc)} cm` },
+        { label: 'Reduction', value: 'By half (: 2)' },
+        { label: 'New side', value: `${formatNum(s, loc)} : 2 ＝ ${formatNum(newS, loc)} cm` }
       ],
-      explanation: `Διαιρούμε την αρχική πλευρά με το 2: ${s} : 2 ＝ ${newS} cm.`
-    };
-  },
-  // 4. Περίμετρος ισοπλεύρου τριγώνου επί 4
-  () => {
-    const s = randInt(3, 7);
-    const p1 = 3 * s;
-    const p2 = 4 * p1;
-    const correct = `${p2} cm`;
-    return {
-      title: 'ΤΕΤΡΑΠΛΑΣΙΑΣΜΟΣ ΠΕΡΙΜΕΤΡΟΥ ΤΡΙΓΩΝΟΥ',
-      prompt: `Ένα ισόπλευρο τρίγωνο έχει πλευρά ${s} cm (περίμετρος ${p1} cm). Αν τετραπλασιάσουμε το μήκος των πλευρών του, πόση θα γίνει η νέα του περίμετρος;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${p2 + 12} cm`,
-        `${p2 - 12} cm`,
-        `${p1 * 2} cm`,
-        `${p1 * 16} cm`
-      ]),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: 'Αρχική περίμετρος', value: `${p1} cm` },
-        { label: 'Συντελεστής μεγέθυνσης', value: '4' },
-        { label: 'Νέα περίμετρος', value: `4 · ${p1} ＝ ${p2} cm` }
-      ],
-      explanation: `Η νέα περίμετρος τετραπλασιάζεται: 4 · ${p1} ＝ ${p2} cm.`
-    };
-  },
-  // 5. Σμίκρυνση στο ένα τρίτο (1/3)
-  () => {
-    const p = 36;
-    const newP = p / 3;
-    const correct = `${newP} cm`;
-    return {
-      title: 'ΣΜΙΚΡΥΝΣΗ ΠΕΡΙΜΕΤΡΟΥ ΣΤΟ ΕΝΑ ΤΡΙΤΟ',
-      prompt: `Ένα σχήμα έχει περίμετρο 36 cm. Αν το σμικρύνουμε ώστε όλες οι πλευρές του να γίνουν 3 φορές μικρότερες, πόση θα είναι η νέα του περίμετρος;`,
-      options: ensureFourUniqueOptions(correct, () => ['9 cm', '18 cm', '4 cm', '24 cm']),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: 'Αρχική περίμετρος', value: '36 cm' },
-        { label: 'Σμίκρυνση', value: '3 φορές μικρότερη (: 3)' },
-        { label: 'Νέα περίμετρος', value: '36 : 3 ＝ 12 cm' }
-      ],
-      explanation: `36 : 3 ＝ 12 cm.`
-    };
-  },
-  // 6. Μεγέθυνση επί 5
-  () => {
-    const s = 4;
-    const newS = s * 5;
-    const correct = `${newS} cm`;
-    return {
-      title: 'ΜΕΓΕΘΥΝΣΗ ΠΛΕΥΡΑΣ ΕΠΙ 5',
-      prompt: `Ένα κανονικό οκτάγωνο έχει πλευρά 4 cm. Αν μεγεθυνθεί με κλίμακα 5 : 1, πόσο θα είναι το μήκος της πλευράς του στο νέο σχήμα;`,
-      options: ensureFourUniqueOptions(correct, () => ['15 cm', '25 cm', '16 cm', '40 cm']),
-      correctAnswer: correct,
-      unit: 'cm',
-      tableData: [
-        { label: 'Αρχική πλευρά', value: '4 cm' },
-        { label: 'Κλίμακα μεγέθυνσης', value: '5 : 1 (· 5)' },
-        { label: 'Νέα πλευρά', value: '4 · 5 ＝ 20 cm' }
-      ],
-      explanation: `4 · 5 ＝ 20 cm.`
+      fractionData: { n: `${formatNum(s, loc)} cm`, d: '2', res: `${formatNum(newS, loc)} cm` },
+      explanation: loc === 'el'
+        ? `Διαιρούμε την αρχική πλευρά με το 2: ${formatNum(s, loc)} : 2 ＝ ${formatNum(newS, loc)} cm.`
+        : `Divide initial side length by 2: ${formatNum(s, loc)} : 2 ＝ ${formatNum(newS, loc)} cm.`
     };
   }
 ];
 
-// POOL ΓΙΑ Q12: Μεταβολή Εμβαδού σε Μεγέθυνση / Σμίκρυνση (λ²)
-const PROBLEM_POOL_Q12 = [
-  // 1. Διπλασιασμός πλευράς (τετραπλασιασμός εμβαδού)
-  () => {
+// POOL ΓΙΑ Q10: Μεταβολή Εμβαδού σε Μεγέθυνση / Σμίκρυνση (λ²)
+const PROBLEM_POOL_Q10 = [
+  (loc) => {
     const a1 = randInt(12, 35);
     const a2 = a1 * 4;
-    const correct = `${a2} cm²`;
+    const correct = `${formatNum(a2, loc)} cm²`;
     return {
-      title: 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα γεωμετρικό σχήμα έχει εμβαδόν ${a1} cm². Αν διπλασιάσουμε όλες τις διαστάσεις του (συντελεστής λ ＝ 2), πόσο θα γίνει το εμβαδόν του νέου σχήματος;`,
+      title: loc === 'el' ? 'ΔΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ' : 'DOUBLING SIDES AND AREA',
+      prompt: loc === 'el'
+        ? `Ένα γεωμετρικό σχήμα έχει εμβαδόν ${formatNum(a1, loc)} cm². Αν διπλασιάσουμε όλες τις διαστάσεις του (συντελεστής λ ＝ 2), πόσο θα γίνει το εμβαδόν του νέου σχήματος;`
+        : `A geometric figure has an area of ${formatNum(a1, loc)} cm². If we double all its dimensions (scale factor k ＝ 2), what will the area of the new figure be?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${a1 * 2} cm²`,
-        `${a2 + 8} cm²`,
-        `${a2 - 8} cm²`,
-        `${a1 * 8} cm²`
+        `${formatNum(a1 * 2, loc)} cm²`,
+        `${formatNum(a2 + 8, loc)} cm²`,
+        `${formatNum(a2 - 8 > 0 ? a2 - 8 : a2 + 16, loc)} cm²`,
+        `${formatNum(a1 * 8, loc)} cm²`
       ]),
       correctAnswer: correct,
       unit: 'cm²',
-      tableData: [
-        { label: 'Αρχικό εμβαδόν', value: `${a1} cm²` },
+      tableData: loc === 'el' ? [
+        { label: 'Αρχικό εμβαδόν', value: `${formatNum(a1, loc)} cm²` },
         { label: 'Συντελεστής διαστάσεων (λ)', value: '2' },
         { label: 'Συντελεστής εμβαδού (λ²)', value: '2 · 2 ＝ 4' },
-        { label: 'Νέο εμβαδόν', value: `4 · ${a1} ＝ ${a2} cm²` }
+        { label: 'Νέο εμβαδόν', value: `4 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm²` }
+      ] : [
+        { label: 'Initial area', value: `${formatNum(a1, loc)} cm²` },
+        { label: 'Linear factor (k)', value: '2' },
+        { label: 'Area factor (k²)', value: '2 · 2 ＝ 4' },
+        { label: 'New area', value: `4 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm²` }
       ],
-      explanation: `Όταν οι διαστάσεις διπλασιάζονται, το εμβαδόν τετραπλασιάζεται (2 · 2 ＝ 4): 4 · ${a1} ＝ ${a2} cm².`
+      explanation: loc === 'el'
+        ? `Όταν οι διαστάσεις διπλασιάζονται, το εμβαδόν τετραπλασιάζεται (2 · 2 ＝ 4): 4 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm².`
+        : `When linear dimensions double, area quadruples (2 · 2 ＝ 4): 4 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm².`
     };
   },
-  // 2. Τριπλασιασμός πλευράς (εννεαπλασιασμός εμβαδού)
-  () => {
+  (loc) => {
     const a1 = randInt(6, 15);
     const a2 = a1 * 9;
-    const correct = `${a2} cm²`;
+    const correct = `${formatNum(a2, loc)} cm²`;
     return {
-      title: 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα ορθογώνιο έχει εμβαδόν ${a1} cm². Αν τριπλασιάσουμε και το μήκος και το πλάτος του (συντελεστής λ ＝ 3), ποιο θα είναι το εμβαδόν του νέου ορθογωνίου;`,
+      title: loc === 'el' ? 'ΤΡΙΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ' : 'TRIPLING SIDES AND AREA',
+      prompt: loc === 'el'
+        ? `Ένα ορθογώνιο έχει εμβαδόν ${formatNum(a1, loc)} cm². Αν τριπλασιάσουμε και το μήκος και το πλάτος του (συντελεστής λ ＝ 3), ποιο θα είναι το εμβαδόν του νέου ορθογωνίου;`
+        : `A rectangle has an area of ${formatNum(a1, loc)} cm². If we triple both its length and width (scale factor k ＝ 3), what will the area of the new rectangle be?`,
       options: ensureFourUniqueOptions(correct, () => [
-        `${a1 * 3} cm²`,
-        `${a1 * 6} cm²`,
-        `${a2 + 18} cm²`,
-        `${a2 - 18} cm²`
+        `${formatNum(a1 * 3, loc)} cm²`,
+        `${formatNum(a1 * 6, loc)} cm²`,
+        `${formatNum(a2 + 18, loc)} cm²`,
+        `${formatNum(a2 - 18 > 0 ? a2 - 18 : a2 + 36, loc)} cm²`
       ]),
       correctAnswer: correct,
       unit: 'cm²',
-      tableData: [
-        { label: 'Αρχικό εμβαδόν', value: `${a1} cm²` },
+      tableData: loc === 'el' ? [
+        { label: 'Αρχικό εμβαδόν', value: `${formatNum(a1, loc)} cm²` },
         { label: 'Συντελεστής διαστάσεων (λ)', value: '3' },
         { label: 'Συντελεστής εμβαδού (λ²)', value: '3 · 3 ＝ 9' },
-        { label: 'Νέο εμβαδόν', value: `9 · ${a1} ＝ ${a2} cm²` }
+        { label: 'Νέο εμβαδόν', value: `9 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm²` }
+      ] : [
+        { label: 'Initial area', value: `${formatNum(a1, loc)} cm²` },
+        { label: 'Linear factor (k)', value: '3' },
+        { label: 'Area factor (k²)', value: '3 · 3 ＝ 9' },
+        { label: 'New area', value: `9 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm²` }
       ],
-      explanation: `Όταν οι διαστάσεις τριπλασιάζονται, το εμβαδόν γίνεται 3 · 3 ＝ 9 φορές μεγαλύτερο: 9 · ${a1} ＝ ${a2} cm².`
+      explanation: loc === 'el'
+        ? `Όταν οι διαστάσεις τριπλασιάζονται, το εμβαδόν εννεαπλασιάζεται (3 · 3 ＝ 9): 9 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm².`
+        : `When dimensions triple, area increases by 3 · 3 ＝ 9 times: 9 · ${formatNum(a1, loc)} ＝ ${formatNum(a2, loc)} cm².`
     };
   },
-  // 3. Σμίκρυνση στο 1/2 (εμβαδόν στο 1/4)
-  () => {
-    const a1 = randInt(10, 25) * 4;
-    const a2 = a1 / 4;
-    const correct = `${a2} cm²`;
+  (loc) => {
+    const correct = loc === 'el' ? '25 φορές' : '25 times';
     return {
-      title: 'ΣΜΙΚΡΥΝΣΗ ΣΤΟ ΜΙΣΟ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα τετράγωνο έχει εμβαδόν ${a1} cm². Αν υποδιπλασιάσουμε την πλευρά του (σμίκρυνση στο μισό, συντελεστής 0,5), πόσο θα γίνει το εμβαδόν του νέου τετραγώνου;`,
-      options: ensureFourUniqueOptions(correct, () => [
-        `${a1 / 2} cm²`,
-        `${a2 + 6} cm²`,
-        `${a2 - 4 > 0 ? a2 - 4 : a2 + 8} cm²`,
-        `${a1 / 8} cm²`
-      ]),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Αρχικό εμβαδόν', value: `${a1} cm²` },
-        { label: 'Σμίκρυνση πλευράς', value: 'Στο μισό (: 2)' },
-        { label: 'Μεταβολή εμβαδού', value: 'Στο ένα τέταρτο (: 4)' },
-        { label: 'Νέο εμβαδόν', value: `${a1} : 4 ＝ ${a2} cm²` }
-      ],
-      explanation: `Όταν η πλευρά υποδιπλασιάζεται, το εμβαδόν διαιρείται με το 2 · 2 ＝ 4: ${a1} : 4 ＝ ${a2} cm².`
-    };
-  },
-  // 4. Τετραπλασιασμός πλευράς (εμβαδόν επί 16)
-  () => {
-    const a1 = 5;
-    const a2 = a1 * 16;
-    const correct = `${a2} cm²`;
-    return {
-      title: 'ΤΕΤΡΑΠΛΑΣΙΑΣΜΟΣ ΠΛΕΥΡΩΝ ΚΑΙ ΕΜΒΑΔΟΝ',
-      prompt: `Ένα μικρό παραλληλόγραμμο έχει εμβαδόν 5 cm². Αν τετραπλασιάσουμε όλες τις διαστάσεις του (συντελεστής λ ＝ 4), πόσο θα είναι το εμβαδόν του νέου σχήματος;`,
-      options: ensureFourUniqueOptions(correct, () => ['20 cm²', '40 cm²', '100 cm²', '64 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Αρχικό εμβαδόν', value: '5 cm²' },
-        { label: 'Συντελεστής διαστάσεων (λ)', value: '4' },
-        { label: 'Συντελεστής εμβαδού (λ²)', value: '4 · 4 ＝ 16' },
-        { label: 'Νέο εμβαδόν', value: '5 · 16 ＝ 80 cm²' }
-      ],
-      explanation: `Το εμβαδόν πολλαπλασιάζεται επί 4 · 4 ＝ 16: 5 · 16 ＝ 80 cm².`
-    };
-  },
-  // 5. Φωτοτυπία μεγέθυνσης 200%
-  () => {
-    const a1 = 50;
-    const a2 = a1 * 4;
-    const correct = `${a2} cm²`;
-    return {
-      title: 'ΜΕΓΕΘΥΝΣΗ ΦΩΤΟΤΥΠΙΑΣ 200%',
-      prompt: `Μια φωτογραφία με εμβαδόν 50 cm² μεγεθύνεται σε φωτοτυπικό μηχάνημα σε ποσοστό 200% (διπλασιασμός μήκους και πλάτους, συντελεστής λ ＝ 2). Ποιο θα είναι το εμβαδόν της νέας φωτογραφίας;`,
-      options: ensureFourUniqueOptions(correct, () => ['100 cm²', '150 cm²', '250 cm²', '400 cm²']),
-      correctAnswer: correct,
-      unit: 'cm²',
-      tableData: [
-        { label: 'Αρχικό εμβαδόν', value: '50 cm²' },
-        { label: 'Ποσοστό μεγέθυνσης 200%', value: 'Διπλασιασμός διαστάσεων (λ ＝ 2)' },
-        { label: 'Μεταβολή εμβαδού', value: '2 · 2 ＝ 4 φορές μεγαλύτερο' },
-        { label: 'Νέο εμβαδόν', value: '50 · 4 ＝ 200 cm²' }
-      ],
-      explanation: `Ο διπλασιασμός των διαστάσεων τετραπλασιάζει το εμβαδόν: 50 · 4 ＝ 200 cm².`
-    };
-  },
-  // 6. Πόσες φορές μεγαλώνει το εμβαδόν αν λ ＝ 5
-  () => {
-    const correct = '25 φορές';
-    return {
-      title: 'ΣΥΝΤΕΛΕΣΤΗΣ ΜΕΤΑΒΟΛΗΣ ΕΜΒΑΔΟΥ',
-      prompt: `Αν πενταπλασιάσουμε όλες τις πλευρές ενός γεωμετρικού σχήματος (συντελεστής λ ＝ 5), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;`,
-      options: ensureFourUniqueOptions(correct, () => ['5 φορές', '10 φορές', '20 φορές', '50 φορές']),
+      title: loc === 'el' ? 'ΣΥΝΤΕΛΕΣΤΗΣ ΜΕΤΑΒΟΛΗΣ ΕΜΒΑΔΟΥ' : 'AREA SCALING FACTOR',
+      prompt: loc === 'el'
+        ? 'Αν πενταπλασιάσουμε όλες τις πλευρές ενός γεωμετρικού σχήματος (συντελεστής λ ＝ 5), πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;'
+        : 'If we multiply all sides of a geometric figure by 5 (scale factor k ＝ 5), how many times larger does its area become?',
+      options: ensureFourUniqueOptions(correct, () => loc === 'el'
+        ? ['5 φορές', '10 φορές', '20 φορές', '50 φορές']
+        : ['5 times', '10 times', '20 times', '50 times']
+      ),
       correctAnswer: correct,
       unit: 'φορές',
-      tableData: [
+      tableData: loc === 'el' ? [
         { label: 'Συντελεστής πλευρών (λ)', value: '5' },
         { label: 'Κανόνας μεταβολής εμβαδού', value: 'λ · λ ＝ λ²' },
         { label: 'Υπολογισμός', value: '5 · 5 ＝ 25 φορές' }
+      ] : [
+        { label: 'Side scale factor (k)', value: '5' },
+        { label: 'Area scaling rule', value: 'k · k ＝ k²' },
+        { label: 'Calculation', value: '5 · 5 ＝ 25 times' }
       ],
-      explanation: `Το εμβαδόν μεταβάλλεται κατά το τετράγωνο του συντελεστή: 5 · 5 ＝ 25 φορές μεγαλύτερο.`
+      explanation: loc === 'el'
+        ? 'Το εμβαδόν μεταβάλλεται κατά το τετράγωνο του συντελεστή: 5 · 5 ＝ 25 φορές μεγαλύτερο.'
+        : 'Area scales quadratically by the square of the factor: 5 · 5 ＝ 25 times larger.'
     };
   }
 ];
 
 // -------------------------------------------------------------
-// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ 12 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
+// ΔΗΜΙΟΥΡΓΙΑ ΤΟΥ ΣΕΤ ΑΚΡΙΒΩΣ 10 ΕΡΩΤΗΣΕΩΝ (GENERATOR)
 // -------------------------------------------------------------
 
-function generateQuestionsSet() {
+function generateQuestionsSet(locale = 'el') {
   const qs = [];
 
   // Q1: Διατήρηση γωνιών στη μεγέθυνση (True/False)
@@ -652,93 +500,151 @@ function generateQuestionsSet() {
   qs.push({
     id: 1,
     type: 'boolean',
-    title: 'ΓΩΝΙΕΣ ΚΑΙ ΜΕΓΕΘΥΝΣΗ',
+    title: locale === 'el' ? 'ΓΩΝΙΕΣ ΚΑΙ ΜΕΓΕΘΥΝΣΗ' : 'ANGLES AND SCALING',
     prompt: isQ1True
-      ? 'Όταν μεγεθύνουμε ή σμικρύνουμε ένα γεωμετρικό σχήμα, όλες οι γωνίες του παραμένουν απολύτως ίδιες (δεν αλλάζουν).'
-      : 'Όταν διπλασιάζουμε τις πλευρές ενός τριγώνου, διπλασιάζονται και οι μοίρες των γωνιών του.',
+      ? (locale === 'el'
+          ? 'Όταν μεγεθύνουμε ή σμικρύνουμε ένα γεωμετρικό σχήμα, όλες οι γωνίες του παραμένουν απολύτως ίδιες (δεν αλλάζουν).'
+          : 'When we enlarge or reduce a geometric shape, all its angles remain completely unchanged.')
+      : (locale === 'el'
+          ? 'Όταν διπλασιάζουμε τις πλευρές ενός τριγώνου, διπλασιάζονται και οι μοίρες των γωνιών του.'
+          : 'When we double the side lengths of a triangle, the degree measures of its angles also double.'),
     correctAnswer: isQ1True,
-    tableData: [
+    tableData: locale === 'el' ? [
       { label: 'Μήκος πλευρών', value: 'Μεταβάλλεται αναλογικά (· λ)' },
       { label: 'Μέτρο γωνιών', value: 'Παραμένει απολύτως σταθερό' },
       { label: 'Μορφή σχήματος', value: 'Διατηρείται απαράλλαχτη (όμοια σχήματα)' }
+    ] : [
+      { label: 'Side length', value: 'Scales proportionally (· k)' },
+      { label: 'Angle measure', value: 'Remains strictly invariant' },
+      { label: 'Shape geometry', value: 'Preserved completely (similar shapes)' }
     ],
     explanation: isQ1True
-      ? 'ΣΩΣΤΟ: Στη μεγέθυνση και τη σμίκρυνση οι γωνίες δεν αλλάζουν ποτέ, διατηρώντας ακέραια τη γεωμετρική μορφή του σχήματος.'
-      : 'ΛΑΘΟΣ: Οι γωνίες δεν διπλασιάζονται ποτέ! Αν διπλασιάζονταν, το άθροισμα των γωνιών ενός τριγώνου θα γινόταν 360°, πράγμα αδύνατο.'
+      ? (locale === 'el'
+          ? 'ΣΩΣΤΟ: Στη μεγέθυνση και τη σμίκρυνση οι γωνίες δεν αλλάζουν ποτέ, διατηρώντας ακέραια τη γεωμετρική μορφή του σχήματος.'
+          : 'CORRECT: In scaling, all angles remain invariant, preserving the geometric similarity of the figure.')
+      : (locale === 'el'
+          ? 'ΛΑΘΟΣ: Οι γωνίες δεν διπλασιάζονται ποτέ! Αν διπλασιάζονταν, το άθροισμα των γωνιών ενός τριγώνου θα γινόταν 360°, πράγμα αδύνατο.'
+          : 'FALSE: Angles never scale! If they doubled, the triangle sum would become 360°, which is impossible.')
   });
 
   // Q2: Ορισμός της κλίμακας (MCQ)
+  const q2Correct = locale === 'el'
+    ? 'Τον λόγο του μήκους στο σχέδιο προς το πραγματικό μήκος'
+    : 'The ratio of drawing length to actual real-world length';
   qs.push({
     id: 2,
     type: 'mcq',
-    title: 'ΟΡΙΣΜΟΣ ΚΛΙΜΑΚΑΣ',
-    prompt: 'Τι εκφράζει η κλίμακα σε ένα σχέδιο ή σε έναν χάρτη;',
-    options: ensureFourUniqueOptions(
-      'Τον λόγο του μήκους στο σχέδιο προς το πραγματικό μήκος',
-      () => [
-        'Το συνολικό βάρος του χάρτη σε γραμμάρια',
-        'Τη διαφορά ανάμεσα στο μήκος και στο πλάτος',
-        'Το εμβαδόν του χαρτιού σχεδίασης'
-      ]
+    title: locale === 'el' ? 'ΟΡΙΣΜΟΣ ΚΛΙΜΑΚΑΣ' : 'SCALE DEFINITION',
+    prompt: locale === 'el'
+      ? 'Τι εκφράζει η κλίμακα σε ένα σχέδιο ή σε έναν χάρτη;'
+      : 'What does scale express on a blueprint or map?',
+    options: ensureFourUniqueOptions(q2Correct, () => locale === 'el'
+      ? [
+          'Το συνολικό βάρος του χάρτη σε γραμμάρια',
+          'Τη διαφορά ανάμεσα στο μήκος και στο πλάτος',
+          'Το εμβαδόν του χαρτιού σχεδίασης'
+        ]
+      : [
+          'The total physical weight of the paper map',
+          'The difference between length and width',
+          'The area of the drawing paper'
+        ]
     ),
-    correctAnswer: 'Τον λόγο του μήκους στο σχέδιο προς το πραγματικό μήκος',
-    tableData: [
+    correctAnswer: q2Correct,
+    tableData: locale === 'el' ? [
       { label: 'Ορισμός', value: 'Κλίμακα ＝ Μήκος στο σχέδιο : Πραγματικό μήκος' },
       { label: 'Μονάδες μέτρησης', value: 'Εκφράζονται στην ίδια μονάδα (συνήθως cm)' }
+    ] : [
+      { label: 'Definition', value: 'Scale ＝ Drawing length : Actual length' },
+      { label: 'Units', value: 'Must be expressed in identical units (typically cm)' }
     ],
-    explanation: 'Η κλίμακα είναι ο μαθηματικός λόγος (διαίρεση) του μήκους στο σχέδιο προς το αντίστοιχο πραγματικό μήκος.'
+    explanation: locale === 'el'
+      ? 'Η κλίμακα είναι ο μαθηματικός λόγος (διαίρεση) του μήκους στο σχέδιο προς το αντίστοιχο πραγματικό μήκος.'
+      : 'Scale is the mathematical ratio of drawing length to corresponding real-world length.'
   });
 
   // Q3: Ερμηνεία κλίμακας 1 : 100 (MCQ)
+  const q3Correct = locale === 'el'
+    ? 'Ότι 1 cm στο σχέδιο αντιστοιχεί σε 100 cm (1 m) στην πραγματικότητα'
+    : 'That 1 cm on the plan corresponds to 100 cm (1 m) in reality';
   qs.push({
     id: 3,
     type: 'mcq',
-    title: 'ΕΡΜΗΝΕΙΑ ΚΛΙΜΑΚΑΣ 1 : 100',
-    prompt: 'Τι σημαίνει η κλίμακα 1 : 100 στην κάτοψη ενός σπιτιού;',
-    options: ensureFourUniqueOptions(
-      'Ότι 1 cm στο σχέδιο αντιστοιχεί σε 100 cm (1 m) στην πραγματικότητα',
-      () => [
-        'Ότι το σπίτι είναι 100 φορές μικρότερο από το σχέδιο',
-        'Ότι 1 cm στο σχέδιο αντιστοιχεί σε 100 μέτρα',
-        'Ότι το σχέδιο περιλαμβάνει 100 δωμάτια'
-      ]
+    title: locale === 'el' ? 'ΕΡΜΗΝΕΙΑ ΚΛΙΜΑΚΑΣ 1 : 100' : 'INTERPRETING SCALE 1 : 100',
+    prompt: locale === 'el'
+      ? 'Τι σημαίνει η κλίμακα 1 : 100 στην κάτοψη ενός σπιτιού;'
+      : 'What does scale 1 : 100 signify on a house floor plan?',
+    options: ensureFourUniqueOptions(q3Correct, () => locale === 'el'
+      ? [
+          'Ότι το σπίτι είναι 100 φορές μικρότερο από το σχέδιο',
+          'Ότι 1 cm στο σχέδιο αντιστοιχεί σε 100 μέτρα',
+          'Ότι το σχέδιο περιλαμβάνει 100 δωμάτια'
+        ]
+      : [
+          'That the actual house is 100 times smaller than the drawing',
+          'That 1 cm on the drawing equals 100 meters',
+          'That the floor plan contains 100 rooms'
+        ]
     ),
-    correctAnswer: 'Ότι 1 cm στο σχέδιο αντιστοιχεί σε 100 cm (1 m) στην πραγματικότητα',
-    tableData: [
+    correctAnswer: q3Correct,
+    tableData: locale === 'el' ? [
       { label: 'Κλίμακα', value: '1 : 100' },
       { label: 'Σχέση μεγεθών', value: '1 cm στο σχέδιο ＝ 100 cm (1 m) στην πραγματικότητα' }
+    ] : [
+      { label: 'Scale', value: '1 : 100' },
+      { label: 'Ratio equivalence', value: '1 cm on plan ＝ 100 cm (1 m) in reality' }
     ],
-    explanation: 'Κλίμακα 1 : 100 σημαίνει ότι κάθε 1 cm στο σχέδιο αντιστοιχεί σε 100 cm, δηλαδή ακριβώς 1 μέτρο στην πραγματικότητα.'
+    explanation: locale === 'el'
+      ? 'Κλίμακα 1 : 100 σημαίνει ότι κάθε 1 cm στο σχέδιο αντιστοιχεί σε 100 cm, δηλαδή ακριβώς 1 μέτρο στην πραγματικότητα.'
+      : 'Scale 1 : 100 means that 1 cm on the drawing equals 100 cm (exactly 1 meter) in reality.'
   });
 
   // Q4: Οπτική αναγνώριση σωστής μεγέθυνσης (SVG - No Giveaway)
+  const q4Correct = locale === 'el'
+    ? '4 × 2 (διπλασιασμός και των δύο πλευρών)'
+    : '4 × 2 (doubling both length and width)';
   qs.push({
     id: 4,
     type: 'mcq',
-    title: 'ΑΝΑΓΝΩΡΙΣΗ ΣΩΣΤΗΣ ΜΕΓΕΘΥΝΣΗΣ',
-    prompt: 'Παρατηρήστε τα δύο ορθογώνια. Το αρχικό είναι 2 × 1. Ποιες διαστάσεις πρέπει να έχει το νέο ορθογώνιο ώστε να αποτελεί πραγματική μεγέθυνση (όμοιο σχήμα);',
+    title: locale === 'el' ? 'ΑΝΑΓΝΩΡΙΣΗ ΣΩΣΤΗΣ ΜΕΓΕΘΥΝΣΗΣ' : 'IDENTIFYING PROPORTIONAL SCALING',
+    prompt: locale === 'el'
+      ? 'Παρατηρήστε τα δύο ορθογώνια. Το αρχικό είναι 2 × 1. Ποιες διαστάσεις πρέπει να έχει το νέο ορθογώνιο ώστε να αποτελεί πραγματική μεγέθυνση (όμοιο σχήμα);'
+      : 'Observe the rectangles below. The initial rectangle is 2 × 1. What dimensions must the new rectangle have to be a true geometric enlargement?',
     svg: (
-      <svg viewBox="0 0 200 90" className="w-52 h-24 mx-auto my-2 select-none drop-shadow-sm">
+      <svg viewBox="0 0 200 90" className="w-52 h-24 max-w-full mx-auto my-2 select-none drop-shadow-sm">
         <rect x="20" y="30" width="40" height="20" fill="#e0e7ff" stroke="#4f46e5" strokeWidth="2" />
         <text x="40" y="24" fill="#4f46e5" fontSize="10" fontWeight="bold" textAnchor="middle">2 × 1</text>
-        <text x="40" y="44" fill="#64748b" fontSize="9" textAnchor="middle">Αρχικό</text>
+        <text x="40" y="44" fill="#64748b" fontSize="9" textAnchor="middle">{locale === 'el' ? 'Αρχικό' : 'Initial'}</text>
 
         <rect x="100" y="15" width="80" height="40" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.5" />
-        <text x="140" y="40" fill="#15803d" fontSize="11" fontWeight="black" textAnchor="middle">Νέο (?)</text>
+        <text x="140" y="40" fill="#15803d" fontSize="11" fontWeight="black" textAnchor="middle">{locale === 'el' ? 'Νέο (?)' : 'New (?)'}</text>
       </svg>
     ),
-    options: ensureFourUniqueOptions('4 × 2 (διπλασιασμός και των δύο πλευρών)', () => [
-      '4 × 1 (διπλασιασμός μόνο του μήκους)',
-      '2 × 3 (αύξηση μόνο του πλάτους)',
-      '5 × 1 (επιμήκυνση)'
-    ]),
-    correctAnswer: '4 × 2 (διπλασιασμός και των δύο πλευρών)',
-    tableData: [
+    options: ensureFourUniqueOptions(q4Correct, () => locale === 'el'
+      ? [
+          '4 × 1 (διπλασιασμός μόνο του μήκους)',
+          '2 × 3 (αύξηση μόνο του πλάτους)',
+          '5 × 1 (επιμήκυνση)'
+        ]
+      : [
+          '4 × 1 (doubling length only)',
+          '2 × 3 (increasing width only)',
+          '5 × 1 (elongation)'
+        ]
+    ),
+    correctAnswer: q4Correct,
+    tableData: locale === 'el' ? [
       { label: 'Αρχικός λόγος', value: '2 : 1 ＝ 2' },
       { label: 'Σωστή μεγέθυνση', value: 'Πολλαπλασιασμός και των δύο διαστάσεων με τον ίδιο αριθμό (2 · 2 ＝ 4 και 1 · 2 ＝ 2)' },
       { label: 'Έλεγχος λόγου', value: '4 : 2 ＝ 2 (ίδια αναλογία)' }
+    ] : [
+      { label: 'Initial ratio', value: '2 : 1 ＝ 2' },
+      { label: 'Proper scaling', value: 'Multiplying both dimensions by the same factor (2 · 2 ＝ 4 and 1 · 2 ＝ 2)' },
+      { label: 'Ratio verification', value: '4 : 2 ＝ 2 (identical proportion)' }
     ],
-    explanation: 'Για να είναι το σχήμα όμοιο και να μην παραμορφωθεί, πρέπει να πολλαπλασιαστούν και οι δύο διαστάσεις με τον ίδιο συντελεστή (2 · 2 ＝ 4 και 1 · 2 ＝ 2).'
+    explanation: locale === 'el'
+      ? 'Για να είναι το σχήμα όμοιο, πρέπει να πολλαπλασιαστούν και οι δύο διαστάσεις με τον ίδιο αριθμό: 2 · 2 ＝ 4 και 1 · 2 ＝ 2.'
+      : 'For shapes to remain similar, both dimensions must be multiplied by the exact same scale factor: 4 × 2.'
   });
 
   // Q5: Υπολογισμός πραγματικού μήκους σε κάτοψη 1 : 50 (Input αριθμού)
@@ -747,89 +653,71 @@ function generateQuestionsSet() {
   qs.push({
     id: 5,
     type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΠΡΑΓΜΑΤΙΚΟΥ ΜΗΚΟΥΣ (1 : 50)',
-    prompt: `Σε ένα σχέδιο με κλίμακα 1 : 50, ένα έπιπλο έχει μήκος ${cmQ5} cm. Πόσα μέτρα (m) είναι το πραγματικό του μήκος; (Γράψτε μόνο τον αριθμό)`,
-    correctAnswer: formatNum(realMQ5),
-    tableData: [
-      { label: 'Μήκος σχεδίου', value: `${cmQ5} cm` },
+    title: locale === 'el' ? 'ΥΠΟΛΟΓΙΣΜΟΣ ΠΡΑΓΜΑΤΙΚΟΥ ΜΗΚΟΥΣ (1 : 50)' : 'CALCULATING ACTUAL LENGTH (1 : 50)',
+    prompt: locale === 'el'
+      ? `Σε ένα σχέδιο με κλίμακα 1 : 50, ένα έπιπλο έχει μήκος ${formatNum(cmQ5, locale)} cm. Πόσα μέτρα (m) είναι το πραγματικό του μήκος; (Γράψτε μόνο τον αριθμό)`
+      : `On a drawing with scale 1 : 50, a piece of furniture measures ${formatNum(cmQ5, locale)} cm. How many meters (m) long is it in reality? (Write number only)`,
+    correctAnswer: formatNum(realMQ5, locale),
+    tableData: locale === 'el' ? [
+      { label: 'Μήκος σχεδίου', value: `${formatNum(cmQ5, locale)} cm` },
       { label: 'Κλίμακα', value: '1 : 50' },
-      { label: 'Σε εκατοστά', value: `${cmQ5} · 50 ＝ ${cmQ5 * 50} cm` },
-      { label: 'Σε μέτρα', value: `${formatNum(realMQ5)} m` }
+      { label: 'Σε εκατοστά', value: `${formatNum(cmQ5, locale)} · 50 ＝ ${formatNum(cmQ5 * 50, locale)} cm` },
+      { label: 'Σε μέτρα', value: `${formatNum(realMQ5, locale)} m` }
+    ] : [
+      { label: 'Drawing length', value: `${formatNum(cmQ5, locale)} cm` },
+      { label: 'Scale', value: '1 : 50' },
+      { label: 'In centimeters', value: `${formatNum(cmQ5, locale)} · 50 ＝ ${formatNum(cmQ5 * 50, locale)} cm` },
+      { label: 'In meters', value: `${formatNum(realMQ5, locale)} m` }
     ],
-    explanation: `${cmQ5} · 50 cm ＝ ${cmQ5 * 50} cm ＝ ${formatNum(realMQ5)} m.`
+    fractionData: { n: `${formatNum(cmQ5 * 50, locale)} cm`, d: '100', res: `${formatNum(realMQ5, locale)} m` },
+    explanation: locale === 'el'
+      ? `${formatNum(cmQ5, locale)} · 50 cm ＝ ${formatNum(cmQ5 * 50, locale)} cm ＝ ${formatNum(realMQ5, locale)} m.`
+      : `${formatNum(cmQ5, locale)} · 50 cm ＝ ${formatNum(cmQ5 * 50, locale)} cm ＝ ${formatNum(realMQ5, locale)} m.`
   });
 
-  // Q6: Υπολογισμός πραγματικής απόστασης σε χάρτη 1 : 100.000 (Input αριθμού)
-  const cmQ6 = randInt(4, 15);
-  const kmQ6 = cmQ6;
+  // Q6: Μεταβολή εμβαδού όταν διπλασιάζονται οι πλευρές (MCQ)
+  const q6Correct = locale === 'el' ? '4 φορές (τετραπλασιάζεται)' : '4 times (quadrupled)';
   qs.push({
     id: 6,
-    type: 'input',
-    title: 'ΥΠΟΛΟΓΙΣΜΟΣ ΑΠΟΣΤΑΣΗΣ ΣΕ KM (1 : 100.000)',
-    prompt: `Σε έναν χάρτη με κλίμακα 1 : 100.000, η απόσταση δύο σταθμών μετρήθηκε ${cmQ6} cm. Πόσα χιλιόμετρα (km) είναι η πραγματική απόσταση; (Γράψτε μόνο τον αριθμό)`,
-    correctAnswer: String(kmQ6),
-    tableData: [
-      { label: 'Απόσταση χάρτη', value: `${cmQ6} cm` },
-      { label: 'Κλίμακα', value: '1 : 100.000 (1 cm ＝ 1 km)' },
-      { label: 'Πραγματική απόσταση', value: `${kmQ6} km` }
-    ],
-    explanation: `Επειδή 100.000 cm ＝ 1 km, κάθε 1 cm στον χάρτη αντιστοιχεί σε 1 km. Άρα η απόσταση είναι ${kmQ6} km.`
-  });
-
-  // Q7: Μεταβολή περιμέτρου όταν διπλασιάζονται οι πλευρές (MCQ)
-  qs.push({
-    id: 7,
     type: 'mcq',
-    title: 'ΜΕΤΑΒΟΛΗ ΠΕΡΙΜΕΤΡΟΥ ΣΕ ΜΕΓΕΘΥΝΣΗ',
-    prompt: 'Αν διπλασιάσουμε όλες τις πλευρές ενός πολυγώνου, πόσες φορές μεγαλύτερη θα γίνει η περίμετρός του;',
-    options: ensureFourUniqueOptions('2 φορές (διπλασιάζεται)', () => [
-      '4 φορές (τετραπλασιάζεται)',
-      '8 φορές',
-      'Παραμένει η ίδια'
-    ]),
-    correctAnswer: '2 φορές (διπλασιάζεται)',
-    tableData: [
-      { label: 'Συντελεστής πλευρών', value: '2' },
-      { label: 'Κανόνας περιμέτρου', value: 'Η περίμετρος είναι άθροισμα μηκών, άρα πολλαπλασιάζεται επίσης επί 2' }
-    ],
-    explanation: 'Η περίμετρος είναι γραμμικό μέγεθος και μεταβάλλεται ακριβώς όπως και οι πλευρές: διπλασιάζεται (2 φορές μεγαλύτερη).'
-  });
-
-  // Q8: Μεταβολή εμβαδού όταν διπλασιάζονται οι πλευρές (MCQ)
-  qs.push({
-    id: 8,
-    type: 'mcq',
-    title: 'ΜΕΤΑΒΟΛΗ ΕΜΒΑΔΟΥ ΣΕ ΜΕΓΕΘΥΝΣΗ',
-    prompt: 'Αν διπλασιάσουμε όλες τις πλευρές ενός τετραγώνου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;',
-    options: ensureFourUniqueOptions('4 φορές (τετραπλασιάζεται)', () => [
-      '2 φορές (διπλασιάζεται)',
-      '8 φορές',
-      '16 φορές'
-    ]),
-    correctAnswer: '4 φορές (τετραπλασιάζεται)',
-    tableData: [
+    title: locale === 'el' ? 'ΜΕΤΑΒΟΛΗ ΕΜΒΑΔΟΥ ΣΕ ΜΕΓΕΘΥΝΣΗ' : 'AREA CHANGE IN ENLARGEMENT',
+    prompt: locale === 'el'
+      ? 'Αν διπλασιάσουμε όλες τις πλευρές ενός τετραγώνου, πόσες φορές μεγαλύτερο θα γίνει το εμβαδόν του;'
+      : 'If we double all side lengths of a square, how many times larger does its area become?',
+    options: ensureFourUniqueOptions(q6Correct, () => locale === 'el'
+      ? ['2 φορές (διπλασιάζεται)', '8 φορές', '16 φορές']
+      : ['2 times (doubled)', '8 times', '16 times']
+    ),
+    correctAnswer: q6Correct,
+    tableData: locale === 'el' ? [
       { label: 'Συντελεστής πλευρών (λ)', value: '2' },
       { label: 'Κανόνας εμβαδού', value: 'λ · λ ＝ 2 · 2 ＝ 4' },
       { label: 'Αποτέλεσμα', value: 'Τετραπλασιάζεται' }
+    ] : [
+      { label: 'Side scale factor (k)', value: '2' },
+      { label: 'Area scaling rule', value: 'k · k ＝ 2 · 2 ＝ 4' },
+      { label: 'Result', value: 'Quadruples' }
     ],
-    explanation: 'Το εμβαδόν εξαρτάται από το γινόμενο δύο διαστάσεων. Αν διπλασιαστούν και οι δύο: 2 · 2 ＝ 4 φορές μεγαλύτερο.'
+    explanation: locale === 'el'
+      ? 'Το εμβαδόν εξαρτάται από το γινόμενο δύο διαστάσεων. Αν διπλασιαστούν και οι δύο: 2 · 2 ＝ 4 φορές μεγαλύτερο.'
+      : 'Area depends on two linear dimensions. Doubling both yields: 2 · 2 ＝ 4 times larger.'
   });
 
-  // Q9: Πρόβλημα από PROBLEM_POOL_Q9
-  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)]();
+  // Q7: Πρόβλημα από PROBLEM_POOL_Q7 (Κλίμακες Χαρτών)
+  const p7 = PROBLEM_POOL_Q7[randInt(0, PROBLEM_POOL_Q7.length - 1)](locale);
+  qs.push({ id: 7, type: 'mcq', ...p7 });
+
+  // Q8: Πρόβλημα από PROBLEM_POOL_Q8 (Κατόψεις σε m)
+  const p8 = PROBLEM_POOL_Q8[randInt(0, PROBLEM_POOL_Q8.length - 1)](locale);
+  qs.push({ id: 8, type: 'mcq', ...p8 });
+
+  // Q9: Πρόβλημα από PROBLEM_POOL_Q9 (Μεταβολή Περιμέτρου)
+  const p9 = PROBLEM_POOL_Q9[randInt(0, PROBLEM_POOL_Q9.length - 1)](locale);
   qs.push({ id: 9, type: 'mcq', ...p9 });
 
-  // Q10: Πρόβλημα από PROBLEM_POOL_Q10
-  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)]();
+  // Q10: Πρόβλημα από PROBLEM_POOL_Q10 (Μεταβολή Εμβαδού)
+  const p10 = PROBLEM_POOL_Q10[randInt(0, PROBLEM_POOL_Q10.length - 1)](locale);
   qs.push({ id: 10, type: 'mcq', ...p10 });
-
-  // Q11: Πρόβλημα από PROBLEM_POOL_Q11
-  const p11 = PROBLEM_POOL_Q11[randInt(0, PROBLEM_POOL_Q11.length - 1)]();
-  qs.push({ id: 11, type: 'mcq', ...p11 });
-
-  // Q12: Πρόβλημα από PROBLEM_POOL_Q12
-  const p12 = PROBLEM_POOL_Q12[randInt(0, PROBLEM_POOL_Q12.length - 1)]();
-  qs.push({ id: 12, type: 'mcq', ...p12 });
 
   return qs;
 }
@@ -839,16 +727,19 @@ function generateQuestionsSet() {
 // -------------------------------------------------------------
 
 export default function MegethinsiSmikrinsiAskiseisPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     loadNewSet();
-  }, []);
+  }, [locale]);
 
   function loadNewSet() {
-    const newQs = generateQuestionsSet();
+    const newQs = generateQuestionsSet(locale);
     setQuestions(newQs);
     setUserAnswers({});
     setSubmitted(false);
@@ -899,56 +790,105 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
   ).length;
 
   const score = questions.reduce((acc, q) => (isQuestionCorrect(q) ? acc + 1 : acc), 0);
-  const totalCount = questions.length || 12;
+  const totalCount = questions.length || 10;
   const percentage = Math.round((score / totalCount) * 100);
+
+  // Μεταφράσεις UI
+  const ui = {
+    el: {
+      headTitle: "Ασκήσεις: Μεγέθυνση, Σμίκρυνση & Κλίμακα - ΣΤ' Δημοτικού | LearnMaths.gr",
+      headDesc: "Διαδραστικές ασκήσεις στην κλίμακα, τους χάρτες, τη μεγέθυνση και τη σμίκρυνση σχημάτων για τη ΣΤ' Δημοτικού.",
+      backTheory: "Θεωρία Κεφ. 70",
+      btnTheory: "📖 Θεωρία",
+      badge: "ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 70 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+      heroTitle: "Ασκήσεις: Μεγέθυνση, Σμίκρυνση και Κλίμακα",
+      heroDesc: "Εξασκηθείτε στους υπολογισμούς κλίμακας σε χάρτες και κατόψεις, καθώς και στη μεταβολή περιμέτρου και εμβαδού μέσα από 10 δυναμικές ερωτήσεις.",
+      heroSub: "10 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση & Αναλυτική Επεξήγηση",
+      btnNewSet: "Νέες Ασκήσεις",
+      correctBadge: "ΣΩΣΤΟ",
+      wrongBadge: "ΛΑΘΟΣ",
+      trueBtn: "ΣΩΣΤΟ",
+      falseBtn: "ΛΑΘΟΣ",
+      inputPlaceholder: "Απάντηση...",
+      answeredLabel: "ΑΠΑΝΤΗΘΗΚΑΝ:",
+      scoreLabel: "ΣΚΟΡ:",
+      percentageLabel: "ΠΟΣΟΣΤΟ:",
+      btnSubmit: "ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ",
+      feedbackCorrect: "✓ Μπράβο! Σωστή απάντηση.",
+      feedbackWrong: "✗ Λάθος. Η σωστή απάντηση είναι: "
+    },
+    en: {
+      headTitle: "Exercises: Scaling & Map Scale - 6th Grade | LearnMaths.gr",
+      headDesc: "Interactive exercises on map scale, blueprints, enlargements, and reductions for 6th Grade.",
+      backTheory: "Theory Chap. 70",
+      btnTheory: "📖 Theory",
+      badge: "EXERCISES • CHAPTER 70 • 6TH GRADE",
+      heroTitle: "Exercises: Enlargement, Reduction and Scale",
+      heroDesc: "Practice scale calculations on maps and architectural plans, as well as perimeter and area scaling through 10 dynamic questions.",
+      heroSub: "10 Dynamic Exercises with Instant Evaluation & Step-by-Step Solutions",
+      btnNewSet: "New Exercises",
+      correctBadge: "CORRECT",
+      wrongBadge: "WRONG",
+      trueBtn: "TRUE",
+      falseBtn: "FALSE",
+      inputPlaceholder: "Answer...",
+      answeredLabel: "ANSWERED:",
+      scoreLabel: "SCORE:",
+      percentageLabel: "PERCENTAGE:",
+      btnSubmit: "CHECK ANSWERS",
+      feedbackCorrect: "✓ Well done! Correct answer.",
+      feedbackWrong: "✗ Incorrect. The correct answer is: "
+    }
+  }[locale];
 
   return (
     <Layout
-      title="Ασκήσεις: Μεγέθυνση, Σμίκρυνση &amp; Κλίμακα - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις στην κλίμακα, τους χάρτες, τη μεγέθυνση και τη σμίκρυνση σχημάτων για τη ΣΤ' Δημοτικού."
+      title={ui.headTitle}
+      description={ui.headDesc}
       backUrl="/st-dimotikou/70-megethinsi-smikrinsi"
-      backText="Θεωρία Κεφ. 70"
+      backText={ui.backTheory}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/70-megethinsi-smikrinsi"
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
+          className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0"
         >
-          <span>📖 Θεωρία</span>
+          <span>{ui.btnTheory}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden box-border">
 
         {/* HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden mb-8 sm:mb-12">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΑΣΚΗΣΕΙΣ • ΚΕΦΑΛΑΙΟ 70 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span className="break-words">{ui.badge}</span>
             </div>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              {toCleanUppercase('Ασκησεις: Μεγεθυνση, Σμικρυνση και Κλιμακα')}
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(ui.heroTitle)}
             </h1>
-            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Εξασκηθείτε στους υπολογισμούς κλίμακας σε χάρτες και κατόψεις, καθώς και στη μεταβολή περιμέτρου και εμβαδού μέσα από 12 δυναμικές ερωτήσεις.
+            <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl break-words">
+              {ui.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>12 Δυναμικές Ασκήσεις με Αυτόματη Αξιολόγηση &amp; Αναλυτική Επεξήγηση</span>
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+              <span className="break-words">{ui.heroSub}</span>
             </div>
             <button
+              type="button"
               onClick={loadNewSet}
-              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
+              className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base shrink-0"
             >
-              <span>🔄 {toCleanUppercase('Νεες Ασκησεις')}</span>
+              <span>🔄 {toCleanUppercase(ui.btnNewSet)}</span>
             </button>
           </div>
         </section>
 
-        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (12 ΕΡΩΤΗΣΕΙΣ) */}
+        {/* ΛΙΣΤΑ ΕΡΩΤΗΣΕΩΝ (ΑΚΡΙΒΩΣ 10 ΕΡΩΤΗΣΕΙΣ) */}
         <div className="space-y-6 sm:space-y-8">
           {questions.map((q, index) => {
             const isCorrect = isQuestionCorrect(q);
@@ -957,7 +897,7 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white rounded-3xl p-5 sm:p-8 shadow-sm border transition-all ${
+                className={`bg-white rounded-3xl p-4 sm:p-8 shadow-sm border transition-all min-w-0 ${
                   submitted
                     ? isCorrect
                       ? 'border-emerald-300 ring-1 ring-emerald-200'
@@ -966,42 +906,42 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                 }`}
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
-                <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150">
+                <div className="flex items-center justify-between gap-2 sm:gap-4 mb-4 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm sm:text-base border border-indigo-150 shrink-0">
                       {index + 1}
                     </span>
-                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider">
-                      {toCleanUppercase(q.title || `ΕΡΩΤΗΣΗ ${index + 1}`)}
+                    <h2 className="text-xs sm:text-sm font-black text-slate-800 tracking-wider break-words [overflow-wrap:anywhere]">
+                      {toCleanUppercase(q.title || `${locale === 'el' ? 'ΕΡΩΤΗΣΗ' : 'QUESTION'} ${index + 1}`)}
                     </h2>
                   </div>
 
                   {submitted && (
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-black tracking-wider ${
+                      className={`px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-black tracking-wider shrink-0 ${
                         isCorrect
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
                       }`}
                     >
-                      {isCorrect ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                      {isCorrect ? toCleanUppercase(ui.correctBadge) : toCleanUppercase(ui.wrongBadge)}
                     </span>
                   )}
                 </div>
 
-                {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY: ΟΥΔΕΙΣ ΠΙΝΑΚΑΣ ΕΔΩ) */}
+                {/* ΕΚΦΩΝΗΣΗ & SVG (NO-GIVEAWAY) */}
                 <div className="mb-6 space-y-3">
-                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed">
+                  <p className="text-slate-800 text-sm sm:text-base font-semibold leading-relaxed break-words [overflow-wrap:anywhere]">
                     {q.prompt}
                   </p>
-                  {q.svg && <div className="py-2">{q.svg}</div>}
+                  {q.svg && <div className="py-2 flex justify-center">{q.svg}</div>}
                 </div>
 
-                {/* ΔΙΑΔΡΑΣΤΙΚΑ ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
+                {/* ΧΕΙΡΙΣΤΗΡΙΑ ΑΠΑΝΤΗΣΗΣ */}
                 <div className="mb-4">
                   {/* ΤΥΠΟΣ 1: BOOLEAN */}
                   {q.type === 'boolean' && (
-                    <div className="grid grid-cols-2 gap-3 max-w-md">
+                    <div className="grid grid-cols-2 gap-3 max-w-md w-full">
                       {[true, false].map((val) => {
                         const isSelected = userAns === val;
                         return (
@@ -1010,20 +950,20 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                             type="button"
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, val)}
-                            className={`py-3 px-4 rounded-2xl font-bold text-xs sm:text-sm transition-all border ${
+                            className={`py-3 px-3 sm:px-4 rounded-2xl font-bold text-xs sm:text-sm transition-all border break-words ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
-                            {val ? toCleanUppercase('ΣΩΣΤΟ') : toCleanUppercase('ΛΑΘΟΣ')}
+                            {val ? toCleanUppercase(ui.trueBtn) : toCleanUppercase(ui.falseBtn)}
                           </button>
                         );
                       })}
                     </div>
                   )}
 
-                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΑ ΚΟΥΜΠΙΑ) */}
+                  {/* ΤΥΠΟΣ 2: MCQ (4 ΜΟΝΑΔΙΚΕΣ ΕΠΙΛΟΓΕΣ ΧΩΡΙΣ LINE-CLAMP) */}
                   {q.type === 'mcq' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {q.options.map((opt, optIdx) => {
@@ -1034,14 +974,14 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                             type="button"
                             disabled={submitted}
                             onClick={() => handleAnswerChange(q.id, opt)}
-                            className={`text-left p-3.5 sm:p-4 rounded-2xl border font-semibold text-xs sm:text-sm transition-all flex items-start gap-3 ${
+                            className={`text-left p-3.5 sm:p-4 rounded-2xl border font-semibold text-xs sm:text-sm transition-all flex items-start gap-3 w-full ${
                               isSelected
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/30'
                                 : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                             }`}
                           >
                             <span
-                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${
                                 isSelected
                                   ? 'bg-white text-indigo-700'
                                   : 'bg-white text-slate-500 border border-slate-200'
@@ -1049,7 +989,7 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                             >
                               {String.fromCharCode(65 + optIdx)}
                             </span>
-                            <span className="break-words whitespace-normal leading-snug flex-1">
+                            <span className="break-words [overflow-wrap:anywhere] whitespace-normal leading-snug flex-1">
                               {opt}
                             </span>
                           </button>
@@ -1060,13 +1000,13 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
 
                   {/* ΤΥΠΟΣ 3: INPUT */}
                   {q.type === 'input' && (
-                    <div className="max-w-xs">
+                    <div className="w-full max-w-xs">
                       <input
                         type="text"
                         inputMode="decimal"
                         maxLength={10}
                         disabled={submitted}
-                        placeholder="Απάντηση..."
+                        placeholder={ui.inputPlaceholder}
                         value={userAns || ''}
                         onChange={(e) => {
                           const cleaned = e.target.value
@@ -1080,12 +1020,12 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                   )}
                 </div>
 
-                {/* FEEDBACK & EXPLANATION (ΑΠΟΚΛΕΙΣΤΙΚΑ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
+                {/* FEEDBACK & EXPLANATION (ΜΟΝΟ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ) */}
                 {submitted && (
                   <div className="mt-6 pt-5 border-t border-slate-150 space-y-4">
-                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) ΜΟΝΟ ΕΔΩ */}
+                    {/* ΠΙΝΑΚΑΣ ΔΕΔΟΜΕΝΩΝ (TABLEDATA) */}
                     {q.tableData && q.tableData.length > 0 && (
-                      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
+                      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/60 p-1">
                         <table className="w-full text-left text-xs sm:text-sm">
                           <tbody>
                             {q.tableData.map((row, rIdx) => (
@@ -1093,10 +1033,10 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                                 key={rIdx}
                                 className={rIdx !== q.tableData.length - 1 ? 'border-b border-slate-200/60' : ''}
                               >
-                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3">
+                                <td className="py-2.5 px-3 font-bold text-slate-600 bg-slate-100/70 w-1/3 min-w-[110px] break-words">
                                   {row.label}
                                 </td>
-                                <td className="py-2.5 px-3 font-semibold text-slate-800">
+                                <td className="py-2.5 px-3 font-semibold text-slate-800 break-words [overflow-wrap:anywhere]">
                                   {row.value}
                                 </td>
                               </tr>
@@ -1106,7 +1046,7 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                       </div>
                     )}
 
-                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ */}
+                    {/* ΑΝΑΛΥΤΙΚΗ ΕΠΕΞΗΓΗΣΗ ΜΕ ΚΑΝΟΝΙΚΑ ΚΛΑΣΜΑΤΑ */}
                     <div
                       className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed ${
                         isCorrect
@@ -1114,18 +1054,27 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                           : 'bg-rose-50 text-rose-950 border border-rose-200'
                       }`}
                     >
-                      <p className="font-bold mb-1">
+                      <p className="font-bold mb-1 break-words">
                         {isCorrect
-                          ? '✓ Μπράβο! Σωστή απάντηση.'
-                          : `✗ Λάθος. Η σωστή απάντηση είναι: ${
+                          ? ui.feedbackCorrect
+                          : `${ui.feedbackWrong}${
                               q.type === 'boolean'
                                 ? q.correctAnswer
-                                  ? 'Σωστό'
-                                  : 'Λάθος'
+                                  ? ui.trueBtn
+                                  : ui.falseBtn
                                 : q.correctAnswer
                             }`}
                       </p>
-                      <p className="text-slate-700">{q.explanation}</p>
+                      <div className="text-slate-700 flex flex-wrap items-center gap-1 leading-normal break-words">
+                        <span>{q.explanation}</span>
+                        {q.fractionData && (
+                          <span className="inline-flex flex-wrap items-center gap-1 font-mono font-bold">
+                            <span>(</span>
+                            <Fraction n={q.fractionData.n} d={q.fractionData.d} />
+                            <span>＝ {q.fractionData.res})</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1134,27 +1083,27 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
           })}
         </div>
 
-        {/* STICKY BOTTOM SCORE FOOTER (12 ΕΡΩΤΗΣΕΙΣ) */}
-        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        {/* STICKY BOTTOM SCORE FOOTER (10 ΕΡΩΤΗΣΕΙΣ) */}
+        <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
           <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-4 sm:gap-8 min-w-0">
               {!submitted ? (
-                <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                  <span>{toCleanUppercase('ΑΠΑΝΤΗΘΗΚΑΝ:')} </span>
+                <div className="text-xs sm:text-sm font-semibold text-slate-300 truncate">
+                  <span>{toCleanUppercase(ui.answeredLabel)} </span>
                   <span className="font-black text-indigo-400 text-sm sm:text-base">
                     {answeredCount} / {totalCount}
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 sm:gap-6">
+                <div className="flex items-center gap-3 sm:gap-6 min-w-0">
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΣΚΟΡ:')} </span>
+                    <span className="hidden xs:inline">{toCleanUppercase(ui.scoreLabel)} </span>
                     <span className="font-black text-emerald-400 text-sm sm:text-base">
                       {score} / {totalCount}
                     </span>
                   </div>
                   <div className="text-xs sm:text-sm font-semibold text-slate-300">
-                    <span>{toCleanUppercase('ΠΟΣΟΣΤΟ:')} </span>
+                    <span className="hidden xs:inline">{toCleanUppercase(ui.percentageLabel)} </span>
                     <span className="font-black text-amber-400 text-sm sm:text-base">
                       {percentage}%
                     </span>
@@ -1163,7 +1112,7 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               {!submitted ? (
                 <button
                   type="button"
@@ -1173,18 +1122,18 @@ export default function MegethinsiSmikrinsiAskiseisPage() {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm"
+                  className="px-4 py-2.5 sm:px-6 sm:py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-black rounded-xl shadow-lg shadow-emerald-500/25 transition-all text-xs sm:text-sm whitespace-nowrap"
                 >
-                  {toCleanUppercase('ΕΛΕΓΧΟΣ ΑΠΑΝΤΗΣΕΩΝ')}
+                  {toCleanUppercase(ui.btnSubmit)}
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={loadNewSet}
-                  className="px-5 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2"
+                  className="px-4 py-2.5 sm:px-6 sm:py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black rounded-xl shadow-lg shadow-indigo-600/30 transition-all text-xs sm:text-sm flex items-center gap-2 whitespace-nowrap"
                 >
                   <span>🔄</span>
-                  <span>{toCleanUppercase('ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}</span>
+                  <span>{toCleanUppercase(ui.btnNewSet)}</span>
                 </button>
               )}
             </div>

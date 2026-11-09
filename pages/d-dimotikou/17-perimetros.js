@@ -1,7 +1,19 @@
 // pages/d-dimotikou/17-perimetros.js
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 // Βοηθητικό εξάρτημα για Ενιαίο Στυλ Ετικέτας Πλευράς με ασφαλή όρια
 function SideLabel({ x, y, text }) {
@@ -37,7 +49,124 @@ function SideLabel({ x, y, text }) {
   );
 }
 
+const translations = {
+  el: {
+    metaTitle: 'Υπολογισμός Περιμέτρου Σχημάτων - Θεωρία | LearnMaths.gr',
+    metaDesc:
+      'Μαθαίνουμε τι είναι η περίμετρος και πώς την υπολογίζουμε σε τρίγωνα, τετράγωνα, ορθογώνια και πολύγωνα με διαδραστικό γεωμετρικό εργαστήριο.',
+    backText: "Δ' Δημοτικού",
+    exercisesBtn: 'Ασκήσεις',
+    badge: "Δ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: '📏 Υπολογισμός Περιμέτρου Σχημάτων',
+    heroSubtitle:
+      'Μαθαίνουμε τι είναι η περίμετρος (το συνολικό μήκος του περιγράμματος ενός σχήματος) και πώς την υπολογίζουμε προσθέτοντας όλες τις πλευρές του!',
+    readyBoxTitle: 'Έτοιμος για εξάσκηση;',
+    readyBoxDesc:
+      'Δοκίμασε τις ασκήσεις στην περίμετρο για να σιγουρευτείς ότι κατανόησες πλήρως τους υπολογισμούς!',
+    goToExercises: '🎯 Μετάβαση στις Ασκήσεις',
+    theoryHeading: 'Αναλυτική Θεωρία και Κανόνες Περιμέτρου',
+    cardDefTitle: 'Τι είναι η Περίμετρος;',
+    cardDefDesc:
+      'Περίμετρος ονομάζεται το συνολικό μήκος του εξωτερικού περιγράμματος (της «περίφραξης») ενός επίπεδου γεωμετρικού σχήματος.',
+    cardRuleTitle: 'Ο Βασικός Κανόνας',
+    cardRuleDesc:
+      'Για να βρούμε την περίμετρο οποιουδήποτε πολυγώνου, προσθέτουμε τα μήκη όλων των πλευρών του μία προς μία!',
+    cardShortcutsTitle: 'Γρήγοροι Τύποι',
+    squareShortcutLabel: 'Τετράγωνο:',
+    squareShortcutFormula: '4 · πλευρά',
+    rectShortcutLabel: 'Ορθογώνιο:',
+    rectShortcutFormula: '(2 · μήκος) ＋ (2 · πλάτος)',
+    labTitle: 'Διαδραστικό Εργαστήριο Περιμέτρου',
+    labSubtitle:
+      'Επίλεξε γεωμετρικό σχήμα, άλλαξε τα μήκη των πλευρών και παρατήρησε τη ζωντανή προσαρμογή!',
+    shapes: {
+      triangle: '▲ Τρίγωνο',
+      square: '❏ Τετράγωνο',
+      rectangle: '▭ Ορθογώνιο',
+      polygon: '⬟ Πεντάγωνο',
+      hexagon: '⬢ Εξάγωνο',
+    },
+    perimeterResultLabel: '📏 Περίμετρος ＝',
+    formulaHeader: 'ΑΝΑΛΥΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ:',
+    controlsTitle: '🎛️ Μήκη Πλευρών (2 έως 18 cm)',
+    sideALabel: 'ΠΛΕΥΡΑ a',
+    sideALengthSuffix: '(ΜΗΚΟΣ)',
+    sideBLabel: 'ΠΛΕΥΡΑ b',
+    sideBWidthSuffix: '(ΠΛΑΤΟΣ)',
+    sideCLabel: 'ΠΛΕΥΡΑ c',
+    sideDLabel: 'ΠΛΕΥΡΑ d',
+    sideELabel: 'ΠΛΕΥΡΑ e',
+    sideFLabel: 'ΠΛΕΥΡΑ f',
+    decrease: 'Μείωση',
+    increase: 'Αύξηση',
+    unitCm: 'cm',
+    bottomTitle: '📝 Ώρα για Εξάσκηση!',
+    bottomDesc:
+      'Έμαθες να υπολογίζεις την περίμετρο σχημάτων; Δοκίμασε τις διαδραστικές ασκήσεις!',
+    startExercises: 'Ξεκίνα τις Ασκήσεις ➔',
+  },
+  en: {
+    metaTitle: 'Calculating Perimeter of Shapes - Theory | LearnMaths.gr',
+    metaDesc:
+      'Learn what perimeter is and how to calculate it in triangles, squares, rectangles, and polygons through an interactive geometry lab.',
+    backText: 'Grade 4',
+    exercisesBtn: 'Exercises',
+    badge: 'GRADE 4',
+    heroTitle: '📏 Calculating Perimeter of Shapes',
+    heroSubtitle:
+      'Learn what perimeter is (the total boundary length of a 2D shape) and how to calculate it by adding all its sides together!',
+    readyBoxTitle: 'Ready for practice?',
+    readyBoxDesc:
+      'Try the practice exercises on perimeter to make sure you fully master all the calculations!',
+    goToExercises: '🎯 Go to Exercises',
+    theoryHeading: 'Detailed Theory & Perimeter Rules',
+    cardDefTitle: 'What is Perimeter?',
+    cardDefDesc:
+      'Perimeter is the total continuous length of the outer boundary (the "fence") enclosing a flat 2D geometric shape.',
+    cardRuleTitle: 'The Core Rule',
+    cardRuleDesc:
+      'To find the perimeter of any polygon, we simply add the lengths of all its outer sides together one by one!',
+    cardShortcutsTitle: 'Shortcut Formulas',
+    squareShortcutLabel: 'Square:',
+    squareShortcutFormula: '4 · side',
+    rectShortcutLabel: 'Rectangle:',
+    rectShortcutFormula: '(2 · length) ＋ (2 · width)',
+    labTitle: 'Interactive Perimeter Lab',
+    labSubtitle:
+      'Choose a geometric shape, adjust the side lengths, and observe real-time visual updates!',
+    shapes: {
+      triangle: '▲ Triangle',
+      square: '❏ Square',
+      rectangle: '▭ Rectangle',
+      polygon: '⬟ Pentagon',
+      hexagon: '⬢ Hexagon',
+    },
+    perimeterResultLabel: '📏 Perimeter ＝',
+    formulaHeader: 'STEP-BY-STEP CALCULATION:',
+    controlsTitle: '🎛️ Side Lengths (2 to 18 cm)',
+    sideALabel: 'SIDE a',
+    sideALengthSuffix: '(LENGTH)',
+    sideBLabel: 'SIDE b',
+    sideBWidthSuffix: '(WIDTH)',
+    sideCLabel: 'SIDE c',
+    sideDLabel: 'SIDE d',
+    sideELabel: 'SIDE e',
+    sideFLabel: 'SIDE f',
+    decrease: 'Decrease',
+    increase: 'Increase',
+    unitCm: 'cm',
+    bottomTitle: '📝 Time to Practice!',
+    bottomDesc:
+      'Learned how to calculate the perimeter of shapes? Put your skills to the test with interactive exercises!',
+    startExercises: 'Start Exercises ➔',
+  },
+};
+
 export default function PerimetrosTheoryPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = translations[locale];
+
   const [shape, setShape] = useState('triangle'); // 'triangle', 'square', 'rectangle', 'polygon', 'hexagon'
 
   // Διαστάσεις πλευρών (σε cm) - Όρια sliders: 2 έως 18
@@ -86,48 +215,46 @@ export default function PerimetrosTheoryPage() {
 
   return (
     <Layout
-      title="Υπολογισμός Περιμέτρου Σχημάτων - Θεωρία | LearnMaths.gr"
-      description="Μαθαίνουμε τι είναι η περίμετρος και πώς την υπολογίζουμε σε τρίγωνα, τετράγωνα, ορθογώνια και πολύγωνα με διαδραστικό γεωμετρικό εργαστήριο."
+      title={t.metaTitle}
+      description={t.metaDesc}
       backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/d-dimotikou/17-perimetros-ask"
           className="bg-slate-900 hover:bg-black text-white font-black px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>🎯</span> Ασκήσεις
+          <span>🎯</span> {t.exercisesBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER & EXERCISES PROMO CARD */}
         <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white p-6 sm:p-8 rounded-3xl shadow-md relative overflow-hidden">
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2 space-y-3">
               <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ
+                {toCleanUppercase(t.badge)}
               </span>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-                📏 Υπολογισμός Περιμέτρου Σχημάτων
+                {t.heroTitle}
               </h1>
               <p className="text-amber-100 text-sm sm:text-base lg:text-lg leading-relaxed">
-                Μαθαίνουμε τι είναι η περίμετρος (το συνολικό μήκος του περιγράμματος ενός σχήματος) και πώς την υπολογίζουμε προσθέτοντας όλες τις πλευρές του!
+                {t.heroSubtitle}
               </p>
             </div>
 
             {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
             <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
               <div className="text-3xl">🚀</div>
-              <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
-              <p className="text-xs text-amber-100">
-                Δοκίμασε τις ασκήσεις στην περίμετρο για να σιγουρευτείς ότι κατανόησες πλήρως τους υπολογισμούς!
-              </p>
+              <h3 className="font-extrabold text-white text-lg">{t.readyBoxTitle}</h3>
+              <p className="text-xs text-amber-100">{t.readyBoxDesc}</p>
               <Link
                 href="/d-dimotikou/17-perimetros-ask"
                 className="inline-block w-full bg-slate-900 hover:bg-black text-white font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
               >
-                🎯 Μετάβαση στις Ασκήσεις
+                {t.goToExercises}
               </Link>
             </div>
           </div>
@@ -137,7 +264,7 @@ export default function PerimetrosTheoryPage() {
         <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100 space-y-8">
           <div className="border-b pb-4 border-slate-100">
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-              <span>📖</span> Αναλυτική Θεωρία και Κανόνες Περιμέτρου
+              <span>📖</span> {t.theoryHeading}
             </h2>
           </div>
 
@@ -145,31 +272,31 @@ export default function PerimetrosTheoryPage() {
             {/* 1. Ορισμός */}
             <div className="bg-amber-50/70 p-5 sm:p-6 rounded-2xl border border-amber-100 space-y-3 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold text-amber-900 flex items-center gap-2">
-                <span>🏃</span> Τι είναι η Περίμετρος;
+                <span>🏃</span> {t.cardDefTitle}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                <strong>Περίμετρος</strong> ονομάζεται το συνολικό μήκος του εξωτερικού περιγράμματος (της «περίφραξης») ενός επίπεδου γεωμετρικού σχήματος.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">{t.cardDefDesc}</p>
             </div>
 
             {/* 2. Ο Κανόνας */}
             <div className="bg-orange-50/70 p-5 sm:p-6 rounded-2xl border border-orange-100 space-y-3 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold text-orange-900 flex items-center gap-2">
-                <span>➕</span> Ο Βασικός Κανόνας
+                <span>➕</span> {t.cardRuleTitle}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Για να βρούμε την περίμετρο οποιουδήποτε πολυγώνου, <strong>προσθέτουμε τα μήκη όλων των πλευρών του</strong> μία προς μία!
-              </p>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">{t.cardRuleDesc}</p>
             </div>
 
             {/* 3. Σύντομοι Τύποι */}
             <div className="bg-rose-50/70 p-5 sm:p-6 rounded-2xl border border-rose-100 space-y-3 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold text-rose-900 flex items-center gap-2">
-                <span>⚡</span> Γρήγοροι Τύποι
+                <span>⚡</span> {t.cardShortcutsTitle}
               </h3>
               <ul className="text-xs text-slate-700 space-y-1.5 font-mono font-bold">
-                <li>• <strong>Τετράγωνο:</strong> 4 · πλευρά</li>
-                <li>• <strong>Ορθογώνιο:</strong> (2 · μήκος) ＋ (2 · πλάτος)</li>
+                <li>
+                  <strong>{t.squareShortcutLabel}</strong> {t.squareShortcutFormula}
+                </li>
+                <li>
+                  <strong>{t.rectShortcutLabel}</strong> {t.rectShortcutFormula}
+                </li>
               </ul>
             </div>
           </div>
@@ -180,11 +307,9 @@ export default function PerimetrosTheoryPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-4 border-slate-100">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🧮</span> Διαδραστικό Εργαστήριο Περιμέτρου
+                <span>🧮</span> {t.labTitle}
               </h2>
-              <p className="text-slate-500 text-xs sm:text-sm">
-                Επίλεξε γεωμετρικό σχήμα, άλλαξε τα μήκη των πλευρών και παρατήρησε τη ζωντανή προσαρμογή!
-              </p>
+              <p className="text-slate-500 text-xs sm:text-sm">{t.labSubtitle}</p>
             </div>
 
             {/* ΚΟΥΜΠΙΑ ΕΠΙΛΟΓΗΣ ΣΧΗΜΑΤΟΣ */}
@@ -197,7 +322,7 @@ export default function PerimetrosTheoryPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                ▲ Τρίγωνο
+                {t.shapes.triangle}
               </button>
               <button
                 onClick={(e) => handleShapeSelect(e, 'square')}
@@ -207,7 +332,7 @@ export default function PerimetrosTheoryPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                ❏ Τετράγωνο
+                {t.shapes.square}
               </button>
               <button
                 onClick={(e) => handleShapeSelect(e, 'rectangle')}
@@ -217,7 +342,7 @@ export default function PerimetrosTheoryPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                ▭ Ορθογώνιο
+                {t.shapes.rectangle}
               </button>
               <button
                 onClick={(e) => handleShapeSelect(e, 'polygon')}
@@ -227,7 +352,7 @@ export default function PerimetrosTheoryPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                ⬟ Πεντάγωνο
+                {t.shapes.polygon}
               </button>
               <button
                 onClick={(e) => handleShapeSelect(e, 'hexagon')}
@@ -237,18 +362,18 @@ export default function PerimetrosTheoryPage() {
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
-                ⬢ Εξάγωνο
+                {t.shapes.hexagon}
               </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ (RESPONSIVE SVG ΧΩΡΙΣ SCROLL) */}
+            {/* CANVAS ΟΠΤΙΚΟΠΟΙΗΣΗΣ */}
             <div className="bg-slate-950 p-4 sm:p-7 rounded-3xl border border-slate-800 shadow-xl flex flex-col items-center justify-center space-y-4">
               {/* DISPLAY RESULT BANNER */}
               <div className="bg-amber-400 text-slate-950 px-5 py-2 rounded-2xl font-black text-base sm:text-lg shadow-md flex items-center gap-2">
-                <span>📏 Περίμετρος ＝</span>
-                <span className="font-mono text-xl sm:text-2xl">{perimeter} cm</span>
+                <span>{t.perimeterResultLabel}</span>
+                <span className="font-mono text-xl sm:text-2xl">{perimeter} {t.unitCm}</span>
               </div>
 
               <div className="w-full max-w-[360px] aspect-[5/4] bg-slate-900/60 rounded-2xl border border-slate-800 relative flex items-center justify-center overflow-hidden">
@@ -350,7 +475,7 @@ export default function PerimetrosTheoryPage() {
                       const aRad = (a * Math.PI) / 180;
                       return {
                         x: 225 + r * Math.cos(aRad),
-                        y: 180 + r * Math.sin(aRad)
+                        y: 180 + r * Math.sin(aRad),
                       };
                     });
 
@@ -367,7 +492,7 @@ export default function PerimetrosTheoryPage() {
                       const offset = 36;
                       return {
                         x: midX + (dirX / len) * offset,
-                        y: midY + (dirY / len) * offset
+                        y: midY + (dirY / len) * offset,
                       };
                     });
 
@@ -393,7 +518,7 @@ export default function PerimetrosTheoryPage() {
                       const aRad = (a * Math.PI) / 180;
                       return {
                         x: 225 + r * Math.cos(aRad),
-                        y: 180 - r * Math.sin(aRad)
+                        y: 180 - r * Math.sin(aRad),
                       };
                     });
 
@@ -410,7 +535,7 @@ export default function PerimetrosTheoryPage() {
                       const offset = 35;
                       return {
                         x: midX + (dirX / len) * offset,
-                        y: midY + (dirY / len) * offset
+                        y: midY + (dirY / len) * offset,
                       };
                     });
 
@@ -432,7 +557,7 @@ export default function PerimetrosTheoryPage() {
               {/* FORMULA DISPLAY */}
               <div className="bg-slate-900 p-3.5 rounded-2xl border border-slate-800 text-center w-full shadow-sm">
                 <span className="text-[11px] uppercase font-black tracking-wider block text-slate-400 mb-1">
-                  ΑΝΑΛΥΤΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ:
+                  {t.formulaHeader}
                 </span>
                 <div className="font-mono font-black text-sm sm:text-base text-amber-400 break-words">
                   {formulaText}
@@ -440,20 +565,22 @@ export default function PerimetrosTheoryPage() {
               </div>
             </div>
 
-            {/* SLIDERS ΧΕΙΡΙΣΜΟΥ (ΚΑΝΟΝΑΣ 2) */}
+            {/* SLIDERS ΧΕΙΡΙΣΜΟΥ */}
             <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-3.5">
               <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-                <span>🎛️</span> Μήκη Πλευρών (2 έως 18 cm)
+                <span>🎛️</span> {t.controlsTitle}
               </h3>
 
               {/* SLIDER A */}
               <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                 <div className="h-7 flex items-center justify-between text-center px-1">
                   <span className="text-[11px] font-black uppercase text-slate-500">
-                    ΠΛΕΥΡΑ a {shape === 'rectangle' ? '(ΜΗΚΟΣ)' : ''}
+                    {toCleanUppercase(
+                      `${t.sideALabel} ${shape === 'rectangle' ? t.sideALengthSuffix : ''}`
+                    )}
                   </span>
                   <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                    {sideA} cm
+                    {sideA} {t.unitCm}
                   </span>
                 </div>
 
@@ -461,8 +588,8 @@ export default function PerimetrosTheoryPage() {
                   <button
                     onClick={(e) => updateSide(e, setSideA, sideA, -1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                    title="Μείωση"
-                    aria-label="Μείωση πλευράς a"
+                    title={t.decrease}
+                    aria-label={`${t.decrease} ${t.sideALabel}`}
                   >
                     －
                   </button>
@@ -479,8 +606,8 @@ export default function PerimetrosTheoryPage() {
                   <button
                     onClick={(e) => updateSide(e, setSideA, sideA, 1)}
                     className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                    title="Αύξηση"
-                    aria-label="Αύξηση πλευράς a"
+                    title={t.increase}
+                    aria-label={`${t.increase} ${t.sideALabel}`}
                   >
                     ＋
                   </button>
@@ -492,10 +619,12 @@ export default function PerimetrosTheoryPage() {
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                   <div className="h-7 flex items-center justify-between text-center px-1">
                     <span className="text-[11px] font-black uppercase text-slate-500">
-                      ΠΛΕΥΡΑ b {shape === 'rectangle' ? '(ΠΛΑΤΟΣ)' : ''}
+                      {toCleanUppercase(
+                        `${t.sideBLabel} ${shape === 'rectangle' ? t.sideBWidthSuffix : ''}`
+                      )}
                     </span>
                     <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                      {sideB} cm
+                      {sideB} {t.unitCm}
                     </span>
                   </div>
 
@@ -503,8 +632,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideB, sideB, -1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Μείωση"
-                      aria-label="Μείωση πλευράς b"
+                      title={t.decrease}
+                      aria-label={`${t.decrease} ${t.sideBLabel}`}
                     >
                       －
                     </button>
@@ -521,8 +650,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideB, sideB, 1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Αύξηση"
-                      aria-label="Αύξηση πλευράς b"
+                      title={t.increase}
+                      aria-label={`${t.increase} ${t.sideBLabel}`}
                     >
                       ＋
                     </button>
@@ -534,9 +663,11 @@ export default function PerimetrosTheoryPage() {
               {(shape === 'triangle' || shape === 'polygon' || shape === 'hexagon') && (
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                   <div className="h-7 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500">ΠΛΕΥΡΑ c</span>
+                    <span className="text-[11px] font-black uppercase text-slate-500">
+                      {toCleanUppercase(t.sideCLabel)}
+                    </span>
                     <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                      {sideC} cm
+                      {sideC} {t.unitCm}
                     </span>
                   </div>
 
@@ -544,8 +675,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideC, sideC, -1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Μείωση"
-                      aria-label="Μείωση πλευράς c"
+                      title={t.decrease}
+                      aria-label={`${t.decrease} ${t.sideCLabel}`}
                     >
                       －
                     </button>
@@ -562,8 +693,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideC, sideC, 1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Αύξηση"
-                      aria-label="Αύξηση πλευράς c"
+                      title={t.increase}
+                      aria-label={`${t.increase} ${t.sideCLabel}`}
                     >
                       ＋
                     </button>
@@ -575,9 +706,11 @@ export default function PerimetrosTheoryPage() {
               {(shape === 'polygon' || shape === 'hexagon') && (
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                   <div className="h-7 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500">ΠΛΕΥΡΑ d</span>
+                    <span className="text-[11px] font-black uppercase text-slate-500">
+                      {toCleanUppercase(t.sideDLabel)}
+                    </span>
                     <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                      {sideD} cm
+                      {sideD} {t.unitCm}
                     </span>
                   </div>
 
@@ -585,8 +718,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideD, sideD, -1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Μείωση"
-                      aria-label="Μείωση πλευράς d"
+                      title={t.decrease}
+                      aria-label={`${t.decrease} ${t.sideDLabel}`}
                     >
                       －
                     </button>
@@ -603,8 +736,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideD, sideD, 1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Αύξηση"
-                      aria-label="Αύξηση πλευράς d"
+                      title={t.increase}
+                      aria-label={`${t.increase} ${t.sideDLabel}`}
                     >
                       ＋
                     </button>
@@ -616,9 +749,11 @@ export default function PerimetrosTheoryPage() {
               {(shape === 'polygon' || shape === 'hexagon') && (
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                   <div className="h-7 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500">ΠΛΕΥΡΑ e</span>
+                    <span className="text-[11px] font-black uppercase text-slate-500">
+                      {toCleanUppercase(t.sideELabel)}
+                    </span>
                     <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                      {sideE} cm
+                      {sideE} {t.unitCm}
                     </span>
                   </div>
 
@@ -626,8 +761,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideE, sideE, -1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Μείωση"
-                      aria-label="Μείωση πλευράς e"
+                      title={t.decrease}
+                      aria-label={`${t.decrease} ${t.sideELabel}`}
                     >
                       －
                     </button>
@@ -644,8 +779,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideE, sideE, 1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Αύξηση"
-                      aria-label="Αύξηση πλευράς e"
+                      title={t.increase}
+                      aria-label={`${t.increase} ${t.sideELabel}`}
                     >
                       ＋
                     </button>
@@ -657,9 +792,11 @@ export default function PerimetrosTheoryPage() {
               {shape === 'hexagon' && (
                 <div className="bg-white p-3 rounded-2xl border border-slate-200 space-y-1.5 shadow-sm">
                   <div className="h-7 flex items-center justify-between text-center px-1">
-                    <span className="text-[11px] font-black uppercase text-slate-500">ΠΛΕΥΡΑ f</span>
+                    <span className="text-[11px] font-black uppercase text-slate-500">
+                      {toCleanUppercase(t.sideFLabel)}
+                    </span>
                     <span className="min-w-[64px] text-center whitespace-nowrap font-mono font-black text-amber-600 text-sm">
-                      {sideF} cm
+                      {sideF} {t.unitCm}
                     </span>
                   </div>
 
@@ -667,8 +804,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideF, sideF, -1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Μείωση"
-                      aria-label="Μείωση πλευράς f"
+                      title={t.decrease}
+                      aria-label={`${t.decrease} ${t.sideFLabel}`}
                     >
                       －
                     </button>
@@ -685,8 +822,8 @@ export default function PerimetrosTheoryPage() {
                     <button
                       onClick={(e) => updateSide(e, setSideF, sideF, 1)}
                       className="w-9 h-9 shrink-0 flex items-center justify-center bg-amber-50 hover:bg-amber-100 active:bg-amber-200 text-amber-800 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                      title="Αύξηση"
-                      aria-label="Αύξηση πλευράς f"
+                      title={t.increase}
+                      aria-label={`${t.increase} ${t.sideFLabel}`}
                     >
                       ＋
                     </button>
@@ -700,16 +837,14 @@ export default function PerimetrosTheoryPage() {
         {/* BOTTOM EXERCISES CALLOUT BANNER */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
-            <p className="text-slate-800 text-sm md:text-base">
-              Έμαθες να υπολογίζεις την περίμετρο σχημάτων; Δοκίμασε τις διαδραστικές ασκήσεις!
-            </p>
+            <h3 className="text-xl sm:text-2xl font-black">{t.bottomTitle}</h3>
+            <p className="text-slate-800 text-sm md:text-base">{t.bottomDesc}</p>
           </div>
           <Link
             href="/d-dimotikou/17-perimetros-ask"
             className="bg-slate-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            {t.startExercises}
           </Link>
         </div>
       </div>

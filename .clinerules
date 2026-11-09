@@ -1,0 +1,62 @@
+# LearnMaths.gr — ST' Dimotikou Standards
+
+## 1. Pedagogical Standards ("No-Giveaway")
+- The question prompt (`prompt`) must contain strictly the problem narrative, any required dynamic SVG diagram (e.g. number line, area grid), and the input or choice controls.
+- NEVER include helper data tables (`tableData`), multi-step calculation breakdowns, or solution hints in the question prompt before submission.
+- `tableData` and detailed solution steps belong EXCLUSIVELY in the post-submission Feedback / Explanation section (`isSubmitted && ...`).
+
+## 2. Typography & Capitalization
+- Fully support dual-language (`el` and `en`) via Next.js `useRouter().locale`.
+- Greek uppercase rule: NEVER place accents on Greek uppercase letters (e.g., use `ΕΡΩΤΗΣΗ`, `ΕΛΕΓΧΟΣ`, `ΣΚΟΡ`, `ΠΟΣΟΣΤΟ`, `ΣΩΣΤΟ`, `ΛΑΘΟΣ`), with the ONLY exception being `ΣΤ'`.
+- Always use the standardized `toCleanUppercase` helper:
+  ```javascript
+  function toCleanUppercase(str) {
+    if (!str) return '';
+    const parts = str.split(/(ΣΤ')/g);
+    return parts
+      .map((part) => (part === "ΣΤ'" ? "ΣΤ'" : part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()))
+      .join('');
+  }
+
+  function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono ${className}`}>
+      <span className="border-b-2 border-current px-1 pb-0.5 text-center leading-none">{num}</span>
+      <span className="px-1 pt-0.5 text-center leading-none">{den}</span>
+    </span>
+  );
+}
+
+Use standardized Unicode math operators:
+
+Multiplication: · (middle dot, never ASCII x or *)
+
+Division: : (colon)
+
+Addition: ＋ (full-width or padded)
+
+Subtraction: － (minus sign)
+
+Equality: ＝
+
+Inequalities: ＞, ＜
+
+Locale-aware number formatting:
+
+Greek (el): Comma , for decimals, dot . for thousands (e.g. 1.250,50).
+
+English (en): Dot . for decimals, comma , for thousands (e.g. 1,250.50).
+
+Exactly 10 questions per exercise set (score / 10, Math.round((score / 10) * 100)%).
+
+Unique MCQ Options: Every MCQ options array must pass through [...new Set(rawOptions)] before shuffling to prevent duplicate buttons.
+
+MCQ Buttons: Do NOT truncate text. Use break-words whitespace-normal leading-snug flex-1 inside a responsive grid (grid grid-cols-1 sm:grid-cols-2 gap-3).
+
+Decimal Inputs: Must accept both , and . interchangeably, evaluated with tolerance Math.abs(userVal - q.correctVal) < 0.05.
+
+Full screen width support for modern displays up to 4K/8K:w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16.
+
+Main content container must have bottom padding pb-28 sm:pb-32 so content is never hidden behind the fixed bottom score bar (z-50).
+
+Touch-friendly buttons (touch-manipulation, active:scale-95, cursor-pointer).

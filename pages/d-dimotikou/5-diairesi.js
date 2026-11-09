@@ -1,23 +1,186 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΚΑΘΑΡΙΣΜΟΥ & ΤΥΠΟΓΡΑΦΙΑΣ --- //
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+function formatNumberLocale(num, locale = 'el') {
+  if (num === null || num === undefined || isNaN(num)) return '';
+  return num.toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
 }
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// --- ΣΥΓΚΕΝΤΡΩΤΙΚΟ ΛΕΞΙΚΟ i18n --- //
+const translations = {
+  el: {
+    metaTitle: "Η Διαίρεση με Μονοψήφιο Διαιρέτη - Θεωρία | LearnMaths.gr",
+    metaDesc: "Μαθαίνουμε τη διαίρεση διψήφιων και τριψήφιων αριθμών με μονοψήφιο διαιρέτη, τέλειες και ατελείς διαιρέσεις και την επαλήθευση.",
+    backUrl: "/d-dimotikou",
+    backText: "Δ' Δημοτικού",
+    exercisesBtn: "Ασκήσεις",
+    exercisesUrl: "/d-dimotikou/5-diairesi-ask",
+    badge: "Δ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "Η Διαίρεση με Μονοψήφιο Διαιρέτη",
+    heroDesc: "Μαθαίνουμε τη διαίρεση διψήφιων και τριψήφιων αριθμών, τους όρους της και πώς κάνουμε επαλήθευση με τον πολλαπλασιασμό!",
+    promoReadyTitle: "Έτοιμος για εξάσκηση;",
+    promoReadyDesc: "Δοκίμασε τις ασκήσεις στη διαίρεση για να σιγουρευτείς ότι την κατανόησες πλήρως!",
+    promoReadyBtn: "Μετάβαση στις Ασκήσεις",
+    // Section 1
+    sec1Title: "Αναλυτική Θεωρία και Ορισμοί",
+    whatIsTitle: "Τι είναι η Διαίρεση;",
+    whatIsDesc1: "είναι η πράξη με την οποία",
+    whatIsDesc2: "έναν αριθμό σε ίσα μέρη ή βρίσκουμε πόσες φορές χωράει ένας αριθμός μέσα σε έναν άλλο.",
+    whatIsBold1: "Διαίρεση",
+    whatIsBold2: "μοιράζουμε",
+    whatIsNote: "Η διαίρεση είναι η αντίστροφη πράξη του πολλαπλασιασμού!",
+    exactVsTitle: "Τέλεια και Ατελής Διαίρεση",
+    exactTitle: "Τέλεια Διαίρεση:",
+    exactDesc: "Όταν δεν περισσεύει τίποτα, δηλαδή το υπόλοιπο είναι 0 (υ ＝ 0).",
+    inexactTitle: "Ατελής Διαίρεση:",
+    inexactDesc: "Όταν περισσεύει μονάδα, δηλαδή το υπόλοιπο είναι μεγαλύτερο του μηδενός (υ ＞ 0).",
+    termsHeader: "Οι Όροι της Διαίρεσης και η Επαλήθευση",
+    termsCardTitle: "1. Τα 4 Στοιχεία της Διαίρεσης:",
+    termDividend: "Διαιρετέος (Δ):",
+    termDividendDesc: "Ο αριθμός που μοιράζουμε.",
+    termDivisor: "Διαιρέτης (δ):",
+    termDivisorDesc: "Σε πόσα ίσα μέρη μοιράζουμε.",
+    termQuotient: "Πηλίκο (π):",
+    termQuotientDesc: "Πόσο παίρνει το κάθε μέρος.",
+    termRemainder: "Υπόλοιπο (υ):",
+    termRemainderDesc: "Ό,τι περισσεύει (πάντοτε ισχύει υ ＜ δ).",
+    checkCardTitle: "2. Τύπος Επαλήθευσης (με Πολλαπλασιασμό):",
+    checkCardDesc: "Για να ελέγξουμε αν η διαίρεση είναι σωστή, πολλαπλασιάζουμε τον διαιρέτη με το πηλίκο και προσθέτουμε το υπόλοιπο:",
+    checkFormulaNameDividend: "Διαιρετέος",
+    checkFormulaNameDivisor: "Διαιρέτης",
+    checkFormulaNameQuotient: "Πηλίκο",
+    checkFormulaNameRemainder: "Υπόλοιπο",
+    checkSymbolic: "Δ ＝ (δ · π) ＋ υ",
+    // Section 2
+    sec2Title: "Διαδραστικό Εργαστήριο Κάθετης Διαίρεσης",
+    sec2Desc: "Άλλαξε τον διαιρετέο και τον διαιρέτη για να παρακολουθήσεις τα βήματα της κάθετης πράξης!",
+    twoDigitBtn: "Διψήφιος",
+    threeDigitBtn: "Τριψήφιος",
+    sliderDividendLabel: "ΔΙΑΙΡΕΤΕΟΣ (Δ)",
+    sliderDivisorLabel: "ΔΙΑΙΡΕΤΗΣ (δ)",
+    btnDecreaseDividend: "Μείωση διαιρετέου",
+    btnIncreaseDividend: "Αύξηση διαιρετέου",
+    btnDecreaseDivisor: "Μείωση διαιρέτη",
+    btnIncreaseDivisor: "Αύξηση διαιρέτη",
+    layoutTitle: "ΣΧΟΛΙΚΗ ΔΙΑΤΑΞΗ ΠΡΑΞΗΣ:",
+    remainderLabel: "ΥΠΟΛΟΙΠΟ (υ):",
+    legendD: "Δ ＝ Διαιρετεος",
+    legendDLower: "δ ＝ Διαιρετης",
+    legendQ: "π ＝ Πηλικο",
+    verificationTitle: "Επαλήθευση με Πολλαπλασιασμό",
+    verificationDesc: "Ελέγχουμε αν η πράξη είναι σωστή εφαρμόζοντας τον τύπο της Ευκλείδειας διαίρεσης:",
+    dividendTag: "(Διαιρετέος)",
+    exactNote: "Η διαίρεση είναι τέλεια (υ ＝ 0), άρα ο διαιρετέος ισούται ακριβώς με το γινόμενο δ · π.",
+    inexactNote: "Η διαίρεση είναι ατελής (υ ＝ {r} ＜ {d}), άρα προσθέτουμε το υπόλοιπο στο γινόμενο.",
+    ruleNote: "Κανόνας: Σε κάθε διαίρεση, το υπόλοιπο (υ) είναι πάντοτε αυστηρά μικρότερο από τον διαιρέτη (δ).",
+    // Bottom Promo
+    bottomPromoTitle: "Ώρα για Εξάσκηση!",
+    bottomPromoDesc: "Έμαθες τη διαίρεση και την επαλήθευση; Δοκίμασε τις διαδραστικές ασκήσεις!",
+    bottomPromoBtn: "Ξεκίνα τις Ασκήσεις ➔"
+  },
+  en: {
+    metaTitle: "Division by One-Digit Divisor - Theory | LearnMaths.gr",
+    metaDesc: "Learn two-digit and three-digit division by single-digit divisors, exact vs inexact divisions, and check solutions step by step.",
+    backUrl: "/en/d-dimotikou",
+    backText: "4th Grade",
+    exercisesBtn: "Exercises",
+    exercisesUrl: "/en/d-dimotikou/5-diairesi-ask",
+    badge: "4TH GRADE",
+    heroTitle: "Division by One-Digit Divisor",
+    heroDesc: "Learn how to divide two-digit and three-digit numbers, study division terms, and verify solutions via multiplication!",
+    promoReadyTitle: "Ready for practice?",
+    promoReadyDesc: "Try the division practice exercises to make sure you have fully mastered every step!",
+    promoReadyBtn: "Go to Exercises",
+    // Section 1
+    sec1Title: "Detailed Theory and Definitions",
+    whatIsTitle: "What is Division?",
+    whatIsDesc1: "is the mathematical operation by which we",
+    whatIsDesc2: "a quantity into equal parts or find how many times one number fits into another.",
+    whatIsBold1: "Division",
+    whatIsBold2: "share equally",
+    whatIsNote: "Division is the inverse operation of multiplication!",
+    exactVsTitle: "Exact and Inexact Division",
+    exactTitle: "Exact Division:",
+    exactDesc: "When there is no remainder left over, meaning remainder is 0 (r ＝ 0).",
+    inexactTitle: "Inexact Division:",
+    inexactDesc: "When units are left over, meaning remainder is greater than zero (r ＞ 0).",
+    termsHeader: "Terms of Division and Checking",
+    termsCardTitle: "1. The 4 Elements of Division:",
+    termDividend: "Dividend (D):",
+    termDividendDesc: "The number being divided.",
+    termDivisor: "Divisor (d):",
+    termDivisorDesc: "How many equal parts we divide into.",
+    termQuotient: "Quotient (q):",
+    termQuotientDesc: "The result each part receives.",
+    termRemainder: "Remainder (r):",
+    termRemainderDesc: "What remains left over (always r ＜ d).",
+    checkCardTitle: "2. Verification Formula (via Multiplication):",
+    checkCardDesc: "To verify whether a division is correct, multiply the divisor by the quotient and add the remainder:",
+    checkFormulaNameDividend: "Dividend",
+    checkFormulaNameDivisor: "Divisor",
+    checkFormulaNameQuotient: "Quotient",
+    checkFormulaNameRemainder: "Remainder",
+    checkSymbolic: "D ＝ (d · q) ＋ r",
+    // Section 2
+    sec2Title: "Interactive Long Division Lab",
+    sec2Desc: "Adjust the dividend and divisor sliders to explore the step-by-step long division layout!",
+    twoDigitBtn: "Two-digit",
+    threeDigitBtn: "Three-digit",
+    sliderDividendLabel: "DIVIDEND (D)",
+    sliderDivisorLabel: "DIVISOR (d)",
+    btnDecreaseDividend: "Decrease dividend",
+    btnIncreaseDividend: "Increase dividend",
+    btnDecreaseDivisor: "Decrease divisor",
+    btnIncreaseDivisor: "Increase divisor",
+    layoutTitle: "STANDARD COLUMN DIVISION LAYOUT:",
+    remainderLabel: "REMAINDER (r):",
+    legendD: "D ＝ Dividend",
+    legendDLower: "d ＝ Divisor",
+    legendQ: "q ＝ Quotient",
+    verificationTitle: "Verification via Multiplication",
+    verificationDesc: "We verify the operation by applying the Euclidean division formula:",
+    dividendTag: "(Dividend)",
+    exactNote: "The division is exact (r ＝ 0), so the dividend equals exactly d · q.",
+    inexactNote: "The division is inexact (r ＝ {r} ＜ {d}), so we add the remainder to the product.",
+    ruleNote: "Rule: In every division, the remainder (r) must always be strictly less than the divisor (d).",
+    // Bottom Promo
+    bottomPromoTitle: "Time to Practice!",
+    bottomPromoDesc: "Understood division steps and verification? Try the interactive practice exercises!",
+    bottomPromoBtn: "Start Exercises ➔"
+  }
+};
+
 export default function DiairesiTheoryPage() {
-  const [dividend, setDividend] = useState(756); // Διαιρετέος (Δ)
-  const [divisor, setDivisor] = useState(6);     // Διαιρέτης (δ)
+  const router = useRouter();
+  const rawLocale = router.locale || router.query.locale;
+  const currentLocale = rawLocale === 'en' ? 'en' : 'el';
+  const t = translations[currentLocale];
+
+  const [dividend, setDividend] = useState(756);
+  const [divisor, setDivisor] = useState(6);
 
   const D = Math.floor(dividend) || 10;
   const d = Math.floor(divisor) || 2;
 
-  // Υπολογισμοί διαίρεσης
   const q = Math.floor(D / d);
   const r = D % d;
   const isExact = r === 0;
@@ -48,7 +211,6 @@ export default function DiairesiTheoryPage() {
     setDivisor((prev) => Math.max(2, Math.min(9, prev + delta)));
   };
 
-  // Παραγωγή των αναλυτικών σχολικών βημάτων για το γραφικό της κάθετης διαίρεσης
   const generateSchoolSteps = () => {
     if (D === 0 || d === 0) return [];
 
@@ -98,48 +260,48 @@ export default function DiairesiTheoryPage() {
 
   return (
     <Layout
-      title="Η Διαίρεση με Μονοψήφιο Διαιρέτη - Θεωρία | LearnMaths.gr"
-      description="Μαθαίνουμε τη διαίρεση διψήφιων και τριψήφιων αριθμών με μονοψήφιο διαιρέτη, τέλειες και ατελείς διαιρέσεις και την επαλήθευση."
-      backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      title={t.metaTitle}
+      description={t.metaDesc}
+      backUrl={t.backUrl}
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
-          href="/d-dimotikou/5-diairesi-ask"
+          href={t.exercisesUrl}
           className="bg-amber-500 hover:bg-amber-600 text-white font-black px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>🎯</span> Ασκήσεις
+          <span>🎯</span> {t.exercisesBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER & EXERCISES PROMO CARD */}
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 sm:p-8 rounded-3xl shadow-md relative overflow-hidden">
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2 space-y-3">
               <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-                Δ' ΔΗΜΟΤΙΚΟΥ
+                {toCleanUppercase(t.badge)}
               </span>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-                ➗ Η Διαίρεση με Μονοψήφιο Διαιρέτη
+                : {t.heroTitle}
               </h1>
               <p className="text-purple-100 text-sm sm:text-base lg:text-lg leading-relaxed">
-                Μαθαίνουμε τη διαίρεση διψήφιων και τριψήφιων αριθμών, τους όρους της και πώς κάνουμε επαλήθευση με τον πολλαπλασιασμό!
+                {t.heroDesc}
               </p>
             </div>
 
             {/* ΠΛΑΙΣΙΟ ΠΑΡΑΠΟΜΠΗΣ ΣΤΙΣ ΑΣΚΗΣΕΙΣ */}
             <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 text-center space-y-3 shadow-lg">
               <div className="text-3xl">🚀</div>
-              <h3 className="font-extrabold text-white text-lg">Έτοιμος για εξάσκηση;</h3>
+              <h3 className="font-extrabold text-white text-lg">{t.promoReadyTitle}</h3>
               <p className="text-xs text-purple-100">
-                Δοκίμασε τις ασκήσεις στη διαίρεση για να σιγουρευτείς ότι την κατανόησες πλήρως!
+                {t.promoReadyDesc}
               </p>
               <Link
-                href="/d-dimotikou/5-diairesi-ask"
+                href={t.exercisesUrl}
                 className="inline-block w-full bg-amber-400 hover:bg-amber-500 text-slate-900 font-black py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-0.5 text-sm"
               >
-                🎯 Μετάβαση στις Ασκήσεις
+                🎯 {t.promoReadyBtn}
               </Link>
             </div>
           </div>
@@ -149,7 +311,7 @@ export default function DiairesiTheoryPage() {
         <div className="bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100 space-y-8">
           <div className="border-b pb-4 border-slate-100">
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-              <span>📖</span> Αναλυτική Θεωρία και Ορισμοί
+              <span>📖</span> {t.sec1Title}
             </h2>
           </div>
 
@@ -157,29 +319,29 @@ export default function DiairesiTheoryPage() {
             {/* Τι είναι η Διαίρεση */}
             <div className="bg-indigo-50/70 p-5 sm:p-6 rounded-2xl border border-indigo-100 space-y-3">
               <h3 className="text-base sm:text-lg font-bold text-indigo-900 flex items-center gap-2">
-                <span>🔹</span> Τι είναι η Διαίρεση;
+                <span>🔹</span> {t.whatIsTitle}
               </h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                <strong>Διαίρεση</strong> είναι η πράξη με την οποία <strong>μοιράζουμε</strong> έναν αριθμό σε ίσα μέρη ή βρίσκουμε πόσες φορές χωράει ένας αριθμός μέσα σε έναν άλλο.
+                <strong>{t.whatIsBold1}</strong> {t.whatIsDesc1} <strong>{t.whatIsBold2}</strong> {t.whatIsDesc2}
               </p>
               <div className="bg-white p-3 rounded-xl border border-indigo-100 text-xs text-indigo-950 font-medium">
-                💡 <i>Η διαίρεση είναι η αντίστροφη πράξη του πολλαπλασιασμού!</i>
+                💡 <i>{t.whatIsNote}</i>
               </div>
             </div>
 
             {/* Τέλεια vs Ατελής */}
             <div className="bg-purple-50/70 p-5 sm:p-6 rounded-2xl border border-purple-100 space-y-3">
               <h3 className="text-base sm:text-lg font-bold text-purple-900 flex items-center gap-2">
-                <span>⚖️</span> Τέλεια και Ατελής Διαίρεση
+                <span>⚖️</span> {t.exactVsTitle}
               </h3>
               <ul className="space-y-2.5 text-sm text-slate-700">
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-600 font-bold">•</span>
-                  <span><strong>Τέλεια Διαίρεση:</strong> Όταν δεν περισσεύει τίποτα, δηλαδή το <strong>υπόλοιπο είναι 0 (υ ＝ 0)</strong>.</span>
+                  <span><strong>{t.exactTitle}</strong> {t.exactDesc}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-amber-600 font-bold">•</span>
-                  <span><strong>Ατελής Διαίρεση:</strong> Όταν περισσεύει μονάδα, δηλαδή το <strong>υπόλοιπο είναι μεγαλύτερο του μηδενός (υ ＞ 0)</strong>.</span>
+                  <span><strong>{t.inexactTitle}</strong> {t.inexactDesc}</span>
                 </li>
               </ul>
             </div>
@@ -188,38 +350,38 @@ export default function DiairesiTheoryPage() {
           {/* ΟΡΟΛΟΓΙΑ & ΕΠΑΛΗΘΕΥΣΗ */}
           <div className="bg-slate-50 p-5 sm:p-6 rounded-2xl border border-slate-200/80 space-y-4">
             <h3 className="text-base sm:text-lg font-extrabold text-slate-800">
-              🏷️ Οι Όροι της Διαίρεσης και η Επαλήθευση
+              🏷️ {t.termsHeader}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
                 <h4 className="font-bold text-purple-700 border-b pb-1">
-                  1. Τα 4 Στοιχεία της Διαίρεσης:
+                  {t.termsCardTitle}
                 </h4>
                 <ul className="space-y-1.5 text-slate-700 font-mono">
-                  <li><strong className="text-indigo-600">Διαιρετέος (Δ):</strong> Ο αριθμός που μοιράζουμε.</li>
-                  <li><strong className="text-blue-600">Διαιρέτης (δ):</strong> Σε πόσα ίσα μέρη μοιράζουμε.</li>
-                  <li><strong className="text-emerald-600">Πηλίκο (π):</strong> Πόσο παίρνει το κάθε μέρος.</li>
-                  <li><strong className="text-amber-600">Υπόλοιπο (υ):</strong> Ό,τι περισσεύει (πάντοτε ισχύει υ ＜ δ).</li>
+                  <li><strong className="text-indigo-600">{t.termDividend}</strong> {t.termDividendDesc}</li>
+                  <li><strong className="text-blue-600">{t.termDivisor}</strong> {t.termDivisorDesc}</li>
+                  <li><strong className="text-emerald-600">{t.termQuotient}</strong> {t.termQuotientDesc}</li>
+                  <li><strong className="text-amber-600">{t.termRemainder}</strong> {t.termRemainderDesc}</li>
                 </ul>
               </div>
 
               <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-2">
                 <h4 className="font-bold text-emerald-700 border-b pb-1">
-                  2. Τύπος Επαλήθευσης (με Πολλαπλασιασμό):
+                  {t.checkCardTitle}
                 </h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Για να ελέγξουμε αν η διαίρεση είναι σωστή, πολλαπλασιάζουμε τον διαιρέτη με το πηλίκο και προσθέτουμε το υπόλοιπο:
+                  {t.checkCardDesc}
                 </p>
                 <div className="inline-flex flex-wrap items-center justify-center gap-1.5 leading-relaxed break-words px-3 py-2 bg-emerald-50 rounded-xl border border-emerald-200 font-mono font-bold text-slate-900 w-full text-center">
-                  <span>Διαιρετέος</span>
+                  <span>{t.checkFormulaNameDividend}</span>
                   <span>＝</span>
-                  <span>(Διαιρέτης · Πηλίκο)</span>
+                  <span>({t.checkFormulaNameDivisor} · {t.checkFormulaNameQuotient})</span>
                   <span>＋</span>
-                  <span>Υπόλοιπο</span>
+                  <span>{t.checkFormulaNameRemainder}</span>
                 </div>
                 <p className="text-[11px] text-center font-mono text-emerald-800 font-bold">
-                  Δ ＝ (δ · π) ＋ υ
+                  {t.checkSymbolic}
                 </p>
               </div>
             </div>
@@ -231,46 +393,49 @@ export default function DiairesiTheoryPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-4 border-slate-100">
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                <span>🧮</span> Διαδραστικό Εργαστήριο Κάθετης Διαίρεσης
+                <span>🧮</span> {t.sec2Title}
               </h2>
               <p className="text-slate-500 text-xs sm:text-sm">
-                Άλλαξε τον διαιρετέο και τον διαιρέτη για να παρακολουθήσεις τα βήματα της κάθετης πράξης!
+                {t.sec2Desc}
               </p>
             </div>
 
             <div className="flex flex-wrap gap-2 self-start sm:self-auto">
               <button
+                type="button"
                 onClick={handleRandomize2Digit}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 active:scale-95 touch-manipulation"
               >
-                <span>🎲</span> Διψήφιος
+                <span>🎲</span> {t.twoDigitBtn}
               </button>
               <button
+                type="button"
                 onClick={handleRandomize3Digit}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-black px-3.5 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 active:scale-95 touch-manipulation"
               >
-                <span>🎲</span> Τριψήφιος
+                <span>🎲</span> {t.threeDigitBtn}
               </button>
             </div>
           </div>
 
-          {/* TOUCH SLIDERS ΧΕΙΡΙΣΜΟΥ (ΚΑΝΟΝΑΣ 2) */}
+          {/* TOUCH SLIDERS ΧΕΙΡΙΣΜΟΥ */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200">
             {/* Slider Διαιρετέου (Δ) */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">ΔΙΑΙΡΕΤΕΟΣ (Δ)</span>
+                <span className="text-xs font-black uppercase text-slate-500">{t.sliderDividendLabel}</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-indigo-600 text-base">
-                  {formatNumber(D)}
+                  {formatNumberLocale(D, currentLocale)}
                 </span>
               </div>
 
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
+                  type="button"
                   onClick={(e) => updateDividend(e, -10)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-700 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                  title="Μείωση κατά 10"
-                  aria-label="Μείωση διαιρετέου"
+                  title="-10"
+                  aria-label={t.btnDecreaseDividend}
                 >
                   －
                 </button>
@@ -285,10 +450,11 @@ export default function DiairesiTheoryPage() {
                 />
 
                 <button
+                  type="button"
                   onClick={(e) => updateDividend(e, 10)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-700 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                  title="Αύξηση κατά 10"
-                  aria-label="Αύξηση διαιρετέου"
+                  title="+10"
+                  aria-label={t.btnIncreaseDividend}
                 >
                   ＋
                 </button>
@@ -298,18 +464,19 @@ export default function DiairesiTheoryPage() {
             {/* Slider Διαιρέτη (δ) */}
             <div className="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
               <div className="h-8 flex items-center justify-between text-center px-1">
-                <span className="text-xs font-black uppercase text-slate-500">ΔΙΑΙΡΕΤΗΣ (δ)</span>
+                <span className="text-xs font-black uppercase text-slate-500">{t.sliderDivisorLabel}</span>
                 <span className="min-w-[72px] text-center whitespace-nowrap font-mono font-black text-blue-600 text-base">
-                  {d}
+                  {formatNumberLocale(d, currentLocale)}
                 </span>
               </div>
 
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
+                  type="button"
                   onClick={(e) => updateDivisor(e, -1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-blue-50 hover:bg-blue-100 active:bg-blue-200 text-blue-700 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                  title="Μείωση κατά 1"
-                  aria-label="Μείωση διαιρέτη"
+                  title="-1"
+                  aria-label={t.btnDecreaseDivisor}
                 >
                   －
                 </button>
@@ -324,10 +491,11 @@ export default function DiairesiTheoryPage() {
                 />
 
                 <button
+                  type="button"
                   onClick={(e) => updateDivisor(e, 1)}
                   className="w-9 h-9 shrink-0 flex items-center justify-center bg-blue-50 hover:bg-blue-100 active:bg-blue-200 text-blue-700 font-black text-base rounded-xl transition active:scale-95 select-none touch-manipulation"
-                  title="Αύξηση κατά 1"
-                  aria-label="Αύξηση διαιρέτη"
+                  title="+1"
+                  aria-label={t.btnIncreaseDivisor}
                 >
                   ＋
                 </button>
@@ -340,7 +508,7 @@ export default function DiairesiTheoryPage() {
             {/* ΑΡΙΣΤΕΡΑ: ΓΡΑΦΙΚΟ ΚΑΘΕΤΗΣ ΔΙΑΙΡΕΣΗΣ */}
             <div className="flex flex-col items-center gap-2 w-full max-w-[360px] mx-auto">
               <span className="text-xs font-black text-slate-500 uppercase tracking-wider mb-1">
-                ΣΧΟΛΙΚΗ ΔΙΑΤΑΞΗ ΠΡΑΞΗΣ:
+                {t.layoutTitle}
               </span>
 
               <div className="w-full bg-slate-950 text-white p-5 sm:p-6 rounded-3xl shadow-xl border border-slate-800 font-mono text-xl sm:text-2xl font-black relative min-h-[320px] flex py-6 select-none justify-center">
@@ -427,7 +595,7 @@ export default function DiairesiTheoryPage() {
 
                     {/* Ένδειξη Τελικού Υπολοίπου */}
                     <div className="mt-auto pt-8 text-[11px] font-sans font-black uppercase text-amber-400 tracking-wider">
-                      ΥΠΟΛΟΙΠΟ (υ): {r}
+                      {t.remainderLabel} {formatNumberLocale(r, currentLocale)}
                     </div>
                   </div>
                 </div>
@@ -435,9 +603,9 @@ export default function DiairesiTheoryPage() {
 
               {/* Επεξηγηματικό Legend */}
               <div className="flex justify-between w-full text-[10px] font-bold text-slate-500 border-t pt-2 uppercase px-1 tracking-tight">
-                <span>🔵 Δ ＝ Διαιρετεος</span>
-                <span>🟢 δ ＝ Διαιρετης</span>
-                <span>🟣 π ＝ Πηλικο</span>
+                <span>🔵 {t.legendD}</span>
+                <span>🟢 {t.legendDLower}</span>
+                <span>🟣 {t.legendQ}</span>
               </div>
             </div>
 
@@ -446,23 +614,23 @@ export default function DiairesiTheoryPage() {
               <div className="flex items-center gap-2 border-b border-emerald-200 pb-3">
                 <span className="text-2xl">✅</span>
                 <h3 className="font-extrabold text-emerald-950 text-base sm:text-lg">
-                  Επαλήθευση με Πολλαπλασιασμό
+                  {t.verificationTitle}
                 </h3>
               </div>
 
               <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                Ελέγχουμε αν η πράξη είναι σωστή εφαρμόζοντας τον τύπο της Ευκλείδειας διαίρεσης:
+                {t.verificationDesc}
               </p>
 
               <div className="bg-white p-4 rounded-2xl border border-emerald-200 font-mono text-sm sm:text-base space-y-2 text-center shadow-sm">
                 <div className="text-slate-800 font-bold">
-                  (<span className="text-blue-600">{d}</span> · <span className="text-purple-600">{formatNumber(q)}</span>) ＋ <span className="text-amber-600">{r}</span>
+                  (<span className="text-blue-600">{formatNumberLocale(d, currentLocale)}</span> · <span className="text-purple-600">{formatNumberLocale(q, currentLocale)}</span>) ＋ <span className="text-amber-600">{formatNumberLocale(r, currentLocale)}</span>
                 </div>
                 <div className="text-xs sm:text-sm text-slate-500 font-sans">
-                  ＝ {formatNumber(d * q)} ＋ {r}
+                  ＝ {formatNumberLocale(d * q, currentLocale)} ＋ {formatNumberLocale(r, currentLocale)}
                 </div>
                 <div className="text-xl sm:text-2xl font-black text-indigo-600 border-t pt-2 border-slate-100">
-                  ＝ {formatNumber(D)} <span className="text-xs text-slate-500 font-normal font-sans">(Διαιρετέος)</span>
+                  ＝ {formatNumberLocale(D, currentLocale)} <span className="text-xs text-slate-500 font-normal font-sans">{t.dividendTag}</span>
                 </div>
               </div>
 
@@ -470,13 +638,15 @@ export default function DiairesiTheoryPage() {
                 <span>💡</span>
                 <span>
                   {isExact
-                    ? 'Η διαίρεση είναι τέλεια (υ ＝ 0), άρα ο διαιρετέος ισούται ακριβώς με το γινόμενο δ · π.'
-                    : `Η διαίρεση είναι ατελής (υ ＝ ${r} ＜ ${d}), άρα προσθέτουμε το υπόλοιπο στο γινόμενο.`}
+                    ? t.exactNote
+                    : t.inexactNote
+                        .replace('{r}', formatNumberLocale(r, currentLocale))
+                        .replace('{d}', formatNumberLocale(d, currentLocale))}
                 </span>
               </div>
 
               <div className="text-[11px] text-slate-500 font-bold border-t pt-3 border-emerald-200">
-                🔍 Κανόνας: Σε κάθε διαίρεση, το υπόλοιπο (υ) είναι πάντοτε αυστηρά μικρότερο από τον διαιρέτη (δ).
+                🔍 {t.ruleNote}
               </div>
             </div>
           </div>
@@ -485,16 +655,16 @@ export default function DiairesiTheoryPage() {
         {/* BOTTOM EXERCISES CALLOUT BANNER */}
         <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 p-6 md:p-8 rounded-3xl shadow-md text-slate-900 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-xl sm:text-2xl font-black">📝 Ώρα για Εξάσκηση!</h3>
+            <h3 className="text-xl sm:text-2xl font-black">📝 {t.bottomPromoTitle}</h3>
             <p className="text-slate-800 text-sm md:text-base">
-              Έμαθες τη διαίρεση και την επαλήθευση; Δοκίμασε τις διαδραστικές ασκήσεις!
+              {t.bottomPromoDesc}
             </p>
           </div>
           <Link
-            href="/d-dimotikou/5-diairesi-ask"
+            href={t.exercisesUrl}
             className="bg-slate-900 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl shadow-lg transition transform hover:scale-105 text-sm md:text-base whitespace-nowrap"
           >
-            Ξεκίνα τις Ασκήσεις ➔
+            {t.bottomPromoBtn}
           </Link>
         </div>
       </div>

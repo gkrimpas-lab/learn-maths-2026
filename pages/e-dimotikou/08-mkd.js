@@ -1,14 +1,212 @@
 // pages/e-dimotikou/08-mkd.js
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+
+// Βοηθητική συνάρτηση άτονων κεφαλαίων (διατηρεί το Ε')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Ε')/g);
+  return parts
+    .map((part) => {
+      if (part === "Ε'") return "Ε'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+// Component για κανονική εμφάνιση κλάσματος (αριθμητής πάνω, οριζόντια γραμμή, παρονομαστής κάτω)
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 font-mono leading-none ${className}`}>
+      <span className="text-center px-1 pb-0.5 border-b-2 border-current w-full block text-[0.9em]">
+        {num}
+      </span>
+      <span className="text-center px-1 pt-0.5 w-full block text-[0.9em]">
+        {den}
+      </span>
+    </span>
+  );
+}
 
 const LIMITS = {
   NUM_MIN: 4,
   NUM_MAX: 48
 };
 
+const TRANSLATIONS = {
+  el: {
+    metaTitle: "Μέγιστος Κοινός Διαιρέτης (ΜΚΔ) - Ε' Δημοτικού | LearnMaths.gr",
+    metaDesc: "Πλήρης θεωρία με παραδείγματα για τον Μέγιστο Κοινό Διαιρέτη (ΜΚΔ), μεθόδους υπολογισμού, εφαρμογή σε ανάγωγα κλάσματα και διαδραστικό εργαστήριο για την Ε' Δημοτικού.",
+    backText: "Ε' Δημοτικού",
+    exercisesBtn: "Ασκήσεις",
+    chapterBadge: "ΚΕΦΑΛΑΙΟ 8 • Ε' ΔΗΜΟΤΙΚΟΥ",
+    mainTitle: "Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)",
+    mainSubtitle: "Μαθαίνουμε πώς να βρίσκουμε τον μεγαλύτερο κοινό διαιρέτη δύο ή περισσότερων φυσικών αριθμών, πώς πετυχαίνουμε άμεση απλοποίηση κλασμάτων σε ανάγωγη μορφή με μία μόνο κίνηση και πώς λύνουμε προβλήματα μέγιστης ισοκατανομής.",
+    liveBadge: "Θεωρία & Δυναμική Σύγκριση Διαιρετών",
+    tryExercisesBtn: "Δοκίμασε τις Ασκήσεις",
+
+    stepsSectionTitle: "Βασικές Έννοιες σε 4 Βήματα",
+    stepsSectionSubtitle: "Η μαθηματική ουσία του ΜΚΔ και οι στρατηγικές ταχύτατου υπολογισμού.",
+
+    step1Badge: "ΒΗΜΑ 1",
+    step1Category: "Ορισμός",
+    step1Title: "Τι είναι ο ΜΚΔ;",
+    step1Text: "Μέγιστος Κοινός Διαιρέτης (ΜΚΔ) δύο ή περισσότερων φυσικών αριθμών ονομάζεται ο μεγαλύτερος από τους κοινούς διαιρέτες τους.",
+    notationLabel: "Συμβολισμός:",
+    notationRead: "Διαβάζεται: «Ο Μέγιστος Κοινός Διαιρέτης του 12 και του 18 είναι το 6».",
+    step1Tip: "Ο αριθμός 1 είναι πάντα κοινός διαιρέτης, άρα ο ΜΚΔ δύο οποιωνδήποτε φυσικών αριθμών είναι τουλάχιστον 1!",
+
+    step2Badge: "ΒΗΜΑ 2",
+    step2Category: "1η Μέθοδος",
+    step2Title: "Μέθοδος με Λίστες Διαιρετών",
+    step2Text: "Γράφουμε αναλυτικά όλους τους διαιρέτες για κάθε αριθμό και επιλέγουμε τον μεγαλύτερο αριθμό που υπάρχει και στις δύο λίστες:",
+    commonDivisorsPrefix: "Κοινοί διαιρέτες: 1, 2, 3, 6 ➔ Μέγιστος: 6.",
+    step2Tip: "Είναι η πιο ασφαλής μέθοδος για να βλέπουμε όλα τα κοινά στοιχεία χωρίς να παραλείψουμε κανένα.",
+
+    step3Badge: "ΒΗΜΑ 3",
+    step3Category: "2η Μέθοδος (Γρήγορη)",
+    step3Title: "Έλεγχος Διαιρετών του Μικρότερου",
+    step3Text: "Επειδή ο ΜΚΔ δεν μπορεί να ξεπεράσει τον μικρότερο αριθμό, εξετάζουμε τους διαιρέτες του μικρότερου από τον μεγαλύτερο προς τον μικρότερο:",
+    forExampleMkd: "Για το ΜΚΔ(16, 24):",
+    step3DivsSmall: "Διαιρέτες του μικρότερου (16): 16, 8, 4, 2, 1.",
+    step3L1Part1: "Διαιρεί το 16 το 24; Όχι, το",
+    step3L1Part2: "αφήνει υπόλοιπο 8.",
+    step3L2Part1: "Διαιρεί το 8 το 24; Ναι, το",
+    step3L2Part2: "＝ 3 (τέλεια διαίρεση).",
+    step3Conclusion: "Άρα ΜΚΔ(16, 24) ＝ 8!",
+    step3TipPrefix: "Ειδική Περίπτωση:",
+    step3Tip: "Αν ο μικρότερος διαιρεί ακριβώς τον μεγαλύτερο, τότε ο ΜΚΔ είναι ο ίδιος ο μικρότερος αριθμός (π.χ. ΜΚΔ(6, 18) ＝ 6).",
+
+    step4Badge: "ΒΗΜΑ 4",
+    step4Category: "Εφαρμογές",
+    step4Title: "Πού Χρησιμεύει ο ΜΚΔ;",
+    step4Text: "Ο ΜΚΔ είναι το βασικό μαθηματικό εργαλείο για δύο κρίσιμες εφαρμογές:",
+    app1Label: "1. Απλοποίηση σε Ανάγωγο:",
+    app1Desc: "Διαιρώντας αριθμητή και παρονομαστή με τον ΜΚΔ, το κλάσμα γίνεται ανάγωγο αμέσως:",
+    app2Label: "2. Προβλήματα Ισομοιρασιάς:",
+    app2Desc: "Μας δείχνει το μέγιστο πλήθος όμοιων πακέτων/ομάδων που μπορούμε να φτιάξουμε χωρίς να περισσέψει τίποτα.",
+    step4TipPart1: "Όταν δύο αριθμοί έχουν",
+    step4TipPart2: "ονομάζονται",
+    step4TipPart3: "πρώτοι μεταξύ τους",
+
+    labBadge: "ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Δυναμικός Υπολογιστής & Αναλυτής ΜΚΔ",
+    labSubtitle: "Επίλεξε 2, 3 ή 4 αριθμούς. Δες τα σύνολα των διαιρετών τους, πώς ξεχωρίζουν οι κοινοί διαιρέτες και ποιος είναι ο Μέγιστος Κοινός Διαιρέτης.",
+    numbersCountSuffix: "Αριθμοί",
+    num1Label: "1ΟΣ ΑΡΙΘΜΟΣ",
+    num2Label: "2ΟΣ ΑΡΙΘΜΟΣ",
+    num3Label: "3ΟΣ ΑΡΙΘΜΟΣ",
+    num4Label: "4ΟΣ ΑΡΙΘΜΟΣ",
+    inactive3: "Ανενεργός 3ος",
+    inactive4: "Ανενεργός 4ος",
+    decreaseAria: "Μείωση",
+    increaseAria: "Αύξηση",
+
+    listComparisonTitle: "ΠΑΡΑΘΕΣΗ ΔΙΑΙΡΕΤΩΝ & ΕΝΤΟΠΙΣΜΟΣ ΚΟΙΝΩΝ ΟΡΩΝ",
+    legendMkd: "ΜΚΔ",
+    legendCommon: "Κοινοί Διαιρέτες",
+    divisorsSymbol: "Δ",
+
+    resultHeader: "Ο ΜΕΓΙΣΤΟΣ ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ",
+    resultDescPart1: "Ο αριθμός",
+    resultDescPart2: "είναι ο μεγαλύτερος δυνατός φυσικός αριθμός που διαιρεί ακριβώς και ταυτόχρονα όλους τους αριθμούς:",
+
+    ctaTitle: "Ώρα για Εξάσκηση στον ΜΚΔ!",
+    ctaSubtitle: "Δοκίμασε τις δυνάμεις σου σε απαιτητικές ασκήσεις υπολογισμού ΜΚΔ, πλήρη αναγωγή κλασμάτων και σύνθετα προβλήματα μέγιστης ισοκατανομής.",
+    ctaBtn: "Έναρξη Ασκήσεων",
+    mkdNotationName: "ΜΚΔ"
+  },
+  en: {
+    metaTitle: "Greatest Common Divisor (GCD) - 5th Grade | LearnMaths.gr",
+    metaDesc: "Comprehensive theory with examples on the Greatest Common Divisor (GCD), calculation methods, irreducible fraction simplification, and interactive lab for 5th Grade.",
+    backText: "5th Grade",
+    exercisesBtn: "Exercises",
+    chapterBadge: "CHAPTER 8 • 5TH GRADE",
+    mainTitle: "Greatest Common Divisor (GCD)",
+    mainSubtitle: "Learn how to find the greatest common divisor of two or more natural numbers, reduce fractions to their simplest form in a single step, and solve maximum equal-distribution word problems.",
+    liveBadge: "Theory & Dynamic Divisors Comparison",
+    tryExercisesBtn: "Try Exercises",
+
+    stepsSectionTitle: "Core Concepts in 4 Steps",
+    stepsSectionSubtitle: "The mathematical essence of the GCD and efficient calculation strategies.",
+
+    step1Badge: "STEP 1",
+    step1Category: "Definition",
+    step1Title: "What is the GCD?",
+    step1Text: "The Greatest Common Divisor (GCD) of two or more natural numbers is the largest of their common divisors.",
+    notationLabel: "Notation:",
+    notationRead: "Read as: \"The Greatest Common Divisor of 12 and 18 is 6\".",
+    step1Tip: "The number 1 is always a common divisor, so the GCD of any two natural numbers is at least 1!",
+
+    step2Badge: "STEP 2",
+    step2Category: "Method 1",
+    step2Title: "Listing Divisors Method",
+    step2Text: "Write out all divisors for each number and select the largest number present in both lists:",
+    commonDivisorsPrefix: "Common divisors: 1, 2, 3, 6 ➔ Greatest: 6.",
+    step2Tip: "This is the safest method to inspect all shared elements without missing any divisor.",
+
+    step3Badge: "STEP 3",
+    step3Category: "Method 2 (Fast)",
+    step3Title: "Testing Divisors of the Smallest",
+    step3Text: "Since the GCD cannot exceed the smallest number, test the divisors of the smallest number in descending order:",
+    forExampleMkd: "For GCD(16, 24):",
+    step3DivsSmall: "Divisors of the smallest (16): 16, 8, 4, 2, 1.",
+    step3L1Part1: "Does 16 divide 24? No,",
+    step3L1Part2: "leaves remainder 8.",
+    step3L2Part1: "Does 8 divide 24? Yes,",
+    step3L2Part2: "＝ 3 (exact division).",
+    step3Conclusion: "Therefore GCD(16, 24) ＝ 8!",
+    step3TipPrefix: "Special Case:",
+    step3Tip: "If the smaller number divides the larger number completely, then the GCD is that smaller number itself (e.g. GCD(6, 18) ＝ 6).",
+
+    step4Badge: "STEP 4",
+    step4Category: "Applications",
+    step4Title: "Why is GCD Useful?",
+    step4Text: "The GCD is the essential mathematical tool for two critical applications:",
+    app1Label: "1. Simplification to Irreducible Fractions:",
+    app1Desc: "Dividing both numerator and denominator by their GCD reduces the fraction to lowest terms immediately:",
+    app2Label: "2. Equal Distribution Problems:",
+    app2Desc: "It determines the maximum number of identical packets or groups that can be formed without any leftovers.",
+    step4TipPart1: "When two numbers have",
+    step4TipPart2: "they are called",
+    step4TipPart3: "co-prime (relatively prime)",
+
+    labBadge: "INTERACTIVE LAB",
+    labTitle: "Dynamic GCD Calculator & Analyzer",
+    labSubtitle: "Select 2, 3, or 4 numbers. Observe their divisor sets, highlight shared divisors, and pinpoint the Greatest Common Divisor.",
+    numbersCountSuffix: "Numbers",
+    num1Label: "1ST NUMBER",
+    num2Label: "2ND NUMBER",
+    num3Label: "3RD NUMBER",
+    num4Label: "4TH NUMBER",
+    inactive3: "Inactive 3rd",
+    inactive4: "Inactive 4th",
+    decreaseAria: "Decrease",
+    increaseAria: "Increase",
+
+    listComparisonTitle: "DIVISORS COMPARISON & COMMON TERMS DETECTION",
+    legendMkd: "GCD",
+    legendCommon: "Common Divisors",
+    divisorsSymbol: "D",
+
+    resultHeader: "THE GREATEST COMMON DIVISOR",
+    resultDescPart1: "The number",
+    resultDescPart2: "is the largest natural number that divides completely and simultaneously all selected numbers:",
+
+    ctaTitle: "Time to Practice GCD!",
+    ctaSubtitle: "Test your skills with dynamic GCD calculations, irreducible fraction reductions, and multi-step equal-distribution word problems.",
+    ctaBtn: "Start Exercises",
+    mkdNotationName: "GCD"
+  }
+};
+
 export default function MkdTheoryPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
   // Πλήθος αριθμών προς εξέταση (2, 3 ή 4)
   const [numCount, setNumCount] = useState(2);
 
@@ -23,9 +221,9 @@ export default function MkdTheoryPage() {
     let x = Math.abs(a);
     let y = Math.abs(b);
     while (y) {
-      const t = y;
+      const temp = y;
       y = x % y;
-      x = t;
+      x = temp;
     }
     return x;
   };
@@ -60,49 +258,52 @@ export default function MkdTheoryPage() {
   if (numCount >= 3) activeNumbers.push(n3);
   if (numCount === 4) activeNumbers.push(n4);
 
+  const formatNum = (num) =>
+    num.toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
+
   return (
     <Layout
-      title="Μέγιστος Κοινός Διαιρέτης (ΜΚΔ) - Ε' Δημοτικού | LearnMaths.gr"
-      description="Πλήρης θεωρία με παραδείγματα για τον Μέγιστο Κοινό Διαιρέτη (ΜΚΔ), μεθόδους υπολογισμού, εφαρμογή σε ανάγωγα κλάσματα και διαδραστικό εργαστήριο για την Ε' Δημοτικού."
+      title={t.metaTitle}
+      description={t.metaDesc}
       backUrl="/e-dimotikou"
-      backText="Ε' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/e-dimotikou/08-mkd-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>🎯 {t.exercisesBtn}</span>
         </Link>
       }
     >
       {/* Container πλήρους εύρους για 2K & 4K και responsive για κινητά */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-10 2xl:space-y-14 pb-24">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-10 2xl:space-y-14">
         
         {/* 1. HEADER BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 8 • Ε' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{toCleanUppercase(t.chapterBadge)}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)
+              {t.mainTitle}
             </h1>
             <p className="text-sky-100 text-sm sm:text-lg 2xl:text-2xl leading-relaxed max-w-4xl">
-              Μαθαίνουμε πώς να βρίσκουμε τον μεγαλύτερο κοινό διαιρέτη δύο ή περισσότερων φυσικών αριθμών, πώς πετυχαίνουμε άμεση απλοποίηση κλασμάτων σε ανάγωγη μορφή με μία μόνο κίνηση και πώς λύνουμε προβλήματα μέγιστης ισοκατανομής.
+              {t.mainSubtitle}
             </p>
           </div>
 
           <div className="mt-8 pt-6 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-3 w-3 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία &amp; Δυναμική Σύγκριση Διαιρετών</span>
+              <span>{t.liveBadge}</span>
             </div>
             <Link
               href="/e-dimotikou/08-mkd-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-5 py-2.5 2xl:px-7 2xl:py-3.5 rounded-xl shadow-md transition active:scale-95 text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.tryExercisesBtn}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -112,10 +313,10 @@ export default function MkdTheoryPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες σε 4 Βήματα
+              {t.stepsSectionTitle}
             </h2>
             <p className="text-slate-600 text-sm sm:text-base 2xl:text-xl mt-1">
-              Η μαθηματική ουσία του ΜΚΔ και οι στρατηγικές ταχύτατου υπολογισμού.
+              {t.stepsSectionSubtitle}
             </p>
           </div>
 
@@ -125,30 +326,32 @@ export default function MkdTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-sky-100 text-sky-800 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {toCleanUppercase(t.step1Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Ορισμός</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">
+                    {t.step1Category}
+                  </span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Τι είναι ο ΜΚΔ;
+                  {t.step1Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  <strong>Μέγιστος Κοινός Διαιρέτης (ΜΚΔ)</strong> δύο ή περισσότερων φυσικών αριθμών ονομάζεται ο <strong>μεγαλύτερος</strong> από τους κοινούς διαιρέτες τους.
+                  {t.step1Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base">
-                  <p className="text-slate-700 font-semibold">Συμβολισμός:</p>
+                  <p className="text-slate-700 font-semibold">{t.notationLabel}</p>
                   <div className="p-2.5 bg-white rounded-xl border border-slate-300 font-mono font-bold text-slate-900 shadow-inner text-center">
-                    ΜΚΔ(12, 18) ＝ 6
+                    {t.mkdNotationName}(12, 18) ＝ 6
                   </div>
                   <p className="text-slate-500 text-xs">
-                    Διαβάζεται: «Ο Μέγιστος Κοινός Διαιρέτης του 12 και του 18 είναι το 6».
+                    {t.notationRead}
                   </p>
                 </div>
               </div>
 
               <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Ο αριθμός <strong>1</strong> είναι πάντα κοινός διαιρέτης, άρα ο ΜΚΔ δύο οποιωνδήποτε φυσικών αριθμών είναι τουλάχιστον 1!
+                💡 {t.step1Tip}
               </div>
             </article>
 
@@ -157,28 +360,30 @@ export default function MkdTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {toCleanUppercase(t.step2Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">1η Μέθοδος</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">
+                    {t.step2Category}
+                  </span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Μέθοδος με Λίστες Διαιρετών
+                  {t.step2Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Γράφουμε αναλυτικά όλους τους διαιρέτες για κάθε αριθμό και επιλέγουμε τον μεγαλύτερο αριθμό που υπάρχει <strong>και στις δύο λίστες</strong>:
+                  {t.step2Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base font-mono">
-                  <div>Δ(12) ＝ {'{'} 1, 2, 3, 4, <strong className="text-emerald-600 font-black">6</strong>, 12 {'}'}</div>
-                  <div>Δ(18) ＝ {'{'} 1, 2, 3, <strong className="text-emerald-600 font-black">6</strong>, 9, 18 {'}'}</div>
+                  <div>{t.divisorsSymbol}(12) ＝ {'{'} 1, 2, 3, 4, <strong className="text-emerald-600 font-black">6</strong>, 12 {'}'}</div>
+                  <div>{t.divisorsSymbol}(18) ＝ {'{'} 1, 2, 3, <strong className="text-emerald-600 font-black">6</strong>, 9, 18 {'}'}</div>
                   <div className="pt-2 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                    Κοινοί διαιρέτες: 1, 2, 3, 6 ➔ <strong>Μέγιστος: 6</strong>.
+                    {t.commonDivisorsPrefix}
                   </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Είναι η πιο ασφαλής μέθοδος για να βλέπουμε όλα τα κοινά στοιχεία χωρίς να παραλείψουμε κανένα.
+                ⚡ {t.step2Tip}
               </div>
             </article>
 
@@ -187,34 +392,44 @@ export default function MkdTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {toCleanUppercase(t.step3Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">2η Μέθοδος (Γρήγορη)</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">
+                    {t.step3Category}
+                  </span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Έλεγχος Διαιρετών του Μικρότερου
+                  {t.step3Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Επειδή ο ΜΚΔ <strong>δεν μπορεί να ξεπεράσει τον μικρότερο αριθμό</strong>, εξετάζουμε τους διαιρέτες του μικρότερου από τον μεγαλύτερο προς τον μικρότερο:
+                  {t.step3Text}
                 </p>
 
                 <div className="bg-slate-50 p-4 2xl:p-5 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm 2xl:text-base">
-                  <p className="text-slate-700 font-semibold">Για το ΜΚΔ(16, 24):</p>
+                  <p className="text-slate-700 font-semibold">{t.forExampleMkd}</p>
                   <p className="text-slate-600 text-xs">
-                    Διαιρέτες του μικρότερου (16): 16, 8, 4, 2, 1.
+                    {t.step3DivsSmall}
                   </p>
-                  <ol className="list-decimal list-inside space-y-1 font-mono text-slate-700 text-xs">
-                    <li>Διαιρεί το 16 το 24; Όχι (24 ： 16 ＝ 1 υπ. 8).</li>
-                    <li>Διαιρεί το 8 το 24; <strong className="text-emerald-700">Ναι (24 ： 8 ＝ 3).</strong></li>
+                  <ol className="list-decimal list-inside space-y-2 font-mono text-slate-700 text-xs">
+                    <li className="flex items-center flex-wrap gap-1">
+                      <span>{t.step3L1Part1}</span>
+                      <Fraction num="24" den="16" />
+                      <span>{t.step3L1Part2}</span>
+                    </li>
+                    <li className="flex items-center flex-wrap gap-1">
+                      <span>{t.step3L2Part1}</span>
+                      <Fraction num="24" den="8" />
+                      <strong className="text-emerald-700">{t.step3L2Part2}</strong>
+                    </li>
                   </ol>
                   <div className="pt-1 text-indigo-900 font-bold font-mono">
-                    Άρα ΜΚΔ(16, 24) ＝ 8!
+                    {t.step3Conclusion}
                   </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 <strong>Ειδική Περίπτωση:</strong> Αν ο μικρότερος διαιρεί ακριβώς τον μεγαλύτερο, τότε ο ΜΚΔ είναι ο ίδιος ο μικρότερος αριθμός (π.χ. ΜΚΔ(6, 18) ＝ 6).
+                🎯 <strong>{t.step3TipPrefix}</strong> {t.step3Tip}
               </div>
             </article>
 
@@ -223,29 +438,38 @@ export default function MkdTheoryPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-3 py-1 bg-emerald-100 text-emerald-900 text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 4
+                    {toCleanUppercase(t.step4Badge)}
                   </span>
-                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">Εφαρμογές</span>
+                  <span className="text-xs 2xl:text-sm font-semibold text-slate-500">
+                    {t.step4Category}
+                  </span>
                 </div>
                 <h3 className="text-lg sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Πού Χρησιμεύει ο ΜΚΔ;
+                  {t.step4Title}
                 </h3>
                 <p className="text-slate-600 text-sm 2xl:text-base leading-relaxed">
-                  Ο ΜΚΔ είναι το βασικό μαθηματικό εργαλείο για δύο κρίσιμες εφαρμογές:
+                  {t.step4Text}
                 </p>
 
-                <div className="space-y-2 text-xs sm:text-sm 2xl:text-base">
-                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950">
-                    <strong>1. Απλοποίηση σε Ανάγωγο:</strong> Διαιρώντας αριθμητή και παρονομαστή με τον ΜΚΔ, το κλάσμα γίνεται ανάγωγο αμέσως: (12 ： 6) / (18 ： 6) ＝ <strong>2/3</strong>.
+                <div className="space-y-3 text-xs sm:text-sm 2xl:text-base">
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-1">
+                    <p><strong>{t.app1Label}</strong> {t.app1Desc}</p>
+                    <div className="flex items-center justify-center flex-wrap gap-1 pt-1 font-mono font-bold text-emerald-900">
+                      <Fraction num="12" den="18" />
+                      <span>＝</span>
+                      <Fraction num="12 : 6" den="18 : 6" />
+                      <span>＝</span>
+                      <Fraction num="2" den="3" className="text-emerald-800 scale-105" />
+                    </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-950">
-                    <strong>2. Προβλήματα Ισομοιρασιάς:</strong> Μας δείχνει το μέγιστο πλήθος όμοιων πακέτων/ομάδων που μπορούμε να φτιάξουμε χωρίς να περισσέψει τίποτα.
+                    <strong>{t.app2Label}</strong> {t.app2Desc}
                   </div>
                 </div>
               </div>
 
               <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Όταν δύο αριθμοί έχουν <strong>ΜΚΔ ＝ 1</strong>, ονομάζονται <strong>πρώτοι μεταξύ τους</strong>.
+                🚀 {t.step4TipPart1} <strong>{t.mkdNotationName} ＝ 1</strong>, {t.step4TipPart2} <strong>{t.step4TipPart3}</strong>.
               </div>
             </article>
           </div>
@@ -256,13 +480,13 @@ export default function MkdTheoryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>🔬 {toCleanUppercase(t.labBadge)}</span>
               </div>
               <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Δυναμικός Υπολογιστής &amp; Αναλυτής ΜΚΔ
+                {t.labTitle}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Επίλεξε 2, 3 ή 4 αριθμούς. Δες τα σύνολα των διαιρετών τους, πώς ξεχωρίζουν οι κοινοί διαιρέτες και ποιος είναι ο Μέγιστος Κοινός Διαιρέτης.
+                {t.labSubtitle}
               </p>
             </div>
 
@@ -279,7 +503,7 @@ export default function MkdTheoryPage() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  {cnt} Αριθμοί
+                  {cnt} {t.numbersCountSuffix}
                 </button>
               ))}
             </div>
@@ -291,16 +515,16 @@ export default function MkdTheoryPage() {
             <div className="bg-blue-50/70 p-4 2xl:p-5 rounded-2xl border border-blue-200 space-y-2">
               <div className="h-8 flex items-center justify-between text-left">
                 <span className="text-xs 2xl:text-sm font-black uppercase text-blue-900 tracking-wider">
-                  1ΟΣ ΑΡΙΘΜΟΣ
+                  {toCleanUppercase(t.num1Label)}
                 </span>
                 <span className="min-w-[56px] text-center font-mono font-black text-lg text-blue-600 bg-white px-2 py-0.5 rounded-lg border border-blue-200">
-                  {n1}
+                  {formatNum(n1)}
                 </span>
               </div>
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
                   type="button"
-                  aria-label="Μείωση 1ου αριθμού"
+                  aria-label={`${t.decreaseAria} 1`}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -317,12 +541,12 @@ export default function MkdTheoryPage() {
                   max={LIMITS.NUM_MAX}
                   value={n1}
                   onChange={(e) => setN1(Number(e.target.value))}
-                  aria-label="1ος Αριθμός"
+                  aria-label={t.num1Label}
                   className="w-full min-w-0 max-w-full accent-blue-600 cursor-pointer"
                 />
                 <button
                   type="button"
-                  aria-label="Αύξηση 1ου αριθμού"
+                  aria-label={`${t.increaseAria} 1`}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -340,16 +564,16 @@ export default function MkdTheoryPage() {
             <div className="bg-indigo-50/70 p-4 2xl:p-5 rounded-2xl border border-indigo-200 space-y-2">
               <div className="h-8 flex items-center justify-between text-left">
                 <span className="text-xs 2xl:text-sm font-black uppercase text-indigo-900 tracking-wider">
-                  2ΟΣ ΑΡΙΘΜΟΣ
+                  {toCleanUppercase(t.num2Label)}
                 </span>
                 <span className="min-w-[56px] text-center font-mono font-black text-lg text-indigo-600 bg-white px-2 py-0.5 rounded-lg border border-indigo-200">
-                  {n2}
+                  {formatNum(n2)}
                 </span>
               </div>
               <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                 <button
                   type="button"
-                  aria-label="Μείωση 2ου αριθμού"
+                  aria-label={`${t.decreaseAria} 2`}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -366,12 +590,12 @@ export default function MkdTheoryPage() {
                   max={LIMITS.NUM_MAX}
                   value={n2}
                   onChange={(e) => setN2(Number(e.target.value))}
-                  aria-label="2ος Αριθμός"
+                  aria-label={t.num2Label}
                   className="w-full min-w-0 max-w-full accent-indigo-600 cursor-pointer"
                 />
                 <button
                   type="button"
-                  aria-label="Αύξηση 2ου αριθμού"
+                  aria-label={`${t.increaseAria} 2`}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -390,16 +614,16 @@ export default function MkdTheoryPage() {
               <div className="bg-purple-50/70 p-4 2xl:p-5 rounded-2xl border border-purple-200 space-y-2">
                 <div className="h-8 flex items-center justify-between text-left">
                   <span className="text-xs 2xl:text-sm font-black uppercase text-purple-900 tracking-wider">
-                    3ΟΣ ΑΡΙΘΜΟΣ
+                    {toCleanUppercase(t.num3Label)}
                   </span>
                   <span className="min-w-[56px] text-center font-mono font-black text-lg text-purple-600 bg-white px-2 py-0.5 rounded-lg border border-purple-200">
-                    {n3}
+                    {formatNum(n3)}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση 3ου αριθμού"
+                    aria-label={`${t.decreaseAria} 3`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -416,12 +640,12 @@ export default function MkdTheoryPage() {
                     max={LIMITS.NUM_MAX}
                     value={n3}
                     onChange={(e) => setN3(Number(e.target.value))}
-                    aria-label="3ος Αριθμός"
+                    aria-label={t.num3Label}
                     className="w-full min-w-0 max-w-full accent-purple-600 cursor-pointer"
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση 3ου αριθμού"
+                    aria-label={`${t.increaseAria} 3`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -436,7 +660,7 @@ export default function MkdTheoryPage() {
               </div>
             ) : (
               <div className="hidden lg:flex bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 flex-col items-center justify-center text-center opacity-40">
-                <span className="text-xs font-bold text-slate-400">Ανενεργός 3ος</span>
+                <span className="text-xs font-bold text-slate-400">{t.inactive3}</span>
               </div>
             )}
 
@@ -445,16 +669,16 @@ export default function MkdTheoryPage() {
               <div className="bg-emerald-50/70 p-4 2xl:p-5 rounded-2xl border border-emerald-200 space-y-2">
                 <div className="h-8 flex items-center justify-between text-left">
                   <span className="text-xs 2xl:text-sm font-black uppercase text-emerald-900 tracking-wider">
-                    4ΟΣ ΑΡΙΘΜΟΣ
+                    {toCleanUppercase(t.num4Label)}
                   </span>
                   <span className="min-w-[56px] text-center font-mono font-black text-lg text-emerald-600 bg-white px-2 py-0.5 rounded-lg border border-emerald-200">
-                    {n4}
+                    {formatNum(n4)}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση 4ου αριθμού"
+                    aria-label={`${t.decreaseAria} 4`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -471,12 +695,12 @@ export default function MkdTheoryPage() {
                     max={LIMITS.NUM_MAX}
                     value={n4}
                     onChange={(e) => setN4(Number(e.target.value))}
-                    aria-label="4ος Αριθμός"
+                    aria-label={t.num4Label}
                     className="w-full min-w-0 max-w-full accent-emerald-600 cursor-pointer"
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση 4ου αριθμού"
+                    aria-label={`${t.increaseAria} 4`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -491,7 +715,7 @@ export default function MkdTheoryPage() {
               </div>
             ) : (
               <div className="hidden lg:flex bg-slate-50 p-4 rounded-2xl border border-dashed border-slate-300 flex-col items-center justify-center text-center opacity-40">
-                <span className="text-xs font-bold text-slate-400">Ανενεργός 4ος</span>
+                <span className="text-xs font-bold text-slate-400">{t.inactive4}</span>
               </div>
             )}
           </div>
@@ -499,15 +723,15 @@ export default function MkdTheoryPage() {
           {/* Παράθεση Λιστών Διαιρετών με Σήμανση του ΜΚΔ */}
           <div className="space-y-4 pt-2">
             <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-500 px-1">
-              <span>ΠΑΡΑΘΕΣΗ ΔΙΑΙΡΕΤΩΝ &amp; ΕΝΤΟΠΙΣΜΟΣ ΚΟΙΝΩΝ ΟΡΩΝ</span>
+              <span>{toCleanUppercase(t.listComparisonTitle)}</span>
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1.5">
                   <span className="w-3.5 h-3.5 rounded bg-emerald-500 ring-2 ring-emerald-300"></span>
-                  <span className="text-slate-700">ΜΚΔ</span>
+                  <span className="text-slate-700">{t.legendMkd}</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="w-3.5 h-3.5 rounded bg-sky-500"></span>
-                  <span className="text-slate-700">Κοινοί Διαιρέτες</span>
+                  <span className="text-slate-700">{t.legendCommon}</span>
                 </span>
               </div>
             </div>
@@ -515,7 +739,7 @@ export default function MkdTheoryPage() {
             {/* Λίστα 1 */}
             <div className="bg-white p-4 2xl:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <span className="text-xs font-black text-blue-700 bg-blue-50 px-3 py-1 rounded-lg tracking-wider inline-block">
-                Δ({n1})
+                {t.divisorsSymbol}({formatNum(n1)})
               </span>
               <div className="flex flex-wrap gap-2 pt-1 text-sm 2xl:text-base font-mono font-bold">
                 {list1.map((v) => {
@@ -532,7 +756,7 @@ export default function MkdTheoryPage() {
                           : 'bg-slate-50 text-slate-700 border-slate-200'
                       }`}
                     >
-                      {v}
+                      {formatNum(v)}
                     </span>
                   );
                 })}
@@ -542,7 +766,7 @@ export default function MkdTheoryPage() {
             {/* Λίστα 2 */}
             <div className="bg-white p-4 2xl:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
               <span className="text-xs font-black text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg tracking-wider inline-block">
-                Δ({n2})
+                {t.divisorsSymbol}({formatNum(n2)})
               </span>
               <div className="flex flex-wrap gap-2 pt-1 text-sm 2xl:text-base font-mono font-bold">
                 {list2.map((v) => {
@@ -559,7 +783,7 @@ export default function MkdTheoryPage() {
                           : 'bg-slate-50 text-slate-700 border-slate-200'
                       }`}
                     >
-                      {v}
+                      {formatNum(v)}
                     </span>
                   );
                 })}
@@ -570,7 +794,7 @@ export default function MkdTheoryPage() {
             {numCount >= 3 && (
               <div className="bg-white p-4 2xl:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 animate-fade-in">
                 <span className="text-xs font-black text-purple-700 bg-purple-50 px-3 py-1 rounded-lg tracking-wider inline-block">
-                  Δ({n3})
+                  {t.divisorsSymbol}({formatNum(n3)})
                 </span>
                 <div className="flex flex-wrap gap-2 pt-1 text-sm 2xl:text-base font-mono font-bold">
                   {list3.map((v) => {
@@ -587,7 +811,7 @@ export default function MkdTheoryPage() {
                             : 'bg-slate-50 text-slate-700 border-slate-200'
                         }`}
                       >
-                        {v}
+                        {formatNum(v)}
                       </span>
                     );
                   })}
@@ -599,7 +823,7 @@ export default function MkdTheoryPage() {
             {numCount === 4 && (
               <div className="bg-white p-4 2xl:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2 animate-fade-in">
                 <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg tracking-wider inline-block">
-                  Δ({n4})
+                  {t.divisorsSymbol}({formatNum(n4)})
                 </span>
                 <div className="flex flex-wrap gap-2 pt-1 text-sm 2xl:text-base font-mono font-bold">
                   {list4.map((v) => {
@@ -616,7 +840,7 @@ export default function MkdTheoryPage() {
                             : 'bg-slate-50 text-slate-700 border-slate-200'
                         }`}
                       >
-                        {v}
+                        {formatNum(v)}
                       </span>
                     );
                   })}
@@ -628,16 +852,17 @@ export default function MkdTheoryPage() {
           {/* Τελική Κάρτα Αποτελέσματος ΜΚΔ */}
           <div className="bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-800 text-white p-6 2xl:p-8 rounded-3xl text-center shadow-lg max-w-3xl mx-auto space-y-2">
             <span className="text-xs 2xl:text-sm uppercase font-black text-emerald-200 tracking-wider block">
-              Ο ΜΕΓΙΣΤΟΣ ΚΟΙΝΟΣ ΔΙΑΙΡΕΤΗΣ
+              {toCleanUppercase(t.resultHeader)}
             </span>
             <div className="text-2xl sm:text-3xl 2xl:text-4xl font-black font-mono">
-              ΜΚΔ({activeNumbers.join(', ')}) ＝{' '}
+              {t.mkdNotationName}({activeNumbers.map((num) => formatNum(num)).join(', ')}) ＝{' '}
               <span className="text-amber-300 text-3xl sm:text-5xl font-black ml-1 inline-block animate-pulse">
-                {mkdResult}
+                {formatNum(mkdResult)}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-emerald-100 max-w-xl mx-auto pt-1 leading-relaxed">
-              Ο αριθμός {mkdResult} είναι ο <strong>μεγαλύτερος δυνατός φυσικός αριθμός</strong> που διαιρεί ακριβώς και ταυτόχρονα όλους τους αριθμούς: {activeNumbers.join(', ')}!
+              {t.resultDescPart1} <strong>{formatNum(mkdResult)}</strong> {t.resultDescPart2}{' '}
+              {activeNumbers.map((num) => formatNum(num)).join(', ')}!
             </p>
           </div>
         </section>
@@ -646,10 +871,10 @@ export default function MkdTheoryPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στον ΜΚΔ!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε απαιτητικές ασκήσεις υπολογισμού ΜΚΔ, πλήρη αναγωγή κλασμάτων και σύνθετα προβλήματα μέγιστης ισοκατανομής.
+              {t.ctaSubtitle}
             </p>
           </div>
 
@@ -657,7 +882,7 @@ export default function MkdTheoryPage() {
             href="/e-dimotikou/08-mkd-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span>🎯 {t.ctaBtn}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

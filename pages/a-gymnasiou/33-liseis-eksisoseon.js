@@ -1,6 +1,19 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+
+// Καθαρισμός τόνων στα ελληνικά κεφαλαία (διατηρείται μόνο το Α')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Α')/g);
+  return parts
+    .map((part) => {
+      if (part === "Α'") return "Α'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 // ============================================================================
 // ΕΠΑΝΑΧΡΗΣΙΜΟΠΟΙΗΣΙΜΟ COMPONENT ΚΛΑΣΜΑΤΟΣ (Πρόσημο πάντα μπροστά από τη γραμμή)
@@ -14,13 +27,13 @@ function Frac({ num, den, isNeg = false, className = '' }) {
   const displayDen = denStr.replace(/^-/, '');
 
   return (
-    <span className={`inline-flex items-center gap-0.5 align-middle mx-1 font-mono ${className}`}>
+    <span className={`inline-flex items-center gap-0.5 sm:gap-1 align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full ${className}`}>
       {hasMinus && <span className="font-bold">－</span>}
       <span className="inline-flex flex-col items-center justify-center leading-none text-center">
-        <span className="pb-0.5 px-1.5 border-b-2 w-full text-center" style={{ borderColor: 'currentColor' }}>
+        <span className="pb-0.5 px-1 sm:px-1.5 border-b border-current w-full text-center break-all">
           {displayNum}
         </span>
-        <span className="pt-0.5 px-1.5 w-full text-center">
+        <span className="pt-0.5 px-1 sm:px-1.5 w-full text-center break-all">
           {displayDen}
         </span>
       </span>
@@ -60,12 +73,189 @@ const formatCleanNum = (str) => {
     .replace(/^＋ /, '');
 };
 
+// ============================================================================
+// ΣΥΓΚΕΝΤΡΩΤΙΚΟ ΛΕΞΙΚΟ i18n
+// ============================================================================
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Επίλυση Εξισώσεων αx + β = γ | Α' Γυμνασίου",
+    pageDescription: "Αναλυτική θεωρία και αυτόματος διαδραστικός επιλυτής εξισώσεων βήμα-βήμα (με κλάσματα, παρενθέσεις και πολλαπλά x) για την Α' Γυμνασίου.",
+    backText: "Α' Γυμνασίου",
+    exercisesBtn: "ΑΣΚΗΣΕΙΣ",
+    chapterBadge: "Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 29 • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ",
+    mainTitle: "Επίλυση Εξισώσεων της Μορφής α·x ＋ β ＝ γ",
+    mainSubtitle: "Μαθαίνουμε τη γενική μέθοδο επίλυσης εξισώσεων 1ου βαθμού, πώς απαλείφουμε παρενθέσεις και κλάσματα βήμα προς βήμα, και πώς χρησιμοποιούμε εξισώσεις για να λύσουμε ρεαλιστικά προβλήματα.",
+
+    sec1Title: "Πώς Λύνουμε την Εξίσωση α·x ＋ β ＝ γ",
+    step1Badge: "ΒΗΜΑ 1",
+    step1Title: "Χωρισμός Γνωστών από Αγνώστους",
+    step1Desc: "Μεταφέρουμε τους όρους που έχουν τον άγνωστο x στο 1ο μέλος (αριστερά) και τους σταθερούς αριθμούς στο 2ο μέλος (δεξιά), αλλάζοντας το πρόσημο κάθε όρου που αλλάζει μέλος:",
+    step1Formula: "α · x ＝ γ － β",
+
+    step2Badge: "ΒΗΜΑ 2",
+    step2Title: "Αναγωγή Ομοίων Όρων",
+    step2Desc: "Εκτελούμε τις πράξεις σε κάθε μέλος ξεχωριστά (προσθέτουμε ή αφαιρούμε τους συντελεστές του x στο 1ο μέλος και τους αριθμούς στο 2ο μέλος), ώστε η εξίσωση να πάρει την απλή μορφή:",
+    step2Formula: "Α · x ＝ Β",
+
+    step3Badge: "ΒΗΜΑ 3",
+    step3Title: "Διαίρεση σε Μορφή Κλάσματος",
+    step3Desc: "Αν ο συντελεστής Α ≠ 0, διαιρούμε και τα δύο μέλη με το Α. Γράφουμε τη λύση πάντα σε κανονική μορφή κλάσματος και απλοποιούμε:",
+
+    fractionsBoxTitle: "Τι κάνουμε αν υπάρχουν Κλάσματα και Παρενθέσεις;",
+    fractionsStep1: "Βρίσκουμε το Ε.Κ.Π. όλων των παρονομαστών και πολλαπλασιάζουμε κάθε όρο της εξίσωσης με αυτό.",
+    fractionsStep2: "Απλοποιούμε το Ε.Κ.Π. με κάθε παρονομαστή και βάζουμε σε παρένθεση τους σύνθετους αριθμητές.",
+    fractionsStep3: "Εκτελούμε τους πολλαπλασιασμούς (επιμεριστική ιδιότητα) για να φύγουν οι παρενθέσεις.",
+
+    specialCasesTitle: "Ειδικές Περιπτώσεις (Όταν ο συντελεστής του x μηδενίζεται)",
+    specialCaseIdentityTitle: "0 · x ＝ 0 (Ταυτότητα / Αόριστη):",
+    specialCaseIdentityDesc: "Επαληθεύεται για κάθε αριθμό x (έχει άπειρες λύσεις).",
+    specialCaseImpossibleTitle: "0 · x ＝ Β (όπου Β ≠ 0, Αδύνατη):",
+    specialCaseImpossibleDesc: "Δεν επαληθεύεται για κανέναν αριθμό x (δεν έχει λύση).",
+
+    lab1Title: "🛠️ Εργαστήριο 1: Αναλυτικός Επιλυτής Εξισώσεων Βήμα-Βήμα",
+    fullAnalysisBadge: "ΠΛΗΡΗΣ ΑΝΑΛΥΣΗ ΚΑΘΕ ΠΡΑΞΗΣ",
+    lab1Desc: "Πληκτρολόγησε οποιαδήποτε εξίσωση 1ου βαθμού στο πλαίσιο (για την εισαγωγή κλασμάτων χρησιμοποίησε το σύμβολο /, π.χ. -2x/3 - (4-5x)/4 + 5/6 = 15). Ο επιλυτής θα σου δείξει αναλυτικά ένα-ένα όλα τα ενδιάμεσα βήματα!",
+    presetTitle: "ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΣ ΔΟΚΙΜΗ:",
+    inputLabel: "ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΕΞΙΣΩΣΗ ΣΟΥ (ΜΕ ΤΟ ΣΥΜΒΟΛΟ / ΓΙΑ ΤΑ ΚΛΑΣΜΑΤΑ):",
+    btnResetSteps: "⏮️ ΑΠΟ ΤΗΝ ΑΡΧΗ (ΒΗΜΑ 1)",
+    btnNextStep: "▶️ ΕΠΟΜΕΝΟ ΒΗΜΑ",
+    btnAllSteps: "⏭️ ΟΛΑ ΤΑ ΒΗΜΑΤΑ",
+    stepsProgress: "ΑΝΑΛΥΤΙΚΗ ΠΟΡΕΙΑ ΕΠΙΛΥΣΗΣ",
+    stepLabel: "ΒΗΜΑ",
+
+    sec3Title: "Επίλυση Προβλημάτων με Εξισώσεις",
+    problem1Badge: "ΠΑΡΑΔΕΙΓΜΑ 1: ΟΙΚΟΝΟΜΙΚΟ ΠΡΟΒΛΗΜΑ",
+    problem1Title: "Συνδρομή & Μαθήματα Κολύμβησης",
+    problem1Text: "Ένα κολυμβητήριο χρεώνει 15 € για την ετήσια εγγραφή και 4 € για κάθε προπόνηση. Αν ένας αθλητής πλήρωσε συνολικά 63 €, πόσες προπονήσεις έκανε;",
+    stepsSolvingTitle: "Βήματα Επίλυσης:",
+    p1Step1: "Έστω x ο αριθμός των προπονήσεων.",
+    p1Step2: "Εξίσωση: 4 · x ＋ 15 ＝ 63",
+    p1Step3: "Χωρισμός: 4 · x ＝ 63 － 15 ➔ 4 · x ＝ 48",
+    p1ResultPrefix: "Λύση: x ＝",
+    p1ResultSuffix: "＝ 12 προπονήσεις.",
+
+    problem2Badge: "ΠΑΡΑΔΕΙΓΜΑ 2: ΓΕΩΜΕΤΡΙΚΟ ΠΡΟΒΛΗΜΑ",
+    problem2Title: "Περίμετρος Ορθογωνίου Κήπου",
+    problem2Text: "Το μήκος ενός ορθογωνίου κήπου είναι κατά 5 μέτρα μεγαλύτερο από το πλάτος του. Αν η περίμετρος του κήπου είναι 50 μέτρα, ποιες είναι οι διαστάσεις του;",
+    p2Step1: "Έστω x το πλάτος, άρα το μήκος είναι x ＋ 5.",
+    p2Step2: "Εξίσωση: 2 · x ＋ 2 · (x ＋ 5) ＝ 50",
+    p2Step3: "Απλοποίηση: 2x ＋ 2x ＋ 10 ＝ 50 ➔ 4x ＝ 40",
+    p2ResultPrefix: "Λύση: x ＝",
+    p2ResultSuffix: "＝ 10 m (πλάτος) και 15 m (μήκος).",
+
+    lab2Title: "🛠️ Εργαστήριο 2: Διαδραστικός Προσομοιωτής α·x ＋ β ＝ γ με Κλασματική Λύση",
+    coeffALabel: "ΣΥΝΤΕΛΕΣΤΗΣ (α)",
+    constBLabel: "ΣΤΑΘΕΡΟΣ (β)",
+    targetCLabel: "2Ο ΜΕΛΟΣ (γ)",
+    simEqTitle: "Εξίσωση:",
+    simStep1Text: "1. Μεταφορά σταθερού όρου:",
+    simStep2Text: "2. Λύση: x ＝",
+    simIdentityMsg: "Ταυτότητα (0x ＝ 0): Αληθεύει για κάθε x!",
+    simImpossibleMsg: (val) => `Αδύνατη εξίσωση (0x ＝ ${val}): Δεν έχει λύση!`,
+
+    presets: [
+      { label: 'ΑΠΛΗ (αx＋β＝γ)', eq: '3x - 4 = 11' },
+      { label: 'ΠΟΛΛΑ x', eq: '5x - 3 + 2x = 4x + 9' },
+      { label: 'ΜΕ ΠΑΡΕΝΘΕΣΕΙΣ', eq: '2(x + 3) - 4 = 10' },
+      { label: 'ΑΠΛΑ ΚΛΑΣΜΑΤΑ', eq: 'x/2 + x/3 = 5' },
+      { label: 'ΠΛΗΡΗΣ ΜΕ ΚΛΑΣΜΑΤΑ', eq: '-2x/3 - (4 - 5x)/4 + 5/6 = 15' },
+      { label: 'ΑΔΥΝΑΤΗ', eq: '2(x + 1) = 2x + 5' },
+    ]
+  },
+  en: {
+    pageTitle: "Solving Equations ax + b = c | Grade 7 Math",
+    pageDescription: "Comprehensive theory and step-by-step interactive equation solver (handling fractions, parentheses, and multiple x terms) for Grade 7 Math.",
+    backText: "Grade 7 Math",
+    exercisesBtn: "EXERCISES",
+    chapterBadge: "GRADE 7 • CHAPTER 29 • THEORY & LAB",
+    mainTitle: "Solving Linear Equations of the Form a·x ＋ b ＝ c",
+    mainSubtitle: "Learn the general method for solving first-degree equations, eliminating parentheses and fractions systematically, and applying equations to practical problems.",
+
+    sec1Title: "How to Solve the Equation a·x ＋ b ＝ c",
+    step1Badge: "STEP 1",
+    step1Title: "Separating Variables and Constants",
+    step1Desc: "Transpose terms containing the unknown x to the left side and constant numbers to the right side, reversing the sign of every term that changes sides:",
+    step1Formula: "a · x ＝ c － b",
+
+    step2Badge: "STEP 2",
+    step2Title: "Collecting Like Terms",
+    step2Desc: "Perform arithmetic operations on each side separately (add or subtract coefficients of x on the left, constants on the right) so the equation takes the simplified form:",
+    step2Formula: "A · x ＝ B",
+
+    step3Badge: "STEP 3",
+    step3Title: "Division in Fractional Form",
+    step3Desc: "If the coefficient A ≠ 0, divide both sides by A. Always express the solution as a standard vertical fraction and simplify:",
+
+    fractionsBoxTitle: "What if there are Fractions and Parentheses?",
+    fractionsStep1: "Find the LCM of all denominators and multiply every single term in the equation by it.",
+    fractionsStep2: "Simplify the LCM with each denominator and enclose compound numerators in parentheses.",
+    fractionsStep3: "Carry out the multiplications (distributive property) to remove all parentheses.",
+
+    specialCasesTitle: "Special Cases (When the coefficient of x becomes 0)",
+    specialCaseIdentityTitle: "0 · x ＝ 0 (Identity / Indeterminate):",
+    specialCaseIdentityDesc: "True for any real number x (infinitely many solutions).",
+    specialCaseImpossibleTitle: "0 · x ＝ B (where B ≠ 0, Impossible):",
+    specialCaseImpossibleDesc: "Not true for any number x (no solutions exist).",
+
+    lab1Title: "🛠️ Lab 1: Step-by-Step Interactive Equation Solver",
+    fullAnalysisBadge: "STEP-BY-STEP BREAKDOWN",
+    lab1Desc: "Type any linear equation in the box (use / for fractions, e.g. -2x/3 - (4-5x)/4 + 5/6 = 15). The solver will display every single intermediate step in full vertical fraction notation!",
+    presetTitle: "SAMPLE EQUATIONS TO TRY:",
+    inputLabel: "ENTER YOUR EQUATION (USE / FOR FRACTIONS):",
+    btnResetSteps: "⏮️ START OVER (STEP 1)",
+    btnNextStep: "▶️ NEXT STEP",
+    btnAllSteps: "⏭️ ALL STEPS",
+    stepsProgress: "DETAILED SOLUTION PROGRESS",
+    stepLabel: "STEP",
+
+    sec3Title: "Solving Real-World Problems with Equations",
+    problem1Badge: "EXAMPLE 1: FINANCIAL PROBLEM",
+    problem1Title: "Swim Club Membership & Training Sessions",
+    problem1Text: "A swimming pool charges a 15 € annual registration fee plus 4 € for each practice session. If an athlete paid 63 € in total, how many practice sessions did they attend?",
+    stepsSolvingTitle: "Solution Steps:",
+    p1Step1: "Let x be the number of training sessions.",
+    p1Step2: "Equation: 4 · x ＋ 15 ＝ 63",
+    p1Step3: "Rearrange: 4 · x ＝ 63 － 15 ➔ 4 · x ＝ 48",
+    p1ResultPrefix: "Solution: x ＝",
+    p1ResultSuffix: "＝ 12 sessions.",
+
+    problem2Badge: "EXAMPLE 2: GEOMETRIC PROBLEM",
+    problem2Title: "Perimeter of a Rectangular Garden",
+    problem2Text: "The length of a rectangular garden is 5 meters longer than its width. If the perimeter is 50 meters, what are the dimensions of the garden?",
+    p2Step1: "Let x be the width, so the length is x ＋ 5.",
+    p2Step2: "Equation: 2 · x ＋ 2 · (x ＋ 5) ＝ 50",
+    p2Step3: "Simplify: 2x ＋ 2x ＋ 10 ＝ 50 ➔ 4x ＝ 40",
+    p2ResultPrefix: "Solution: x ＝",
+    p2ResultSuffix: "＝ 10 m (width) and 15 m (length).",
+
+    lab2Title: "🛠️ Lab 2: Interactive Simulator a·x ＋ b ＝ c with Fractional Roots",
+    coeffALabel: "COEFFICIENT (a)",
+    constBLabel: "CONSTANT (b)",
+    targetCLabel: "2ND SIDE (c)",
+    simEqTitle: "Equation:",
+    simStep1Text: "1. Transpose constant term:",
+    simStep2Text: "2. Solution: x ＝",
+    simIdentityMsg: "Identity (0x ＝ 0): True for all x!",
+    simImpossibleMsg: (val) => `Impossible equation (0x ＝ ${val}): No solution!`,
+
+    presets: [
+      { label: 'BASIC (ax＋b＝c)', eq: '3x - 4 = 11' },
+      { label: 'MULTIPLE x', eq: '5x - 3 + 2x = 4x + 9' },
+      { label: 'PARENTHESES', eq: '2(x + 3) - 4 = 10' },
+      { label: 'SIMPLE FRACTIONS', eq: 'x/2 + x/3 = 5' },
+      { label: 'COMPOUND FRACTIONS', eq: '-2x/3 - (4 - 5x)/4 + 5/6 = 15' },
+      { label: 'IMPOSSIBLE', eq: '2(x + 1) = 2x + 5' },
+    ]
+  }
+};
+
 /**
  * Αναλύει και επιλύει με ΠΛΗΡΗ ΠΑΙΔΑΓΩΓΙΚΑ ΒΗΜΑΤΑ γραμμικές εξισώσεις 1ου βαθμού
  */
-function solveLinearEquationStepByStep(rawInput) {
+function solveLinearEquationStepByStep(rawInput, locale = 'el') {
+  const isEn = locale === 'en';
   if (!rawInput || !rawInput.trim()) {
-    return { error: 'Πληκτρολόγησε μια εξίσωση για να ξεκινήσει η επίλυση.' };
+    return { error: isEn ? 'Type an equation to start solving.' : 'Πληκτρολόγησε μια εξίσωση για να ξεκινήσει η επίλυση.' };
   }
 
   // Κανονικοποίηση εισόδου
@@ -84,18 +274,18 @@ function solveLinearEquationStepByStep(rawInput) {
 
   // 1. Έλεγχος χαρακτήρων
   if (/[^0-9x+\-*/().=]/.test(str)) {
-    return { error: 'Η εξίσωση περιέχει μη έγκυρους χαρακτήρες. Χρησιμοποίησε αριθμούς, το x, +, -, *, /, ( ) και =.' };
+    return { error: isEn ? 'The equation contains invalid characters. Use numbers, x, +, -, *, /, ( ) and =.' : 'Η εξίσωση περιέχει μη έγκυρους χαρακτήρες. Χρησιμοποίησε αριθμούς, το x, +, -, *, /, ( ) και =.' };
   }
 
   // 2. Έλεγχος συμβόλου '='
   const eqParts = str.split('=');
   if (eqParts.length !== 2 || !eqParts[0] || !eqParts[1]) {
-    return { error: 'Η εξίσωση πρέπει να περιέχει ακριβώς ένα σύμβολο «=» με παραστάσεις και στα δύο μέλη.' };
+    return { error: isEn ? 'The equation must contain exactly one "=" sign with expressions on both sides.' : 'Η εξίσωση πρέπει να περιέχει ακριβώς ένα σύμβολο «=» με παραστάσεις και στα δύο μέλη.' };
   }
 
   // 3. Έλεγχος ύπαρξης αγνώστου x
   if (!str.includes('x')) {
-    return { error: 'Η εξίσωση πρέπει να περιέχει τον άγνωστο «x».' };
+    return { error: isEn ? 'The equation must contain the unknown "x".' : 'Η εξίσωση πρέπει να περιέχει τον άγνωστο «x».' };
   }
 
   // 4. Έλεγχος ισορροπίας παρενθέσεων
@@ -103,15 +293,15 @@ function solveLinearEquationStepByStep(rawInput) {
   for (const ch of str) {
     if (ch === '(') openCount++;
     if (ch === ')') openCount--;
-    if (openCount < 0) return { error: 'Λάθος στις παρενθέσεις: έκλεισε παρένθεση χωρίς να έχει ανοίξει.' };
+    if (openCount < 0) return { error: isEn ? 'Parentheses error: closed parenthesis without opening.' : 'Λάθος στις παρενθέσεις: έκλεισε παρένθεση χωρίς να έχει ανοίξει.' };
   }
   if (openCount !== 0) {
-    return { error: 'Ανοιχτή παρένθεση: βεβαιώσου ότι όλες οι παρενθέσεις κλείνουν σωστά.' };
+    return { error: isEn ? 'Open parenthesis: ensure all parentheses are properly closed.' : 'Ανοιχτή παρένθεση: βεβαιώσου ότι όλες οι παρενθέσεις κλείνουν σωστά.' };
   }
 
   // 5. Έλεγχος διαίρεσης με το 0
   if (/\/0(?![0-9.])/.test(str)) {
-    return { error: 'Δεν επιτρέπεται η διαίρεση με το μηδέν (παρονομαστής 0).' };
+    return { error: isEn ? 'Division by zero is not allowed (denominator 0).' : 'Δεν επιτρέπεται η διαίρεση με το μηδέν (παρονομαστής 0).' };
   }
 
   const parseSide = (sideStr) => {
@@ -135,7 +325,7 @@ function solveLinearEquationStepByStep(rawInput) {
     if (current) tokens.push(current);
 
     let denominators = [];
-    let rawTopTerms = []; // Δομή για αναλυτική οπτικοποίηση του Ε.Κ.Π. και των απλοποιήσεων
+    let rawTopTerms = [];
     let expandedTerms = [];
 
     for (let tok of tokens) {
@@ -145,7 +335,7 @@ function solveLinearEquationStepByStep(rawInput) {
         sign = -1;
         tok = tok.slice(1);
       }
-      if (!tok) return { error: 'Ελλιπής όρος στην εξίσωση.' };
+      if (!tok) return { error: isEn ? 'Incomplete term in equation.' : 'Ελλιπής όρος στην εξίσωση.' };
 
       let slashIdx = -1;
       let d = 0;
@@ -153,7 +343,7 @@ function solveLinearEquationStepByStep(rawInput) {
         if (tok[i] === '(') d++;
         if (tok[i] === ')') d--;
         if (tok[i] === '/' && d === 0) {
-          if (slashIdx !== -1) return { error: 'Απόφυγε τα διαδοχικά σύμβολα «/» στον ίδιο όρο.' };
+          if (slashIdx !== -1) return { error: isEn ? 'Avoid consecutive "/" symbols in the same term.' : 'Απόφυγε τα διαδοχικά σύμβολα «/» στον ίδιο όρο.' };
           slashIdx = i;
         }
       }
@@ -165,10 +355,10 @@ function solveLinearEquationStepByStep(rawInput) {
         const denStr = tok.slice(slashIdx + 1).replace(/^\((.*)\)$/, '$1');
         denVal = Number(denStr);
         if (!Number.isFinite(denVal) || denVal === 0 || denStr.includes('x')) {
-          return { error: 'Ο παρονομαστής πρέπει να είναι μη μηδενικός αριθμός (όχι μεταβλητή x).' };
+          return { error: isEn ? 'Denominator must be a non-zero number (not variable x).' : 'Ο παρονομαστής πρέπει να είναι μη μηδενικός αριθμός (όχι μεταβλητή x).' };
         }
         if (!Number.isInteger(denVal)) {
-          return { error: 'Χρησιμοποίησε ακέραιους παρονομαστές στα κλάσματα.' };
+          return { error: isEn ? 'Use integer denominators in fractions.' : 'Χρησιμοποίησε ακέραιους παρονομαστές στα κλάσματα.' };
         }
         if (denVal < 0) {
           sign = -sign;
@@ -194,9 +384,8 @@ function solveLinearEquationStepByStep(rawInput) {
         isCompound = true;
       }
 
-      if (!Number.isFinite(mult)) return { error: 'Μη έγκυρος συντελεστής μπροστά από παρένθεση.' };
+      if (!Number.isFinite(mult)) return { error: isEn ? 'Invalid coefficient before parenthesis.' : 'Μη έγκυρος συντελεστής μπροστά από παρένθεση.' };
 
-      // Αποθήκευση του αρχικού όρου για τα ενδιάμεσα παιδαγωγικά βήματα
       const displayNumStr =
         mult !== 1
           ? `${mult}·(${formatCleanNum(inner)})`
@@ -233,15 +422,15 @@ function solveLinearEquationStepByStep(rawInput) {
           st = st.slice(1);
         }
         st = st.replace(/\*/g, '');
-        if (!st) return { error: 'Συντακτικό λάθος μέσα στην παρένθεση.' };
+        if (!st) return { error: isEn ? 'Syntax error inside parenthesis.' : 'Συντακτικό λάθος μέσα στην παρένθεση.' };
 
         if (st.includes('x')) {
           if (st.indexOf('x') !== st.lastIndexOf('x')) {
-            return { error: 'Η εξίσωση πρέπει να είναι 1ου βαθμού (όχι x·x ή x²).' };
+            return { error: isEn ? 'The equation must be first degree (no x·x or x²).' : 'Η εξίσωση πρέπει να είναι 1ου βαθμού (όχι x·x ή x²).' };
           }
           const cStr = st.replace('x', '');
           const cVal = cStr === '' ? 1 : Number(cStr);
-          if (!Number.isFinite(cVal)) return { error: `Μη έγκυρος όρος «${st}».` };
+          if (!Number.isFinite(cVal)) return { error: isEn ? `Invalid term "${st}".` : `Μη έγκυρος όρος «${st}».` };
           expandedTerms.push({
             isX: true,
             coeff: sign * subSign * mult * cVal,
@@ -249,7 +438,7 @@ function solveLinearEquationStepByStep(rawInput) {
           });
         } else {
           const val = Number(st);
-          if (!Number.isFinite(val)) return { error: `Μη έγκυρος αριθμός «${st}».` };
+          if (!Number.isFinite(val)) return { error: isEn ? `Invalid number "${st}".` : `Μη έγκυρος αριθμός «${st}».` };
           expandedTerms.push({
             isX: false,
             coeff: sign * subSign * mult * val,
@@ -301,7 +490,6 @@ function solveLinearEquationStepByStep(rawInput) {
       .join('');
   };
 
-  // Μορφοποίηση του ενδιάμεσου βήματος μετά την απλοποίηση των παρονομαστών (π.χ. -4·(2x) - 3·(4 - 5x) + 2·5 = 12·15)
   const formatCancelledSide = (rawTerms, lcmVal) => {
     return rawTerms
       .map((rt, idx) => {
@@ -309,13 +497,11 @@ function solveLinearEquationStepByStep(rawInput) {
         const totalMult = Math.round(q * rt.mult * 1000) / 1000;
         const signStr = rt.sign < 0 ? (idx === 0 ? '－' : ' － ') : idx === 0 ? '' : ' ＋ ';
 
-        // Αν ο όρος είχε κλάσμα ή πολλαπλασιάστηκε με το ΕΚΠ, δείχνουμε καθαρά το γινόμενο
         if (rt.isCompound) {
           return totalMult === 1
             ? `${signStr}(${rt.innerClean})`
             : `${signStr}${totalMult} · (${rt.innerClean})`;
         } else {
-          // Απλός όρος π.χ. 2x ή 5 ή 15
           const needsParen = rt.innerClean.includes('x') && rt.innerClean !== 'x';
           const termDisplay = needsParen ? `(${rt.innerClean})` : rt.innerClean;
           if (totalMult === 1) {
@@ -331,46 +517,50 @@ function solveLinearEquationStepByStep(rawInput) {
 
   // ΒΗΜΑ 1: Αρχική Εξίσωση
   steps.push({
-    title: 'ΑΡΧΙΚΗ ΕΞΙΣΩΣΗ',
-    desc: 'Καταγράφουμε την αρχική εξίσωση με κανονική κλασματική μορφή:',
+    title: isEn ? 'INITIAL EQUATION' : 'ΑΡΧΙΚΗ ΕΞΙΣΩΣΗ',
+    desc: isEn ? 'Record the initial equation in standard fraction notation:' : 'Καταγράφουμε την αρχική εξίσωση με κανονική κλασματική μορφή:',
     renderType: 'initial',
     leftTerms: leftParsed.rawTopTerms,
     rightTerms: rightParsed.rawTopTerms,
   });
 
-  // ΑΝ ΥΠΑΡΧΟΥΝ ΚΛΑΣΜΑΤΑ: Δείχνουμε 3 αναλυτικά υπο-βήματα!
   if (hasFractions) {
-    // ΒΗΜΑ 2: Εμφάνιση του Ε.Κ.Π. να πολλαπλασιάζει ΚΑΘΕ όρο ξεχωριστά
+    const lcmName = isEn ? 'LCM' : 'Ε.Κ.Π.';
     steps.push({
-      title: `ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ ΚΑΘΕ ΟΡΟΥ ΜΕ ΤΟ Ε.Κ.Π. (${commonLCM})`,
-      desc: `Βρίσκουμε το Ε.Κ.Π. των παρονομαστών που είναι το ${commonLCM} και πολλαπλασιάζουμε ΚΑΘΕ όρο και των δύο μελών με το ${commonLCM}:`,
+      title: isEn ? `MULTIPLY EACH TERM BY THE ${lcmName} (${commonLCM})` : `ΠΟΛΛΑΠΛΑΣΙΑΣΜΟΣ ΚΑΘΕ ΟΡΟΥ ΜΕ ΤΟ Ε.Κ.Π. (${commonLCM})`,
+      desc: isEn
+        ? `Find the LCM of the denominators, which is ${commonLCM}, and multiply EVERY term on both sides by ${commonLCM}:`
+        : `Βρίσκουμε το Ε.Κ.Π. των παρονομαστών που είναι το ${commonLCM} και πολλαπλασιάζουμε ΚΑΘΕ όρο και των δύο μελών με το ${commonLCM}:`,
       renderType: 'lcm_multiply',
       lcmVal: commonLCM,
       leftTerms: leftParsed.rawTopTerms,
       rightTerms: rightParsed.rawTopTerms,
     });
 
-    // ΒΗΜΑ 3: Απλοποίηση του Ε.Κ.Π. με κάθε παρονομαστή (π.χ. 12:3=4, 12:4=3, 12:6=2)
     steps.push({
-      title: 'ΑΠΛΟΠΟΙΗΣΗ ΤΩΝ ΠΑΡΟΝΟΜΑΣΤΩΝ',
-      desc: `Διαιρούμε το ${commonLCM} με τον παρονομαστή κάθε κλάσματος και πολλαπλασιάζουμε το πηλίκο με τον αντίστοιχο αριθμητή (βάζοντας παρένθεση όπου χρειάζεται):`,
+      title: isEn ? 'CANCEL OUT DENOMINATORS' : 'ΑΠΛΟΠΟΙΗΣΗ ΤΩΝ ΠΑΡΟΝΟΜΑΣΤΩΝ',
+      desc: isEn
+        ? `Divide ${commonLCM} by each fraction denominator and multiply the quotient by the respective numerator (enclosing compound numerators in parentheses):`
+        : `Διαιρούμε το ${commonLCM} με τον παρονομαστή κάθε κλάσματος και πολλαπλασιάζουμε το πηλίκο με τον αντίστοιχο αριθμητή (βάζοντας παρένθεση όπου χρειάζεται):`,
       math: `${formatCancelledSide(leftParsed.rawTopTerms, commonLCM)} ＝ ${formatCancelledSide(
         rightParsed.rawTopTerms,
         commonLCM
       )}`,
     });
 
-    // ΒΗΜΑ 4: Εκτέλεση των πολλαπλασιασμών και απαλοιφή παρενθέσεων
     steps.push({
-      title: 'ΕΚΤΕΛΕΣΗ ΠΟΛΛΑΠΛΑΣΙΑΣΜΩΝ & ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ',
-      desc: 'Εκτελούμε τους πολλαπλασιασμούς και την επιμεριστική ιδιότητα (προσοχή στα πρόσημα όταν υπάρχει μείον μπροστά από παρένθεση):',
+      title: isEn ? 'EXPAND MULTIPLICATIONS & REMOVE PARENTHESES' : 'ΕΚΤΕΛΕΣΗ ΠΟΛΛΑΠΛΑΣΙΑΣΜΩΝ & ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ',
+      desc: isEn
+        ? 'Perform multiplications using the distributive property (watch the signs when a minus precedes parentheses):'
+        : 'Εκτελούμε τους πολλαπλασιασμούς και την επιμεριστική ιδιότητα (προσοχή στα πρόσημα όταν υπάρχει μείον μπροστά από παρένθεση):',
       math: `${formatTermsList(leftScaled)} ＝ ${formatTermsList(rightScaled)}`,
     });
   } else if (hasParensOverall) {
-    // Αν δεν έχει κλάσματα αλλά έχει παρενθέσεις
     steps.push({
-      title: 'ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ (ΕΠΙΜΕΡΙΣΤΙΚΗ ΙΔΙΟΤΗΤΑ)',
-      desc: 'Εφαρμόζουμε την επιμεριστική ιδιότητα πολλαπλασιάζοντας τον εξωτερικό αριθμό με κάθε όρο μέσα στην παρένθεση:',
+      title: isEn ? 'REMOVE PARENTHESES (DISTRIBUTIVE PROPERTY)' : 'ΑΠΑΛΟΙΦΗ ΠΑΡΕΝΘΕΣΕΩΝ (ΕΠΙΜΕΡΙΣΤΙΚΗ ΙΔΙΟΤΗΤΑ)',
+      desc: isEn
+        ? 'Apply the distributive property, multiplying the outer factor by each term inside the parentheses:'
+        : 'Εφαρμόζουμε την επιμεριστική ιδιότητα πολλαπλασιάζοντας τον εξωτερικό αριθμό με κάθε όρο μέσα στην παρένθεση:',
       math: `${formatTermsList(leftScaled)} ＝ ${formatTermsList(rightScaled)}`,
     });
   }
@@ -387,8 +577,10 @@ function solveLinearEquationStepByStep(rawInput) {
   ];
 
   steps.push({
-    title: 'ΧΩΡΙΣΜΟΣ ΓΝΩΣΤΩΝ ΑΠΟ ΑΓΝΩΣΤΟΥΣ',
-    desc: 'Κρατάμε ή μεταφέρουμε τους όρους με τον άγνωστο x στο 1ο μέλος και τους σταθερούς αριθμούς στο 2ο μέλος (αλλάζοντας το πρόσημο όσων όρων αλλάζουν μέλος):',
+    title: isEn ? 'SEPARATE VARIABLES FROM CONSTANTS' : 'ΧΩΡΙΣΜΟΣ ΓΝΩΣΤΩΝ ΑΠΟ ΑΓΝΩΣΤΟΥΣ',
+    desc: isEn
+      ? 'Move terms containing variable x to the left side and constant numbers to the right side (reversing signs of transposed terms):'
+      : 'Κρατάμε ή μεταφέρουμε τους όρους με τον άγνωστο x στο 1ο μέλος και τους σταθερούς αριθμούς στο 2ο μέλος (αλλάζοντας το πρόσημο όσων όρων αλλάζουν μέλος):',
     math: `${formatTermsList(xTermsOnLeft.length ? xTermsOnLeft : [{ isX: true, val: 0 }])} ＝ ${formatTermsList(
       constTermsOnRight.length ? constTermsOnRight : [{ isX: false, val: 0 }]
     )}`,
@@ -399,8 +591,10 @@ function solveLinearEquationStepByStep(rawInput) {
   const totalConst = Math.round(constTermsOnRight.reduce((acc, t) => acc + t.val, 0) * 1000) / 1000;
 
   steps.push({
-    title: 'ΑΝΑΓΩΓΗ ΟΜΟΙΩΝ ΟΡΩΝ',
-    desc: 'Εκτελούμε τις πράξεις μεταξύ των ομοίων όρων με x στο 1ο μέλος και μεταξύ των αριθμών στο 2ο μέλος:',
+    title: isEn ? 'COLLECT LIKE TERMS' : 'ΑΝΑΓΩΓΗ ΟΜΟΙΩΝ ΟΡΩΝ',
+    desc: isEn
+      ? 'Perform operations between like terms with x on the left and constants on the right:'
+      : 'Εκτελούμε τις πράξεις μεταξύ των ομοίων όρων με x στο 1ο μέλος και μεταξύ των αριθμών στο 2ο μέλος:',
     math: `${totalX === 1 ? 'x' : totalX === -1 ? '－x' : `${totalX} · x`} ＝ ${totalConst}`,
   });
 
@@ -408,17 +602,21 @@ function solveLinearEquationStepByStep(rawInput) {
   if (totalX === 0) {
     if (totalConst === 0) {
       steps.push({
-        title: 'ΤΑΥΤΟΤΗΤΑ (ΑΟΡΙΣΤΗ ΕΞΙΣΩΣΗ)',
-        desc: 'Ο συντελεστής του x είναι 0 και το 2ο μέλος είναι 0. Η ισότητα 0 · x ＝ 0 αληθεύει για κάθε αριθμό x!',
-        math: 'Άπειρες Λύσεις (Ταυτότητα)',
+        title: isEn ? 'IDENTITY (INDETERMINATE EQUATION)' : 'ΤΑΥΤΟΤΗΤΑ (ΑΟΡΙΣΤΗ ΕΞΙΣΩΣΗ)',
+        desc: isEn
+          ? 'The coefficient of x is 0 and the RHS is 0. The equality 0 · x ＝ 0 is true for every number x!'
+          : 'Ο συντελεστής του x είναι 0 και το 2ο μέλος είναι 0. Η ισότητα 0 · x ＝ 0 αληθεύει για κάθε αριθμό x!',
+        math: isEn ? 'Infinitely Many Solutions (Identity)' : 'Άπειρες Λύσεις (Ταυτότητα)',
         isSpecial: true,
         status: 'identity',
       });
     } else {
       steps.push({
-        title: 'ΑΔΥΝΑΤΗ ΕΞΙΣΩΣΗ',
-        desc: `Ο συντελεστής του x είναι 0, αλλά το 2ο μέλος είναι ${totalConst} ≠ 0. Κανένας αριθμός πολλαπλασιαζόμενος με το 0 δεν δίνει ${totalConst}.`,
-        math: 'Καμία Λύση (Αδύνατη)',
+        title: isEn ? 'IMPOSSIBLE EQUATION' : 'ΑΔΥΝΑΤΗ ΕΞΙΣΩΣΗ',
+        desc: isEn
+          ? `The coefficient of x is 0, but the RHS is ${totalConst} ≠ 0. No number multiplied by 0 equals ${totalConst}.`
+          : `Ο συντελεστής του x είναι 0, αλλά το 2ο μέλος είναι ${totalConst} ≠ 0. Κανένας αριθμός πολλαπλασιαζόμενος με το 0 δεν δίνει ${totalConst}.`,
+        math: isEn ? 'No Solution (Impossible)' : 'Καμία Λύση (Αδύνατη)',
         isSpecial: true,
         status: 'impossible',
       });
@@ -440,8 +638,10 @@ function solveLinearEquationStepByStep(rawInput) {
     const finalIntValue = totalConst === 0 ? 0 : isNegativeResult ? -simplifiedNum : simplifiedNum;
 
     steps.push({
-      title: 'ΔΙΑΙΡΕΣΗ ΜΕ ΤΟΝ ΣΥΝΤΕΛΕΣΤΗ ΤΟΥ ΑΓΝΩΣΤΟΥ',
-      desc: `Διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου (${totalX}) γράφοντας το πηλίκο σε κανονική μορφή κλάσματος:`,
+      title: isEn ? 'DIVIDE BY COEFFICIENT OF VARIABLE' : 'ΔΙΑΙΡΕΣΗ ΜΕ ΤΟΝ ΣΥΝΤΕΛΕΣΤΗ ΤΟΥ ΑΓΝΩΣΤΟΥ',
+      desc: isEn
+        ? `Divide both sides by the coefficient of the variable (${totalX}), writing the quotient in standard fraction notation:`
+        : `Διαιρούμε και τα δύο μέλη με τον συντελεστή του αγνώστου (${totalX}) γράφοντας το πηλίκο σε κανονική μορφή κλάσματος:`,
       fractionData: {
         rawNum: totalConst,
         rawDen: totalX,
@@ -484,7 +684,16 @@ function RenderSideWithFractions({ terms, lcmMultiplier = null }) {
 }
 
 export default function LiseisEksisoseonTheoria() {
-  // State για Εργαστήριο 1: Custom Αναλυτής Εξισώσεων (Προεπιλογή: η εξίσωση της εικόνας για άμεσο έλεγχο!)
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
+  const formatNumber = (num) => {
+    if (num === undefined || num === null || isNaN(num)) return '0';
+    return Number(num).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
+  };
+
+  // State για Εργαστήριο 1: Custom Αναλυτής Εξισώσεων
   const [equationInput, setEquationInput] = useState('-2x/3 - (4 - 5x)/4 + 5/6 = 15');
   const [visibleStepsCount, setVisibleStepsCount] = useState(99);
 
@@ -501,16 +710,10 @@ export default function LiseisEksisoseonTheoria() {
     setter((prev) => Math.max(min, Math.min(max, prev + val)));
   };
 
-  const solverResult = useMemo(() => solveLinearEquationStepByStep(equationInput), [equationInput]);
-
-  const presetEquations = [
-    { label: 'ΑΠΛΗ (αx＋β＝γ)', eq: '3x - 4 = 11' },
-    { label: 'ΠΟΛΛΑ x', eq: '5x - 3 + 2x = 4x + 9' },
-    { label: 'ΜΕ ΠΑΡΕΝΘΕΣΕΙΣ', eq: '2(x + 3) - 4 = 10' },
-    { label: 'ΑΠΛΑ ΚΛΑΣΜΑΤΑ', eq: 'x/2 + x/3 = 5' },
-    { label: 'ΠΛΗΡΗΣ ΜΕ ΚΛΑΣΜΑΤΑ', eq: '-2x/3 - (4 - 5x)/4 + 5/6 = 15' },
-    { label: 'ΑΔΥΝΑΤΗ', eq: '2(x + 1) = 2x + 5' },
-  ];
+  const solverResult = useMemo(
+    () => solveLinearEquationStepByStep(equationInput, locale),
+    [equationInput, locale]
+  );
 
   const loadPreset = (eqStr) => {
     setEquationInput(eqStr);
@@ -529,99 +732,99 @@ export default function LiseisEksisoseonTheoria() {
 
   return (
     <Layout
-      title="Επίλυση Εξισώσεων αx + β = γ | Α' Γυμνασίου"
-      description="Αναλυτική θεωρία και αυτόματος διαδραστικός επιλυτής εξισώσεων βήμα-βήμα (με κλάσματα, παρενθέσεις και πολλαπλά x) για την Α' Γυμνασίου."
+      title={t.pageTitle}
+      description={t.pageDescription}
       backUrl="/a-gymnasiou"
-      backText="Α' Γυμνασίου"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/a-gymnasiou/33-liseis-eksisoseon-ask"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-sm sm:text-base transition-all shadow-md"
+          className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs sm:text-sm md:text-base transition-all shadow-md shrink-0"
         >
           <span>🎯</span>
-          <span>ΑΣΚΗΣΕΙΣ</span>
+          <span>{toCleanUppercase(t.exercisesBtn)}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 sm:py-10 space-y-10 sm:space-y-16">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8 sm:space-y-12">
         {/* Banner Header */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-6 sm:p-10 lg:p-14 shadow-xl border border-indigo-700/50">
-          <div className="max-w-4xl space-y-4">
-            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-              Α' ΓΥΜΝΑΣΙΟΥ • ΚΕΦΑΛΑΙΟ 29 • ΘΕΩΡΙΑ & ΕΡΓΑΣΤΗΡΙΟ
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-indigo-900 to-indigo-800 text-white p-5 sm:p-8 lg:p-12 shadow-xl border border-indigo-700/50">
+          <div className="max-w-4xl space-y-3 sm:space-y-4">
+            <span className="inline-block px-3 py-1 rounded-full text-xs sm:text-sm font-bold tracking-wider bg-indigo-500/30 text-indigo-200 border border-indigo-400/30 break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(t.chapterBadge)}
             </span>
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-              Επίλυση Εξισώσεων της Μορφής α·x ＋ β ＝ γ
+            <h1 className="text-xl sm:text-3xl lg:text-5xl font-black tracking-tight text-white break-words [overflow-wrap:anywhere]">
+              {t.mainTitle}
             </h1>
-            <p className="text-sm sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed">
-              Μαθαίνουμε τη γενική μέθοδο επίλυσης εξισώσεων 1ου βαθμού, πώς απαλείφουμε παρενθέσεις και κλάσματα βήμα προς βήμα, και πώς χρησιμοποιούμε εξισώσεις για να λύσουμε ρεαλιστικά προβλήματα.
+            <p className="text-xs sm:text-base lg:text-lg text-indigo-100/90 leading-relaxed break-words [overflow-wrap:anywhere]">
+              {t.mainSubtitle}
             </p>
           </div>
         </section>
 
         {/* 1. ΜΕΘΟΔΟΛΟΓΙΑ ΕΠΙΛΥΣΗΣ αx + β = γ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
+        <section className="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg shrink-0">
                 1
               </span>
-              Πώς Λύνουμε την Εξίσωση α·x ＋ β ＝ γ
+              <span>{t.sec1Title}</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
             {/* Βήμα 1 */}
-            <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3 flex flex-col justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded inline-block">
-                  ΒΗΜΑ 1
+                  {toCleanUppercase(t.step1Badge)}
                 </span>
-                <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Χωρισμός Γνωστών από Αγνώστους
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg break-words [overflow-wrap:anywhere]">
+                  {t.step1Title}
                 </h3>
-                <p className="text-slate-600">
-                  Μεταφέρουμε τους όρους που έχουν τον άγνωστο <strong>x</strong> στο 1ο μέλος (αριστερά) και τους σταθερούς αριθμούς στο 2ο μέλος (δεξιά), <strong>αλλάζοντας το πρόσημο</strong> κάθε όρου που αλλάζει μέλος:
+                <p className="text-slate-600 leading-relaxed break-words [overflow-wrap:anywhere]">
+                  {t.step1Desc}
                 </p>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-indigo-100 font-mono text-center font-bold text-indigo-950 text-sm">
-                α · x ＝ γ － β
+              <div className="p-3 bg-white rounded-xl border border-indigo-100 font-mono text-center font-bold text-indigo-950 text-sm break-words [overflow-wrap:anywhere]">
+                {t.step1Formula}
               </div>
             </div>
 
             {/* Βήμα 2 */}
-            <div className="p-5 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-3 flex flex-col justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-sky-700 bg-sky-100 px-2.5 py-0.5 rounded inline-block">
-                  ΒΗΜΑ 2
+                  {toCleanUppercase(t.step2Badge)}
                 </span>
-                <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Αναγωγή Ομοίων Όρων
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg break-words [overflow-wrap:anywhere]">
+                  {t.step2Title}
                 </h3>
-                <p className="text-slate-600">
-                  Εκτελούμε τις πράξεις σε κάθε μέλος ξεχωριστά (προσθέτουμε ή αφαιρούμε τους συντελεστές του x στο 1ο μέλος και τους αριθμούς στο 2ο μέλος), ώστε η εξίσωση να πάρει την απλή μορφή:
+                <p className="text-slate-600 leading-relaxed break-words [overflow-wrap:anywhere]">
+                  {t.step2Desc}
                 </p>
               </div>
-              <div className="p-3 bg-white rounded-xl border border-sky-100 font-mono text-center font-bold text-sky-950 text-sm">
-                Α · x ＝ Β
+              <div className="p-3 bg-white rounded-xl border border-sky-100 font-mono text-center font-bold text-sky-950 text-sm break-words [overflow-wrap:anywhere]">
+                {t.step2Formula}
               </div>
             </div>
 
             {/* Βήμα 3 */}
-            <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3 flex flex-col justify-between">
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3 flex flex-col justify-between">
               <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded inline-block">
-                  ΒΗΜΑ 3
+                  {toCleanUppercase(t.step3Badge)}
                 </span>
-                <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                  Διαίρεση σε Μορφή Κλάσματος
+                <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg break-words [overflow-wrap:anywhere]">
+                  {t.step3Title}
                 </h3>
-                <p className="text-slate-600">
-                  Αν ο συντελεστής Α ≠ 0, διαιρούμε και τα δύο μέλη με το Α. Γράφουμε τη λύση <strong>πάντα σε κανονική μορφή κλάσματος</strong> και απλοποιούμε:
+                <p className="text-slate-600 leading-relaxed break-words [overflow-wrap:anywhere]">
+                  {t.step3Desc}
                 </p>
               </div>
-              <div className="p-2.5 bg-white rounded-xl border border-amber-100 font-mono text-center font-bold text-amber-950 text-sm flex items-center justify-center">
+              <div className="p-2.5 bg-white rounded-xl border border-amber-100 font-mono text-center font-bold text-amber-950 text-sm flex items-center justify-center break-words [overflow-wrap:anywhere]">
                 <span>x ＝ </span>
                 <Frac num="Β" den="Α" />
               </div>
@@ -630,33 +833,27 @@ export default function LiseisEksisoseonTheoria() {
 
           {/* Ειδικές Περιπτώσεις & Σύνθετες Εξισώσεις */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 text-xs sm:text-sm">
-            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="font-bold text-slate-900 text-base">
-                Τι κάνουμε αν υπάρχουν Κλάσματα και Παρενθέσεις;
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+              <div className="font-bold text-slate-900 text-sm sm:text-base break-words [overflow-wrap:anywhere]">
+                {t.fractionsBoxTitle}
               </div>
               <ol className="list-decimal list-inside space-y-1.5 text-slate-600">
-                <li>
-                  Βρίσκουμε το <strong>Ε.Κ.Π.</strong> όλων των παρονομαστών και πολλαπλασιάζουμε <strong>κάθε όρο</strong> της εξίσωσης με αυτό.
-                </li>
-                <li>
-                  Απλοποιούμε το Ε.Κ.Π. με κάθε παρονομαστή και βάζουμε σε παρένθεση τους σύνθετους αριθμητές.
-                </li>
-                <li>
-                  Εκτελούμε τους πολλαπλασιασμούς (επιμεριστική ιδιότητα) για να φύγουν οι παρενθέσεις.
-                </li>
+                <li className="break-words [overflow-wrap:anywhere]">{t.fractionsStep1}</li>
+                <li className="break-words [overflow-wrap:anywhere]">{t.fractionsStep2}</li>
+                <li className="break-words [overflow-wrap:anywhere]">{t.fractionsStep3}</li>
               </ol>
             </div>
 
-            <div className="p-5 rounded-2xl bg-rose-50/50 border border-rose-200 space-y-2">
-              <div className="font-bold text-rose-950 text-base">
-                Ειδικές Περιπτώσεις (Όταν ο συντελεστής του x μηδενίζεται)
+            <div className="p-4 sm:p-5 rounded-2xl bg-rose-50/50 border border-rose-200 space-y-2">
+              <div className="font-bold text-rose-950 text-sm sm:text-base break-words [overflow-wrap:anywhere]">
+                {t.specialCasesTitle}
               </div>
               <ul className="list-disc list-inside space-y-1.5 text-slate-700">
-                <li>
-                  <strong>0 · x ＝ 0 (Ταυτότητα / Αόριστη):</strong> Επαληθεύεται για <strong>κάθε αριθμό x</strong> (έχει άπειρες λύσεις).
+                <li className="break-words [overflow-wrap:anywhere]">
+                  <strong>{t.specialCaseIdentityTitle}</strong> {t.specialCaseIdentityDesc}
                 </li>
-                <li>
-                  <strong>0 · x ＝ Β (όπου Β ≠ 0, Αδύνατη):</strong> Δεν επαληθεύεται για <strong>κανέναν αριθμό x</strong> (δεν έχει λύση).
+                <li className="break-words [overflow-wrap:anywhere]">
+                  <strong>{t.specialCaseImpossibleTitle}</strong> {t.specialCaseImpossibleDesc}
                 </li>
               </ul>
             </div>
@@ -664,41 +861,41 @@ export default function LiseisEksisoseonTheoria() {
         </section>
 
         {/* 2. ΕΡΓΑΣΤΗΡΙΟ 1: ΑΥΤΟΜΑΤΟΣ ΕΠΙΛΥΤΗΣ ΕΞΙΣΩΣΕΩΝ ΒΗΜΑ-ΒΗΜΑ */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
+        <section className="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-6">
           <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg shrink-0">
                 2
               </span>
-              🛠️ Εργαστήριο 1: Αναλυτικός Επιλυτής Εξισώσεων Βήμα-Βήμα
+              <span>{t.lab1Title}</span>
             </h2>
-            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 self-start sm:self-auto">
-              ΠΛΗΡΗΣ ΑΝΑΛΥΣΗ ΚΑΘΕ ΠΡΑΞΗΣ
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 self-start sm:self-auto break-words [overflow-wrap:anywhere]">
+              {toCleanUppercase(t.fullAnalysisBadge)}
             </span>
           </div>
 
-          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-            Πληκτρολόγησε οποιαδήποτε εξίσωση 1ου βαθμού στο πλαίσιο (για την εισαγωγή κλασμάτων χρησιμοποίησε το σύμβολο <strong>/</strong>, π.χ. <code>-2x/3 - (4-5x)/4 + 5/6 = 15</code>). Ο επιλυτής θα σου δείξει αναλυτικά ένα-ένα όλα τα ενδιάμεσα βήματα!
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed break-words [overflow-wrap:anywhere]">
+            {t.lab1Desc}
           </p>
 
           {/* Έτοιμα Κουμπιά Παραδειγμάτων */}
           <div className="space-y-2">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ ΠΡΟΣ ΔΟΚΙΜΗ:
+              {toCleanUppercase(t.presetTitle)}
             </div>
             <div className="flex flex-wrap gap-2">
-              {presetEquations.map((p, idx) => (
+              {t.presets.map((p, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => loadPreset(p.eq)}
-                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition active:scale-95 border flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-xl font-bold text-xs transition active:scale-95 border flex items-center gap-1 break-words [overflow-wrap:anywhere] ${
                     equationInput === p.eq
                       ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                   }`}
                 >
-                  <span>{p.label}</span>
+                  <span>{toCleanUppercase(p.label)}</span>
                 </button>
               ))}
             </div>
@@ -707,8 +904,8 @@ export default function LiseisEksisoseonTheoria() {
           {/* Πεδίο Εισαγωγής Εξίσωσης */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
             <div className="lg:col-span-7 space-y-1">
-              <label className="text-[11px] font-bold text-indigo-900 uppercase block">
-                ΠΛΗΚΤΡΟΛΟΓΗΣΕ ΤΗΝ ΕΞΙΣΩΣΗ ΣΟΥ (ΜΕ ΤΟ ΣΥΜΒΟΛΟ / ΓΙΑ ΤΑ ΚΛΑΣΜΑΤΑ):
+              <label className="text-[11px] font-bold text-indigo-900 uppercase block break-words [overflow-wrap:anywhere]">
+                {toCleanUppercase(t.inputLabel)}
               </label>
               <input
                 type="text"
@@ -718,7 +915,7 @@ export default function LiseisEksisoseonTheoria() {
                   setVisibleStepsCount(99);
                 }}
                 placeholder="π.χ. -2x/3 - (4-5x)/4 + 5/6 = 15"
-                className="w-full h-12 px-4 rounded-xl bg-white border-2 border-indigo-200 focus:border-indigo-600 outline-none font-mono font-bold text-base sm:text-lg text-slate-900 shadow-sm"
+                className="w-full h-12 px-4 rounded-xl bg-white border-2 border-indigo-200 focus:border-indigo-600 outline-none font-mono font-bold text-sm sm:text-base md:text-lg text-slate-900 shadow-sm"
               />
             </div>
 
@@ -729,7 +926,7 @@ export default function LiseisEksisoseonTheoria() {
                 disabled={!!solverResult.error}
                 className="px-3.5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 disabled:opacity-40 text-slate-800 font-bold text-xs transition active:scale-95"
               >
-                ⏮️ ΑΠΟ ΤΗΝ ΑΡΧΗ (ΒΗΜΑ 1)
+                {toCleanUppercase(t.btnResetSteps)}
               </button>
               <button
                 type="button"
@@ -744,7 +941,7 @@ export default function LiseisEksisoseonTheoria() {
                 }
                 className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-bold text-xs transition active:scale-95 shadow-sm"
               >
-                ▶️ ΕΠΟΜΕΝΟ ΒΗΜΑ
+                {toCleanUppercase(t.btnNextStep)}
               </button>
               <button
                 type="button"
@@ -755,23 +952,23 @@ export default function LiseisEksisoseonTheoria() {
                 }
                 className="px-3.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-bold text-xs transition active:scale-95 shadow-sm"
               >
-                ⏭️ ΟΛΑ ΤΑ ΒΗΜΑΤΑ
+                {toCleanUppercase(t.btnAllSteps)}
               </button>
             </div>
           </div>
 
           {/* Προβολή Αναλυτικών Βημάτων */}
           {solverResult.error ? (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-semibold flex items-center gap-3">
-              <span className="text-lg">⚠️</span>
+            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm font-semibold flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="text-lg shrink-0">⚠️</span>
               <span>{solverResult.error}</span>
             </div>
           ) : (
-            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-300">
-                  ΑΝΑΛΥΤΙΚΗ ΠΟΡΕΙΑ ΕΠΙΛΥΣΗΣ ({Math.min(visibleStepsCount, solverResult.steps.length)} /{' '}
-                  {solverResult.steps.length} ΒΗΜΑΤΑ)
+            <div className="p-4 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-4 shadow-md overflow-x-hidden">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-wrap gap-2">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-300 break-words [overflow-wrap:anywhere]">
+                  {toCleanUppercase(t.stepsProgress)} ({Math.min(visibleStepsCount, solverResult.steps.length)} /{' '}
+                  {solverResult.steps.length})
                 </span>
               </div>
 
@@ -779,7 +976,7 @@ export default function LiseisEksisoseonTheoria() {
                 {solverResult.steps.slice(0, visibleStepsCount).map((st, sIdx) => (
                   <div
                     key={sIdx}
-                    className={`p-4 rounded-xl border transition-all ${
+                    className={`p-3.5 sm:p-4 rounded-xl border transition-all break-words [overflow-wrap:anywhere] ${
                       st.status === 'solved' || st.status === 'identity'
                         ? 'bg-emerald-500/15 border-emerald-400/40'
                         : st.status === 'impossible'
@@ -787,34 +984,34 @@ export default function LiseisEksisoseonTheoria() {
                         : 'bg-white/5 border-white/10'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-indigo-500/30 text-indigo-200">
-                        ΒΗΜΑ {sIdx + 1}
+                        {toCleanUppercase(t.stepLabel)} {sIdx + 1}
                       </span>
-                      <span className="text-xs sm:text-sm font-bold text-amber-300">
-                        {st.title}
+                      <span className="text-xs sm:text-sm font-bold text-amber-300 break-words [overflow-wrap:anywhere]">
+                        {toCleanUppercase(st.title)}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-300 mb-2">{st.desc}</p>
+                    <p className="text-xs text-slate-300 mb-2 leading-relaxed break-words [overflow-wrap:anywhere]">{st.desc}</p>
 
                     {/* Βήμα 1: Αρχική Εξίσωση με Κλάσματα */}
                     {st.renderType === 'initial' ? (
-                      <div className="font-mono text-base sm:text-xl font-black text-white flex items-center flex-wrap gap-2">
+                      <div className="font-mono text-sm sm:text-base md:text-xl font-black text-white inline-flex items-center flex-wrap gap-2">
                         <RenderSideWithFractions terms={st.leftTerms} />
                         <span>＝</span>
                         <RenderSideWithFractions terms={st.rightTerms} />
                       </div>
                     ) : st.renderType === 'lcm_multiply' ? (
                       /* Βήμα 2: Εμφάνιση του Ε.Κ.Π. μπροστά από κάθε όρο */
-                      <div className="font-mono text-base sm:text-xl font-black text-white flex items-center flex-wrap gap-2">
+                      <div className="font-mono text-sm sm:text-base md:text-xl font-black text-white inline-flex items-center flex-wrap gap-2">
                         <RenderSideWithFractions terms={st.leftTerms} lcmMultiplier={st.lcmVal} />
                         <span>＝</span>
                         <RenderSideWithFractions terms={st.rightTerms} lcmMultiplier={st.lcmVal} />
                       </div>
                     ) : st.fractionData ? (
                       /* Τελικό Βήμα: Λύση με το Frac component */
-                      <div className="font-mono text-base sm:text-xl font-black text-emerald-400 flex items-center flex-wrap gap-2 pt-1">
+                      <div className="font-mono text-sm sm:text-base md:text-xl font-black text-emerald-400 inline-flex items-center flex-wrap gap-2 pt-1">
                         <span>x ＝</span>
                         <Frac
                           num={Math.abs(st.fractionData.rawNum)}
@@ -834,11 +1031,11 @@ export default function LiseisEksisoseonTheoria() {
                             </>
                           )}
                         {st.fractionData.isExactInteger && (
-                          <span>＝ {st.fractionData.finalIntValue}</span>
+                          <span>＝ {formatNumber(st.fractionData.finalIntValue)}</span>
                         )}
                       </div>
                     ) : (
-                      <div className="font-mono text-base sm:text-xl font-black text-white break-words">
+                      <div className="font-mono text-sm sm:text-base md:text-xl font-black text-white break-words [overflow-wrap:anywhere]">
                         {st.math}
                       </div>
                     )}
@@ -850,61 +1047,61 @@ export default function LiseisEksisoseonTheoria() {
         </section>
 
         {/* 3. ΠΑΡΑΔΕΙΓΜΑΤΑ ΜΕ ΠΡΟΒΛΗΜΑΤΑ & ΕΡΓΑΣΤΗΡΙΟ 2 */}
-        <section className="bg-white rounded-3xl p-5 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
+        <section className="bg-white rounded-3xl p-4 sm:p-8 lg:p-10 shadow-sm border border-slate-200/80 space-y-8">
           <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg">
+            <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-slate-900 flex items-center gap-3 break-words [overflow-wrap:anywhere]">
+              <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 font-extrabold text-base sm:text-lg shrink-0">
                 3
               </span>
-              Επίλυση Προβλημάτων με Εξισώσεις
+              <span>{t.sec3Title}</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
             {/* Πρόβλημα 1 */}
-            <div className="p-6 rounded-2xl bg-indigo-50/60 border border-indigo-200 space-y-3">
+            <div className="p-4 sm:p-6 rounded-2xl bg-indigo-50/60 border border-indigo-200 space-y-3">
               <span className="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded inline-block">
-                ΠΑΡΑΔΕΙΓΜΑ 1: ΟΙΚΟΝΟΜΙΚΟ ΠΡΟΒΛΗΜΑ
+                {toCleanUppercase(t.problem1Badge)}
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                Συνδρομή & Μαθήματα Κολύμβησης
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg break-words [overflow-wrap:anywhere]">
+                {t.problem1Title}
               </h3>
-              <p className="text-slate-600">
-                Ένα κολυμβητήριο χρεώνει <strong>15 €</strong> για την ετήσια εγγραφή και <strong>4 €</strong> για κάθε προπόνηση. Αν ένας αθλητής πλήρωσε συνολικά <strong>63 €</strong>, πόσες προπονήσεις έκανε;
+              <p className="text-slate-600 leading-relaxed break-words [overflow-wrap:anywhere]">
+                {t.problem1Text}
               </p>
-              <div className="p-3.5 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm space-y-1.5 text-slate-800">
-                <div className="font-sans font-bold text-indigo-950">Βήματα Επίλυσης:</div>
-                <div>• Έστω <strong>x</strong> ο αριθμός των προπονήσεων.</div>
-                <div>• Εξίσωση: <strong>4 · x ＋ 15 ＝ 63</strong></div>
-                <div>• Χωρισμός: 4 · x ＝ 63 － 15 ➔ 4 · x ＝ 48</div>
-                <div className="flex items-center font-bold text-emerald-700">
-                  <span>• Λύση: x ＝ </span>
+              <div className="p-3.5 bg-white rounded-xl border border-indigo-100 font-mono text-xs sm:text-sm space-y-1.5 text-slate-800 break-words [overflow-wrap:anywhere]">
+                <div className="font-sans font-bold text-indigo-950">{t.stepsSolvingTitle}</div>
+                <div>{t.p1Step1}</div>
+                <div>{t.p1Step2}</div>
+                <div>{t.p1Step3}</div>
+                <div className="inline-flex flex-wrap items-center font-bold text-emerald-700 gap-1">
+                  <span>{t.p1ResultPrefix}</span>
                   <Frac num="48" den="4" />
-                  <span> ＝ 12 προπονήσεις.</span>
+                  <span>{t.p1ResultSuffix}</span>
                 </div>
               </div>
             </div>
 
             {/* Πρόβλημα 2 */}
-            <div className="p-6 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
+            <div className="p-4 sm:p-6 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-3">
               <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded inline-block">
-                ΠΑΡΑΔΕΙΓΜΑ 2: ΓΕΩΜΕΤΡΙΚΟ ΠΡΟΒΛΗΜΑ
+                {toCleanUppercase(t.problem2Badge)}
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg">
-                Περίμετρος Ορθογωνίου Κήπου
+              <h3 className="font-bold text-slate-900 text-sm sm:text-base md:text-lg break-words [overflow-wrap:anywhere]">
+                {t.problem2Title}
               </h3>
-              <p className="text-slate-600">
-                Το μήκος ενός ορθογωνίου κήπου είναι <strong>κατά 5 μέτρα μεγαλύτερο</strong> από το πλάτος του. Αν η περίμετρος του κήπου είναι <strong>50 μέτρα</strong>, ποιες είναι οι διαστάσεις του;
+              <p className="text-slate-600 leading-relaxed break-words [overflow-wrap:anywhere]">
+                {t.problem2Text}
               </p>
-              <div className="p-3.5 bg-white rounded-xl border border-amber-100 font-mono text-xs sm:text-sm space-y-1.5 text-slate-800">
-                <div className="font-sans font-bold text-amber-950">Βήματα Επίλυσης:</div>
-                <div>• Έστω <strong>x</strong> το πλάτος, άρα το μήκος είναι <strong>x ＋ 5</strong>.</div>
-                <div>• Εξίσωση: 2·x ＋ 2·(x ＋ 5) ＝ 50</div>
-                <div>• Απλοποίηση: 2x ＋ 2x ＋ 10 ＝ 50 ➔ 4x ＝ 40</div>
-                <div className="flex items-center font-bold text-emerald-700">
-                  <span>• Λύση: x ＝ </span>
+              <div className="p-3.5 bg-white rounded-xl border border-amber-100 font-mono text-xs sm:text-sm space-y-1.5 text-slate-800 break-words [overflow-wrap:anywhere]">
+                <div className="font-sans font-bold text-amber-950">{t.stepsSolvingTitle}</div>
+                <div>{t.p2Step1}</div>
+                <div>{t.p2Step2}</div>
+                <div>{t.p2Step3}</div>
+                <div className="inline-flex flex-wrap items-center font-bold text-emerald-700 gap-1">
+                  <span>{t.p2ResultPrefix}</span>
                   <Frac num="40" den="4" />
-                  <span> ＝ 10 m (πλάτος) και 15 m (μήκος).</span>
+                  <span>{t.p2ResultSuffix}</span>
                 </div>
               </div>
             </div>
@@ -912,29 +1109,31 @@ export default function LiseisEksisoseonTheoria() {
 
           {/* ΕΡΓΑΣΤΗΡΙΟ 2: ΠΡΟΣΟΜΟΙΩΤΗΣ αx + β = γ */}
           <div className="pt-4 border-t border-slate-100 space-y-5">
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">
-              🛠️ Εργαστήριο 2: Διαδραστικός Προσομοιωτής α·x ＋ β ＝ γ με Κλασματική Λύση
+            <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 break-words [overflow-wrap:anywhere]">
+              {t.lab2Title}
             </h3>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+              <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-indigo-900 uppercase block">ΣΥΝΤΕΛΕΣΤΗΣ (α)</label>
+                  <label className="text-[10px] font-bold text-indigo-900 uppercase block break-words [overflow-wrap:anywhere]">
+                    {toCleanUppercase(t.coeffALabel)}
+                  </label>
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-10 w-full gap-1">
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimA, -1, -10, 10, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       －
                     </button>
                     <div className="h-full flex items-center justify-center bg-indigo-50 rounded-lg border border-indigo-200 font-bold text-sm font-mono text-indigo-950">
-                      {simA}
+                      {formatNumber(simA)}
                     </div>
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimA, 1, -10, 10, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       ＋
                     </button>
@@ -942,22 +1141,24 @@ export default function LiseisEksisoseonTheoria() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block">ΣΤΑΘΕΡΟΣ (β)</label>
+                  <label className="text-[10px] font-bold text-slate-500 uppercase block break-words [overflow-wrap:anywhere]">
+                    {toCleanUppercase(t.constBLabel)}
+                  </label>
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-10 w-full gap-1">
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimB, -1, -20, 20, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       －
                     </button>
-                    <div className="h-full flex items-center justify-center bg-white rounded-lg border border-slate-200 font-bold text-sm font-mono">
-                      {simB > 0 ? `＋${simB}` : simB}
+                    <div className="h-full flex items-center justify-center bg-white rounded-lg border border-slate-200 font-bold text-sm font-mono text-slate-800">
+                      {simB > 0 ? `＋${formatNumber(simB)}` : formatNumber(simB)}
                     </div>
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimB, 1, -20, 20, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       ＋
                     </button>
@@ -965,22 +1166,24 @@ export default function LiseisEksisoseonTheoria() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-amber-700 uppercase block">2Ο ΜΕΛΟΣ (γ)</label>
+                  <label className="text-[10px] font-bold text-amber-700 uppercase block break-words [overflow-wrap:anywhere]">
+                    {toCleanUppercase(t.targetCLabel)}
+                  </label>
                   <div className="grid grid-cols-[30px_1fr_30px] items-center h-10 w-full gap-1">
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimC, -1, -25, 25, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       －
                     </button>
                     <div className="h-full flex items-center justify-center bg-amber-50 rounded-lg border border-amber-200 font-bold text-sm font-mono text-amber-950">
-                      {simC}
+                      {formatNumber(simC)}
                     </div>
                     <button
                       type="button"
                       onClick={(e) => handleStep(setSimC, 1, -25, 25, e)}
-                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs"
+                      className="w-full h-full flex items-center justify-center rounded-lg bg-white border border-slate-300 font-bold hover:bg-slate-100 active:scale-95 text-xs text-slate-800"
                     >
                       ＋
                     </button>
@@ -988,27 +1191,27 @@ export default function LiseisEksisoseonTheoria() {
                 </div>
               </div>
 
-              <div className="lg:col-span-7 p-6 rounded-2xl bg-slate-900 text-white space-y-3 shadow-md font-mono">
-                <div className="text-base sm:text-xl font-black text-amber-300">
-                  Εξίσωση: {simA}x {simB >= 0 ? `＋ ${simB}` : `－ ${Math.abs(simB)}`} ＝ {simC}
+              <div className="lg:col-span-7 p-4 sm:p-6 rounded-2xl bg-slate-900 text-white space-y-3 shadow-md font-mono">
+                <div className="text-sm sm:text-base md:text-xl font-black text-amber-300 inline-flex flex-wrap items-center gap-1">
+                  <span>{t.simEqTitle} {simA}x {simB >= 0 ? `＋ ${simB}` : `－ ${Math.abs(simB)}`} ＝ {simC}</span>
                 </div>
 
-                <div className="text-xs sm:text-sm text-indigo-200">
-                  1. Μεταφορά σταθερού όρου: {simA}x ＝ {simC} {simB >= 0 ? `－ ${simB}` : `＋ ${Math.abs(simB)}`} ➔{' '}
+                <div className="text-xs sm:text-sm text-indigo-200 inline-flex flex-wrap items-center gap-1 leading-relaxed">
+                  <span>{t.simStep1Text} {simA}x ＝ {simC} {simB >= 0 ? `－ ${simB}` : `＋ ${Math.abs(simB)}`} ➔</span>
                   <strong>
                     {simA}x ＝ {simRightAfterMove}
                   </strong>
                 </div>
 
                 {simA === 0 ? (
-                  <div className="text-sm font-bold text-rose-400 pt-1">
+                  <div className="text-xs sm:text-sm font-bold text-rose-400 pt-1 break-words [overflow-wrap:anywhere]">
                     {simRightAfterMove === 0
-                      ? 'Ταυτότητα (0x ＝ 0): Αληθεύει για κάθε x!'
-                      : `Αδύνατη εξίσωση (0x ＝ ${simRightAfterMove}): Δεν έχει λύση!`}
+                      ? t.simIdentityMsg
+                      : t.simImpossibleMsg(simRightAfterMove)}
                   </div>
                 ) : (
-                  <div className="pt-2 border-t border-slate-800 flex items-center flex-wrap gap-2 text-base sm:text-2xl font-black text-emerald-400">
-                    <span>2. Λύση: x ＝</span>
+                  <div className="pt-2 border-t border-slate-800 inline-flex flex-wrap items-center gap-2 text-sm sm:text-base md:text-2xl font-black text-emerald-400">
+                    <span>{t.simStep2Text}</span>
                     <Frac
                       num={Math.abs(simRightAfterMove)}
                       den={Math.abs(simA)}

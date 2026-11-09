@@ -1,20 +1,34 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ ΚΑΘΑΡΙΣΜΟΥ ΚΑΙ ΤΥΠΟΓΡΑΦΙΑΣ --- //
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function formatNumberLocale(num, locale = 'el') {
+  if (num === null || num === undefined || isNaN(num)) return '';
+  return num.toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
 }
 
+// Μετατροπή ακεραίου σε λεκτικό στα Ελληνικά (έως 20.000)
 function numberToGreekWords(num) {
   if (num === 0) return 'μηδέν';
-  if (num >= 20000) return 'είκοσι χιλιάδες';
+  if (num === 20000) return 'είκοσι χιλιάδες';
 
   const units = ['', 'ένα', 'δύο', 'τρία', 'τέσσερα', 'πέντε', 'έξι', 'επτά', 'οκτώ', 'εννέα'];
   const tens = ['', 'δέκα', 'είκοσι', 'τριάντα', 'σαράντα', 'πενήντα', 'εξήντα', 'εβδομήντα', 'ογδόντα', 'εννενήντα'];
@@ -62,65 +76,185 @@ function numberToGreekWords(num) {
   return res.trim().replace(/\s+/g, ' ');
 }
 
-// 1. Ερώτηση Πολλαπλής Επιλογής (ΟΜΑΔΑ Α - 4 επιλογές με αυξημένη δεξαμενή)
-function makeMCQQuestion() {
+// Μετατροπή ακεραίου σε λεκτικό στα Αγγλικά (έως 20.000)
+function numberToEnglishWords(num) {
+  if (num === 0) return 'zero';
+  if (num === 20000) return 'twenty thousand';
+
+  const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+  const convertBelowThousand = (n) => {
+    let s = '';
+    const h = Math.floor(n / 100);
+    const rem = n % 100;
+
+    if (h > 0) {
+      s += ones[h] + ' hundred';
+      if (rem > 0) s += ' and ';
+    }
+
+    if (rem > 0) {
+      if (rem < 10) {
+        s += ones[rem];
+      } else if (rem < 20) {
+        s += teens[rem - 10];
+      } else {
+        const t = Math.floor(rem / 10);
+        const u = rem % 10;
+        s += tens[t];
+        if (u > 0) s += '-' + ones[u];
+      }
+    }
+    return s.trim();
+  };
+
+  const thousands = Math.floor(num / 1000);
+  const remainder = num % 1000;
+
+  let result = '';
+  if (thousands > 0) {
+    result += convertBelowThousand(thousands) + ' thousand';
+    if (remainder > 0) {
+      result += remainder < 100 ? ' and ' : ' ';
+    }
+  }
+
+  if (remainder > 0) {
+    result += convertBelowThousand(remainder);
+  }
+
+  return result.trim().replace(/\s+/g, ' ');
+}
+
+// --- ΣΥΓΚΕΝΤΡΩΤΙΚΟ ΛΕΞΙΚΟ i18n --- //
+const translations = {
+  el: {
+    metaTitle: "Ασκήσεις: Αριθμοί έως το 20.000 | LearnMaths.gr",
+    metaDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού: ανάγνωση, γραφή, αξία θέσης ψηφίου και σύγκριση αριθμών έως το 20.000.",
+    backUrl: "/d-dimotikou",
+    backText: "Δ' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    badge: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    title: "Ασκήσεις: Αριθμοί έως το 20.000",
+    subtitle: "Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!",
+    newQuestionsBtn: "Νέες Ασκήσεις",
+    submitBtn: "Έλεγχος Απαντήσεων",
+    scoreLabel: "Σκορ:",
+    successRate: "Επιτυχία:",
+    bottomPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    // Q1 & Q2
+    mcqPrompt: "Πώς διαβάζεται σωστά ο αριθμός",
+    mcqFbSuccess: "Ο αριθμός {num} διαβάζεται αναλύοντας πρώτα τις χιλιάδες και έπειτα τις μονάδες: «{ans}».",
+    mcqFbError: "Η ορθή ανάγνωση του αριθμού {num} είναι: «{ans}».",
+    // Q3 & Q4
+    pvPrompt: "Ποια είναι η πραγματική αξία του ψηφίου",
+    pvInNumber: "στον αριθμό",
+    pvParenthesis: "Το ψηφίο βρίσκεται στη θέση των {place}",
+    pvPlaceholder: "Γράψε την αξία (π.χ. 4000)",
+    pvFbSuccess: "Το ψηφίο {digit} εκφράζει {digit} {place}, δηλαδή {digit} · {mult} ＝ {ans}.",
+    pvFbError: "Το ψηφίο {digit} βρίσκεται στη θέση των {place}, άρα η πραγματική του αξία είναι {digit} · {mult} ＝ {ans}.",
+    // Q5 & Q6
+    decPrompt: "Συμπλήρωσε τον αριθμό που λείπει από την ανάλυση:",
+    decFbSuccess: "Η σωστή ανάλυση του αριθμού προκύπτει από το άθροισμα των επιμέρους αξιών των ψηφίων του.",
+    decFbError: "Ο όρος που έλειπε είναι ο {correct}, ώστε το συνολικό άθροισμα να ισούται με {num}.",
+    // Q7 & Q8
+    compPrompt: "Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):",
+    compFbSame: "Οι δύο αριθμοί έχουν ακριβώς την ίδια αξία σε όλες τις τάξεις μεγέθους.",
+    compFbDiff: "Συγκρίνοντας από τα αριστερά προς τα δεξιά, ισχύει {a} {sym} {b}.",
+    compFbError: "Η ορθή σύγκριση είναι {a} {sym} {b}."
+  },
+  en: {
+    metaTitle: "Exercises: Numbers up to 20,000 | LearnMaths.gr",
+    metaDesc: "Interactive math exercises for 4th Grade: reading, writing, place value, and comparing numbers up to 20,000.",
+    backUrl: "/en/d-dimotikou",
+    backText: "4th Grade",
+    theoryBtn: "Theory",
+    badge: "4TH GRADE • PRACTICE",
+    title: "Exercises: Numbers up to 20,000",
+    subtitle: "Every time you click 'New Exercises', new dynamic problems are generated from the pool!",
+    newQuestionsBtn: "New Exercises",
+    submitBtn: "Check Answers",
+    scoreLabel: "Score:",
+    successRate: "Success Rate:",
+    bottomPrompt: "Complete all questions and click 'Check Answers'!",
+    // Q1 & Q2
+    mcqPrompt: "How is the number correctly read:",
+    mcqFbSuccess: "The number {num} is read by breaking down thousands and units: \"{ans}\".",
+    mcqFbError: "The correct reading of {num} is: \"{ans}\".",
+    // Q3 & Q4
+    pvPrompt: "What is the place value of the digit",
+    pvInNumber: "in the number",
+    pvParenthesis: "The digit is in the position of {place}",
+    pvPlaceholder: "Enter the value (e.g. 4000)",
+    pvFbSuccess: "Digit {digit} represents {digit} {place}, meaning {digit} · {mult} ＝ {ans}.",
+    pvFbError: "Digit {digit} is in the position of {place}, so its place value is {digit} · {mult} ＝ {ans}.",
+    // Q5 & Q6
+    decPrompt: "Fill in the missing number in the decomposition:",
+    decFbSuccess: "The correct decomposition is formed by adding the place value of each digit.",
+    decFbError: "The missing term is {correct}, making the total sum equal to {num}.",
+    // Q7 & Q8
+    compPrompt: "Select the appropriate comparison sign ( ＜ , ＝ , ＞ ):",
+    compFbSame: "Both numbers have identical value across all place values.",
+    compFbDiff: "Comparing digits from left to right, we get {a} {sym} {b}.",
+    compFbError: "The correct comparison is {a} {sym} {b}."
+  }
+};
+
+// --- ΓΕΝΝΗΤΡΙΕΣ ΕΡΩΤΗΣΕΩΝ --- //
+
+function makeMCQQuestion(locale) {
   const num = getRandomInt(1000, 19999);
-  const correctText = numberToGreekWords(num);
+  const toWords = locale === 'en' ? numberToEnglishWords : numberToGreekWords;
+  const correctText = toWords(num);
 
   const wrongCandidates = new Set();
 
-  // Distractor 1: Παραλλαγή χιλιάδων
   const diffK = (num >= 10000 ? -1 : 1) * (getRandomInt(1, 3) * 1000);
   const w1 = Math.max(1000, Math.min(20000, num + diffK));
-  if (w1 !== num) wrongCandidates.add(numberToGreekWords(w1));
+  if (w1 !== num) wrongCandidates.add(toWords(w1));
 
-  // Distractor 2: Παραλλαγή εκατοντάδων
   const diffH = (num % 1000 >= 500 ? -1 : 1) * 200;
   const w2 = Math.max(1000, Math.min(20000, num + diffH));
-  if (w2 !== num) wrongCandidates.add(numberToGreekWords(w2));
+  if (w2 !== num) wrongCandidates.add(toWords(w2));
 
-  // Distractor 3: Αντιστροφή δεκάδων/μονάδων
   const lastTwo = num % 100;
   const d = Math.floor(lastTwo / 10);
   const m = lastTwo % 10;
   let w3 = num - lastTwo + (m * 10 + d);
   if (w3 === num || w3 > 20000) w3 = num > 1500 ? num - 50 : num + 50;
-  wrongCandidates.add(numberToGreekWords(w3));
+  wrongCandidates.add(toWords(w3));
 
-  // Συμπλήρωση αν χρειάζεται μέχρι να έχουμε 3 διακριτές λάθος επιλογές
   let step = 100;
   while (wrongCandidates.size < 3) {
     const candidate = Math.max(1000, Math.min(19999, num + step));
-    if (candidate !== num) wrongCandidates.add(numberToGreekWords(candidate));
+    if (candidate !== num) wrongCandidates.add(toWords(candidate));
     step += 150;
   }
 
-  const wrongArr = Array.from(wrongCandidates).slice(0, 3);
-  const options = [
-    { text: correctText, isCorrect: true },
-    { text: wrongArr[0], isCorrect: false },
-    { text: wrongArr[1], isCorrect: false },
-    { text: wrongArr[2], isCorrect: false },
-  ].sort(() => Math.random() - 0.5);
+  const rawOptions = [
+    correctText,
+    ...Array.from(wrongCandidates).slice(0, 3)
+  ];
+  const uniqueOptions = [...new Set(rawOptions)].sort(() => Math.random() - 0.5);
 
-  return { number: num, options, correct: correctText };
+  return { number: num, options: uniqueOptions, correct: correctText };
 }
 
-// 2. Ερώτηση Αξίας Θέσης (Μοναδικότητα ψηφίου στον αριθμό)
-function makePlaceValueQuestion() {
+function makePlaceValueQuestion(locale) {
   const places = [
-    { name: 'Δεκάδων Χιλιάδων', short: 'ΔΧ', multiplier: 10000 },
-    { name: 'Μονάδων Χιλιάδων', short: 'Χ', multiplier: 1000 },
-    { name: 'Εκατοντάδων', short: 'Ε', multiplier: 100 },
-    { name: 'Δεκάδων', short: 'Δ', multiplier: 10 },
-    { name: 'Μονάδων', short: 'Μ', multiplier: 1 }
+    { nameEl: 'Δεκάδων Χιλιάδων', nameEn: 'Ten Thousands', short: 'ΔΧ', multiplier: 10000 },
+    { nameEl: 'Μονάδων Χιλιάδων', nameEn: 'Thousands', short: 'Χ', multiplier: 1000 },
+    { nameEl: 'Εκατοντάδων', nameEn: 'Hundreds', short: 'Ε', multiplier: 100 },
+    { nameEl: 'Δεκάδων', nameEn: 'Tens', short: 'Δ', multiplier: 10 },
+    { nameEl: 'Μονάδων', nameEn: 'Units', short: 'Μ', multiplier: 1 }
   ];
 
   let num = 0;
   let chosenPlace = places[0];
   let digit = 0;
 
-  // Εγγύηση: το επιλεγμένο ψηφίο υπάρχει ΑΚΡΙΒΩΣ μία φορά στον αριθμό
   while (true) {
     num = getRandomInt(1000, 19999);
     const validPlaces = places.filter(p => Math.floor(num / p.multiplier) % 10 > 0);
@@ -134,14 +268,12 @@ function makePlaceValueQuestion() {
   return {
     number: num,
     digit,
-    placeName: chosenPlace.name,
-    placeShort: chosenPlace.short,
+    placeName: locale === 'en' ? chosenPlace.nameEn : chosenPlace.nameEl,
     multiplier: chosenPlace.multiplier,
     correct: digit * chosenPlace.multiplier
   };
 }
 
-// 3. Ερώτηση Ανάλυσης Αριθμού
 function makeDecompositionQuestion() {
   const num = getRandomInt(2500, 19999);
   const dx = Math.floor(num / 10000) * 10000;
@@ -168,22 +300,18 @@ function makeDecompositionQuestion() {
   };
 }
 
-// 4. Ερώτηση Σύγκρισης με παγίδες δεξαμενής
 function makeComparisonQuestion() {
   const type = getRandomInt(1, 4);
   let numA = getRandomInt(1000, 20000);
   let numB = getRandomInt(1000, 20000);
 
   if (type === 1) {
-    // Ίδιοι αριθμοί
     numB = numA;
   } else if (type === 2) {
-    // Παραπλήσιοι αριθμοί (διαφορά μόνο σε δεκάδες/μονάδες)
     const base = getRandomInt(1000, 1990) * 10;
     numA = base + getRandomInt(1, 9);
     numB = base + getRandomInt(1, 9);
   } else if (type === 3) {
-    // Ίδια ψηφία σε άλλη θέση (π.χ. 14.050 vs 14.500)
     const th = getRandomInt(1, 19);
     const d1 = getRandomInt(2, 9);
     numA = th * 1000 + d1 * 100;
@@ -197,13 +325,12 @@ function makeComparisonQuestion() {
   return { numA, numB, correct: correctSym };
 }
 
-// Δημιουργία 8 Ερωτήσεων
-function generateQuestions() {
+function generateQuestions(locale) {
   return {
-    q1: makeMCQQuestion(),
-    q2: makeMCQQuestion(),
-    q3: makePlaceValueQuestion(),
-    q4: makePlaceValueQuestion(),
+    q1: makeMCQQuestion(locale),
+    q2: makeMCQQuestion(locale),
+    q3: makePlaceValueQuestion(locale),
+    q4: makePlaceValueQuestion(locale),
     q5: makeDecompositionQuestion(),
     q6: makeDecompositionQuestion(),
     q7: makeComparisonQuestion(),
@@ -212,6 +339,11 @@ function generateQuestions() {
 }
 
 export default function ArithmoiEos20XiliadesAskPage() {
+  const router = useRouter();
+  const rawLocale = router.locale || router.query.locale;
+  const currentLocale = rawLocale === 'en' ? 'en' : 'el';
+  const t = translations[currentLocale];
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -220,7 +352,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(currentLocale));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -228,7 +360,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [currentLocale]);
 
   if (!questions) return null;
 
@@ -239,7 +371,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
 
   const handleNumericInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace(/\D/g, '');
+    const clean = rawVal.replace(/[^0-9]/g, '').slice(0, 10);
     setAnswers(prev => ({ ...prev, [key]: clean }));
   };
 
@@ -262,7 +394,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
     setSubmitted(true);
   };
 
-  // Component για Ασκήσεις MCQ (1 & 2)
+  // Render MCQ (Q1 & Q2)
   const renderMCQ = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
     return (
@@ -276,13 +408,13 @@ export default function ArithmoiEos20XiliadesAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Πώς διαβάζεται σωστά ο αριθμός <span className="text-blue-600 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.number)}</span>;
+            {t.mcqPrompt} <span className="text-blue-600 font-mono font-black text-lg sm:text-xl">{formatNumberLocale(qData.number, currentLocale)}</span>;
           </h3>
         </div>
 
         <div className="grid grid-cols-1 gap-2.5 sm:pl-11">
           {qData.options.map((opt, idx) => {
-            const isSelected = answers[qKey] === opt.text;
+            const isSelected = answers[qKey] === opt;
             return (
               <label
                 key={idx}
@@ -296,13 +428,15 @@ export default function ArithmoiEos20XiliadesAskPage() {
                   type="radio"
                   id={`${qKey}-opt-${idx}`}
                   name={qKey}
-                  value={opt.text}
+                  value={opt}
                   checked={isSelected}
-                  onChange={() => handleInputChange(qKey, opt.text)}
+                  onChange={() => handleInputChange(qKey, opt)}
                   disabled={submitted}
                   className="w-4 h-4 text-blue-600 focus:ring-blue-500 shrink-0"
                 />
-                <span className="capitalize leading-relaxed">{opt.text}</span>
+                <span className="capitalize leading-snug break-words whitespace-normal flex-1">
+                  {opt}
+                </span>
               </label>
             );
           })}
@@ -312,11 +446,15 @@ export default function ArithmoiEos20XiliadesAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                Ο αριθμός <span className="font-mono font-bold">{formatNumber(qData.number)}</span> διαβάζεται αναλύοντας πρώτα τις χιλιάδες και έπειτα τις μονάδες: «{qData.correct}».
+                {t.mcqFbSuccess
+                  .replace('{num}', formatNumberLocale(qData.number, currentLocale))
+                  .replace('{ans}', qData.correct)}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η ορθή ανάγνωση του αριθμού <span className="font-mono font-bold">{formatNumber(qData.number)}</span> είναι: «<strong className="font-bold text-rose-900 capitalize">{qData.correct}</strong>».
+                {t.mcqFbError
+                  .replace('{num}', formatNumberLocale(qData.number, currentLocale))
+                  .replace('{ans}', qData.correct)}
               </p>
             )}
           </div>
@@ -325,7 +463,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
     );
   };
 
-  // Component για Ασκήσεις Αξίας Θέσης (3 & 4)
+  // Render Place Value (Q3 & Q4)
   const renderPlaceValue = (qKey, qData, numLabel) => {
     const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
     return (
@@ -340,10 +478,10 @@ export default function ArithmoiEos20XiliadesAskPage() {
           </span>
           <div className="space-y-1">
             <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-              Ποια είναι η πραγματική αξία του ψηφίου <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{qData.digit}</span> στον αριθμό <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{formatNumber(qData.number)}</span>;
+              {t.pvPrompt} <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{qData.digit}</span> {t.pvInNumber} <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{formatNumberLocale(qData.number, currentLocale)}</span>;
             </h3>
             <p className="text-xs text-slate-500">
-              (Το ψηφίο βρίσκεται στη θέση των {qData.placeName})
+              ({t.pvParenthesis.replace('{place}', qData.placeName)})
             </p>
           </div>
         </div>
@@ -353,9 +491,10 @@ export default function ArithmoiEos20XiliadesAskPage() {
             type="text"
             inputMode="numeric"
             autoComplete="off"
+            maxLength={10}
             id={`input-${qKey}`}
             name={`input-${qKey}`}
-            placeholder="Γράψε την αξία (π.χ. 4000)"
+            placeholder={t.pvPlaceholder}
             value={answers[qKey]}
             onChange={(e) => handleNumericInput(qKey, e.target.value)}
             disabled={submitted}
@@ -367,11 +506,19 @@ export default function ArithmoiEos20XiliadesAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                Το ψηφίο {qData.digit} εκφράζει {qData.digit} {qData.placeName}, δηλαδή {qData.digit} · {formatNumber(qData.multiplier)} ＝ <span className="font-mono font-bold">{formatNumber(qData.correct)}</span>.
+                {t.pvFbSuccess
+                  .replace(/\{digit\}/g, qData.digit)
+                  .replace(/\{place\}/g, qData.placeName)
+                  .replace(/\{mult\}/g, formatNumberLocale(qData.multiplier, currentLocale))
+                  .replace(/\{ans\}/g, formatNumberLocale(qData.correct, currentLocale))}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ψηφίο {qData.digit} βρίσκεται στη θέση των {qData.placeName}, άρα η πραγματική του αξία είναι {qData.digit} · {formatNumber(qData.multiplier)} ＝ <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>.
+                {t.pvFbError
+                  .replace(/\{digit\}/g, qData.digit)
+                  .replace(/\{place\}/g, qData.placeName)
+                  .replace(/\{mult\}/g, formatNumberLocale(qData.multiplier, currentLocale))
+                  .replace(/\{ans\}/g, formatNumberLocale(qData.correct, currentLocale))}
               </p>
             )}
           </div>
@@ -380,7 +527,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
     );
   };
 
-  // Component για Ασκήσεις Ανάλυσης (5 & 6)
+  // Render Decomposition (Q5 & Q6)
   const renderDecomposition = (qKey, qData, numLabel) => {
     const isCorrect = parseInt(answers[qKey], 10) === qData.correct;
     const partsArray = [
@@ -402,13 +549,13 @@ export default function ArithmoiEos20XiliadesAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Συμπλήρωσε τον αριθμό που λείπει από την ανάλυση:
+            {t.decPrompt}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-1.5 leading-relaxed break-words px-3.5 py-2.5 bg-slate-50 rounded-2xl border border-slate-200 font-mono text-sm sm:text-base font-bold text-slate-800 w-full">
-            <span className="text-teal-700 font-black">{formatNumber(qData.number)}</span>
+            <span className="text-teal-700 font-black">{formatNumberLocale(qData.number, currentLocale)}</span>
             <span>＝</span>
 
             {partsArray.map((part, idx) => (
@@ -418,6 +565,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
                     type="text"
                     inputMode="numeric"
                     autoComplete="off"
+                    maxLength={10}
                     id={`input-${qKey}-${part.key}`}
                     name={`input-${qKey}-${part.key}`}
                     value={answers[qKey]}
@@ -427,7 +575,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
                     placeholder="?"
                   />
                 ) : (
-                  <span>{formatNumber(part.val)}</span>
+                  <span>{formatNumberLocale(part.val, currentLocale)}</span>
                 )}
                 {idx < partsArray.length - 1 && <span>＋</span>}
               </span>
@@ -439,11 +587,13 @@ export default function ArithmoiEos20XiliadesAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                Η σωστή ανάλυση του αριθμού προκύπτει από το άθροισμα των επιμέρους αξιών των ψηφίων του.
+                {t.decFbSuccess}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Ο όρος που έλειπε είναι ο <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)}</span>, ώστε το συνολικό άθροισμα να ισούται με {formatNumber(qData.number)}.
+                {t.decFbError
+                  .replace('{correct}', formatNumberLocale(qData.correct, currentLocale))
+                  .replace('{num}', formatNumberLocale(qData.number, currentLocale))}
               </p>
             )}
           </div>
@@ -452,7 +602,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
     );
   };
 
-  // Component για Ασκήσεις Σύγκρισης (7 & 8)
+  // Render Comparison (Q7 & Q8)
   const renderComparison = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
     return (
@@ -466,13 +616,13 @@ export default function ArithmoiEos20XiliadesAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):
+            {t.compPrompt}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-4">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-lg sm:text-2xl font-mono font-black text-slate-800 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-            <span>{formatNumber(qData.numA)}</span>
+            <span>{formatNumberLocale(qData.numA, currentLocale)}</span>
 
             <div className="flex gap-2">
               {['＜', '＝', '＞'].map((sym) => (
@@ -496,7 +646,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
               ))}
             </div>
 
-            <span>{formatNumber(qData.numB)}</span>
+            <span>{formatNumberLocale(qData.numB, currentLocale)}</span>
           </div>
         </div>
 
@@ -505,12 +655,18 @@ export default function ArithmoiEos20XiliadesAskPage() {
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
                 {qData.numA === qData.numB
-                  ? 'Οι δύο αριθμοί έχουν ακριβώς την ίδια αξία σε όλες τις τάξεις μεγέθους.'
-                  : `Συγκρίνοντας από τα αριστερά προς τα δεξιά, ισχύει ${formatNumber(qData.numA)} ${qData.correct} ${formatNumber(qData.numB)}.`}
+                  ? t.compFbSame
+                  : t.compFbDiff
+                      .replace('{a}', formatNumberLocale(qData.numA, currentLocale))
+                      .replace('{sym}', qData.correct)
+                      .replace('{b}', formatNumberLocale(qData.numB, currentLocale))}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η ορθή σύγκριση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.numA)} {qData.correct} {formatNumber(qData.numB)}</span>.
+                {t.compFbError
+                  .replace('{a}', formatNumberLocale(qData.numA, currentLocale))
+                  .replace('{sym}', qData.correct)
+                  .replace('{b}', formatNumberLocale(qData.numB, currentLocale))}
               </p>
             )}
           </div>
@@ -519,34 +675,36 @@ export default function ArithmoiEos20XiliadesAskPage() {
     );
   };
 
+  const totalQuestions = 8;
+
   return (
     <Layout
-      title="Ασκήσεις: Αριθμοί έως το 20.000 | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού: ανάγνωση, γραφή, αξία θέσης ψηφίου και σύγκριση αριθμών έως το 20.000."
-      backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      title={t.metaTitle}
+      description={t.metaDesc}
+      backUrl={t.backUrl}
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/d-dimotikou/1-arithmoi-eos-20-xiliades"
           className="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badge)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Αριθμοί έως το 20.000
+              📝 {t.title}
             </h1>
             <p className="text-amber-100 text-xs sm:text-sm md:text-base">
-              Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!
+              {t.subtitle}
             </p>
           </div>
 
@@ -554,12 +712,12 @@ export default function ArithmoiEos20XiliadesAskPage() {
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-amber-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            🔄 {t.newQuestionsBtn}
           </button>
         </div>
 
-        {/* FORM ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* FORM ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderMCQ('q1', questions.q1, 1)}
           {renderMCQ('q2', questions.q2, 2)}
 
@@ -579,7 +737,7 @@ export default function ArithmoiEos20XiliadesAskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                🎯 {t.submitBtn}
               </button>
             </div>
           )}
@@ -587,16 +745,16 @@ export default function ArithmoiEos20XiliadesAskPage() {
       </div>
 
       {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
-              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
+              <span>🏆 {t.scoreLabel}</span>
+              <span className="text-xl sm:text-2xl font-mono">{score} / {totalQuestions}</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / totalQuestions) * 100)}%</span>
               </span>
             )}
           </div>
@@ -607,11 +765,11 @@ export default function ArithmoiEos20XiliadesAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                <span>🔄</span> {t.newQuestionsBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.bottomPrompt}
               </p>
             )}
           </div>

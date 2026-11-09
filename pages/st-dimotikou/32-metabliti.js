@@ -1,25 +1,46 @@
 // pages/st-dimotikou/32-metabliti.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 
-// Οριο τιμης μεταβλητης για το εργαστηριο
+// Όριο τιμής μεταβλητής για το εργαστήριο
 const MAX_X_VAL = 20;
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
+// Αυστηρή συνάρτηση αφαίρεσης τόνων για κεφαλαία (εξαιρείται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNum(num) {
+// Μορφοποίηση αριθμών βάσει locale
+function formatNum(num, locale = 'el') {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  return Number(num).toLocaleString(loc);
+}
+
+// Component για κανονική κατακόρυφη μορφή κλάσματος
+function FractionDisplay({ num, den, size = 'sm', className = '' }) {
+  const sizeClasses = {
+    sm: { numDen: 'text-xs sm:text-sm font-bold', line: 'w-full h-0.5' },
+    md: { numDen: 'text-sm sm:text-base font-black', line: 'w-full h-0.5' }
+  };
+  const selected = sizeClasses[size] || sizeClasses.sm;
+
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle font-mono leading-none px-1 ${className}`}>
+      <span className={`${selected.numDen} pb-0.5`}>{num}</span>
+      <span className={`${selected.line} bg-current rounded-full my-0.5 min-w-[12px]`} />
+      <span className={`${selected.numDen} pt-0.5`}>{den}</span>
+    </span>
+  );
 }
 
 const PRESET_EXPRESSIONS = [
@@ -31,16 +52,130 @@ const PRESET_EXPRESSIONS = [
   { a: 6, b: 4, op: '-', label: '6x － 4' }
 ];
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Η Έννοια της Μεταβλητής - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Διαδραστική θεωρία για την έννοια της μεταβλητής, τις αλγεβρικές παραστάσεις και τον υπολογισμό αριθμητικής τιμής για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    navExercises: "🎯 Ασκήσεις",
+    heroBadge: "ΚΕΦΑΛΑΙΟ 32 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "32. Η Έννοια της Μεταβλητής και Αλγεβρικές Παραστάσεις",
+    heroDesc: "Μάθε τι είναι η μεταβλητή (x, y, α), πώς ένα γράμμα παίρνει τη θέση ενός αγνώστου ή μεταβαλλόμενου αριθμού και πώς υπολογίζουμε την αριθμητική τιμή μιας μαθηματικής έκφρασης!",
+    heroFeature: "Διαδραστική Μηχανή Υπολογισμού & Δυναμικός Πίνακας Τιμών",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Βασικές Έννοιες: Μεταβλητές & Αλγεβρικές Παραστάσεις",
+    theorySubtitle: "Από την καθημερινή γλώσσα στη γλώσσα της Άλγεβρας και των συμβόλων.",
+    card1Badge: "ΟΡΙΣΜΟΣ",
+    card1Sub: "x, y, α, β",
+    card1Title: "Τι είναι η Μεταβλητή;",
+    card1Text: "Μεταβλητή είναι ένα γράμμα (συνήθως x, y, α, β) που χρησιμοποιούμε για να παραστήσουμε μια ποσότητα που αλλάζει τιμή ή είναι άγνωστη.",
+    card1Example: "x ＝ ηλικία, απόσταση, κόστος...",
+    card1Tip: "💡 Το ίδιο γράμμα x μπορεί να πάρει διαφορετικές τιμές ανάλογα με την περίπτωση (π.χ. x ＝ 1, x ＝ 5, x ＝ 10).",
+    card2Badge: "ΕΚΦΡΑΣΗ",
+    card2Sub: "2x ＝ 2 · x",
+    card2Title: "Αλγεβρική Παράσταση",
+    card2Text: "Είναι μια μαθηματική έκφραση που περιέχει αριθμούς, πράξεις και μεταβλητές. Συνήθως παραλείπουμε το σύμβολο του πολλαπλασιασμού: 2x ＝ 2 · x.",
+    card2Tip: "⚡ Στην έκφραση 2x ＋ 3, το 2 ονομάζεται συντελεστής του x και το 3 σταθερός όρος!",
+    card3Badge: "ΥΠΟΛΟΓΙΣΜΟΣ",
+    card3Sub: "Αντικατάσταση",
+    card3Title: "Αριθμητική Τιμή",
+    card3Text: "Για να βρούμε την αριθμητική τιμή, αντικαθιστούμε το γράμμα με τον δοσμένο αριθμό και κάνουμε τις πράξεις με την προτεραιότητά τους.",
+    card3Example: (
+      <span>
+        Αν x ＝ 4 ➔ 2 · 4 ＋ 3 ＝ <strong className="text-emerald-700">11</strong>
+      </span>
+    ),
+    card3Tip: "🎯 Πρώτα εκτελούμε τον πολλαπλασιασμό του συντελεστή με το x και μετά την πρόσθεση ή αφαίρεση!",
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Η Μηχανή της Μεταβλητής & Υπολογισμός Αριθμητικής Τιμής",
+    labSubtitle: "Άλλαξε την τιμή του x, διάλεξε έκφραση και δες πώς η μηχανή αντικαθιστά το γράμμα και υπολογίζει το τελικό αποτέλεσμα!",
+    varHeading: "🔤 ΤΙΜΗ ΜΕΤΑΒΛΗΤΗΣ (x)",
+    expressionSettings: "⚙️ ΠΑΡΑΣΤΑΣΗ: a · x ± b",
+    coeffLabel: "ΣΥΝΤΕΛΕΣΤΗΣ (a)",
+    opLabel: "ΠΡΑΞΗ (±)",
+    constLabel: "ΣΤΑΘΕΡΑ (b)",
+    presetsTitle: "ΕΤΟΙΜΕΣ ΠΑΡΑΣΤΑΣΕΙΣ:",
+    labTip: "💡 Συμβουλή: Όταν αλλάζει η τιμή του x, αλλάζει αυτόματα και η τελική τιμή της παράστασης!",
+    machineTitle: "⚙️ ΜΗΧΑΝΗ ΑΝΤΙΚΑΤΑΣΤΑΣΗΣ ΚΑΙ ΥΠΟΛΟΓΙΣΜΟΥ:",
+    inputLabel: "ΕΙΣΟΔΟΣ (x)",
+    opRunLabel: "ΕΚΤΕΛΕΣΗ ΠΡΑΞΕΩΝ",
+    outputLabel: "ΕΞΟΔΟΣ (ΤΙΜΗ)",
+    tableTitle: (a, op, b) => `📊 ΠΙΝΑΚΑΣ ΤΙΜΩΝ ΓΙΑ ΤΗΝ ΠΑΡΑΣΤΑΣΗ: ${a}x ${op === '+' ? '＋' : '－'} ${b}`,
+    tableRange: "x ＝ 1 έως 5",
+    summaryTitle: (x, a, op, b, res) => `💡 ΣΥΜΠΕΡΑΣΜΑ: Για x ＝ ${x}, η αριθμητική τιμή της παράστασης ${a}x ${op === '+' ? '＋' : '－'} ${b} ισούται με ${res}!`,
+    ctaTitle: "Ώρα για Εξάσκηση στις Μεταβλητές!",
+    ctaDesc: "Κατάλαβες πώς λειτουργεί η μεταβλητή και πώς υπολογίζουμε την τιμή μιας παράστασης; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "The Concept of Variable - 6th Grade | LearnMaths.gr",
+    pageDesc: "Interactive theory on variables, algebraic expressions, and evaluating expressions for 6th Grade.",
+    backText: "6th Grade",
+    navExercises: "🎯 Exercises",
+    heroBadge: "CHAPTER 32 • 6TH GRADE",
+    heroTitle: "32. Variables & Algebraic Expressions",
+    heroDesc: "Discover what a variable (x, y, a) is, how a letter stands in place of an unknown or changing quantity, and how to evaluate an expression!",
+    heroFeature: "Interactive Function Machine & Real-Time Value Table",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Core Concepts: Variables & Algebraic Expressions",
+    theorySubtitle: "From everyday language to the language of algebra and symbols.",
+    card1Badge: "DEFINITION",
+    card1Sub: "x, y, a, b",
+    card1Title: "What is a Variable?",
+    card1Text: "A variable is a letter (usually x, y, a, b) used to represent a changing or unknown quantity.",
+    card1Example: "x ＝ age, distance, cost...",
+    card1Tip: "💡 The same letter x can take different values depending on the context (e.g. x ＝ 1, x ＝ 5, x ＝ 10).",
+    card2Badge: "EXPRESSION",
+    card2Sub: "2x ＝ 2 · x",
+    card2Title: "Algebraic Expression",
+    card2Text: "A mathematical statement containing numbers, operations, and variables. Multiplication signs are usually omitted: 2x ＝ 2 · x.",
+    card2Tip: "⚡ In 2x ＋ 3, 2 is the coefficient of x and 3 is the constant term!",
+    card3Badge: "EVALUATION",
+    card3Sub: "Substitution",
+    card3Title: "Numerical Value",
+    card3Text: "To evaluate an expression, substitute the given number for the variable and calculate using the order of operations.",
+    card3Example: (
+      <span>
+        If x ＝ 4 ➔ 2 · 4 ＋ 3 ＝ <strong className="text-emerald-700">11</strong>
+      </span>
+    ),
+    card3Tip: "🎯 Multiply coefficient by x first, then perform addition or subtraction!",
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: "Variable Machine & Evaluating Expressions",
+    labSubtitle: "Change x, pick an expression, and watch the machine substitute the value and compute the result!",
+    varHeading: "🔤 VARIABLE VALUE (x)",
+    expressionSettings: "⚙️ EXPRESSION: a · x ± b",
+    coeffLabel: "COEFFICIENT (a)",
+    opLabel: "OPERATION (±)",
+    constLabel: "CONSTANT (b)",
+    presetsTitle: "PRESET EXPRESSIONS:",
+    labTip: "💡 Tip: Whenever x changes, the final value of the expression updates automatically!",
+    machineTitle: "⚙️ SUBSTITUTION & CALCULATION ENGINE:",
+    inputLabel: "INPUT (x)",
+    opRunLabel: "ORDER OF OPERATIONS",
+    outputLabel: "OUTPUT (VALUE)",
+    tableTitle: (a, op, b) => `📊 VALUE TABLE FOR EXPRESSION: ${a}x ${op === '+' ? '＋' : '－'} ${b}`,
+    tableRange: "x ＝ 1 to 5",
+    summaryTitle: (x, a, op, b, res) => `💡 SUMMARY: For x ＝ ${x}, the value of expression ${a}x ${op === '+' ? '＋' : '－'} ${b} equals ${res}!`,
+    ctaTitle: "Time to Practice Variables!",
+    ctaDesc: "Mastered variables and evaluating algebraic expressions? Test your skills with 10 interactive questions to consolidate your knowledge!",
+    ctaBtn: "Start Exercises"
+  }
+};
+
 export default function MetablitiPage() {
-  // Τιμη της μεταβλητης x
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
+  // Τιμή της μεταβλητής x
   const [xVal, setXVal] = useState(4);
 
-  // Παραμετροι της αλγεβρικης παραστασης: a · x (op) b
+  // Παράμετροι της αλγεβρικής παράστασης: a · x (op) b
   const [coeffA, setCoeffA] = useState(2);
   const [constantB, setConstantB] = useState(3);
-  const [operator, setOperator] = useState('+'); // '+' η '-'
+  const [operator, setOperator] = useState('+');
 
-  // Χειρισμος αλλαγης x
   const handleXChange = (val) => {
     const clean = String(val).replace(/[^0-9]/g, '');
     if (clean === '') {
@@ -67,14 +202,11 @@ export default function MetablitiPage() {
     setOperator(prev => (prev === '+' ? '-' : '+'));
   };
 
-  // Ενεργη τιμη x
   const activeX = Number(xVal) || 0;
-
-  // Υπολογισμος τιμης παραστασης
   const termAx = coeffA * activeX;
   const resultVal = operator === '+' ? termAx + constantB : Math.max(0, termAx - constantB);
 
-  // Δημιουργια πινακα τιμων για x = 1, 2, 3, 4, 5
+  // Δημιουργία πίνακα τιμών για x = 1, 2, 3, 4, 5
   const tableValues = [1, 2, 3, 4, 5].map(v => ({
     x: v,
     val: operator === '+' ? coeffA * v + constantB : coeffA * v - constantB
@@ -82,46 +214,46 @@ export default function MetablitiPage() {
 
   return (
     <Layout
-      title="Η Έννοια της Μεταβλητής - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Διαδραστική θεωρία για την έννοια της μεταβλητής, τις αλγεβρικές παραστάσεις και τον υπολογισμό αριθμητικής τιμής για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/32-metabliti-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.navExercises}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 32 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.heroBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              32. Η Έννοια της Μεταβλητής και Αλγεβρικές Παραστάσεις
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Μάθε τι είναι η <strong>μεταβλητή (x, y, α)</strong>, πώς ένα γράμμα παίρνει τη θέση ενός αγνώστου ή μεταβαλλόμενου αριθμού και πώς υπολογίζουμε την <strong>αριθμητική τιμή</strong> μιας μαθηματικής έκφρασης!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Διαδραστική Μηχανή Υπολογισμού &amp; Δυναμικός Πίνακας Τιμών</span>
+              <span>{t.heroFeature}</span>
             </div>
             <Link
               href="/st-dimotikou/32-metabliti-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -131,10 +263,10 @@ export default function MetablitiPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες: Μεταβλητές &amp; Αλγεβρικές Παραστάσεις
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Από την καθημερινή γλώσσα στη γλώσσα της Άλγεβρας και των συμβόλων.
+              {t.theorySubtitle}
             </p>
           </div>
 
@@ -145,24 +277,24 @@ export default function MetablitiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΟΡΙΣΜΟΣ
+                    {t.card1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">x, y, α, β</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.card1Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Τι είναι η Μεταβλητή;
+                  {t.card1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  <strong>Μεταβλητή</strong> είναι ένα γράμμα (συνήθως <strong>x, y, α, β</strong>) που χρησιμοποιούμε για να παραστήσουμε μια ποσότητα που <strong>αλλάζει τιμή</strong> ή είναι <strong>άγνωστη</strong>.
+                  {t.card1Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>x ＝ ηλικία, απόσταση, κόστος...</p>
+                  <p>{t.card1Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Το ίδιο γράμμα x μπορεί να πάρει διαφορετικές τιμές ανάλογα με την περίπτωση (π.χ. x ＝ 1, x ＝ 5, x ＝ 10).
+                {t.card1Tip}
               </div>
             </article>
 
@@ -171,24 +303,28 @@ export default function MetablitiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΕΚΦΡΑΣΗ
+                    {t.card2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">2x ＝ 2 · x</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">{t.card2Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Αλγεβρική Παράσταση
+                  {t.card2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Είναι μια μαθηματική έκφραση που περιέχει <strong>αριθμούς, πράξεις και μεταβλητές</strong>. Συνήθως παραλείπουμε το σύμβολο του πολλαπλασιασμού: <strong>2x ＝ 2 · x</strong>.
+                  {t.card2Text}
                 </p>
 
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>2x ＋ 3, 5x － 4, x/2</p>
+                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold flex items-center justify-center gap-2 flex-wrap">
+                  <span>2x ＋ 3</span>
+                  <span>,</span>
+                  <span>5x － 4</span>
+                  <span>,</span>
+                  <FractionDisplay num="x" den="2" size="sm" />
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ Στην έκφραση 2x ＋ 3, το 2 ονομάζεται συντελεστής του x και το 3 σταθερός όρος!
+                {t.card2Tip}
               </div>
             </article>
 
@@ -197,24 +333,24 @@ export default function MetablitiPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΥΠΟΛΟΓΙΣΜΟΣ
+                    {t.card3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">Αντικατάσταση</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-emerald-600">{t.card3Sub}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Αριθμητική Τιμή
+                  {t.card3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Για να βρούμε την <strong>αριθμητική τιμή</strong>, αντικαθιστούμε το γράμμα με τον δοσμένο αριθμό και κάνουμε τις πράξεις με την προτεραιότητά τους.
+                  {t.card3Text}
                 </p>
 
                 <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>Αν x ＝ 4 ➔ 2 · 4 ＋ 3 ＝ <strong className="text-emerald-700">11</strong></p>
+                  <p>{t.card3Example}</p>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🎯 Πρώτα εκτελούμε τον πολλαπλασιασμό του συντελεστή με το x και μετά την πρόσθεση ή αφαίρεση!
+                {t.card3Tip}
               </div>
             </article>
 
@@ -225,20 +361,20 @@ export default function MetablitiPage() {
         <section className="bg-white p-4 sm:p-8 2xl:p-12 rounded-3xl border border-slate-200 shadow-sm space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-              <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+              <span>{t.labBadge}</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Η Μηχανή της Μεταβλητής &amp; Υπολογισμός Αριθμητικής Τιμής
+              {t.labTitle}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-1">
-              Άλλαξε την τιμή του x, διάλεξε έκφραση και δες πώς η μηχανή αντικαθιστά το γράμμα και υπολογίζει το τελικό αποτέλεσμα!
+              {t.labSubtitle}
             </p>
           </div>
 
-          {/* MAIN INTERACTIVE GRID (4 COLS LEFT / 8 COLS RIGHT) */}
+          {/* MAIN INTERACTIVE GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             
-            {/* LEFT: CONTROLS & PRESETS (4 COLS) */}
+            {/* LEFT: CONTROLS & PRESETS */}
             <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-3.5 sm:p-5 rounded-2xl space-y-5 shadow-inner flex flex-col justify-between overflow-hidden">
               <div className="space-y-4">
                 
@@ -246,7 +382,7 @@ export default function MetablitiPage() {
                 <div className="bg-blue-50/60 p-3 sm:p-4 rounded-2xl border border-blue-200 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-black text-blue-800 tracking-wider uppercase">
-                      🔤 ΤΙΜΗ ΜΕΤΑΒΛΗΤΗΣ (x)
+                      {t.varHeading}
                     </span>
                     <span className="text-xs font-mono font-black text-blue-600 bg-white px-2.5 py-1 rounded-xl border border-blue-200 shadow-xs">
                       x ＝ {activeX}
@@ -289,17 +425,17 @@ export default function MetablitiPage() {
                   </div>
                 </div>
 
-                {/* ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ ΕΚΦΡΑΣΗΣ (a · x ± b) */}
+                {/* ΠΑΡΑΜΕΤΡΟΠΟΙΗΣΗ ΕΚΦΡΑΣΗΣ */}
                 <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
                   <span className="text-xs font-black text-slate-700 tracking-wider block uppercase">
-                    ⚙️ ΠΑΡΑΣΤΑΣΗ: a · x ± b
+                    {t.expressionSettings}
                   </span>
                   
                   <div className="grid grid-cols-3 gap-2 text-center">
                     {/* Συντελεστής (a) */}
                     <div className="flex flex-col justify-between space-y-1.5">
                       <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight uppercase">
-                        ΣΥΝΤΕΛΕΣΤΗΣ (a)
+                        {t.coeffLabel}
                       </span>
                       <div className="flex items-center justify-between bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
@@ -323,12 +459,12 @@ export default function MetablitiPage() {
                     {/* Πράξη (op) */}
                     <div className="flex flex-col justify-between space-y-1.5">
                       <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight uppercase">
-                        ΠΡΑΞΗ (±)
+                        {t.opLabel}
                       </span>
                       <button 
                         type="button" 
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleOperator(); }} 
-                        className="w-full h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl border border-indigo-200 text-base flex items-center justify-center touch-manipulation active:scale-95 transition shadow-xs"
+                        className="w-full h-10 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-black rounded-xl border border-indigo-200 text-base flex items-center justify-center touch-manipulation active:scale-95 transition shadow-xs font-mono"
                       >
                         {operator === '+' ? '＋' : '－'}
                       </button>
@@ -337,7 +473,7 @@ export default function MetablitiPage() {
                     {/* Σταθερά (b) */}
                     <div className="flex flex-col justify-between space-y-1.5">
                       <span className="text-[10px] font-bold text-slate-500 h-7 flex items-center justify-center leading-tight uppercase">
-                        ΣΤΑΘΕΡΑ (b)
+                        {t.constLabel}
                       </span>
                       <div className="flex items-center justify-between bg-slate-50 p-1 rounded-xl border border-slate-200 h-10">
                         <button 
@@ -363,7 +499,7 @@ export default function MetablitiPage() {
                 {/* PRESET EXPRESSIONS */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider block">
-                    ΕΤΟΙΜΕΣ ΠΑΡΑΣΤΑΣΕΙΣ:
+                    {t.presetsTitle}
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {PRESET_EXPRESSIONS.map((p, idx) => (
@@ -390,33 +526,33 @@ export default function MetablitiPage() {
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200 mt-3">
-                💡 <strong>Συμβουλή:</strong> Όταν αλλάζει η τιμή του <strong>x</strong>, αλλάζει αυτόματα και η τελική τιμή της παράστασης!
+                {t.labTip}
               </div>
             </div>
 
-            {/* RIGHT: FUNCTION MACHINE & VALUE TABLE (8 COLS) */}
+            {/* RIGHT: FUNCTION MACHINE & VALUE TABLE */}
             <div className="lg:col-span-8 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[520px] space-y-6">
               
-              {/* 1. Η ΜΗΧΑΝΗ ΥΠΟΛΟΓΙΣΜΟΥ (FUNCTION MACHINE VISUAL) */}
+              {/* 1. Η ΜΗΧΑΝΗ ΥΠΟΛΟΓΙΣΜΟΥ */}
               <div className="bg-slate-50 p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-inner space-y-4">
                 <span className="text-xs font-black text-slate-500 uppercase tracking-wider block text-center">
-                  ⚙️ ΜΗΧΑΝΗ ΑΝΤΙΚΑΤΑΣΤΑΣΗΣ ΚΑΙ ΥΠΟΛΟΓΙΣΜΟΥ:
+                  {t.machineTitle}
                 </span>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-3 sm:gap-4 text-center">
                   
                   {/* Είσοδος (Input x) */}
                   <div className="bg-blue-100 border-2 border-blue-400 p-3.5 sm:p-4 rounded-2xl flex flex-col items-center min-w-[110px] sm:min-w-[120px] shadow-sm">
-                    <span className="text-[10px] font-black text-blue-800 tracking-wider uppercase">ΕΙΣΟΔΟΣ (x)</span>
+                    <span className="text-[10px] font-black text-blue-800 tracking-wider uppercase">{t.inputLabel}</span>
                     <span className="text-3xl sm:text-4xl font-mono font-black text-blue-700 mt-1">{activeX}</span>
                   </div>
 
                   <span className="text-2xl text-slate-400 font-black">➔</span>
 
-                  {/* Εσωτερικό Μηχανής (Formula) */}
+                  {/* Εσωτερικό Μηχανής */}
                   <div className="bg-gradient-to-br from-indigo-700 to-purple-800 text-white p-4 sm:p-5 rounded-3xl shadow-xl flex-1 max-w-md border border-indigo-500 w-full">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-200 block mb-1">
-                      ΕΚΤΕΛΕΣΗ ΠΡΑΞΕΩΝ
+                      {t.opRunLabel}
                     </span>
                     <div className="font-mono text-lg sm:text-2xl font-black tracking-wide">
                       {coeffA} · <span className="text-amber-300 underline underline-offset-4">{activeX}</span> {operator === '+' ? '＋' : '－'} {constantB}
@@ -428,27 +564,26 @@ export default function MetablitiPage() {
 
                   <span className="text-2xl text-slate-400 font-black">➔</span>
 
-                  {/* Έξοδος (Result Value) */}
+                  {/* Έξοδος */}
                   <div className="bg-emerald-100 border-2 border-emerald-400 p-3.5 sm:p-4 rounded-2xl flex flex-col items-center min-w-[110px] sm:min-w-[120px] shadow-sm">
-                    <span className="text-[10px] font-black text-emerald-800 tracking-wider uppercase">ΕΞΟΔΟΣ (ΤΙΜΗ)</span>
+                    <span className="text-[10px] font-black text-emerald-800 tracking-wider uppercase">{t.outputLabel}</span>
                     <span className="text-3xl sm:text-4xl font-mono font-black text-emerald-700 mt-1">{resultVal}</span>
                   </div>
 
                 </div>
               </div>
 
-              {/* 2. ΔΥΝΑΜΙΚΟΣ ΠΙΝΑΚΑΣ ΤΙΜΩΝ (TABLE OF VALUES) */}
+              {/* 2. ΔΥΝΑΜΙΚΟΣ ΠΙΝΑΚΑΣ ΤΙΜΩΝ */}
               <div className="space-y-3">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 px-1">
                   <span className="text-xs font-black text-slate-500 tracking-wider block">
-                    📊 ΠΙΝΑΚΑΣ ΤΙΜΩΝ ΓΙΑ ΤΗΝ ΠΑΡΑΣΤΑΣΗ: <strong className="text-indigo-600 font-mono">{coeffA}x {operator === '+' ? '＋' : '－'} {constantB}</strong>
+                    {t.tableTitle(coeffA, operator, constantB)}
                   </span>
                   <span className="text-[11px] font-bold text-slate-400">
-                    x ＝ 1 έως 5
+                    {t.tableRange}
                   </span>
                 </div>
 
-                {/* Πλέγμα με 5 κάρτες */}
                 <div className="flex flex-wrap justify-center sm:grid sm:grid-cols-5 gap-2 text-center">
                   {tableValues.map((row) => (
                     <div 
@@ -472,7 +607,7 @@ export default function MetablitiPage() {
 
               {/* 3. ΤΕΛΙΚΟ ΣΥΜΠΕΡΑΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-3.5 sm:p-4 rounded-2xl text-center font-mono font-black text-xs sm:text-sm shadow-md">
-                💡 ΣΥΜΠΕΡΑΣΜΑ: Για <strong>x ＝ {activeX}</strong>, η αριθμητική τιμή της παράστασης <strong>{coeffA}x {operator === '+' ? '＋' : '－'} {constantB}</strong> ισούται με <strong>{resultVal}</strong>!
+                {t.summaryTitle(activeX, coeffA, operator, constantB, resultVal)}
               </div>
 
             </div>
@@ -484,10 +619,10 @@ export default function MetablitiPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στις Μεταβλητές!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Κατάλαβες πώς λειτουργεί η μεταβλητή και πώς υπολογίζουμε την τιμή μιας παράστασης; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              {t.ctaDesc}
             </p>
           </div>
 
@@ -495,7 +630,7 @@ export default function MetablitiPage() {
             href="/st-dimotikou/32-metabliti-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(t.ctaBtn)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

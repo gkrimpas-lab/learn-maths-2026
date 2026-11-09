@@ -1,9 +1,22 @@
 // pages/d-dimotikou/11-dekadikoi-3-psifia-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// Component για μαθηματική γραφή κλασμάτων
+// Συνάρτηση μετατροπής σε άτονα ελληνικά κεφαλαία με εξαίρεση το "Δ'"
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+// Component για μαθηματική γραφή κλασμάτων (κατακόρυφη μορφή)
 const Fraction = ({ num, den }) => (
   <span className="inline-flex flex-col items-center align-middle mx-1 text-center font-serif leading-none">
     <span className="border-b border-current px-1 pb-0.5 text-[0.95em]">{num}</span>
@@ -15,53 +28,148 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function formatNumberByLocale(num, isEn) {
+  if (num === null || num === undefined || isNaN(num)) return '';
+  return Number(num).toLocaleString(isEn ? 'en-US' : 'el-GR');
 }
+
+// Συγκεντρωτικό λεξικό μεταφράσεων i18n
+const TRANSLATIONS = {
+  el: {
+    metaTitle: "Ασκήσεις: Δεκαδικοί Αριθμοί με 3 Ψηφία | LearnMaths.gr",
+    metaDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στους δεκαδικούς με 3 ψηφία (χιλιοστά): μετατροπή κλασμάτων με παρονομαστή 1.000, αξία θέσης και σύγκριση.",
+    backText: "Δ' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    gradeBadge: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    heroTitle: "📝 Ασκήσεις: Δεκαδικοί με 3 Ψηφία (Χιλιοστά)",
+    heroDesc: "Πατώντας «Νέες Ασκήσεις», οι αριθμοί και τα κλάσματα ανανεώνονται αυτόματα από τη δεξαμενή!",
+    newExercisesBtn: "🔄 Νέες Ασκήσεις",
+    checkAnswersBtn: "🎯 Έλεγχος Απαντήσεων",
+    placeholderDecimal: "π.χ. 0,245",
+    q1PromptPre: "Γράψε το δεκαδικό κλάσμα",
+    q1PromptPost: "ως δεκαδικό αριθμό με υποδιαστολή:",
+    q2Prompt: "Ποιο δεκαδικό κλάσμα ισούται με τον αριθμό",
+    q3PromptPre: "Ποιο ψηφίο βρίσκεται στη θέση των",
+    q3PromptMid: "στον αριθμό",
+    q3PromptPost: ";",
+    digitLabelPrefix: "Ψηφίο",
+    comparePrompt: "Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):",
+    correctAnswerIs: "Ο σωστός δεκαδικός αριθμός είναι",
+    correctFractionIs: "Το ορθό δεκαδικό κλάσμα είναι το",
+    correctDigitIs: "Το ψηφίο είναι το",
+    correctRelationIs: "Η σωστή σχέση είναι",
+    scoreLabel: "🏆 Σκορ:",
+    successRate: "Επιτυχία:",
+    footerPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    places: {
+      tenths: "δέκατα",
+      hundredths: "εκατοστά",
+      thousandths: "χιλιοστά"
+    },
+    explainFractionToDecimal: (numStr, val) =>
+      `Διαιρώντας με το 1.000, η υποδιαστολή μετακινείται 3 θέσεις προς τα αριστερά: ${numStr}/1.000 ＝ ${val}.`,
+    explainDecimalToFraction: (decVal, numStr) =>
+      `Ο αριθμός ${decVal} έχει 3 δεκαδικά ψηφία (χιλιοστά), επομένως ισούται ακριβώς με το δεκαδικό κλάσμα ${numStr}/1.000.`,
+    explainPlaceTenths: (digit) =>
+      `Το ψηφίο των δεκάτων είναι το 1ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${digit}.`,
+    explainPlaceHundredths: (digit) =>
+      `Το ψηφίο των εκατοστών είναι το 2ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${digit}.`,
+    explainPlaceThousandths: (digit) =>
+      `Το ψηφίο των χιλιοστών είναι το 3ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${digit}.`,
+    explainCompareEqual: (strA, strB) =>
+      `Οι αριθμοί ${strA} και ${strB} είναι ίσοι, αφού τα μηδενικά στο τέλος του δεκαδικού μέρους δεν αλλάζουν την αξία.`,
+    explainCompareDiff: (strA, sym, strB) =>
+      `Συγκρίνοντας τα ψηφία από τα αριστερά προς τα δεξιά, προκύπτει ${strA} ${sym} ${strB}.`
+  },
+  en: {
+    metaTitle: "Exercises: Decimal Numbers with 3 Decimal Places | LearnMaths.gr",
+    metaDesc: "Interactive 4th-grade math exercises on 3-decimal-place numbers (thousandths): converting fractions with denominator 1,000, place value, and comparisons.",
+    backText: "Grade 4",
+    theoryBtn: "Theory",
+    gradeBadge: "GRADE 4 • PRACTICE",
+    heroTitle: "📝 Exercises: Decimals with 3 Places (Thousandths)",
+    heroDesc: "By clicking \"New Exercises\", the numbers and fractions regenerate automatically from the pool!",
+    newExercisesBtn: "🔄 New Exercises",
+    checkAnswersBtn: "🎯 Check Answers",
+    placeholderDecimal: "e.g. 0.245",
+    q1PromptPre: "Write the decimal fraction",
+    q1PromptPost: "as a decimal number:",
+    q2Prompt: "Which decimal fraction equals the number",
+    q3PromptPre: "Which digit is in the",
+    q3PromptMid: "place in the number",
+    q3PromptPost: "?",
+    digitLabelPrefix: "Digit",
+    comparePrompt: "Select the appropriate comparison symbol ( ＜ , ＝ , ＞ ):",
+    correctAnswerIs: "The correct decimal number is",
+    correctFractionIs: "The correct decimal fraction is",
+    correctDigitIs: "The digit is",
+    correctRelationIs: "The correct relation is",
+    scoreLabel: "🏆 Score:",
+    successRate: "Score:",
+    footerPrompt: "Complete all questions and click \"Check Answers\"!",
+    places: {
+      tenths: "tenths",
+      hundredths: "hundredths",
+      thousandths: "thousandths"
+    },
+    explainFractionToDecimal: (numStr, val) =>
+      `Dividing by 1,000 moves the decimal point 3 places to the left: ${numStr}/1,000 ＝ ${val}.`,
+    explainDecimalToFraction: (decVal, numStr) =>
+      `The number ${decVal} has 3 decimal places (thousandths), so it equals exactly the decimal fraction ${numStr}/1,000.`,
+    explainPlaceTenths: (digit) =>
+      `The tenths digit is the 1st digit after the decimal point, which is ${digit}.`,
+    explainPlaceHundredths: (digit) =>
+      `The hundredths digit is the 2nd digit after the decimal point, which is ${digit}.`,
+    explainPlaceThousandths: (digit) =>
+      `The thousandths digit is the 3rd digit after the decimal point, which is ${digit}.`,
+    explainCompareEqual: (strA, strB) =>
+      `The numbers ${strA} and ${strB} are equal, because trailing zeros at the end of the decimal part do not change the value.`,
+    explainCompareDiff: (strA, sym, strB) =>
+      `Comparing the digits from left to right, we find ${strA} ${sym} ${strB}.`
+  }
+};
 
 // 1. Άσκηση: Μετατροπή Κλάσματος σε Δεκαδικό με 3 ψηφία (Input)
 function makeFractionToDecimalQuestion(prevQuestion = null) {
-  let num, val;
+  let num;
   const den = 1000;
 
   while (true) {
-    // Εναλλαγή μεταξύ μονοψήφιου, διψήφιου, τριψήφιου και τετραψήφιου αριθμητή για ποικιλία παγίδων
     const category = getRandomInt(1, 4);
-    if (category === 1) num = getRandomInt(3, 9); // π.χ. 7/1000 -> 0,007
-    else if (category === 2) num = getRandomInt(12, 85); // π.χ. 45/1000 -> 0,045
-    else if (category === 3) num = getRandomInt(105, 995); // π.χ. 325/1000 -> 0,325
-    else num = getRandomInt(1005, 4995); // π.χ. 2345/1000 -> 2,345
-
-    val = (num / den).toFixed(3).replace('.', ',');
+    if (category === 1) num = getRandomInt(3, 9);
+    else if (category === 2) num = getRandomInt(12, 85);
+    else if (category === 3) num = getRandomInt(105, 995);
+    else num = getRandomInt(1005, 4995);
 
     if (!prevQuestion || prevQuestion.num !== num) {
       break;
     }
   }
 
+  const numericVal = num / den;
+
   return {
     num,
     den,
-    correct: val,
-    explainText: `Διαιρώντας με το 1.000, η υποδιαστολή μετακινείται 3 θέσεις προς τα αριστερά: ${formatNumber(num)}/1.000 ＝ ${val}.`
+    numericVal
   };
 }
 
 // 2. Άσκηση: Μετατροπή Δεκαδικού σε Κλάσμα (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
 function makeDecimalToFractionQuestion(prevQuestion = null) {
-  let num, decVal;
+  let num;
   const den = 1000;
 
   while (true) {
     num = getRandomInt(15, 985);
-    decVal = (num / den).toFixed(3).replace('.', ',');
-
-    if (!prevQuestion || prevQuestion.decVal !== decVal) {
+    if (!prevQuestion || prevQuestion.num !== num) {
       break;
     }
   }
 
+  const numericVal = num / den;
   const correctText = `${num}/${den}`;
+
   const wrongCandidates = new Set();
   wrongCandidates.add(`${num}/100`);
   wrongCandidates.add(`${num}/10`);
@@ -73,27 +181,30 @@ function makeDecimalToFractionQuestion(prevQuestion = null) {
   }
 
   const wrongArr = Array.from(wrongCandidates).slice(0, 3);
-  const options = [
+  const rawOptions = [
     { num, den, text: correctText, isCorrect: true },
     { num: parseInt(wrongArr[0].split('/')[0], 10), den: parseInt(wrongArr[0].split('/')[1], 10), text: wrongArr[0], isCorrect: false },
     { num: parseInt(wrongArr[1].split('/')[0], 10), den: parseInt(wrongArr[1].split('/')[1], 10), text: wrongArr[1], isCorrect: false },
     { num: parseInt(wrongArr[2].split('/')[0], 10), den: parseInt(wrongArr[2].split('/')[1], 10), text: wrongArr[2], isCorrect: false }
-  ].sort(() => Math.random() - 0.5);
+  ];
+
+  const uniqueOptions = [...new Set(rawOptions.map((o) => o.text))].map((t) =>
+    rawOptions.find((o) => o.text === t)
+  ).sort(() => Math.random() - 0.5);
 
   return {
-    decVal,
-    options,
-    correct: correctText,
     num,
     den,
-    explainText: `Ο αριθμός ${decVal} έχει 3 δεκαδικά ψηφία (χιλιοστά), επομένως ισούται ακριβώς με το δεκαδικό κλάσμα ${num}/1.000.`
+    numericVal,
+    options: uniqueOptions,
+    correct: correctText
   };
 }
 
 // 3. Άσκηση: Αξία Θέσης Ψηφίου (με εγγύηση μοναδικότητας)
 function makePlaceValueQuestion(prevQuestion = null) {
-  let intPart, tenths, hundredths, thousandths, placeType, decStr, correctDigit;
-  const places = ['δέκατα', 'εκατοστά', 'χιλιοστά'];
+  let intPart, tenths, hundredths, thousandths, placeKey, correctDigit;
+  const placeKeys = ['tenths', 'hundredths', 'thousandths'];
 
   while (true) {
     intPart = getRandomInt(0, 9);
@@ -101,7 +212,6 @@ function makePlaceValueQuestion(prevQuestion = null) {
     hundredths = getRandomInt(1, 9);
     thousandths = getRandomInt(1, 9);
 
-    // Εξασφάλιση μοναδικότητας: όλα τα ψηφία του αριθμού είναι διαφορετικά
     if (
       intPart !== tenths &&
       intPart !== hundredths &&
@@ -110,83 +220,77 @@ function makePlaceValueQuestion(prevQuestion = null) {
       tenths !== thousandths &&
       hundredths !== thousandths
     ) {
-      placeType = places[getRandomInt(0, places.length - 1)];
-      decStr = `${intPart},${tenths}${hundredths}${thousandths}`;
+      placeKey = placeKeys[getRandomInt(0, placeKeys.length - 1)];
 
-      if (placeType === 'δέκατα') correctDigit = tenths;
-      if (placeType === 'εκατοστά') correctDigit = hundredths;
-      if (placeType === 'χιλιοστά') correctDigit = thousandths;
+      if (placeKey === 'tenths') correctDigit = tenths;
+      if (placeKey === 'hundredths') correctDigit = hundredths;
+      if (placeKey === 'thousandths') correctDigit = thousandths;
 
-      if (!prevQuestion || prevQuestion.decStr !== decStr || prevQuestion.placeType !== placeType) {
+      if (!prevQuestion || prevQuestion.intPart !== intPart || prevQuestion.placeKey !== placeKey) {
         break;
       }
     }
   }
 
   return {
-    decStr,
-    placeType,
-    correct: correctDigit.toString(),
-    explainText:
-      placeType === 'δέκατα'
-        ? `Το ψηφίο των δεκάτων είναι το 1ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${correctDigit}.`
-        : placeType === 'εκατοστά'
-        ? `Το ψηφίο των εκατοστών είναι το 2ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${correctDigit}.`
-        : `Το ψηφίο των χιλιοστών είναι το 3ο ψηφίο μετά την υποδιαστολή, δηλαδή το ${correctDigit}.`
+    intPart,
+    tenths,
+    hundredths,
+    thousandths,
+    placeKey,
+    correct: correctDigit.toString()
   };
 }
 
-// 4. Άσκηση: Σύγκριση Δεκαδικών με 3 ψηφία (<, =, >)
+// 4. Άσκηση: Σύγκριση Δεκαδικών με 3 ψηφία (＜, ＝, ＞)
 function makeComparisonQuestion(prevQuestion = null) {
-  let valA, valB, strA, strB, correctSym;
+  let valA, valB, rawStrA, rawStrB, correctSym, isTrailingZero;
 
   while (true) {
     const intPart = getRandomInt(0, 9);
     const type = getRandomInt(1, 3);
+    isTrailingZero = false;
 
     if (type === 1) {
-      // Ίσοι αριθμοί με μηδενικά στο τέλος (π.χ. 3,400 vs 3,4)
       const d = getRandomInt(1, 9);
       valA = intPart + d / 10;
       valB = valA;
-      strA = `${intPart},${d}00`;
-      strB = `${intPart},${d}`;
+      rawStrA = `${intPart}.${d}00`;
+      rawStrB = `${intPart}.${d}`;
+      isTrailingZero = true;
     } else if (type === 2) {
-      // Ίδια δέκατα, διαφορά στα εκατοστά ή χιλιοστά
       const d = getRandomInt(1, 8);
       const decA = d * 100 + getRandomInt(10, 80);
       const decB = decA + getRandomInt(-15, 25);
       valA = intPart + decA / 1000;
       valB = intPart + decB / 1000;
-      strA = `${intPart},${decA.toString().padStart(3, '0')}`;
-      strB = `${intPart},${decB.toString().padStart(3, '0')}`;
+      rawStrA = `${intPart}.${decA.toString().padStart(3, '0')}`;
+      rawStrB = `${intPart}.${decB.toString().padStart(3, '0')}`;
     } else {
-      // Διαφορά ήδη από το ακέραιο μέρος ή τα δέκατα
       const decA = getRandomInt(15, 950);
       const decB = getRandomInt(15, 950);
       valA = intPart + decA / 1000;
       valB = intPart + (Math.random() > 0.5 ? 1 : 0) + decB / 1000;
-      strA = (intPart + decA / 1000).toFixed(3).replace('.', ',');
-      strB = valB.toFixed(3).replace('.', ',');
+      rawStrA = (intPart + decA / 1000).toFixed(3);
+      rawStrB = valB.toFixed(3);
     }
 
     correctSym = '＝';
     if (valA > valB) correctSym = '＞';
     if (valA < valB) correctSym = '＜';
 
-    if (!prevQuestion || prevQuestion.strA !== strA || prevQuestion.strB !== strB) {
+    if (!prevQuestion || prevQuestion.rawStrA !== rawStrA || prevQuestion.rawStrB !== rawStrB) {
       break;
     }
   }
 
   return {
-    strA,
-    strB,
+    valA,
+    valB,
+    rawStrA,
+    rawStrB,
     correct: correctSym,
-    explainText:
-      valA === valB
-        ? `Οι αριθμοί ${strA} και ${strB} είναι ίσοι, αφού τα μηδενικά στο τέλος του δεκαδικού μέρους δεν αλλάζουν την αξία.`
-        : `Συγκρίνοντας τα ψηφία από τα αριστερά προς τα δεξιά, προκύπτει ${strA} ${correctSym} ${strB}.`
+    isTrailingZero
   };
 }
 
@@ -208,6 +312,11 @@ function generateQuestions() {
 }
 
 export default function Dekadikoi3PsifiaAskPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+  const isEn = locale === 'en';
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -235,8 +344,23 @@ export default function Dekadikoi3PsifiaAskPage() {
 
   const handleDecimalInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace('.', ',').replace(/[^0-9,]/g, '');
+    const clean = isEn
+      ? rawVal.replace(/[^0-9.]/g, '').slice(0, 10)
+      : rawVal.replace(/\./g, ',').replace(/[^0-9,]/g, '').slice(0, 10);
     setAnswers((prev) => ({ ...prev, [key]: clean }));
+  };
+
+  const handleIntegerInput = (key, rawVal) => {
+    if (submitted) return;
+    const clean = rawVal.replace(/[^0-9]/g, '').slice(0, 10);
+    setAnswers((prev) => ({ ...prev, [key]: clean }));
+  };
+
+  const checkDecimalEqual = (userStr, targetNumeric) => {
+    if (!userStr) return false;
+    const parsed = parseFloat(userStr.replace(',', '.'));
+    if (isNaN(parsed)) return false;
+    return Math.abs(parsed - targetNumeric) <= 0.05;
   };
 
   const handleSubmit = (e) => {
@@ -244,10 +368,9 @@ export default function Dekadikoi3PsifiaAskPage() {
     if (submitted) return;
 
     let currentScore = 0;
-    const normalize = (str) => (str || '').toString().trim().replace('.', ',');
 
-    if (normalize(answers.q1) === normalize(questions.q1.correct)) currentScore += 1;
-    if (normalize(answers.q2) === normalize(questions.q2.correct)) currentScore += 1;
+    if (checkDecimalEqual(answers.q1, questions.q1.numericVal)) currentScore += 1;
+    if (checkDecimalEqual(answers.q2, questions.q2.numericVal)) currentScore += 1;
     if (answers.q3 === questions.q3.correct) currentScore += 1;
     if (answers.q4 === questions.q4.correct) currentScore += 1;
     if (parseInt(answers.q5, 10) === parseInt(questions.q5.correct, 10)) currentScore += 1;
@@ -261,7 +384,15 @@ export default function Dekadikoi3PsifiaAskPage() {
 
   // Render Q1 & Q2: Κλάσμα ➔ Δεκαδικός (Input)
   const renderFractionToDecimal = (qKey, qData, numLabel) => {
-    const isCorrect = (answers[qKey] || '').toString().trim().replace('.', ',') === qData.correct;
+    const isCorrect = checkDecimalEqual(answers[qKey], qData.numericVal);
+    const numFormatted = formatNumberByLocale(qData.num, isEn);
+    const denFormatted = formatNumberByLocale(qData.den, isEn);
+    const correctValFormatted = qData.numericVal.toLocaleString(isEn ? 'en-US' : 'el-GR', {
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3
+    });
+    const explainText = t.explainFractionToDecimal(numFormatted, correctValFormatted);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -273,13 +404,13 @@ export default function Dekadikoi3PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Γράψε το δεκαδικό κλάσμα <Fraction num={formatNumber(qData.num)} den={formatNumber(qData.den)} /> ως δεκαδικό αριθμό με υποδιαστολή:
+            {t.q1PromptPre} <Fraction num={numFormatted} den={denFormatted} /> {t.q1PromptPost}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <Fraction num={formatNumber(qData.num)} den={formatNumber(qData.den)} />
+            <Fraction num={numFormatted} den={denFormatted} />
             <span>＝</span>
             <input
               type="text"
@@ -287,7 +418,8 @@ export default function Dekadikoi3PsifiaAskPage() {
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="π.χ. 0,245"
+              placeholder={t.placeholderDecimal}
+              maxLength={10}
               value={answers[qKey]}
               onChange={(e) => handleDecimalInput(qKey, e.target.value)}
               disabled={submitted}
@@ -300,11 +432,11 @@ export default function Dekadikoi3PsifiaAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Ο σωστός δεκαδικός αριθμός είναι <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+                {t.correctAnswerIs} <span className="font-mono font-bold text-rose-900">{correctValFormatted}</span>. {explainText}
               </p>
             )}
           </div>
@@ -316,6 +448,14 @@ export default function Dekadikoi3PsifiaAskPage() {
   // Render Q3 & Q4: Δεκαδικός ➔ Κλάσμα (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
   const renderDecimalToFraction = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
+    const decFormatted = qData.numericVal.toLocaleString(isEn ? 'en-US' : 'el-GR', {
+      minimumFractionDigits: 3,
+      maximumFractionDigits: 3
+    });
+    const numFormatted = formatNumberByLocale(qData.num, isEn);
+    const denFormatted = formatNumberByLocale(qData.den, isEn);
+    const explainText = t.explainDecimalToFraction(decFormatted, numFormatted);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -327,7 +467,7 @@ export default function Dekadikoi3PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Ποιο δεκαδικό κλάσμα ισούται με τον αριθμό <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{qData.decVal}</span>;
+            {t.q2Prompt} <span className="text-indigo-600 font-mono font-black text-lg sm:text-xl">{decFormatted}</span>?
           </h3>
         </div>
 
@@ -353,7 +493,9 @@ export default function Dekadikoi3PsifiaAskPage() {
                   disabled={submitted}
                   className="hidden"
                 />
-                <Fraction num={formatNumber(opt.num)} den={formatNumber(opt.den)} />
+                <span className="break-words whitespace-normal leading-snug flex-1 text-center">
+                  <Fraction num={formatNumberByLocale(opt.num, isEn)} den={formatNumberByLocale(opt.den, isEn)} />
+                </span>
               </label>
             );
           })}
@@ -363,11 +505,11 @@ export default function Dekadikoi3PsifiaAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ορθό δεκαδικό κλάσμα είναι το <Fraction num={formatNumber(qData.num)} den={formatNumber(qData.den)} />. {qData.explainText}
+                {t.correctFractionIs} <Fraction num={numFormatted} den={denFormatted} />. {explainText}
               </p>
             )}
           </div>
@@ -379,6 +521,15 @@ export default function Dekadikoi3PsifiaAskPage() {
   // Render Q5 & Q6: Αξία Θέσης (Input)
   const renderPlaceValue = (qKey, qData, numLabel) => {
     const isCorrect = (answers[qKey] || '').toString().trim() === qData.correct;
+    const decSep = isEn ? '.' : ',';
+    const decStr = `${qData.intPart}${decSep}${qData.tenths}${qData.hundredths}${qData.thousandths}`;
+    const placeName = t.places[qData.placeKey];
+
+    let explainText = '';
+    if (qData.placeKey === 'tenths') explainText = t.explainPlaceTenths(qData.correct);
+    else if (qData.placeKey === 'hundredths') explainText = t.explainPlaceHundredths(qData.correct);
+    else explainText = t.explainPlaceThousandths(qData.correct);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -390,14 +541,14 @@ export default function Dekadikoi3PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Ποιο ψηφίο βρίσκεται στη θέση των <span className="text-teal-600 font-extrabold">{qData.placeType}</span> στον αριθμό <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">{qData.decStr}</span>;
+            {t.q3PromptPre} <span className="text-teal-600 font-extrabold">{placeName}</span> {t.q3PromptMid} <span className="text-teal-600 font-mono font-black text-lg sm:text-xl">{decStr}</span>{t.q3PromptPost}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
             <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">
-              Ψηφίο ({qData.placeType}):
+              {t.digitLabelPrefix} ({placeName}):
             </span>
             <span>＝</span>
             <input
@@ -407,8 +558,9 @@ export default function Dekadikoi3PsifiaAskPage() {
               id={`input-${qKey}`}
               name={`input-${qKey}`}
               placeholder="?"
+              maxLength={10}
               value={answers[qKey]}
-              onChange={(e) => handleDecimalInput(qKey, e.target.value)}
+              onChange={(e) => handleIntegerInput(qKey, e.target.value)}
               disabled={submitted}
               className="w-28 sm:w-36 p-2 rounded-xl border border-slate-300 font-mono text-base sm:text-xl font-black text-center text-teal-900 bg-white focus:ring-2 focus:ring-teal-500 focus:outline-none shadow-sm"
             />
@@ -419,11 +571,11 @@ export default function Dekadikoi3PsifiaAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Το ψηφίο είναι το <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {qData.explainText}
+                {t.correctDigitIs} <span className="font-mono font-bold text-rose-900">{qData.correct}</span>. {explainText}
               </p>
             )}
           </div>
@@ -435,6 +587,14 @@ export default function Dekadikoi3PsifiaAskPage() {
   // Render Q7 & Q8: Σύγκριση (Buttons)
   const renderComparison = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
+    const decSep = isEn ? '.' : ',';
+    const strA = qData.rawStrA.replace('.', decSep);
+    const strB = qData.rawStrB.replace('.', decSep);
+
+    const explainText = qData.isTrailingZero
+      ? t.explainCompareEqual(strA, strB)
+      : t.explainCompareDiff(strA, qData.correct, strB);
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -446,13 +606,13 @@ export default function Dekadikoi3PsifiaAskPage() {
             {numLabel}
           </span>
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-            Επίλεξε το κατάλληλο σύμβολο σύγκρισης ( ＜ , ＝ , ＞ ):
+            {t.comparePrompt}
           </h3>
         </div>
 
         <div className="sm:pl-11 space-y-4">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-lg sm:text-2xl font-mono font-black text-slate-800 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-            <span>{qData.strA}</span>
+            <span>{strA}</span>
 
             <div className="flex gap-2">
               {['＜', '＝', '＞'].map((sym) => (
@@ -476,7 +636,7 @@ export default function Dekadikoi3PsifiaAskPage() {
               ))}
             </div>
 
-            <span>{qData.strB}</span>
+            <span>{strB}</span>
           </div>
         </div>
 
@@ -484,11 +644,11 @@ export default function Dekadikoi3PsifiaAskPage() {
           <div className="mt-4 sm:pl-11 text-xs sm:text-sm leading-relaxed">
             {isCorrect ? (
               <p className="text-emerald-700 font-semibold bg-emerald-50 p-2.5 rounded-xl border border-emerald-200/60">
-                {qData.explainText}
+                {explainText}
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή σχέση είναι <span className="font-mono font-bold text-rose-900">{qData.strA} {qData.correct} {qData.strB}</span>. {qData.explainText}
+                {t.correctRelationIs} <span className="font-mono font-bold text-rose-900">{strA} {qData.correct} {strB}</span>. {explainText}
               </p>
             )}
           </div>
@@ -499,32 +659,32 @@ export default function Dekadikoi3PsifiaAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Δεκαδικοί Αριθμοί με 3 Ψηφία | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στους δεκαδικούς με 3 ψηφία (χιλιοστά): μετατροπή κλασμάτων με παρονομαστή 1.000, αξία θέσης και σύγκριση."
+      title={t.metaTitle}
+      description={t.metaDesc}
       backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/d-dimotikou/11-dekadikoi-3-psifia"
           className="bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.gradeBadge)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Δεκαδικοί με 3 Ψηφία (Χιλιοστά)
+              {t.heroTitle}
             </h1>
             <p className="text-purple-100 text-xs sm:text-sm md:text-base">
-              Πατώντας «Νέες Ασκήσεις», οι αριθμοί και τα κλάσματα ανανεώνονται αυτόματα από τη δεξαμενή!
+              {t.heroDesc}
             </p>
           </div>
 
@@ -532,12 +692,12 @@ export default function Dekadikoi3PsifiaAskPage() {
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-purple-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            {t.newExercisesBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderFractionToDecimal('q1', questions.q1, 1)}
           {renderFractionToDecimal('q2', questions.q2, 2)}
 
@@ -557,24 +717,24 @@ export default function Dekadikoi3PsifiaAskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                {t.checkAnswersBtn}
               </button>
             </div>
           )}
         </form>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      {/* ΣΤΑΘΕΡΟ ΚΑΤΩ FOOTER (STICKY FOOTER BAR) */}
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
+              <span>{t.scoreLabel}</span>
               <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -585,11 +745,11 @@ export default function Dekadikoi3PsifiaAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                {t.newExercisesBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.footerPrompt}
               </p>
             )}
           </div>

@@ -1,20 +1,191 @@
 // pages/d-dimotikou/27-sterea-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
 // --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Δ')/g);
+  return parts
+    .map((part) => {
+      if (part === "Δ'") return "Δ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function formatNumber(num) {
-  if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
+// Λεξικό Μεταφράσεων
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Ασκήσεις: Γεωμετρικά Στερεά Σώματα | LearnMaths.gr",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στα γεωμετρικά στερεά: αναγνώριση 3D σχημάτων, καταμέτρηση εδρών, ακμών και κορυφών και αντικείμενα καθημερινότητας.",
+    backText: "Δ' Δημοτικού",
+    badgeHeader: "Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    theoryBtn: "Θεωρία",
+    headerTitle: "Ασκήσεις: Γεωμετρικά Στερεά Σώματα",
+    headerDesc: "Πατώντας «Νέες Ασκήσεις», τα στερεά, οι ερωτήσεις και οι μετρήσεις ανανεώνονται αυτόματα από τη δεξαμενή!",
+    newQuestionsBtn: "Νέες Ασκήσεις",
+    submitBtn: "Έλεγχος Απαντήσεων",
+    scoreLabel: "Σκορ:",
+    successRate: "Επιτυχία:",
+    footerPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    resultLabel: "Αποτέλεσμα:",
+    inputPlaceholder: "Αριθμός",
+    correctAnswerIs: "Η σωστή απάντηση είναι:",
+    theStatementIs: "Η πρόταση είναι",
+    qRecognitionTitle: "Ποιο γεωμετρικό στερεό απεικονίζεται στο παρακάτω σχήμα;",
+    qRecognitionExplain: (name) => `Το συγκεκριμένο τρισδιάστατο γεωμετρικό σώμα είναι ${name}.`,
+    qFaces: (solidName) => `Πόσες έδρες έχει συνολικά το στερεό: «${solidName}»;`,
+    qEdges: (solidName) => `Πόσες ακμές έχει συνολικά το στερεό: «${solidName}»;`,
+    qVertices: (solidName) => `Πόσες κορυφές έχει συνολικά το στερεό: «${solidName}»;`,
+    unitFaces: "έδρες",
+    unitEdges: "ακμές",
+    unitVertices: "κορυφές",
+    countExplain: (solidName, val, unit) => `${solidName} έχει ακριβώς ${val} ${unit}.`,
+    qRealLife: (item) => `${item} έχει το σχήμα ποιου γεωμετρικού στερεού;`,
+    realLifeExplain: (item, solidName) => `${item} προσομοιάζει το γεωμετρικό σχήμα: ${solidName}.`,
+    trueLabel: "Σωστό",
+    falseLabel: "Λάθος",
+    solids: {
+      cube: "Κύβος",
+      cuboid: "Ορθογώνιο Παραλληλεπίπεδο",
+      sqPyramid: "Τετραγωνική Πυραμίδα",
+      triPyramid: "Τριγωνική Πυραμίδα (Τετράεδρο)",
+      cylinder: "Κύλινδρος",
+      cone: "Κώνος",
+      sphere: "Σφαίρα"
+    },
+    realLifeItems: {
+      dice: "Ένα ζάρι 🎲",
+      soda: "Ένα κουτάκι αναψυκτικού 🥤",
+      ball: "Μία μπάλα ποδοσφαίρου ⚽",
+      iceCream: "Ένα χωνάκι παγωτού 🍦",
+      shoeBox: "Ένα κουτί παπουτσιών 📦",
+      tent: "Μία σκηνή κάμπινγκ τύπου πυραμίδας ⛺"
+    },
+    trueFalsePool: [
+      {
+        q: "Ο κύβος έχει 6 ίσες τετράγωνες έδρες, 12 ακμές και 8 κορυφές.",
+        correct: "Σωστό",
+        explain: "Ο κύβος αποτελείται από 6 ίσα τετράγωνα, έχει 12 ακμές και 8 κορυφές."
+      },
+      {
+        q: "Η σφαίρα διαθέτει 6 επίπεδες έδρες και 8 κορυφές.",
+        correct: "Λάθος",
+        explain: "Η σφαίρα είναι σώμα εκ περιστροφής με 1 ενιαία καμπύλη επιφάνεια και δεν έχει καθόλου ακμές ή κορυφές."
+      },
+      {
+        q: "Ο κύλινδρος έχει 2 ίσες κυκλικές βάσεις και 1 καμπύλη επιφάνεια.",
+        correct: "Σωστό",
+        explain: "Οι δύο βάσεις του κυλίνδρου είναι ίσοι κυκλικοί δίσκοι ενωμένοι με καμπύλη παράπλευρη επιφάνεια."
+      },
+      {
+        q: "Η τετραγωνική πυραμίδα έχει συνολικά 8 κορυφές.",
+        correct: "Λάθος",
+        explain: "Η τετραγωνική πυραμίδα έχει 5 κορυφές (4 στη βάση ＋ 1 στην κορυφή), ενώ 8 είναι οι ακμές της."
+      },
+      {
+        q: "Το ορθογώνιο παραλληλεπίπεδο έχει 12 ακμές και 8 κορυφές.",
+        correct: "Σωστό",
+        explain: "Το ορθογώνιο παραλληλεπίπεδο αποτελείται από 6 ορθογώνιες έδρες, 12 ακμές και 8 κορυφές."
+      },
+      {
+        q: "Ο κώνος διαθέτει 1 κυκλική βάση και 1 κορυφή.",
+        correct: "Σωστό",
+        explain: "Ο κώνος έχει μία επίπεδη κυκλική βάση και μία μυτερή κορυφή."
+      }
+    ]
+  },
+  en: {
+    pageTitle: "Exercises: 3D Geometric Solids | LearnMaths.gr",
+    pageDesc: "Interactive 4th Grade math exercises on 3D geometric solids: identifying shapes, counting faces, edges, and vertices, and real-world objects.",
+    backText: "4th Grade",
+    badgeHeader: "GRADE 4 • PRACTICE",
+    theoryBtn: "Theory",
+    headerTitle: "Exercises: 3D Geometric Solids",
+    headerDesc: "Clicking «New Exercises» automatically regenerates the solids, questions, and counts from the database!",
+    newQuestionsBtn: "New Exercises",
+    submitBtn: "Check Answers",
+    scoreLabel: "Score:",
+    successRate: "Success:",
+    footerPrompt: "Complete all questions and click «Check Answers»!",
+    resultLabel: "Result:",
+    inputPlaceholder: "Number",
+    correctAnswerIs: "The correct answer is:",
+    theStatementIs: "The statement is",
+    qRecognitionTitle: "Which 3D solid is depicted in the figure below?",
+    qRecognitionExplain: (name) => `This 3D geometric shape is a ${name}.`,
+    qFaces: (solidName) => `How many faces does the solid «${solidName}» have in total?`,
+    qEdges: (solidName) => `How many edges does the solid «${solidName}» have in total?`,
+    qVertices: (solidName) => `How many vertices does the solid «${solidName}» have in total?`,
+    unitFaces: "faces",
+    unitEdges: "edges",
+    unitVertices: "vertices",
+    countExplain: (solidName, val, unit) => `${solidName} has exactly ${val} ${unit}.`,
+    qRealLife: (item) => `${item} has the shape of which 3D geometric solid?`,
+    realLifeExplain: (item, solidName) => `${item} resembles the geometric solid: ${solidName}.`,
+    trueLabel: "True",
+    falseLabel: "False",
+    solids: {
+      cube: "Cube",
+      cuboid: "Rectangular Prism (Cuboid)",
+      sqPyramid: "Square Pyramid",
+      triPyramid: "Triangular Pyramid (Tetrahedron)",
+      cylinder: "Cylinder",
+      cone: "Cone",
+      sphere: "Sphere"
+    },
+    realLifeItems: {
+      dice: "A die 🎲",
+      soda: "A soda can 🥤",
+      ball: "A soccer ball ⚽",
+      iceCream: "An ice cream cone 🍦",
+      shoeBox: "A shoe box 📦",
+      tent: "A pyramid camping tent ⛺"
+    },
+    trueFalsePool: [
+      {
+        q: "A cube has 6 equal square faces, 12 edges, and 8 vertices.",
+        correct: "True",
+        explain: "A cube consists of 6 congruent squares, with 12 edges and 8 vertices."
+      },
+      {
+        q: "A sphere has 6 flat faces and 8 vertices.",
+        correct: "False",
+        explain: "A sphere is a solid of revolution with 1 continuous curved surface and no edges or vertices."
+      },
+      {
+        q: "A cylinder has 2 identical circular bases and 1 curved lateral surface.",
+        correct: "True",
+        explain: "The two bases of a cylinder are congruent circular disks joined by a curved surface."
+      },
+      {
+        q: "A square pyramid has a total of 8 vertices.",
+        correct: "False",
+        explain: "A square pyramid has 5 vertices (4 at the base ＋ 1 apex), whereas 8 is the number of its edges."
+      },
+      {
+        q: "A rectangular prism has 12 edges and 8 vertices.",
+        correct: "True",
+        explain: "A rectangular prism consists of 6 rectangular faces, 12 edges, and 8 vertices."
+      },
+      {
+        q: "A cone has 1 circular base and 1 apex vertex.",
+        correct: "True",
+        explain: "A cone consists of a flat circular base and a single sharp apex vertex."
+      }
+    ]
+  }
+};
 
-// SVG Γραφικά για τις ερωτήσεις αναγνώρισης
+// SVG Γραφικά
 const SOLIDS_SVGS = {
   cube: (
     <svg className="w-36 h-36 mx-auto block select-none" viewBox="0 0 200 200">
@@ -78,60 +249,63 @@ const SOLIDS_SVGS = {
   )
 };
 
-const SOLIDS_DATABASE = [
-  { key: 'cube', name: 'Κύβος', faces: 6, edges: 12, vertices: 8, facesDesc: '6 ίσα τετράγωνα' },
-  { key: 'cuboid', name: 'Ορθογώνιο Παραλληλεπίπεδο', faces: 6, edges: 12, vertices: 8, facesDesc: '6 ορθογώνια' },
-  { key: 'sqPyramid', name: 'Τετραγωνική Πυραμίδα', faces: 5, edges: 8, vertices: 5, facesDesc: '1 τετράγωνο και 4 τρίγωνα' },
-  { key: 'triPyramid', name: 'Τριγωνική Πυραμίδα (Τετράεδρο)', faces: 4, edges: 6, vertices: 4, facesDesc: '4 τρίγωνα' },
-  { key: 'cylinder', name: 'Κύλινδρος', faces: 3, edges: 0, vertices: 0, facesDesc: '2 κύκλοι και 1 καμπύλη επιφάνεια' },
-  { key: 'cone', name: 'Κώνος', faces: 2, edges: 0, vertices: 1, facesDesc: '1 κύκλος και 1 καμπύλη επιφάνεια' },
-  { key: 'sphere', name: 'Σφαίρα', faces: 1, edges: 0, vertices: 0, facesDesc: '1 ενιαία καμπύλη επιφάνεια' }
+const RAW_SOLIDS = [
+  { key: 'cube', faces: 6, edges: 12, vertices: 8 },
+  { key: 'cuboid', faces: 6, edges: 12, vertices: 8 },
+  { key: 'sqPyramid', faces: 5, edges: 8, vertices: 5 },
+  { key: 'triPyramid', faces: 4, edges: 6, vertices: 4 },
+  { key: 'cylinder', faces: 3, edges: 0, vertices: 0 },
+  { key: 'cone', faces: 2, edges: 0, vertices: 1 },
+  { key: 'sphere', faces: 1, edges: 0, vertices: 0 }
 ];
 
-// 1. Άσκηση: Αναγνώριση Στερεού από SVG (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
-function makeSolidRecognitionQuestion(prevQ = null) {
+// 1. Άσκηση: Αναγνώριση Στερεού από SVG (4 Επιλογές MCQ)
+function makeSolidRecognitionQuestion(t, prevQ = null) {
   let solid, correctName;
 
   while (true) {
-    solid = SOLIDS_DATABASE[getRandomInt(0, SOLIDS_DATABASE.length - 1)];
-    correctName = solid.name;
+    solid = RAW_SOLIDS[getRandomInt(0, RAW_SOLIDS.length - 1)];
+    correctName = t.solids[solid.key];
     if (!prevQ || prevQ.correct !== correctName) break;
   }
 
-  const wrongs = SOLIDS_DATABASE.map((s) => s.name).filter((n) => n !== correctName);
-  const shuffledWrongs = wrongs.sort(() => Math.random() - 0.5).slice(0, 3);
-  const options = [correctName, ...shuffledWrongs].sort(() => Math.random() - 0.5);
+  const allNames = RAW_SOLIDS.map((s) => t.solids[s.key]);
+  const wrongs = allNames.filter((n) => n !== correctName);
+  const shuffledWrongs = [...new Set(wrongs)].sort(() => Math.random() - 0.5).slice(0, 3);
+  const rawOptions = [correctName, ...shuffledWrongs].sort(() => Math.random() - 0.5);
+  const options = [...new Set(rawOptions)];
 
   return {
-    q: 'Ποιο γεωμετρικό στερεό απεικονίζεται στο παρακάτω σχήμα;',
+    q: t.qRecognitionTitle,
     svg: SOLIDS_SVGS[solid.key],
     options,
     correct: correctName,
-    explainText: `Το συγκεκριμένο τρισδιάστατο γεωμετρικό σώμα είναι ${correctName}.`
+    explainText: t.qRecognitionExplain(correctName)
   };
 }
 
 // 2. Άσκηση: Καταμέτρηση Εδρών, Ακμών ή Κορυφών (Input)
-function makeCountFeatureQuestion(prevQ = null) {
-  const polyhedra = SOLIDS_DATABASE.slice(0, 4); // Πολύεδρα
-  let solid, featureType, qText, correctVal, featureName;
+function makeCountFeatureQuestion(t, prevQ = null) {
+  const polyhedra = RAW_SOLIDS.slice(0, 4);
+  let solid, featureType, qText, correctVal, featureName, solidName;
 
   while (true) {
     solid = polyhedra[getRandomInt(0, polyhedra.length - 1)];
+    solidName = t.solids[solid.key];
     featureType = getRandomInt(1, 3); // 1 = Έδρες, 2 = Ακμές, 3 = Κορυφές
 
     if (featureType === 1) {
-      qText = `Πόσες έδρες έχει συνολικά το στερεό: «${solid.name}»;`;
+      qText = t.qFaces(solidName);
       correctVal = solid.faces;
-      featureName = 'έδρες';
+      featureName = t.unitFaces;
     } else if (featureType === 2) {
-      qText = `Πόσες ακμές έχει συνολικά το στερεό: «${solid.name}»;`;
+      qText = t.qEdges(solidName);
       correctVal = solid.edges;
-      featureName = 'ακμές';
+      featureName = t.unitEdges;
     } else {
-      qText = `Πόσες κορυφές έχει συνολικά το στερεό: «${solid.name}»;`;
+      qText = t.qVertices(solidName);
       correctVal = solid.vertices;
-      featureName = 'κορυφές';
+      featureName = t.unitVertices;
     }
 
     if (!prevQ || prevQ.q !== qText) break;
@@ -141,88 +315,57 @@ function makeCountFeatureQuestion(prevQ = null) {
     q: qText,
     correct: correctVal,
     unit: featureName,
-    explainText: `${solid.name} έχει ακριβώς ${correctVal} ${featureName}.`
+    explainText: t.countExplain(solidName, correctVal, featureName)
   };
 }
 
-// 3. Άσκηση: Αντικείμενα Καθημερινότητας (ΟΜΑΔΑ Α - 4 Επιλογές MCQ)
-function makeRealLifeMatchingQuestion(prevQ = null) {
+// 3. Άσκηση: Αντικείμενα Καθημερινότητας (4 Επιλογές MCQ)
+function makeRealLifeMatchingQuestion(t, prevQ = null) {
   const examples = [
-    { item: 'Ένα ζάρι 🎲', correct: 'Κύβος', wrongs: ['Σφαίρα', 'Κώνος', 'Κύλινδρος'] },
-    { item: 'Ένα κουτάκι αναψυκτικού 🥤', correct: 'Κύλινδρος', wrongs: ['Κύβος', 'Τετραγωνική Πυραμίδα', 'Κώνος'] },
-    { item: 'Μία μπάλα ποδοσφαίρου ⚽', correct: 'Σφαίρα', wrongs: ['Κύβος', 'Κύλινδρος', 'Ορθογώνιο Παραλληλεπίπεδο'] },
-    { item: 'Ένα χωνάκι παγωτού 🍦', correct: 'Κώνος', wrongs: ['Σφαίρα', 'Κύβος', 'Ορθογώνιο Παραλληλεπίπεδο'] },
-    { item: 'Ένα κουτί παπουτσιών 📦', correct: 'Ορθογώνιο Παραλληλεπίπεδο', wrongs: ['Κύλινδρος', 'Σφαίρα', 'Κώνος'] },
-    { item: 'Μία σκηνή κάμπινγκ τύπου πυραμίδας ⛺', correct: 'Τετραγωνική Πυραμίδα', wrongs: ['Κύλινδρος', 'Κύβος', 'Σφαίρα'] }
+    { itemKey: 'dice', solidKey: 'cube', wrongKeys: ['sphere', 'cone', 'cylinder'] },
+    { itemKey: 'soda', solidKey: 'cylinder', wrongKeys: ['cube', 'sqPyramid', 'cone'] },
+    { itemKey: 'ball', solidKey: 'sphere', wrongKeys: ['cube', 'cylinder', 'cuboid'] },
+    { itemKey: 'iceCream', solidKey: 'cone', wrongKeys: ['sphere', 'cube', 'cuboid'] },
+    { itemKey: 'shoeBox', solidKey: 'cuboid', wrongKeys: ['cylinder', 'sphere', 'cone'] },
+    { itemKey: 'tent', solidKey: 'sqPyramid', wrongKeys: ['cylinder', 'cube', 'sphere'] }
   ];
 
   let ex;
   while (true) {
     ex = examples[getRandomInt(0, examples.length - 1)];
-    if (!prevQ || prevQ.item !== ex.item) break;
+    if (!prevQ || prevQ.itemKey !== ex.itemKey) break;
   }
 
-  const options = [ex.correct, ...ex.wrongs].sort(() => Math.random() - 0.5);
+  const itemName = t.realLifeItems[ex.itemKey];
+  const correct = t.solids[ex.solidKey];
+  const wrongs = ex.wrongKeys.map((k) => t.solids[k]);
+  const rawOptions = [correct, ...wrongs].sort(() => Math.random() - 0.5);
+  const options = [...new Set(rawOptions)];
 
   return {
-    item: ex.item,
-    q: `${ex.item} έχει το σχήμα ποιου γεωμετρικού στερεού;`,
+    itemKey: ex.itemKey,
+    q: t.qRealLife(itemName),
     options,
-    correct: ex.correct,
-    explainText: `${ex.item} προσομοιάζει το γεωμετρικό σχήμα: ${ex.correct}.`
+    correct,
+    explainText: t.realLifeExplain(itemName, correct)
   };
 }
 
-// 4. Άσκηση: Σωστό / Λάθος για τα Στερεά
-// (Χωρίς «Σωστά!» ή «Λάθος!» στο κείμενο εξήγησης)
-const TRUE_FALSE_POOL = [
-  {
-    q: 'Ο κύβος έχει 6 ίσες τετράγωνες έδρες, 12 ακμές και 8 κορυφές.',
-    correct: 'Σωστό',
-    explain: 'Ο κύβος αποτελείται από 6 ίσα τετράγωνα, έχει 12 ακμές και 8 κορυφές.'
-  },
-  {
-    q: 'Η σφαίρα διαθέτει 6 επίπεδες έδρες και 8 κορυφές.',
-    correct: 'Λάθος',
-    explain: 'Η σφαίρα είναι σώμα εκ περιστροφής με 1 ενιαία καμπύλη επιφάνεια και δεν έχει καθόλου ακμές ή κορυφές.'
-  },
-  {
-    q: 'Ο κύλινδρος έχει 2 ίσες κυκλικές βάσεις και 1 καμπύλη επιφάνεια.',
-    correct: 'Σωστό',
-    explain: 'Οι δύο βάσεις του κυλίνδρου είναι ίσοι κυκλικοί δίσκοι ενωμένοι με καμπύλη παράπλευρη επιφάνεια.'
-  },
-  {
-    q: 'Η τετραγωνική πυραμίδα έχει συνολικά 8 κορυφές.',
-    correct: 'Λάθος',
-    explain: 'Η τετραγωνική πυραμίδα έχει 5 κορυφές (4 στη βάση ＋ 1 στην κορυφή), ενώ 8 είναι οι ακμές της.'
-  },
-  {
-    q: 'Το ορθογώνιο παραλληλεπίπεδο έχει 12 ακμές και 8 κορυφές.',
-    correct: 'Σωστό',
-    explain: 'Το ορθογώνιο παραλληλεπίπεδο αποτελείται από 6 ορθογώνιες έδρες, 12 ακμές και 8 κορυφές.'
-  },
-  {
-    q: 'Ο κώνος διαθέτει 1 κυκλική βάση και 1 κορυφή.',
-    correct: 'Σωστό',
-    explain: 'Ο κώνος έχει μία επίπεδη κυκλική βάση και μία μυτερή κορυφή.'
-  }
-];
-
 // Δημιουργία 8 Ερωτήσεων
-function generateQuestions() {
-  const q1 = makeSolidRecognitionQuestion();
-  const q2 = makeSolidRecognitionQuestion(q1);
+function generateQuestions(t) {
+  const q1 = makeSolidRecognitionQuestion(t);
+  const q2 = makeSolidRecognitionQuestion(t, q1);
 
-  const q3 = makeCountFeatureQuestion();
-  const q4 = makeCountFeatureQuestion(q3);
+  const q3 = makeCountFeatureQuestion(t);
+  const q4 = makeCountFeatureQuestion(t, q3);
 
-  const q5 = makeRealLifeMatchingQuestion();
-  const q6 = makeRealLifeMatchingQuestion(q5);
+  const q5 = makeRealLifeMatchingQuestion(t);
+  const q6 = makeRealLifeMatchingQuestion(t, q5);
 
-  const tf1 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
+  const tf1 = t.trueFalsePool[getRandomInt(0, t.trueFalsePool.length - 1)];
   let tf2;
   while (true) {
-    tf2 = TRUE_FALSE_POOL[getRandomInt(0, TRUE_FALSE_POOL.length - 1)];
+    tf2 = t.trueFalsePool[getRandomInt(0, t.trueFalsePool.length - 1)];
     if (tf2.q !== tf1.q) break;
   }
 
@@ -230,6 +373,16 @@ function generateQuestions() {
 }
 
 export default function StereaAskPage() {
+  const router = useRouter();
+  const rawLocale = router?.locale || 'el';
+  const locale = TRANSLATIONS[rawLocale] ? rawLocale : 'el';
+  const t = TRANSLATIONS[locale];
+
+  const formatNumber = (num) => {
+    if (num === '' || num === null || num === undefined || isNaN(num)) return '0';
+    return Number(num).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
+  };
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -238,7 +391,7 @@ export default function StereaAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(t));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -246,7 +399,7 @@ export default function StereaAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [locale]);
 
   if (!questions) return null;
 
@@ -257,7 +410,7 @@ export default function StereaAskPage() {
 
   const handleNumericInput = (key, rawVal) => {
     if (submitted) return;
-    const clean = rawVal.replace(/\D/g, '');
+    const clean = rawVal.replace(/[^0-9]/g, '');
     setAnswers((prev) => ({ ...prev, [key]: clean }));
   };
 
@@ -291,11 +444,11 @@ export default function StereaAskPage() {
       }`}>
         <div className="flex items-start gap-3 mb-4">
           <span className="bg-indigo-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
-            {numLabel}
+            {formatNumber(numLabel)}
           </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
             {qData.q}
-          </h3>
+          </h2>
         </div>
 
         {qData.svg && (
@@ -326,7 +479,9 @@ export default function StereaAskPage() {
                   disabled={submitted}
                   className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 shrink-0"
                 />
-                <span className="leading-snug font-bold text-sm sm:text-base">{opt}</span>
+                <span className="break-words whitespace-normal leading-snug flex-1 font-bold text-sm sm:text-base">
+                  {opt}
+                </span>
               </label>
             );
           })}
@@ -340,7 +495,7 @@ export default function StereaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
+                {t.correctAnswerIs} <strong className="font-bold text-rose-900">{qData.correct}</strong>. {qData.explainText}
               </p>
             )}
           </div>
@@ -360,16 +515,18 @@ export default function StereaAskPage() {
       }`}>
         <div className="flex items-start gap-3 mb-4">
           <span className="bg-purple-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
-            {numLabel}
+            {formatNumber(numLabel)}
           </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
             {qData.q}
-          </h3>
+          </h2>
         </div>
 
         <div className="sm:pl-11 space-y-3">
           <div className="inline-flex flex-wrap items-center justify-center sm:justify-start gap-2 bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 font-mono text-base sm:text-xl font-bold text-slate-800 w-full">
-            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">Αποτέλεσμα:</span>
+            <span className="text-xs sm:text-sm font-sans font-bold text-slate-500">
+              {t.resultLabel}
+            </span>
             <span>＝</span>
             <input
               type="text"
@@ -377,7 +534,8 @@ export default function StereaAskPage() {
               autoComplete="off"
               id={`input-${qKey}`}
               name={`input-${qKey}`}
-              placeholder="Αριθμός"
+              placeholder={t.inputPlaceholder}
+              maxLength={10}
               value={answers[qKey]}
               onChange={(e) => handleNumericInput(qKey, e.target.value)}
               disabled={submitted}
@@ -397,7 +555,7 @@ export default function StereaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η σωστή απάντηση είναι <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)} {qData.unit}</span>. {qData.explainText}
+                {t.correctAnswerIs} <span className="font-mono font-bold text-rose-900">{formatNumber(qData.correct)} {qData.unit}</span>. {qData.explainText}
               </p>
             )}
           </div>
@@ -409,6 +567,8 @@ export default function StereaAskPage() {
   // Render Σωστό / Λάθος (Q7 & Q8)
   const renderTrueFalse = (qKey, qData, numLabel) => {
     const isCorrect = answers[qKey] === qData.correct;
+    const tfOptions = [t.trueLabel, t.falseLabel];
+
     return (
       <div className={`bg-white p-5 sm:p-7 rounded-3xl shadow-sm border transition-all ${
         submitted
@@ -417,15 +577,15 @@ export default function StereaAskPage() {
       }`}>
         <div className="flex items-start gap-3 mb-4">
           <span className="bg-teal-600 text-white font-black text-xs sm:text-sm w-7 h-7 sm:w-8 sm:h-8 rounded-xl shrink-0 flex items-center justify-center shadow-sm">
-            {numLabel}
+            {formatNumber(numLabel)}
           </span>
-          <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
             {qData.q}
-          </h3>
+          </h2>
         </div>
 
         <div className="flex gap-3 sm:pl-11">
-          {['Σωστό', 'Λάθος'].map((opt) => (
+          {tfOptions.map((opt) => (
             <button
               type="button"
               key={opt}
@@ -433,7 +593,7 @@ export default function StereaAskPage() {
               disabled={submitted}
               className={`px-6 sm:px-8 py-3 rounded-2xl font-black text-sm sm:text-base border transition active:scale-95 touch-manipulation select-none ${
                 answers[qKey] === opt
-                  ? (opt === 'Σωστό' ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
+                  ? (opt === t.trueLabel ? 'bg-emerald-600 text-white border-emerald-700 shadow-md' : 'bg-rose-600 text-white border-rose-700 shadow-md')
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
               }`}
             >
@@ -450,7 +610,7 @@ export default function StereaAskPage() {
               </p>
             ) : (
               <p className="text-rose-700 font-medium bg-rose-50 p-2.5 rounded-xl border border-rose-200/60">
-                Η πρόταση είναι <strong className="font-bold text-rose-900">«{qData.correct}»</strong>: {qData.explain}
+                {t.theStatementIs} <strong className="font-bold text-rose-900">«{qData.correct}»</strong>: {qData.explain}
               </p>
             )}
           </div>
@@ -461,32 +621,32 @@ export default function StereaAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Γεωμετρικά Στερεά Σώματα | LearnMaths.gr"
-      description="Διαδραστικές ασκήσεις μαθηματικών Δ' Δημοτικού στα γεωμετρικά στερεά: αναγνώριση 3D σχημάτων, καταμέτρηση εδρών, ακμών και κορυφών και αντικείμενα καθημερινότητας."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/d-dimotikou"
-      backText="Δ' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/d-dimotikou/27-sterea"
           className="bg-blue-100 hover:bg-blue-200 text-blue-950 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      <div className="space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         {/* HEADER BANNER */}
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 sm:p-8 rounded-3xl shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="bg-white/20 text-white text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
-              Δ' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badgeHeader)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Γεωμετρικά Στερεά Σώματα
+              📝 {t.headerTitle}
             </h1>
             <p className="text-blue-100 text-xs sm:text-sm md:text-base">
-              Πατώντας «Νέες Ασκήσεις», τα στερεά, οι ερωτήσεις και οι μετρήσεις ανανεώνονται αυτόματα από τη δεξαμενή!
+              {t.headerDesc}
             </p>
           </div>
 
@@ -494,12 +654,12 @@ export default function StereaAskPage() {
             onClick={loadNewQuestions}
             className="bg-white text-slate-900 font-black px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl shadow-lg hover:bg-blue-50 transition active:scale-95 text-xs sm:text-sm whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            🔄 {t.newQuestionsBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ & PB SAFE AREA ΓΙΑ ΤΟ BOTTOM SCORE BAR */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
+        {/* ΦΟΡΜΑ ΜΕ ΑΣΚΗΣΕΙΣ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
           {renderMCQQuestion('q1', questions.q1, 1)}
           {renderMCQQuestion('q2', questions.q2, 2)}
 
@@ -519,24 +679,24 @@ export default function StereaAskPage() {
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                🎯 {t.submitBtn}
               </button>
             </div>
           )}
         </form>
       </div>
 
-      {/* STICKY FOOTER SCORES & FEEDBACK BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 z-50">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      {/* ΣΤΑΘΕΡΟ BOTTOM FOOTER: SCORES & FEEDBACK BAR */}
+      <footer className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 text-white py-3.5 px-4 sm:px-6 shadow-2xl">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-base sm:text-lg flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
-              <span className="text-xl sm:text-2xl font-mono">{score} / 8</span>
+              <span>🏆 {t.scoreLabel}</span>
+              <span className="text-xl sm:text-2xl font-mono">{formatNumber(score)} / {formatNumber(8)}</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{formatNumber(Math.round((score / 8) * 100))}%</span>
               </span>
             )}
           </div>
@@ -547,16 +707,16 @@ export default function StereaAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center gap-2"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                <span>🔄</span> {t.newQuestionsBtn}
               </button>
             ) : (
               <p className="text-xs text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.footerPrompt}
               </p>
             )}
           </div>
         </div>
-      </div>
+      </footer>
     </Layout>
   );
 }

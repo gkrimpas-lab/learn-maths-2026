@@ -1,16 +1,246 @@
 // pages/st-dimotikou/57-alla-grafimata.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// Μορφοποιηση αριθμου
-function formatNum(val, decimals = 1) {
-  if (Number.isInteger(val)) return String(val);
-  const rounded = Number(val.toFixed(decimals));
-  return String(rounded).replace('.', ',');
+// Ατονα ελληνικα κεφαλαια με εξαιρεση το ΣΤ'
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+// Μορφοποιηση αριθμου αναλογα με το locale
+function formatNum(val, locale = 'el', decimals = 1) {
+  if (val === undefined || val === null || isNaN(Number(val))) return '0';
+  const loc = locale === 'en' ? 'en-US' : 'el-GR';
+  const num = Number(val);
+  if (Number.isInteger(num)) {
+    return num.toLocaleString(loc);
+  }
+  return num.toLocaleString(loc, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+// Κανονικη μορφη κλασματος (αριθμητης πανω, κλασματικη γραμμη, παρονομαστης κατω)
+function Fraction({ num, den, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center align-middle mx-1 text-center font-mono leading-none ${className}`}>
+      <span className="text-[0.9em] font-bold pb-0.5 px-1 border-b border-current">{num}</span>
+      <span className="text-[0.9em] font-bold pt-0.5 px-1">{den}</span>
+    </span>
+  );
 }
 
 export default function AllaGrafimataTheoryPage() {
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+
+  const t = useMemo(() => {
+    return {
+      el: {
+        pageTitle: "Άλλα Γραφήματα: Γραμμής, Οριζόντιο, Κυκλικό - ΣΤ' Δημοτικού | LearnMaths.gr",
+        metaDescription: "Μαθαίνουμε πότε χρησιμοποιούμε γράφημα γραμμής, οριζόντιο ραβδόγραμμα και κυκλικό διάγραμμα (πίτα), πώς υπολογίζουμε επίκεντρες γωνίες και ερμηνεύουμε στατιστικά στοιχεία.",
+        backText: "ΣΤ' Δημοτικού",
+        actionBtn: "🎯 Ασκήσεις",
+        chapterBadge: "ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+        headerTitle: "Άλλα Είδη Γραφημάτων: Γραμμής, Οριζόντιο & Κυκλικό",
+        headerDesc: "Επεκτείνουμε τις γνώσεις μας στη στατιστική απεικόνιση: Μαθαίνουμε να αποτυπώνουμε τη διαχρονική εξέλιξη με γραφήματα γραμμής, να συγκρίνουμε ονόματα με οριζόντια ραβδογράμματα και να διαιρούμε το όλο σε ποσοστά και μοίρες με κυκλικά διαγράμματα.",
+        headerSub: "Θεωρία, Οπτικά Παραδείγματα & Διαδραστική Εναλλαγή Γραφημάτων",
+        tryExercises: "Δοκίμασε τις Ασκήσεις",
+        roadmapTitle: "Επιλογή του Κατάλληλου Γραφήματος σε 4 Βήματα",
+        roadmapDesc: "Κάθε είδος γραφήματος έχει έναν συγκεκριμένο ρόλο ανάλογα με τα δεδομένα που θέλουμε να προβάλουμε.",
+        step1Badge: "ΒΗΜΑ 1",
+        step1Tag: "Εξέλιξη Χρόνου",
+        step1Title: "Γράφημα Γραμμής",
+        step1Text: "Χρησιμοποιείται όταν θέλουμε να δείξουμε πώς μεταβάλλεται ένα μέγεθος με την πάροδο του χρόνου (χρονοσειρά):",
+        step1Bullet1: "Οριζόντιος άξονας (χ): Ο χρόνος (ώρες, ημέρες, μήνες, έτη).",
+        step1Bullet2: "Κατακόρυφος άξονας (ψ): Το μέγεθος (θερμοκρασία, ύψος, πωλήσεις).",
+        step1Bullet3: "Σημεία & Ευθύγραμμα τμήματα: Ενώνουμε τα σημεία για να δούμε αν η τάση είναι ανοδική, καθοδική ή σταθερή.",
+        step1Tip: "💡 Ιδανικό για: ημερήσιες θερμοκρασίες, ανάπτυξη φυτού, μηνιαία έξοδα.",
+        step2Badge: "ΒΗΜΑ 2",
+        step2Tag: "Σύγκριση Ονομάτων",
+        step2Title: "Οριζόντιο Ραβδόγραμμα",
+        step2Text: "Είναι ένα κλασικό ραβδόγραμμα «ξαπλωμένο» οριζόντια. Προτιμάται όταν οι κατηγορίες έχουν μεγάλα ονόματα:",
+        step2Bullet1: "Κατακόρυφος άξονας: Οι κατηγορίες / ονόματα.",
+        step2Bullet2: "Οριζόντιος άξονας: Η κλίμακα των αριθμητικών τιμών.",
+        step2Bullet3: "Μήκος ράβδου: Δείχνει τη συχνότητα της κάθε κατηγορίας.",
+        step2Tip: "⚡ Διευκολύνει την ανάγνωση χωρίς να χρειάζεται να γέρνουμε το κεφάλι για να διαβάσουμε μεγάλες λέξεις!",
+        step3Badge: "ΒΗΜΑ 3",
+        step3Tag: "Μέρος προς Όλο",
+        step3Title: "Κυκλικό Διάγραμμα (Πίτα)",
+        step3Text: "Αναπαριστά τη σχέση των επιμέρους τμημάτων με το σύνολο. Ολόκληρος ο κύκλος αντιπροσωπεύει το 100%:",
+        step3CircleWhole: "Ολόκληρος Κύκλος ＝ 100 % ＝ 360°",
+        step3HalfLabel: "Μισός Κύκλος",
+        step3QuarterLabel: "Τέταρτο Κύκλου",
+        step3Tip: "🎯 Κάθε τομέας του κύκλου έχει επίκεντρη γωνία ανάλογη με το ποσοστό της κατηγορίας.",
+        step4Badge: "ΒΗΜΑ 4",
+        step4Tag: "Μαθηματικός Τύπος",
+        step4Title: "Υπολογισμός Επίκεντρης Γωνίας",
+        step4Text: "Για να σχεδιάσουμε έναν κυκλικό τομέα με μοιρογνωμόνιο, βρίσκουμε τις μοίρες με αναλογία:",
+        step4FormulaTitle: "Μοίρες (α°) ＝",
+        step4FormulaNum: "Ποσοστό % · 360°",
+        step4FormulaDen: "100",
+        step4Example: "Παράδειγμα: Το 20% αντιστοιχεί σε (20 · 360) : 100 ＝ 72°.",
+        step4Tip: "🚀 Το άθροισμα των γωνιών όλων των κυκλικών τομέων ισούται αυστηρά με 360°.",
+        lab1Badge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1",
+        lab1Title: "Δυναμικός Μετατροπέας: Ίδια Δεδομένα σε 3 Διαφορετικά Γραφήματα",
+        lab1Desc: "Ρυθμίστε τις τιμές ανά 1 μονάδα και αλλάξτε την προβολή για να δείτε πώς τα ίδια δεδομένα παρουσιάζονται σε Γράφημα Γραμμής, Οριζόντιο Ραβδόγραμμα ή Κυκλικό Διάγραμμα.",
+        tabLine: "📈 Γραμμής",
+        tabHbar: "📊 Οριζόντιο",
+        tabPie: "🥧 Κυκλικό",
+        pointPrefix: "Σημείο",
+        unitsLabel: "μονάδες",
+        totalUnits: "Σύνολο μονάδων:",
+        chartTitleLine: "ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ (ΧΡΟΝΟΣΕΙΡΑ)",
+        chartTitleHbar: "ΟΡΙΖΟΝΤΙΟ ΡΑΒΔΟΓΡΑΜΜΑ (ΣΥΓΚΡΙΣΗ)",
+        chartTitlePie: "ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ (ΜΕΡΟΣ ΠΡΟΣ ΟΛΟ)",
+        chartTakeaway: "Η επιλογή του γραφήματος εξαρτάται από τον στόχο: εξέλιξη (γραμμή), σύγκριση (ραβδόγραμμα) ή ποσοστά (κυκλικό)!",
+        lab2Badge: "📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΛΟΓΙΑ ΜΟΙΡΩΝ ΚΑΙ ΠΟΣΟΣΤΩΝ",
+        lab2Title: "Πώς Υπολογίζουμε την Επίκεντρη Γωνία (360° ＝ 100%)",
+        lab2Desc: "Σύρετε το ποσοστό (%) για να δείτε ακριβώς πόσες μοίρες επίκεντρης γωνίας πρέπει να σχεδιάσουμε με το μοιρογνωμόνιο και παρατηρήστε το άνοιγμα της γωνίας στον κύκλο:",
+        pctInputLabel: "ΠΟΣΟΣΤΟ ΚΑΤΗΓΟΡΙΑΣ (%):",
+        circleAngleLabel: "ΑΝΟΙΓΜΑ ΓΩΝΙΑΣ ΣΤΟΝ ΚΥΚΛΟ",
+        circleCenterO: "Ο",
+        centralLabel: "Επίκεντρη:",
+        boxAngleHeading: "ΕΠΙΚΕΝΤΡΗ ΓΩΝΙΑ ΣΕ ΜΟΙΡΕΣ (α°)",
+        proportionLabel: "Αναλογία:",
+        boxExplanation: (pct, deg) => `Στο 100% αντιστοιχούν 360°. Στο ${pct}% αντιστοιχούν ακριβώς ${deg}°.`,
+        problemsHeading: "Λυμένα Παραδείγματα Προβλημάτων με Σχήματα",
+        problemsDesc: "Δύο ολοκληρωμένα προβλήματα με γράφημα γραμμής και κυκλικό διάγραμμα.",
+        prob1Badge: "ΠΡΟΒΛΗΜΑ 1: ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ",
+        prob1Tag: "Μετεωρολογία",
+        prob1Title: "Διακύμανση Θερμοκρασίας στη Διάρκεια της Ημέρας",
+        prob1Desc: "Σε έναν μετεωρολογικό σταθμό καταγράφηκε η θερμοκρασία: 08:00 (12°C), 12:00 (20°C), 16:00 (18°C), 20:00 (14°C).",
+        prob1DiagramTitle: "ΣΧΗΜΑ: ΧΡΟΝΟΣΕΙΡΑ ΘΕΡΜΟΚΡΑΣΙΑΣ (°C)",
+        prob1QA: "Ερωτήματα & Απαντήσεις:",
+        prob1Max: "Μέγιστη θερμοκρασία: 20°C (στις 12:00 το μεσημέρι).",
+        prob1Range: "Εύρος διακύμανσης: 20°C － 12°C ＝ 8°C.",
+        prob1Tip: "💡 Το γράφημα γραμμής δείχνει καθαρά την άνοδο της θερμοκρασίας μέχρι το μεσημέρι και τη βαθμιαία πτώση της προς το απόγευμα.",
+        prob2Badge: "ΠΡΟΒΛΗΜΑ 2: ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ",
+        prob2Tag: "Δραστηριότητες",
+        prob2Title: "Κατανομή Ελεύθερου Χρόνου Μαθητή",
+        prob2Desc: "Ένας μαθητής αφιερώνει τον ελεύθερο χρόνο του ως εξής: Αθλητισμός 50 %, Διάβασμα εξωσχολικών βιβλίων 25 %, Μουσική 25 %.",
+        prob2DiagramTitle: "ΣΧΗΜΑ: ΚΥΚΛΙΚΟΣ ΤΟΜΕΑΣ ΑΝΑΛΟΓΙΑΣ",
+        prob2LegendSport: "● Αθλητισμός (50% / 180°)",
+        prob2LegendReading: "● Διάβασμα (25% / 90°)",
+        prob2LegendMusic: "● Μουσική (25% / 90°)",
+        prob2CalcTitle: "Υπολογισμός Επίκεντρων Γωνιών:",
+        prob2CalcSport: "Αθλητισμός (50%): (50 · 360) : 100 ＝ 180°",
+        prob2CalcReading: "Διάβασμα (25%): (25 · 360) : 100 ＝ 90°",
+        prob2CalcMusic: "Μουσική (25%): (25 · 360) : 100 ＝ 90°",
+        prob2Tip: "💡 Το άθροισμα των γωνιών είναι: 180° ＋ 90° ＋ 90° ＝ 360° (ένας πλήρης κύκλος).",
+        ctaTitle: "Ώρα για Εξάσκηση στα Άλλα Είδη Γραφημάτων!",
+        ctaDesc: "Δοκίμασε τις δυνάμεις σου σε 10 απαιτητικές ασκήσεις με γραφήματα γραμμής, οριζόντια ραβδογράμματα, κυκλικά διαγράμματα και υπολογισμούς επίκεντρων γωνιών για τη ΣΤ' Δημοτικού.",
+        ctaBtn: "🎯 Έναρξη Ασκήσεων",
+      },
+      en: {
+        pageTitle: "Other Graphs: Line, Horizontal Bar, Circle - 6th Grade | LearnMaths.gr",
+        metaDescription: "Learn when to use line graphs, horizontal bar charts, and pie charts, how to calculate central angles, and how to interpret statistical data.",
+        backText: "6th Grade",
+        actionBtn: "🎯 Exercises",
+        chapterBadge: "CHAPTER 57 • 6TH GRADE",
+        headerTitle: "Other Graph Types: Line, Horizontal Bar & Pie Charts",
+        headerDesc: "We expand our statistical visualization skills: Learn to show progress over time with line graphs, compare categories with horizontal bar charts, and divide the whole into percentages and degrees with pie charts.",
+        headerSub: "Theory, Visual Examples & Interactive Chart Converter",
+        tryExercises: "Try the Exercises",
+        roadmapTitle: "Choosing the Right Chart in 4 Steps",
+        roadmapDesc: "Every graph type serves a distinct purpose depending on the data you want to communicate.",
+        step1Badge: "STEP 1",
+        step1Tag: "Change Over Time",
+        step1Title: "Line Graph",
+        step1Text: "Used when displaying how a quantity changes over time (time series data):",
+        step1Bullet1: "Horizontal axis (x): Time (hours, days, months, years).",
+        step1Bullet2: "Vertical axis (y): The measured quantity (temperature, height, sales).",
+        step1Bullet3: "Points & Line segments: We connect points to observe upward, downward, or steady trends.",
+        step1Tip: "💡 Ideal for: daily temperatures, plant growth, monthly expenses.",
+        step2Badge: "STEP 2",
+        step2Tag: "Comparing Categories",
+        step2Title: "Horizontal Bar Chart",
+        step2Text: "A standard bar chart placed horizontally. Best suited when category names are long or descriptive:",
+        step2Bullet1: "Vertical axis: Categories or descriptive labels.",
+        step2Bullet2: "Horizontal axis: Numerical value scale.",
+        step2Bullet3: "Bar length: Displays the frequency of each category.",
+        step2Tip: "⚡ Makes reading long category names comfortable without tilting your head!",
+        step3Badge: "STEP 3",
+        step3Tag: "Part to Whole",
+        step3Title: "Pie Chart (Circle Graph)",
+        step3Text: "Represents the proportion of each part relative to the entire whole. The full circle represents 100%:",
+        step3CircleWhole: "Full Circle ＝ 100 % ＝ 360°",
+        step3HalfLabel: "Half Circle",
+        step3QuarterLabel: "Quarter Circle",
+        step3Tip: "🎯 Each circular sector has a central angle proportional to the category's percentage.",
+        step4Badge: "STEP 4",
+        step4Tag: "Mathematical Formula",
+        step4Title: "Calculating Central Angle",
+        step4Text: "To draw a circle sector using a protractor, calculate its degrees using proportion:",
+        step4FormulaTitle: "Angle (α°) ＝",
+        step4FormulaNum: "Percentage % · 360°",
+        step4FormulaDen: "100",
+        step4Example: "Example: 20% corresponds to (20 · 360) : 100 ＝ 72°.",
+        step4Tip: "🚀 The sum of all sector angles in a pie chart must strictly equal 360°.",
+        lab1Badge: "🔬 INTERACTIVE LAB 1",
+        lab1Title: "Dynamic Converter: Same Data in 3 Distinct Graphs",
+        lab1Desc: "Adjust values by 1 unit and switch chart views to see how the exact same dataset is represented as a Line Graph, Horizontal Bar Chart, or Pie Chart.",
+        tabLine: "📈 Line",
+        tabHbar: "📊 Horizontal",
+        tabPie: "🥧 Pie",
+        pointPrefix: "Point",
+        unitsLabel: "units",
+        totalUnits: "Total units:",
+        chartTitleLine: "LINE GRAPH (TIME SERIES)",
+        chartTitleHbar: "HORIZONTAL BAR CHART (COMPARISON)",
+        chartTitlePie: "PIE CHART (PART TO WHOLE)",
+        chartTakeaway: "Chart selection depends on your goal: trend over time (line), comparing labels (bar), or percentages (pie)!",
+        lab2Badge: "📐 INTERACTIVE LAB 2: DEGREES & PERCENTAGES PROPORTION",
+        lab2Title: "How to Compute Central Angle (360° ＝ 100%)",
+        lab2Desc: "Drag the percentage slider to see how many degrees to measure with a protractor, and observe the central angle open dynamically in the circle:",
+        pctInputLabel: "CATEGORY PERCENTAGE (%):",
+        circleAngleLabel: "CENTRAL ANGLE IN CIRCLE",
+        circleCenterO: "O",
+        centralLabel: "Central Angle:",
+        boxAngleHeading: "CENTRAL ANGLE IN DEGREES (α°)",
+        proportionLabel: "Proportion:",
+        boxExplanation: (pct, deg) => `100% corresponds to 360°. Therefore, ${pct}% corresponds to exactly ${deg}°.`,
+        problemsHeading: "Worked Problems with Visuals",
+        problemsDesc: "Two complete worked problems illustrating a line graph and a pie chart.",
+        prob1Badge: "PROBLEM 1: LINE GRAPH",
+        prob1Tag: "Meteorology",
+        prob1Title: "Daily Temperature Variation",
+        prob1Desc: "A weather station recorded temperatures: 08:00 (12°C), 12:00 (20°C), 16:00 (18°C), 20:00 (14°C).",
+        prob1DiagramTitle: "DIAGRAM: TEMPERATURE TIME SERIES (°C)",
+        prob1QA: "Questions & Answers:",
+        prob1Max: "Maximum temperature: 20°C (at 12:00 noon).",
+        prob1Range: "Variation range: 20°C － 12°C ＝ 8°C.",
+        prob1Tip: "💡 The line graph clearly displays the temperature rising until noon and gradually dropping toward the evening.",
+        prob2Badge: "PROBLEM 2: PIE CHART",
+        prob2Tag: "Activities",
+        prob2Title: "Free Time Allocation of a Student",
+        prob2Desc: "A student spends free time as follows: Sports 50 %, Reading extracurricular books 25 %, Music 25 %.",
+        prob2DiagramTitle: "DIAGRAM: CIRCLE SECTOR PROPORTIONS",
+        prob2LegendSport: "● Sports (50% / 180°)",
+        prob2LegendReading: "● Reading (25% / 90°)",
+        prob2LegendMusic: "● Music (25% / 90°)",
+        prob2CalcTitle: "Central Angle Calculations:",
+        prob2CalcSport: "Sports (50%): (50 · 360) : 100 ＝ 180°",
+        prob2CalcReading: "Reading (25%): (25 · 360) : 100 ＝ 90°",
+        prob2CalcMusic: "Music (25%): (25 · 360) : 100 ＝ 90°",
+        prob2Tip: "💡 Sum of angles: 180° ＋ 90° ＋ 90° ＝ 360° (a complete circle).",
+        ctaTitle: "Time to Practice Other Graph Types!",
+        ctaDesc: "Test your skills with 10 dynamic exercises on line graphs, horizontal bar charts, pie charts, and central angle calculations for 6th Grade.",
+        ctaBtn: "🎯 Start Exercises",
+      }
+    }[locale];
+  }, [locale]);
+
   // Εργαστηριο 1: Διαδραστικη Απεικονιση Δεδομενων σε 3 ειδη γραφηματων
   const [chartType, setChartType] = useState('line'); // 'line', 'hbar', 'pie'
   const [val1, setVal1] = useState(15);
@@ -21,11 +251,11 @@ export default function AllaGrafimataTheoryPage() {
   const total = val1 + val2 + val3 + val4;
 
   const dataset = useMemo(() => [
-    { label: 'Σημείο Α', value: val1, color: '#3b82f6', angle: total > 0 ? (val1 / total) * 360 : 0 },
-    { label: 'Σημείο Β', value: val2, color: '#10b981', angle: total > 0 ? (val2 / total) * 360 : 0 },
-    { label: 'Σημείο Γ', value: val3, color: '#f59e0b', angle: total > 0 ? (val3 / total) * 360 : 0 },
-    { label: 'Σημείο Δ', value: val4, color: '#ec4899', angle: total > 0 ? (val4 / total) * 360 : 0 }
-  ], [val1, val2, val3, val4, total]);
+    { label: `${t.pointPrefix} A`, value: val1, color: '#3b82f6', angle: total > 0 ? (val1 / total) * 360 : 0 },
+    { label: `${t.pointPrefix} B`, value: val2, color: '#10b981', angle: total > 0 ? (val2 / total) * 360 : 0 },
+    { label: `${t.pointPrefix} C`, value: val3, color: '#f59e0b', angle: total > 0 ? (val3 / total) * 360 : 0 },
+    { label: `${t.pointPrefix} D`, value: val4, color: '#ec4899', angle: total > 0 ? (val4 / total) * 360 : 0 }
+  ], [val1, val2, val3, val4, total, t]);
 
   // Εργαστηριο 2: Υπολογιστης Επικεντρης Γωνιας
   const [percentInput, setPercentInput] = useState(25); // 25%
@@ -56,7 +286,6 @@ export default function AllaGrafimataTheoryPage() {
     const largeArc = angle > 180 ? 1 : 0;
     const path = `M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY} Z`;
 
-    // Μικρο τοξο ενδειξης γωνιας κοντα στο κεντρο
     const rSmall = 26;
     const endXSmall = cx + rSmall * Math.cos(rad);
     const endYSmall = cy + rSmall * Math.sin(rad);
@@ -67,47 +296,46 @@ export default function AllaGrafimataTheoryPage() {
 
   return (
     <Layout
-      title="Άλλα Γραφήματα: Γραμμής, Οριζόντιο, Κυκλικό - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε πότε χρησιμοποιούμε γράφημα γραμμής, οριζόντιο ραβδόγραμμα και κυκλικό διάγραμμα (πίτα), πώς υπολογίζουμε επίκεντρες γωνίες και ερμηνεύουμε στατιστικά στοιχεία."
+      title={t.pageTitle}
+      description={t.metaDescription}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/57-alla-grafimata-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.actionBtn}</span>
         </Link>
       }
     >
-      {/* Container πληρους ευρους για κινητα εως 2K, 4K & 8K χωρις οριζοντιο scroll */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
         
         {/* 1. HEADER BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 57 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{toCleanUppercase(t.chapterBadge)}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Άλλα Είδη Γραφημάτων: Γραμμής, Οριζόντιο &amp; Κυκλικό
+              {t.headerTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Επεκτείνουμε τις γνώσεις μας στη στατιστική απεικόνιση: Μαθαίνουμε να αποτυπώνουμε τη διαχρονική εξέλιξη με <strong>γραφήματα γραμμής</strong>, να συγκρίνουμε ονόματα με <strong>οριζόντια ραβδογράμματα</strong> και να διαιρούμε το όλο σε ποσοστά και μοίρες με <strong>κυκλικά διαγράμματα</strong>.
+              {t.headerDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Οπτικά Παραδείγματα &amp; Διαδραστική Εναλλαγή Γραφημάτων</span>
+              <span>{t.headerSub}</span>
             </div>
             <Link
               href="/st-dimotikou/57-alla-grafimata-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.tryExercises}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -117,10 +345,10 @@ export default function AllaGrafimataTheoryPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Επιλογή του Κατάλληλου Γραφήματος σε 4 Βήματα
+              {t.roadmapTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Κάθε είδος γραφήματος έχει έναν συγκεκριμένο ρόλο ανάλογα με τα δεδομένα που θέλουμε να προβάλουμε.
+              {t.roadmapDesc}
             </p>
           </div>
 
@@ -131,26 +359,26 @@ export default function AllaGrafimataTheoryPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {toCleanUppercase(t.step1Badge)}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Εξέλιξη Χρόνου</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step1Tag}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Γράφημα Γραμμής
+                  {t.step1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Χρησιμοποιείται όταν θέλουμε να δείξουμε <strong>πώς μεταβάλλεται ένα μέγεθος με την πάροδο του χρόνου</strong> (χρονοσειρά):
+                  {t.step1Text}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
-                  <div>• <strong>Οριζόντιος άξονας (χ):</strong> Ο χρόνος (ώρες, ημέρες, μήνες, έτη).</div>
-                  <div>• <strong>Κατακόρυφος άξονας (ψ):</strong> Το μέγεθος (θερμοκρασία, ύψος, πωλήσεις).</div>
-                  <div>• <strong>Σημεία &amp; Ευθύγραμμα τμήματα:</strong> Ενώνουμε τα σημεία για να δούμε αν η τάση είναι ανοδική, καθοδική ή σταθερή.</div>
+                  <div>• <strong>{t.step1Bullet1}</strong></div>
+                  <div>• <strong>{t.step1Bullet2}</strong></div>
+                  <div>• <strong>{t.step1Bullet3}</strong></div>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Ιδανικό για: ημερήσιες θερμοκρασίες, ανάπτυξη φυτού, μηνιαία έξοδα.
+                {t.step1Tip}
               </div>
             </article>
 
@@ -159,26 +387,26 @@ export default function AllaGrafimataTheoryPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {toCleanUppercase(t.step2Badge)}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Σύγκριση Ονομάτων</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step2Tag}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Οριζόντιο Ραβδόγραμμα
+                  {t.step2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Είναι ένα κλασικό ραβδόγραμμα «ξαπλωμένο» οριζόντια. Προτιμάται όταν <strong>οι κατηγορίες έχουν μεγάλα ονόματα</strong>:
+                  {t.step2Text}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 text-slate-700">
-                  <div>• <strong>Κατακόρυφος άξονας:</strong> Οι κατηγορίες / ονόματα.</div>
-                  <div>• <strong>Οριζόντιος άξονας:</strong> Η κλίμακα των αριθμητικών τιμών.</div>
-                  <div>• <strong>Μήκος ράβδου:</strong> Δείχνει τη συχνότητα της κάθε κατηγορίας.</div>
+                  <div>• <strong>{t.step2Bullet1}</strong></div>
+                  <div>• <strong>{t.step2Bullet2}</strong></div>
+                  <div>• <strong>{t.step2Bullet3}</strong></div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Διευκολύνει την ανάγνωση χωρίς να χρειάζεται να γέρνουμε το κεφάλι για να διαβάσουμε μεγάλες λέξεις!
+                {t.step2Tip}
               </div>
             </article>
 
@@ -187,29 +415,37 @@ export default function AllaGrafimataTheoryPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {toCleanUppercase(t.step3Badge)}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Μέρος προς Όλο</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step3Tag}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Κυκλικό Διάγραμμα (Πίτα)
+                  {t.step3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αναπαριστά τη <strong>σχέση των επιμέρους τμημάτων με το σύνολο</strong>. Ολόκληρος ο κύκλος αντιπροσωπεύει το 100%:
+                  {t.step3Text}
                 </p>
 
-                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm text-center font-mono">
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm text-center font-mono">
                   <div className="text-indigo-950 font-bold">
-                    Ολόκληρος Κύκλος ＝ 100 % ＝ 360°
+                    {t.step3CircleWhole}
                   </div>
-                  <div className="text-slate-600 font-sans text-[11px] leading-normal">
-                    Μισός Κύκλος ＝ 50 % ＝ 180° | Τέταρτο ＝ 25 % ＝ 90°
+                  <div className="text-slate-700 font-sans text-xs flex flex-wrap items-center justify-center gap-3 pt-1 border-t border-slate-200">
+                    <span className="inline-flex items-center">
+                      <Fraction num="1" den="2" className="text-sm text-indigo-700" />
+                      <span>{t.step3HalfLabel} ＝ 50 % ＝ 180°</span>
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <span className="inline-flex items-center">
+                      <Fraction num="1" den="4" className="text-sm text-indigo-700" />
+                      <span>{t.step3QuarterLabel} ＝ 25 % ＝ 90°</span>
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Κάθε τομέας του κύκλου έχει επίκεντρη γωνία ανάλογη με το ποσοστό της κατηγορίας.
+                {t.step3Tip}
               </div>
             </article>
 
@@ -218,29 +454,30 @@ export default function AllaGrafimataTheoryPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 4
+                    {toCleanUppercase(t.step4Badge)}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Μαθηματικός Τύπος</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step4Tag}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Υπολογισμός Επίκεντρης Γωνίας
+                  {t.step4Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Για να σχεδιάσουμε έναν κυκλικό τομέα με μοιρογνωμόνιο, βρίσκουμε τις μοίρες με αναλογία:
+                  {t.step4Text}
                 </p>
 
-                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-1.5 text-xs sm:text-sm font-mono text-center">
-                  <div className="p-2 bg-white rounded-xl border border-slate-200 text-emerald-900 font-bold">
-                    Μοίρες (α°) ＝ (Ποσοστό % · 360°) : 100
+                <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 space-y-2 text-xs sm:text-sm font-mono text-center">
+                  <div className="p-2 bg-white rounded-xl border border-slate-200 text-emerald-900 font-bold flex items-center justify-center flex-wrap gap-1">
+                    <span>{t.step4FormulaTitle}</span>
+                    <Fraction num={t.step4FormulaNum} den={t.step4FormulaDen} className="text-sm text-emerald-700" />
                   </div>
                   <div className="text-[11px] text-slate-500 font-sans">
-                    Παράδειγμα: Το 20% αντιστοιχεί σε (20 · 360) : 100 ＝ <strong>72°</strong>.
+                    {t.step4Example}
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Το άθροισμα των γωνιών όλων των κυκλικών τομέων ισούται αυστηρά με 360°.
+                {t.step4Tip}
               </div>
             </article>
 
@@ -252,13 +489,13 @@ export default function AllaGrafimataTheoryPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
+                <span>{toCleanUppercase(t.lab1Badge)}</span>
               </div>
               <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Δυναμικός Μετατροπέας: Ίδια Δεδομένα σε 3 Διαφορετικά Γραφήματα
+                {t.lab1Title}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Ρυθμίστε τις τιμές ανά 1 μονάδα και αλλάξτε την προβολή για να δείτε πώς τα ίδια δεδομένα παρουσιάζονται σε Γράφημα Γραμμής, Οριζόντιο Ραβδόγραμμα ή Κυκλικό Διάγραμμα.
+                {t.lab1Desc}
               </p>
             </div>
 
@@ -273,7 +510,7 @@ export default function AllaGrafimataTheoryPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📈 Γραμμής
+                {t.tabLine}
               </button>
               <button
                 type="button"
@@ -284,7 +521,7 @@ export default function AllaGrafimataTheoryPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                📊 Οριζόντιο
+                {t.tabHbar}
               </button>
               <button
                 type="button"
@@ -295,30 +532,30 @@ export default function AllaGrafimataTheoryPage() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                🥧 Κυκλικό
+                {t.tabPie}
               </button>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
             
-            {/* Χειριστηρια Τιμων (4 Steppers με grid 36px_1fr_36px και κουμπια 36px) */}
+            {/* Χειριστηρια Τιμων */}
             <div className="lg:col-span-5 space-y-3 sm:space-y-3.5">
               
               {/* Σημειο Α */}
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Σημείο Α
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span> {dataset[0].label}
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-blue-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    {val1} μονάδες
+                    {val1} {t.unitsLabel}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση Σημείου Α"
+                    aria-label={`Decrease ${dataset[0].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.max(5, prev - 1)); }}
                     disabled={val1 <= 5}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -336,7 +573,7 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση Σημείου Α"
+                    aria-label={`Increase ${dataset[0].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal1((prev) => Math.min(50, prev + 1)); }}
                     disabled={val1 >= 50}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -350,16 +587,16 @@ export default function AllaGrafimataTheoryPage() {
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Σημείο Β
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> {dataset[1].label}
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-emerald-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    {val2} μονάδες
+                    {val2} {t.unitsLabel}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση Σημείου Β"
+                    aria-label={`Decrease ${dataset[1].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.max(5, prev - 1)); }}
                     disabled={val2 <= 5}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -377,7 +614,7 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση Σημείου Β"
+                    aria-label={`Increase ${dataset[1].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal2((prev) => Math.min(50, prev + 1)); }}
                     disabled={val2 >= 50}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -391,16 +628,16 @@ export default function AllaGrafimataTheoryPage() {
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Σημείο Γ
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> {dataset[2].label}
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-amber-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    {val3} μονάδες
+                    {val3} {t.unitsLabel}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση Σημείου Γ"
+                    aria-label={`Decrease ${dataset[2].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.max(5, prev - 1)); }}
                     disabled={val3 <= 5}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -418,7 +655,7 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση Σημείου Γ"
+                    aria-label={`Increase ${dataset[2].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal3((prev) => Math.min(50, prev + 1)); }}
                     disabled={val3 >= 50}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -432,16 +669,16 @@ export default function AllaGrafimataTheoryPage() {
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Σημείο Δ
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500"></span> {dataset[3].label}
                   </span>
                   <span className="font-mono font-black text-xs sm:text-sm text-pink-700 bg-white px-2 py-0.5 rounded border border-slate-200">
-                    {val4} μονάδες
+                    {val4} {t.unitsLabel}
                   </span>
                 </div>
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση Σημείου Δ"
+                    aria-label={`Decrease ${dataset[3].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.max(5, prev - 1)); }}
                     disabled={val4 <= 5}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -459,7 +696,7 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση Σημείου Δ"
+                    aria-label={`Increase ${dataset[3].label}`}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setVal4((prev) => Math.min(50, prev + 1)); }}
                     disabled={val4 >= 50}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -471,31 +708,31 @@ export default function AllaGrafimataTheoryPage() {
 
               {/* Συνολο Μοναδων */}
               <div className="p-3 bg-blue-50 rounded-2xl border border-blue-200 text-center font-bold text-xs sm:text-sm text-blue-950">
-                Σύνολο μονάδων: <strong className="font-mono text-sm sm:text-base">{total}</strong>
+                {t.totalUnits} <strong className="font-mono text-sm sm:text-base">{total}</strong>
               </div>
 
             </div>
 
-            {/* Οπτικη Προβολη Γραφηματος (SVG) Χωρις Scroll στα Κινητα */}
+            {/* Οπτικη Προβολη Γραφηματος (SVG) */}
             <div className="lg:col-span-7 bg-slate-50 p-3.5 sm:p-6 rounded-3xl border border-slate-200 flex flex-col items-center justify-center w-full min-h-[340px]">
               
               <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 sm:mb-3 text-center">
-                {chartType === 'line' && 'ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ (ΧΡΟΝΟΣΕΙΡΑ)'}
-                {chartType === 'hbar' && 'ΟΡΙΖΟΝΤΙΟ ΡΑΒΔΟΓΡΑΜΜΑ (ΣΥΓΚΡΙΣΗ)'}
-                {chartType === 'pie' && 'ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ (ΜΕΡΟΣ ΠΡΟΣ ΟΛΟ)'}
+                {chartType === 'line' && toCleanUppercase(t.chartTitleLine)}
+                {chartType === 'hbar' && toCleanUppercase(t.chartTitleHbar)}
+                {chartType === 'pie' && toCleanUppercase(t.chartTitlePie)}
               </span>
 
               {/* 1. Γραφημα Γραμμης (Line Chart) */}
               {chartType === 'line' && (
                 <div className="w-full max-w-[460px] aspect-[4/3] sm:aspect-[16/10] bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 shadow-sm flex items-center justify-center">
                   <svg viewBox="0 0 380 240" className="w-full h-auto max-h-[260px] overflow-visible">
-                    {[0, 15, 30, 45, 60].map((t) => {
-                      const y = 195 - (t / 60) * 150;
+                    {[0, 15, 30, 45, 60].map((tick) => {
+                      const y = 195 - (tick / 60) * 150;
                       return (
-                        <g key={`l-tick-${t}`}>
+                        <g key={`l-tick-${tick}`}>
                           <line x1="42" y1={y} x2="365" y2={y} stroke="#f1f5f9" strokeWidth="1.5" />
                           <text x="35" y={y + 4} fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="end">
-                            {t}
+                            {tick}
                           </text>
                         </g>
                       );
@@ -537,13 +774,13 @@ export default function AllaGrafimataTheoryPage() {
               {chartType === 'hbar' && (
                 <div className="w-full max-w-[460px] aspect-[4/3] sm:aspect-[16/10] bg-white rounded-2xl border border-slate-200 p-2 sm:p-4 shadow-sm flex items-center justify-center">
                   <svg viewBox="0 0 380 240" className="w-full h-auto max-h-[260px] overflow-visible">
-                    {[0, 15, 30, 45, 60].map((t) => {
-                      const x = 75 + (t / 60) * 260;
+                    {[0, 15, 30, 45, 60].map((tick) => {
+                      const x = 75 + (tick / 60) * 260;
                       return (
-                        <g key={`h-tick-${t}`}>
+                        <g key={`h-tick-${tick}`}>
                           <line x1={x} y1="25" x2={x} y2="195" stroke="#f1f5f9" strokeWidth="1.5" />
                           <text x={x} y="210" fontSize="10" fontWeight="bold" fill="#64748b" textAnchor="middle">
-                            {t}
+                            {tick}
                           </text>
                         </g>
                       );
@@ -573,11 +810,10 @@ export default function AllaGrafimataTheoryPage() {
                 </div>
               )}
 
-              {/* 3. Κυκλικο Διαγραμμα (Pie Chart - Πληρως Responsive για κινητα χωρις overflow) */}
+              {/* 3. Κυκλικο Διαγραμμα (Pie Chart) */}
               {chartType === 'pie' && (
                 <div className="w-full max-w-[460px] bg-white rounded-2xl border border-slate-200 p-3 sm:p-5 shadow-sm flex flex-col items-center justify-center gap-3">
                   
-                  {/* SVG Κυκλος με fluid aspect ratio */}
                   <div className="w-full max-w-[190px] sm:max-w-[210px] aspect-square flex items-center justify-center">
                     <svg viewBox="0 0 220 220" className="w-full h-full overflow-visible">
                       {(() => {
@@ -611,7 +847,7 @@ export default function AllaGrafimataTheoryPage() {
                     </svg>
                   </div>
 
-                  {/* Υπομνημα Κυκλικου σε Responsive Grid */}
+                  {/* Υπομνημα Κυκλικου */}
                   <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full text-[11px] sm:text-xs font-mono pt-1">
                     {dataset.map((d, i) => {
                       const pct = total > 0 ? ((d.value / total) * 100).toFixed(0) : 0;
@@ -625,7 +861,7 @@ export default function AllaGrafimataTheoryPage() {
                             <span className="font-sans font-bold text-slate-700 truncate">{d.label}</span>
                           </div>
                           <span className="font-bold text-slate-900 shrink-0">
-                            {pct}% ({formatNum(d.angle, 0)}°)
+                            {pct}% ({formatNum(d.angle, locale, 0)}°)
                           </span>
                         </div>
                       );
@@ -636,7 +872,7 @@ export default function AllaGrafimataTheoryPage() {
               )}
 
               <span className="text-[11px] sm:text-xs text-slate-500 font-semibold mt-2.5 text-center leading-normal">
-                Η επιλογή του γραφήματος εξαρτάται από τον στόχο: εξέλιξη (γραμμή), σύγκριση (ραβδόγραμμα) ή ποσοστά (κυκλικό)!
+                {t.chartTakeaway}
               </span>
             </div>
 
@@ -647,23 +883,23 @@ export default function AllaGrafimataTheoryPage() {
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs 2xl:text-sm font-bold text-amber-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΑΝΑΛΟΓΙΑ ΜΟΙΡΩΝ ΚΑΙ ΠΟΣΟΣΤΩΝ</span>
+              <span>{toCleanUppercase(t.lab2Badge)}</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς Υπολογίζουμε την Επίκεντρη Γωνία (360° ＝ 100%)
+              {t.lab2Title}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρετε το ποσοστό (%) για να δείτε ακριβώς πόσες μοίρες επίκεντρης γωνίας πρέπει να σχεδιάσουμε με το μοιρογνωμόνιο και παρατηρήστε το άνοιγμα της γωνίας στον κύκλο:
+              {t.lab2Desc}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             
-            {/* Ρυθμισεις Ποσοστου με stepper 36px (5 στήλες) */}
+            {/* Ρυθμισεις Ποσοστου */}
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs font-bold text-slate-700">
-                  <span>ΠΟΣΟΣΤΟ ΚΑΤΗΓΟΡΙΑΣ (%):</span>
+                  <span>{t.pctInputLabel}</span>
                   <span className="font-mono text-base sm:text-lg text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 font-black">
                     {percentInput} %
                   </span>
@@ -671,7 +907,7 @@ export default function AllaGrafimataTheoryPage() {
                 <div className="grid grid-cols-[36px_1fr_36px] items-center h-11 w-full gap-2">
                   <button
                     type="button"
-                    aria-label="Μείωση ποσοστού"
+                    aria-label="Decrease percentage"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.max(1, prev - 1)); }}
                     disabled={percentInput <= 1}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -689,7 +925,7 @@ export default function AllaGrafimataTheoryPage() {
                   />
                   <button
                     type="button"
-                    aria-label="Αύξηση ποσοστού"
+                    aria-label="Increase percentage"
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPercentInput((prev) => Math.min(100, prev + 1)); }}
                     disabled={percentInput >= 100}
                     className="w-9 h-9 shrink-0 flex items-center justify-center select-none touch-manipulation active:scale-95 transition bg-white hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none text-slate-800 font-black rounded-lg border border-slate-300 shadow-sm text-base"
@@ -714,17 +950,15 @@ export default function AllaGrafimataTheoryPage() {
               </div>
             </div>
 
-            {/* Δυναμικος Κυκλος με Ανοιγμα Επικεντρης Γωνιας (3 στήλες) */}
+            {/* Δυναμικος Κυκλος με Ανοιγμα Επικεντρης Γωνιας */}
             <div className="lg:col-span-3 bg-slate-50 p-4 rounded-3xl border border-slate-200 flex flex-col items-center justify-center space-y-2">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">
-                ΑΝΟΙΓΜΑ ΓΩΝΙΑΣ ΣΤΟΝ ΚΥΚΛΟ
+                {toCleanUppercase(t.circleAngleLabel)}
               </span>
               <div className="w-full max-w-[180px] aspect-square bg-white rounded-2xl border border-slate-200 p-2 shadow-inner flex items-center justify-center">
                 <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
-                  {/* Περιγραμμα ολοκληρου του κυκλου */}
                   <circle cx="100" cy="100" r="75" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4 3" />
                   
-                  {/* Χρωματισμενος τομεας της επικεντρης γωνιας (χωρις CSS transition για απολυτη σταθεροτητα) */}
                   <path
                     d={angleSectorData.path}
                     fill="#f59e0b"
@@ -733,10 +967,8 @@ export default function AllaGrafimataTheoryPage() {
                     strokeWidth="2.5"
                   />
 
-                  {/* Αρχικη ακτινα αναφορας (κατακορυφη προς τα επανω: 0 μοιρες) */}
                   <line x1="100" y1="100" x2="100" y2="25" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" />
 
-                  {/* Τελικη κινητη ακτινα της επικεντρης γωνιας */}
                   {degreesCalculated < 360 && (
                     <line
                       x1="100"
@@ -749,7 +981,6 @@ export default function AllaGrafimataTheoryPage() {
                     />
                   )}
 
-                  {/* Εσωτερικο τοξο επικεντρης γωνιας κοντα στο κεντρο */}
                   {degreesCalculated > 0 && degreesCalculated < 360 && angleSectorData.arcPath && (
                     <path
                       d={angleSectorData.arcPath}
@@ -759,31 +990,31 @@ export default function AllaGrafimataTheoryPage() {
                     />
                   )}
 
-                  {/* Κεντρο του κυκλου */}
                   <circle cx="100" cy="100" r="4.5" fill="#78350f" stroke="#ffffff" strokeWidth="1.5" />
                   <text x="100" y="116" fontSize="10" fontWeight="bold" fill="#78350f" textAnchor="middle">
-                    Ο
+                    {t.circleCenterO}
                   </text>
                 </svg>
               </div>
               <div className="text-[11px] font-mono font-bold text-amber-800 text-center">
-                Επίκεντρη: <strong className="text-sm">{degreesCalculated}°</strong> ({percentInput}%)
+                {t.centralLabel} <strong className="text-sm">{formatNum(degreesCalculated, locale, 1)}°</strong> ({percentInput}%)
               </div>
             </div>
 
-            {/* Αποτελεσμα & Τυπος (4 στήλες) */}
+            {/* Αποτελεσμα & Τυπος */}
             <div className="lg:col-span-4 bg-amber-50/60 p-5 sm:p-6 rounded-3xl border border-amber-200 space-y-3 text-center">
               <span className="text-xs font-bold text-amber-900 uppercase tracking-wider block">
-                ΕΠΙΚΕΝΤΡΗ ΓΩΝΙΑ ΣΕ ΜΟΙΡΕΣ (α°)
+                {toCleanUppercase(t.boxAngleHeading)}
               </span>
               <div className="text-3xl sm:text-5xl font-black text-amber-700 font-mono">
-                {degreesCalculated}°
+                {formatNum(degreesCalculated, locale, 1)}°
               </div>
-              <div className="p-2.5 sm:p-3 bg-white rounded-2xl border border-amber-100 text-xs sm:text-sm text-slate-700 font-mono">
-                Αναλογία: ({percentInput} · 360°) : 100 ＝ <strong>{degreesCalculated}°</strong>
+              <div className="p-2.5 sm:p-3 bg-white rounded-2xl border border-amber-100 text-xs sm:text-sm text-slate-700 font-mono flex items-center justify-center flex-wrap gap-1">
+                <span>{t.proportionLabel} ({percentInput} · 360°) : 100 ＝</span>
+                <strong className="text-amber-800">{formatNum(degreesCalculated, locale, 1)}°</strong>
               </div>
               <p className="text-xs text-slate-500 font-sans">
-                Στο 100% αντιστοιχούν 360°. Στο {percentInput}% αντιστοιχούν ακριβώς {degreesCalculated}°.
+                {t.boxExplanation(percentInput, formatNum(degreesCalculated, locale, 1))}
               </p>
             </div>
 
@@ -794,10 +1025,10 @@ export default function AllaGrafimataTheoryPage() {
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Παραδείγματα Προβλημάτων με Σχήματα
+              {t.problemsHeading}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Δύο ολοκληρωμένα προβλήματα με γράφημα γραμμής και κυκλικό διάγραμμα.
+              {t.problemsDesc}
             </p>
           </div>
 
@@ -807,21 +1038,21 @@ export default function AllaGrafimataTheoryPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg">
-                  ΠΡΟΒΛΗΜΑ 1: ΓΡΑΦΗΜΑ ΓΡΑΜΜΗΣ
+                  {toCleanUppercase(t.prob1Badge)}
                 </span>
-                <span className="text-xs font-bold text-slate-400">Μετεωρολογία</span>
+                <span className="text-xs font-bold text-slate-400">{t.prob1Tag}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Διακύμανση Θερμοκρασίας στη Διάρκεια της Ημέρας
+                {t.prob1Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Σε έναν μετεωρολογικό σταθμό καταγράφηκε η θερμοκρασία: 08:00 (<strong>12°C</strong>), 12:00 (<strong>20°C</strong>), 16:00 (<strong>18°C</strong>), 20:00 (<strong>14°C</strong>).
+                {t.prob1Desc}
               </p>
 
               {/* ΣΧΗΜΑ 1: SVG Γραφημα Γραμμης Responsive */}
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1">
-                  ΣΧΗΜΑ: ΧΡΟΝΟΣΕΙΡΑ ΘΕΡΜΟΚΡΑΣΙΑΣ (°C)
+                  {toCleanUppercase(t.prob1DiagramTitle)}
                 </span>
                 <div className="w-full max-w-[340px] mx-auto aspect-[16/9] bg-white rounded-xl border border-slate-200 p-2 shadow-inner">
                   <svg viewBox="0 0 320 150" className="w-full h-full overflow-visible">
@@ -856,14 +1087,14 @@ export default function AllaGrafimataTheoryPage() {
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Ερωτήματα &amp; Απαντήσεις:</span>
-                  <div>• <strong>Μέγιστη θερμοκρασία:</strong> 20°C (στις 12:00 το μεσημέρι).</div>
-                  <div>• <strong>Εύρος διακύμανσης:</strong> 20°C － 12°C ＝ <strong className="text-blue-700">8°C</strong>.</div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{t.prob1QA}</span>
+                  <div>• <strong>{t.prob1Max}</strong></div>
+                  <div>• <strong>{t.prob1Range}</strong></div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Το γράφημα γραμμής δείχνει καθαρά την άνοδο της θερμοκρασίας μέχρι το μεσημέρι και τη βαθμιαία πτώση της προς το απόγευμα.
+                {t.prob1Tip}
               </div>
             </article>
 
@@ -871,21 +1102,21 @@ export default function AllaGrafimataTheoryPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg">
-                  ΠΡΟΒΛΗΜΑ 2: ΚΥΚΛΙΚΟ ΔΙΑΓΡΑΜΜΑ
+                  {toCleanUppercase(t.prob2Badge)}
                 </span>
-                <span className="text-xs font-bold text-slate-400">Δραστηριότητες</span>
+                <span className="text-xs font-bold text-slate-400">{t.prob2Tag}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Κατανομή Ελεύθερου Χρόνου Μαθητή
+                {t.prob2Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Ένας μαθητής αφιερώνει τον ελεύθερο χρόνο του ως εξής: Αθλητισμός <strong>50 %</strong>, Διάβασμα εξωσχολικών βιβλίων <strong>25 %</strong>, Μουσική <strong>25 %</strong>.
+                {t.prob2Desc}
               </p>
 
               {/* ΣΧΗΜΑ 2: SVG Κυκλικο Διαγραμμα Responsive */}
               <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1">
-                  ΣΧΗΜΑ: ΚΥΚΛΙΚΟΣ ΤΟΜΕΑΣ ΑΝΑΛΟΓΙΑΣ
+                  {toCleanUppercase(t.prob2DiagramTitle)}
                 </span>
                 <div className="w-full max-w-[280px] mx-auto aspect-square bg-white rounded-xl border border-slate-200 p-2 shadow-inner flex flex-col items-center justify-center">
                   <svg viewBox="0 0 160 160" className="w-32 h-32 sm:w-36 sm:h-36">
@@ -894,24 +1125,24 @@ export default function AllaGrafimataTheoryPage() {
                     <path d="M 80 80 L 10 80 A 70 70 0 0 1 80 10 Z" fill="#f59e0b" stroke="#fff" strokeWidth="1.5" />
                   </svg>
                   <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2 pt-2 text-[10px] font-mono">
-                    <span className="text-blue-700 font-bold">● Αθλητισμός (50%/180°)</span>
-                    <span className="text-emerald-700 font-bold">● Διάβασμα (25%/90°)</span>
-                    <span className="text-amber-700 font-bold">● Μουσική (25%/90°)</span>
+                    <span className="text-blue-700 font-bold">{t.prob2LegendSport}</span>
+                    <span className="text-emerald-700 font-bold">{t.prob2LegendReading}</span>
+                    <span className="text-amber-700 font-bold">{t.prob2LegendMusic}</span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Υπολογισμός Επίκεντρων Γωνιών:</span>
-                  <div>• Αθλητισμός (50%): (50 · 360) : 100 ＝ <strong className="text-blue-700">180°</strong></div>
-                  <div>• Διάβασμα (25%): (25 · 360) : 100 ＝ <strong className="text-emerald-700">90°</strong></div>
-                  <div>• Μουσική (25%): (25 · 360) : 100 ＝ <strong className="text-amber-700">90°</strong></div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{t.prob2CalcTitle}</span>
+                  <div>• {t.prob2CalcSport}</div>
+                  <div>• {t.prob2CalcReading}</div>
+                  <div>• {t.prob2CalcMusic}</div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
-                💡 Το άθροισμα των γωνιών είναι: 180° ＋ 90° ＋ 90° ＝ 360° (ένας πλήρης κύκλος).
+                {t.prob2Tip}
               </div>
             </article>
 
@@ -922,10 +1153,10 @@ export default function AllaGrafimataTheoryPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στα Άλλα Είδη Γραφημάτων!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε 10 απαιτητικές ασκήσεις με γραφήματα γραμμής, οριζόντια ραβδογράμματα, κυκλικά διαγράμματα και υπολογισμούς επίκεντρων γωνιών για τη ΣΤ' Δημοτικού.
+              {t.ctaDesc}
             </p>
           </div>
 
@@ -933,7 +1164,7 @@ export default function AllaGrafimataTheoryPage() {
             href="/st-dimotikou/57-alla-grafimata-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 Έναρξη Ασκήσεων</span>
+            <span>{t.ctaBtn}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

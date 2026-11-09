@@ -1,29 +1,328 @@
 // pages/st-dimotikou/75-embadon-trapeziou.js
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// Αφαίρεση τόνων για κεφαλαία (εξαιρείται το ΣΤ')
+// Αφαίρεση τόνων για κεφαλαία (διατηρείται ακέραιο το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποίηση αριθμού με ελληνική υποδιαστολή
-function formatNum(val) {
+// Μορφοποίηση αριθμού ανάλογα με τη γλώσσα
+function formatNum(val, locale = 'el') {
   if (val === null || val === undefined || isNaN(Number(val))) return '0';
-  return Number(val).toLocaleString('el-GR');
+  return Number(val).toLocaleString(locale === 'el' ? 'el-GR' : 'en-US');
 }
+
+// Component για κανονική κατακόρυφη μορφή κλάσματος (numerator πάνω, γραμμή, denominator κάτω)
+function MathFraction({ num, den }) {
+  return (
+    <span className="inline-flex flex-col items-center justify-center align-middle mx-1 text-center font-mono leading-none text-xs sm:text-sm">
+      <span className="border-b border-current pb-0.5 px-1">{num}</span>
+      <span className="pt-0.5 px-1">{den}</span>
+    </span>
+  );
+}
+
+// Συγκεντρωτικό λεξικό μεταφράσεων i18n
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Εμβαδόν Τραπεζίου & Μονάδες Μέτρησης - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDesc: "Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν τραπεζίου Ε ＝ [(Β ＋ b) · υ] : 2, τη γεωμετρική μετατροπή σε παραλληλόγραμμο και ορθογώνιο και τις μετατροπές μονάδων.",
+    backText: "ΣΤ' Δημοτικού",
+    actionButtonText: "🎯 Ασκήσεις",
+    chapterBadge: "ΚΕΦΑΛΑΙΟ 75 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "Εμβαδόν Τραπεζίου • Μεγάλη Βάση, Μικρή Βάση & Ύψος",
+    heroDesc: "Ανακαλύπτουμε τον θεμελιώδη τύπο Ε ＝ [(Β ＋ b) · υ] : 2, βλέπουμε ζωντανά πώς δύο ίδια τραπέζια ενώνονται σε ένα πλάγιο παραλληλόγραμμο και έπειτα μετατρέπονται σε ορθογώνιο, και εξασκούμαστε στις μετατροπές μονάδων μέτρησης επιφάνειας!",
+    heroSubbadge: "Θεωρία, Απόδειξη 2 Σταδίων (Τραπέζιο ➔ Παραλληλόγραμμο ➔ Ορθογώνιο) & SVG",
+    heroTryExercises: "Δοκίμασε τις Ασκήσεις",
+
+    stepsSectionTitle: "Το Εμβαδόν Τραπεζίου σε 4 Βήματα",
+    stepsSectionSubtitle: "Από την έννοια των δύο βάσεων μέχρι τη γεωμετρική απόδειξη και τους υπολογισμούς.",
+
+    step1Badge: "ΒΗΜΑ 1",
+    step1Category: "Ο Τύπος",
+    step1Title: "Πώς Βρίσκουμε το Εμβαδόν;",
+    step1P1: "Το τραπέζιο έχει δύο παράλληλες πλευρές (τη Μεγάλη Βάση Β και τη Μικρή Βάση b) και ένα Ύψος υ:",
+    step1FormulaText: "Εμβαδόν ＝ [(Β ＋ b) · υ] : 2",
+    step1FractionLabel: "ή σε κλασματική μορφή:",
+    step1Step1: "1. Προσθέτουμε τις δύο βάσεις: (Β ＋ b).",
+    step1Step2: "2. Πολλαπλασιάζουμε το άθροισμα επί το ύψος: · υ.",
+    step1Step3: "3. Διαιρούμε το αποτέλεσμα με το 2: : 2.",
+    step1Tip: "💡 Το ύψος είναι πάντοτε η κάθετη απόσταση (90°) ανάμεσα στις δύο βάσεις, όχι οι πλάγιες πλευρές!",
+
+    step2Badge: "ΒΗΜΑ 2",
+    step2Category: "Γεωμετρική Απόδειξη",
+    step2Title: "Γιατί Ισχύει ο Τύπος;",
+    step2P1: "Η απόδειξη στηρίζεται σε δύο απλά βήματα αναδιάταξης:",
+    step2Step1: "1. Διπλασιασμός: Ενώνουμε ένα δεύτερο ανάποδο τραπέζιο. Σχηματίζεται πλάγιο παραλληλόγραμμο με βάση (Β ＋ b) και ύψος υ.",
+    step2Step2: "2. Ορθογώνιο: Μεταφέροντας το ακριανό τρίγωνο, το παραλληλόγραμμο γίνεται ορθογώνιο με εμβαδόν (Β ＋ b) · υ.",
+    step2Conclusion: "Επειδή χρησιμοποιήσαμε 2 τραπέζια, το ένα έχει εμβαδόν [(Β ＋ b) · υ] : 2!",
+    step2Tip: "⚡ Κάθε τραπέζιο είναι ακριβώς το μισό ενός παραλληλογράμμου με βάση ίση με το άθροισμα των βάσεων (Β ＋ b)!",
+
+    step3Badge: "ΒΗΜΑ 3",
+    step3Category: "Είδη Τραπεζίων",
+    step3Title: "Ορθογώνιο & Ισοσκελές Τραπέζιο",
+    step3P1: "Ο τύπος του εμβαδού ισχύει ακριβώς ο ίδιος για όλα τα είδη τραπεζίων:",
+    step3Case1: "• Ορθογώνιο τραπέζιο: Έχει 2 ορθές γωνίες. Η κάθετη πλευρά του είναι ταυτόχρονα και το ύψος (υ) του!",
+    step3Case2: "• Ισοσκελές τραπέζιο: Οι δύο μη παράλληλες πλευρές του είναι ίσες.",
+    step3Case3: "• Σκαληνό τραπέζιο: Όλες οι πλευρές του έχουν διαφορετικά μήκη.",
+    step3Tip: "🎯 Στο ορθογώνιο τραπέζιο δεν χρειάζεται να σχεδιάσουμε ύψος: είναι έτοιμο στην κάθετη πλευρά!",
+
+    step4Badge: "ΒΗΜΑ 4",
+    step4Category: "Αντίστροφο Πρόβλημα",
+    step4Title: "Εύρεση Ύψους ή Αθροίσματος Βάσεων",
+    step4P1: "Όταν γνωρίζουμε το εμβαδόν και ψάχνουμε άγνωστη διάσταση, διπλασιάζουμε πρώτα το εμβαδόν (2 · Ε):",
+    step4HeightForm: "• Ύψος: υ ＝ (2 · Ε) : (Β ＋ b)",
+    step4BaseSumForm: "• Άθροισμα Βάσεων: (Β ＋ b) ＝ (2 · Ε) : υ",
+    step4Example: "Παράδειγμα: Αν Ε ＝ 50 cm² και (Β ＋ b) ＝ 20 cm, τότε υ ＝ (2 · 50) : 20 ＝ 100 : 20 ＝ 5 cm.",
+    step4Tip: "🚀 Όπως και στο τρίγωνο, διπλασιάζουμε πρώτα το εμβαδόν και μετά διαιρούμε!",
+
+    lab1Badge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1",
+    lab1Title: "Πώς το Τραπέζιο Γίνεται Παραλληλόγραμμο και Ορθογώνιο; (SVG)",
+    lab1Subtitle: "Σύρε την μπάρα προόδου: Στο 50% το 2ο ανάποδο τραπέζιο κουμπώνει σχηματίζοντας παραλληλόγραμμο, και στο 100% το ακριανό τρίγωνο ολισθαίνει στα δεξιά σχηματίζοντας τέλειο ορθογώνιο!",
+    lab1StageLabel: "ΣΤΑΔΙΟ ΑΝΑΔΙΑΤΑΞΗΣ:",
+    lab1Stage0: "0% (1 Τραπέζιο)",
+    lab1Stage50: "50% (Παραλληλόγραμμο)",
+    lab1Stage100: "100% (Ορθογώνιο)",
+    lab1Exp0: "🔷 Στάδιο 0: Αρχικό τραπέζιο με μεγάλη βάση Β ＝ 140 και μικρή βάση b ＝ 70.",
+    lab1Exp1: "🔄 Στάδιο 1: Ένα δεύτερο ανάποδο τραπέζιο πλησιάζει...",
+    lab1Exp2: "🟪 Στάδιο 2: Σχηματίστηκε παραλληλόγραμμο! Τώρα το αριστερό τρίγωνο αποκόπτεται και ολισθαίνει...",
+    lab1Exp3: "🟩 Στάδιο 3: Τέλειο ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ!",
+    lab1TotalBaseText: "Συνολική Βάση: Β ＋ b ＝ 140 ＋ 70 ＝",
+    lab1TwoTrapezoidsText: "Εμβαδόν 2 Τραπεζίων: (Β ＋ b) · υ",
+    lab1OneTrapezoidText: "Εμβαδόν 1 Τραπεζίου: [(Β ＋ b) · υ] : 2",
+    lab1HeightSymbol: "υ",
+    lab1SmallBaseLabel: "b (μικρή)",
+    lab1BigBaseLabel: "Β (μεγάλη)",
+    lab1SecondBigBaseLabel: "Β (του 2ου)",
+    lab1SecondSmallBaseLabel: "b (του 2ου)",
+    lab1SvgCaption: "Τα δύο τραπέζια φτιάχνουν ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ. Άρα το ένα τραπέζιο ισούται με [(Β ＋ b) · υ] : 2.",
+
+    lab2Badge: "📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ & ΜΟΝΑΔΕΣ",
+    lab2Title: "Υπολογιστής Εμβαδού Τραπεζίου & Αυτόματη Μετατροπή",
+    lab2Subtitle: "Άλλαξε τις δύο βάσεις (Β και b) και το ύψος σε cm για να υπολογίσεις το εμβαδόν του τραπεζίου και να δεις τις αυτόματες μετατροπές μονάδων:",
+    lab2BigBLabel: "ΜΕΓΑΛΗ ΒΑΣΗ (Β):",
+    lab2SmallBLabel: "ΜΙΚΡΗ ΒΑΣΗ (b):",
+    lab2HeightLabel: "ΥΨΟΣ (υ):",
+    lab2SumBasesText: "Άθροισμα βάσεων: Β ＋ b ＝",
+    lab2ProductText: "Γινόμενο: (Β ＋ b) · υ ＝",
+    lab2TrapezoidAreaText: "• Εμβαδόν Τραπεζίου:",
+    lab2TableTitle: "ΜΕΤΑΤΡΟΠΗ ΣΕ ΑΛΛΕΣ ΜΟΝΑΔΕΣ ΕΠΙΦΑΝΕΙΑΣ",
+    lab2InCm2: "Σε cm² (Βάση υπολογισμού):",
+    lab2InMm2: "Σε mm² (· 100):",
+    lab2InDm2: "Σε dm² (: 100):",
+    lab2InM2: "Σε m² (: 10.000):",
+    lab2TipPre: "💡 Το εμβαδόν του τραπεζίου είναι ακριβώς το μισό του αντίστοιχου παραλληλογράμμου",
+
+    problemsTitle: "Λυμένα Προβλήματα με Εμβαδόν Τραπεζίου",
+    problemsSubtitle: "Εφαρμογές του τύπου Ε ＝ [(Β ＋ b) · υ] : 2 σε οικόπεδα και αγροτεμάχια.",
+
+    prob1Badge: "ΠΡΟΒΛΗΜΑ 1: ΤΡΑΠΕΖΙΟ ΟΙΚΟΠΕΔΟ",
+    prob1Category: "Ε ＝ [(Β ＋ b) · υ] : 2",
+    prob1Title: "Υπολογισμός Εμβαδού Οικοπέδου σε Σχήμα Τραπεζίου",
+    prob1P1: "Ένα οικόπεδο έχει σχήμα τραπεζίου. Η μεγάλη του βάση είναι 40 m, η μικρή του βάση είναι 25 m και η κάθετη απόσταση ανάμεσα στις δύο βάσεις (το ύψος) είναι 16 m. Οι πλάγιες πλευρές του είναι 18 m και 20 m. Ποιο είναι το εμβαδόν του οικοπέδου σε m²;",
+    prob1DataHeader: "ΔΕΔΟΜΕΝΑ ΠΡΟΒΛΗΜΑΤΟΣ",
+    prob1DataBigB: "Μεγάλη βάση (Β)",
+    prob1DataSmallB: "Μικρή βάση (b)",
+    prob1DataHeight: "Ύψος (υ)",
+    prob1StepsHeader: "Βήματα Επίλυσης:",
+    prob1Step1Label: "Άθροισμα βάσεων:",
+    prob1Step1Text: "Β ＋ b ＝ 40 ＋ 25 ＝ 65 m.",
+    prob1Step2Label: "Πολλαπλασιασμός με το ύψος:",
+    prob1Step2Text: "65 · 16 ＝ 1.040 m².",
+    prob1Step3Label: "Διαίρεση με το 2:",
+    prob1Step3Text: "1.040 : 2 ＝ 520 m².",
+    prob1Tip: "💡 Οι πλάγιες πλευρές (18 m και 20 m) δεν χρησιμοποιούνται στον υπολογισμό του εμβαδού!",
+
+    prob2Badge: "ΠΡΟΒΛΗΜΑ 2: ΕΥΡΕΣΗ ΥΨΟΥΣ & ΣΤΡΕΜΜΑΤΑ",
+    prob2Category: "υ ＝ (2 · Ε) : (Β ＋ b)",
+    prob2Title: "Εύρεση του Ύψους σε Αγροτεμάχιο",
+    prob2P1: "Ένα αγρόκτημα σε σχήμα τραπεζίου έχει έκταση 1,8 στρέμματα (1.800 m²). Οι δύο παράλληλοι φράχτες του (οι βάσεις) έχουν μήκος 70 m και 50 m. Πόσο είναι το ύψος (η απόσταση ανάμεσα στους δύο φράχτες);",
+    prob2DataHeader: "ΣΤΟΙΧΕΙΑ ΥΠΟΛΟΓΙΣΜΟΥ",
+    prob2DataArea: "Εμβαδόν (Ε)",
+    prob2DataBases: "Βάσεις (Β, b)",
+    prob2DataFormula: "Τύπος ύψους",
+    prob2StepsHeader: "Βήματα Επίλυσης:",
+    prob2Step1Label: "Διπλασιάζουμε το εμβαδόν:",
+    prob2Step1Text: "2 · 1.800 ＝ 3.600 m².",
+    prob2Step2Label: "Άθροισμα βάσεων:",
+    prob2Step2Text: "70 ＋ 50 ＝ 120 m.",
+    prob2Step3Label: "Υπολογισμός ύψους:",
+    prob2Step3Text: "3.600 : 120 ＝ 30 m.",
+    prob2Tip: "⚡ Επαλήθευση: [(70 ＋ 50) · 30] : 2 ＝ (120 · 30) : 2 ＝ 3.600 : 2 ＝ 1.800 m²!",
+
+    alertTitle: "Προσοχή / Συνήθη Λάθη που πρέπει να Αποφεύγετε",
+    alertItem1Strong: "Μην ξεχνάτε τις παρενθέσεις στις βάσεις:",
+    alertItem1Text: "Πρώτα προσθέτουμε τις δύο βάσεις (Β ＋ b) και μετά πολλαπλασιάζουμε με το ύψος. Αν πολλαπλασιάσετε μόνο τη μία βάση με το ύψος, το αποτέλεσμα θα είναι λάθος.",
+    alertItem2Strong: "Μην ξεχνάτε τη διαίρεση με το 2:",
+    alertItem2Text: "Ο τύπος (Β ＋ b) · υ υπολογίζει το εμβαδόν δύο ενωμένων τραπεζίων (παραλληλόγραμμο). Το ένα τραπέζιο απαιτεί πάντα διαίρεση με το 2.",
+    alertItem3Strong: "Οι πλάγιες πλευρές δεν είναι ύψος:",
+    alertItem3Text: "Εκτός αν το τραπέζιο είναι ορθογώνιο, οι πλάγιες κεκλιμένες πλευρές είναι πάντοτε μεγαλύτερες από το κάθετο ύψος.",
+    alertItem4Strong: "Ίδιες μονάδες μέτρησης:",
+    alertItem4Text: "Βεβαιωθείτε ότι και οι δύο βάσεις και το ύψος εκφράζονται στην ίδια μονάδα (π.χ. όλα σε m ή όλα σε cm) πριν κάνετε τις πράξεις.",
+
+    footerTitle: "Ώρα για Εξάσκηση στο Εμβαδόν Τραπεζίου!",
+    footerDesc: "Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς βάσεων, ύψους, εμβαδού και μετατροπές μονάδων επιφάνειας για τη ΣΤ' Δημοτικού.",
+    footerButton: "Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "Area of a Trapezoid & Units of Measure - 6th Grade Math | LearnMaths.gr",
+    pageDesc: "Learn how to calculate the area of a trapezoid with A ＝ [(B ＋ b) · h] : 2, its geometric decomposition into a parallelogram and rectangle, and area unit conversions.",
+    backText: "6th Grade",
+    actionButtonText: "🎯 Exercises",
+    chapterBadge: "CHAPTER 75 • 6TH GRADE",
+    heroTitle: "Area of a Trapezoid • Major Base, Minor Base & Height",
+    heroDesc: "Discover the fundamental formula A ＝ [(B ＋ b) · h] : 2, observe how two identical trapezoids unite into a parallelogram and then transform into an equivalent rectangle, and practice surface area conversions!",
+    heroSubbadge: "Theory, 2-Stage Proof (Trapezoid ➔ Parallelogram ➔ Rectangle) & SVG",
+    heroTryExercises: "Try the Exercises",
+
+    stepsSectionTitle: "Area of a Trapezoid in 4 Steps",
+    stepsSectionSubtitle: "From the concept of two parallel bases to geometric proof and inverse problem solving.",
+
+    step1Badge: "STEP 1",
+    step1Category: "The Formula",
+    step1Title: "How Do We Calculate Area?",
+    step1P1: "A trapezoid has two parallel sides (Major Base B and Minor Base b) and a perpendicular Height h:",
+    step1FormulaText: "Area ＝ [(B ＋ b) · h] : 2",
+    step1FractionLabel: "or in fractional form:",
+    step1Step1: "1. Add the two bases: (B ＋ b).",
+    step1Step2: "2. Multiply the sum by the height: · h.",
+    step1Step3: "3. Divide the result by 2: : 2.",
+    step1Tip: "💡 The height is strictly the perpendicular distance (90°) between the two bases, never the slanted lateral sides!",
+
+    step2Badge: "STEP 2",
+    step2Category: "Geometric Proof",
+    step2Title: "Why Does the Formula Hold?",
+    step2P1: "The proof relies on two simple rearrangement steps:",
+    step2Step1: "1. Doubling: Attaching an identical inverted trapezoid creates a parallelogram with base (B ＋ b) and height h.",
+    step2Step2: "2. Rectangle: Translating the end triangle transforms the parallelogram into an equivalent rectangle of area (B ＋ b) · h.",
+    step2Conclusion: "Because 2 trapezoids were combined, a single trapezoid has an area of [(B ＋ b) · h] : 2!",
+    step2Tip: "⚡ Every trapezoid is strictly half of a parallelogram whose base equals the sum of the two bases (B ＋ b)!",
+
+    step3Badge: "STEP 3",
+    step3Category: "Types of Trapezoids",
+    step3Title: "Right & Isosceles Trapezoids",
+    step3P1: "The area formula applies identically to all types of trapezoids:",
+    step3Case1: "• Right trapezoid: Has 2 right angles. Its perpendicular side acts directly as its height (h)!",
+    step3Case2: "• Isosceles trapezoid: Its two non-parallel legs are equal in length.",
+    step3Case3: "• Scalene trapezoid: All four sides have distinct lengths.",
+    step3Tip: "🎯 In a right trapezoid, no extra height needs to be drawn: it is ready as the perpendicular side!",
+
+    step4Badge: "STEP 4",
+    step4Category: "Inverse Problem",
+    step4Title: "Finding Height or Sum of Bases",
+    step4P1: "When the area is known and we solve for an unknown dimension, first double the area (2 · A):",
+    step4HeightForm: "• Height: h ＝ (2 · A) : (B ＋ b)",
+    step4BaseSumForm: "• Sum of Bases: (B ＋ b) ＝ (2 · A) : h",
+    step4Example: "Example: If A ＝ 50 cm² and (B ＋ b) ＝ 20 cm, then h ＝ (2 · 50) : 20 ＝ 100 : 20 ＝ 5 cm.",
+    step4Tip: "🚀 Just like with triangles, first double the area and then divide by the known quantity!",
+
+    lab1Badge: "🔬 INTERACTIVE LAB 1",
+    lab1Title: "How Does a Trapezoid Turn into a Parallelogram and Rectangle? (SVG)",
+    lab1Subtitle: "Drag the progress slider: At 50% a second inverted trapezoid joins to form a parallelogram, and at 100% the end triangle translates right to form a perfect rectangle!",
+    lab1StageLabel: "REARRANGEMENT STAGE:",
+    lab1Stage0: "0% (1 Trapezoid)",
+    lab1Stage50: "50% (Parallelogram)",
+    lab1Stage100: "100% (Rectangle)",
+    lab1Exp0: "🔷 Stage 0: Initial trapezoid with major base B ＝ 140 and minor base b ＝ 70.",
+    lab1Exp1: "🔄 Stage 1: A second identical inverted trapezoid approaches...",
+    lab1Exp2: "🟪 Stage 2: Parallelogram formed! Now the left triangle is cut and translates...",
+    lab1Exp3: "🟩 Stage 3: Perfect rectangle with length (B ＋ b) and width h!",
+    lab1TotalBaseText: "Total Base: B ＋ b ＝ 140 ＋ 70 ＝",
+    lab1TwoTrapezoidsText: "Area of 2 Trapezoids: (B ＋ b) · h",
+    lab1OneTrapezoidText: "Area of 1 Trapezoid: [(B ＋ b) · h] : 2",
+    lab1HeightSymbol: "h",
+    lab1SmallBaseLabel: "b (minor)",
+    lab1BigBaseLabel: "B (major)",
+    lab1SecondBigBaseLabel: "B (of 2nd)",
+    lab1SecondSmallBaseLabel: "b (of 2nd)",
+    lab1SvgCaption: "Two trapezoids form a rectangle with length (B ＋ b) and width h. Thus one trapezoid equals [(B ＋ b) · h] : 2.",
+
+    lab2Badge: "📐 INTERACTIVE LAB 2: CALCULATOR & UNITS",
+    lab2Title: "Trapezoid Area Calculator & Automatic Conversion",
+    lab2Subtitle: "Adjust both bases (B and b) and height in cm to calculate trapezoid area and see live unit conversions:",
+    lab2BigBLabel: "MAJOR BASE (B):",
+    lab2SmallBLabel: "MINOR BASE (b):",
+    lab2HeightLabel: "HEIGHT (h):",
+    lab2SumBasesText: "Sum of bases: B ＋ b ＝",
+    lab2ProductText: "Product: (B ＋ b) · h ＝",
+    lab2TrapezoidAreaText: "• Trapezoid Area:",
+    lab2TableTitle: "CONVERSION TO OTHER AREA UNITS",
+    lab2InCm2: "In cm² (Calculation base):",
+    lab2InMm2: "In mm² (· 100):",
+    lab2InDm2: "In dm² (: 100):",
+    lab2InM2: "In m² (: 10,000):",
+    lab2TipPre: "💡 The area of the trapezoid is strictly half of the corresponding parallelogram",
+
+    problemsTitle: "Solved Trapezoid Area Problems",
+    problemsSubtitle: "Applications of formula A ＝ [(B ＋ b) · h] : 2 to real estate and agricultural fields.",
+
+    prob1Badge: "PROBLEM 1: TRAPEZOIDAL LOT",
+    prob1Category: "A ＝ [(B ＋ b) · h] : 2",
+    prob1Title: "Calculating the Area of a Trapezoidal Land Lot",
+    prob1P1: "A land lot has the shape of a trapezoid. Its major base is 40 m, its minor base is 25 m, and the perpendicular height between them is 16 m. Its lateral sides measure 18 m and 20 m. What is the area of the lot in m²?",
+    prob1DataHeader: "GIVEN DATA",
+    prob1DataBigB: "Major base (B)",
+    prob1DataSmallB: "Minor base (b)",
+    prob1DataHeight: "Height (h)",
+    prob1StepsHeader: "Solution Steps:",
+    prob1Step1Label: "Sum of bases:",
+    prob1Step1Text: "B ＋ b ＝ 40 ＋ 25 ＝ 65 m.",
+    prob1Step2Label: "Multiply by height:",
+    prob1Step2Text: "65 · 16 ＝ 1,040 m².",
+    prob1Step3Label: "Divide by 2:",
+    prob1Step3Text: "1,040 : 2 ＝ 520 m².",
+    prob1Tip: "💡 The slanted lateral sides (18 m and 20 m) are not used in the area calculation!",
+
+    prob2Badge: "PROBLEM 2: FINDING HEIGHT & STREMMATA",
+    prob2Category: "h ＝ (2 · A) : (B ＋ b)",
+    prob2Title: "Finding the Height of a Farmland Lot",
+    prob2P1: "A farm shaped as a trapezoid covers an area of 1.8 stremmata (1,800 m²). Its two parallel boundary fences (bases) measure 70 m and 50 m. What is the height (the perpendicular distance between the fences)?",
+    prob2DataHeader: "CALCULATION METRICS",
+    prob2DataArea: "Area (A)",
+    prob2DataBases: "Bases (B, b)",
+    prob2DataFormula: "Height formula",
+    prob2StepsHeader: "Solution Steps:",
+    prob2Step1Label: "Double the area:",
+    prob2Step1Text: "2 · 1,800 ＝ 3,600 m².",
+    prob2Step2Label: "Sum of bases:",
+    prob2Step2Text: "70 ＋ 50 ＝ 120 m.",
+    prob2Step3Label: "Compute height:",
+    prob2Step3Text: "3,600 : 120 ＝ 30 m.",
+    prob2Tip: "⚡ Verification: [(70 ＋ 50) · 30] : 2 ＝ (120 · 30) : 2 ＝ 3,600 : 2 ＝ 1,800 m²!",
+
+    alertTitle: "Caution / Common Misconceptions to Avoid",
+    alertItem1Strong: "Do not forget brackets around the bases:",
+    alertItem1Text: "Always add the two bases first (B ＋ b) before multiplying by the height. Multiplying only one base by height leads to a wrong result.",
+    alertItem2Strong: "Never forget dividing by 2:",
+    alertItem2Text: "The expression (B ＋ b) · h computes the area of two joined trapezoids (a parallelogram). A single trapezoid always requires dividing by 2.",
+    alertItem3Strong: "Lateral sides are not the height:",
+    alertItem3Text: "Unless the trapezoid is a right trapezoid, the inclined lateral sides are strictly longer than the perpendicular height.",
+    alertItem4Strong: "Identical measurement units:",
+    alertItem4Text: "Ensure both bases and the height are expressed in the exact same unit (e.g. all in m or all in cm) before calculating.",
+
+    footerTitle: "Time to Practice Trapezoid Area!",
+    footerDesc: "Test your skills with 12 dynamic interactive exercises on bases, height, area calculations, and unit conversions for 6th Grade.",
+    footerButton: "Start Exercises"
+  }
+};
 
 export default function EmbadonTrapeziouTheoriaPage() {
+  const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const t = TRANSLATIONS[locale];
+
   // -------------------------------------------------------------------------
   // Εργαστήριο 1: Διαδραστική Γεωμετρική Απόδειξη σε 2 Στάδια (SVG)
-  // Στάδιο 1 (0% -> 50%): Το 2ο ανάποδο τραπέζιο κουμπώνει και φτιάχνει Παραλληλόγραμμο
-  // Στάδιο 2 (50% -> 100%): Το τρίγωνο αποκόπτεται και φτιάχνει Ορθογώνιο
   // -------------------------------------------------------------------------
   const [animProgress, setAnimProgress] = useState(0); // 0 έως 100
 
@@ -60,48 +359,46 @@ export default function EmbadonTrapeziouTheoriaPage() {
 
   return (
     <Layout
-      title="Εμβαδόν Τραπεζίου &amp; Μονάδες Μέτρησης - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Μαθαίνουμε πώς υπολογίζουμε το εμβαδόν τραπεζίου Ε ＝ [(Β ＋ b) · υ] : 2, τη γεωμετρική μετατροπή σε παραλληλόγραμμο και ορθογώνιο και τις μετατροπές μονάδων."
+      title={t.pageTitle}
+      description={t.pageDesc}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/75-embadon-trapeziou-ask"
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.actionButtonText}</span>
         </Link>
       }
     >
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-32 overflow-x-hidden">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 space-y-8 sm:space-y-10 2xl:space-y-14 pb-28 sm:pb-36 overflow-x-hidden">
 
         {/* 1. HERO BANNER */}
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 75 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.chapterBadge}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Εμβαδόν Τραπεζίου • Μεγάλη Βάση, Μικρή Βάση &amp; Ύψος
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Ανακαλύπτουμε τον θεμελιώδη τύπο <strong>Ε ＝ [(Β ＋ b) · υ] : 2</strong>, 
-              βλέπουμε ζωντανά πώς δύο ίδια τραπέζια ενώνονται σε ένα <strong>πλάγιο παραλληλόγραμμο</strong> και έπειτα 
-              μετατρέπονται σε <strong>ορθογώνιο</strong>, και εξασκούμαστε στις μετατροπές μονάδων μέτρησης επιφάνειας!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Θεωρία, Απόδειξη 2 Σταδίων (Τραπέζιο ➔ Παραλληλόγραμμο ➔ Ορθογώνιο) &amp; SVG</span>
+              <span>{t.heroSubbadge}</span>
             </div>
             <Link
               href="/st-dimotikou/75-embadon-trapeziou-ask"
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroTryExercises}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -111,10 +408,10 @@ export default function EmbadonTrapeziouTheoriaPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Το Εμβαδόν Τραπεζίου σε 4 Βήματα
+              {t.stepsSectionTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Από την έννοια των δύο βάσεων μέχρι τη γεωμετρική απόδειξη και τους υπολογισμούς.
+              {t.stepsSectionSubtitle}
             </p>
           </div>
 
@@ -125,31 +422,36 @@ export default function EmbadonTrapeziouTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 1
+                    {t.step1Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Ο Τύπος</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step1Category}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Πώς Βρίσκουμε το Εμβαδόν;
+                  {t.step1Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Το τραπέζιο έχει δύο παράλληλες πλευρές (τη <strong>Μεγάλη Βάση Β</strong> και τη <strong>Μικρή Βάση b</strong>) και ένα <strong>Ύψος υ</strong>:
+                  {t.step1P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 text-center font-mono">
                   <div className="text-indigo-900 font-black text-base sm:text-lg">
-                    Εμβαδόν ＝ [(Β ＋ b) · υ] : 2
+                    {t.step1FormulaText}
                   </div>
-                  <p className="text-[11px] text-slate-600 font-sans text-left pt-1">
-                    1. Προσθέτουμε τις δύο βάσεις: <strong>(Β ＋ b)</strong>.<br />
-                    2. Πολλαπλασιάζουμε το άθροισμα επί το ύψος: <strong>· υ</strong>.<br />
-                    3. Διαιρούμε το αποτέλεσμα με το 2: <strong>: 2</strong>.
-                  </p>
+                  <div className="flex items-center justify-center gap-1 text-slate-700 font-bold pt-1">
+                    <span className="text-xs font-sans text-slate-500">{t.step1FractionLabel}</span>
+                    <span>{locale === 'en' ? 'A ＝' : 'Ε ＝'}</span>
+                    <MathFraction num={locale === 'en' ? '(B ＋ b) · h' : '(Β ＋ b) · υ'} den="2" />
+                  </div>
+                  <div className="text-[11px] text-slate-600 font-sans text-left pt-1 space-y-1">
+                    <p>{t.step1Step1}</p>
+                    <p>{t.step1Step2}</p>
+                    <p>{t.step1Step3}</p>
+                  </div>
                 </div>
               </div>
 
               <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Το ύψος είναι πάντοτε η <strong>κάθετη απόσταση (90°)</strong> ανάμεσα στις δύο βάσεις, όχι οι πλάγιες πλευρές!
+                {t.step1Tip}
               </div>
             </article>
 
@@ -158,32 +460,31 @@ export default function EmbadonTrapeziouTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 2
+                    {t.step2Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Γεωμετρική Απόδειξη</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step2Category}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Γιατί Ισχύει ο Τύπος;
+                  {t.step2Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Η απόδειξη στηρίζεται σε δύο απλά βήματα αναδιάταξης:
+                  {t.step2P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2">
-                  <div>
-                    1. <strong>Διπλασιασμός:</strong> Ενώνουμε ένα δεύτερο ανάποδο τραπέζιο. Σχηματίζεται πλάγιο παραλληλόγραμμο με βάση <strong>(Β ＋ b)</strong> και ύψος <strong>υ</strong>.
-                  </div>
-                  <div>
-                    2. <strong>Ορθογώνιο:</strong> Μεταφέροντας το ακριανό τρίγωνο, το παραλληλόγραμμο γίνεται ορθογώνιο με εμβαδόν <strong>(Β ＋ b) · υ</strong>.
-                  </div>
-                  <div className="text-amber-950 font-bold pt-1 border-t border-slate-200">
-                    Επειδή χρησιμοποιήσαμε 2 τραπέζια, το ένα έχει εμβαδόν <strong>[(Β ＋ b) · υ] : 2</strong>!
+                  <div>{t.step2Step1}</div>
+                  <div>{t.step2Step2}</div>
+                  <div className="text-amber-950 font-bold pt-1 border-t border-slate-200 flex items-center flex-wrap gap-1">
+                    <span>{t.step2Conclusion}</span>
+                    <span>(</span>
+                    <MathFraction num={locale === 'en' ? '(B ＋ b) · h' : '(Β ＋ b) · υ'} den="2" />
+                    <span>)</span>
                   </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs 2xl:text-sm text-amber-950 font-medium">
-                ⚡ Κάθε τραπέζιο είναι ακριβώς το μισό ενός παραλληλογράμμου με βάση ίση με το άθροισμα των βάσεων (Β ＋ b)!
+                {t.step2Tip}
               </div>
             </article>
 
@@ -192,32 +493,26 @@ export default function EmbadonTrapeziouTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 3
+                    {t.step3Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Είδη Τραπεζίων</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step3Category}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Ορθογώνιο &amp; Ισοσκελές Τραπέζιο
+                  {t.step3Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Ο τύπος του εμβαδού ισχύει ακριβώς ο ίδιος για όλα τα είδη τραπεζίων:
+                  {t.step3P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-1.5 font-mono">
-                  <div>
-                    • <strong>Ορθογώνιο τραπέζιο:</strong> Έχει 2 ορθές γωνίες. Η κάθετη πλευρά του είναι ταυτόχρονα και το <strong>ύψος (υ)</strong> του!
-                  </div>
-                  <div>
-                    • <strong>Ισοσκελές τραπέζιο:</strong> Οι δύο μη παράλληλες πλευρές του είναι ίσες.
-                  </div>
-                  <div>
-                    • <strong>Σκαληνό τραπέζιο:</strong> Όλες οι πλευρές του έχουν διαφορετικά μήκη.
-                  </div>
+                  <div>{t.step3Case1}</div>
+                  <div>{t.step3Case2}</div>
+                  <div>{t.step3Case3}</div>
                 </div>
               </div>
 
               <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                🎯 Στο ορθογώνιο τραπέζιο δεν χρειάζεται να σχεδιάσουμε ύψος: είναι έτοιμο στην κάθετη πλευρά!
+                {t.step3Tip}
               </div>
             </article>
 
@@ -226,32 +521,38 @@ export default function EmbadonTrapeziouTheoriaPage() {
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between gap-2">
                   <span className="px-2.5 py-1 bg-emerald-100 text-emerald-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider">
-                    ΒΗΜΑ 4
+                    {t.step4Badge}
                   </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Αντίστροφο Πρόβλημα</span>
+                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{t.step4Category}</span>
                 </div>
                 <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Εύρεση Ύψους ή Αθροίσματος Βάσεων
+                  {t.step4Title}
                 </h3>
                 <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Όταν γνωρίζουμε το εμβαδόν και ψάχνουμε άγνωστη διάσταση, <strong>διπλασιάζουμε πρώτα το εμβαδόν (2 · Ε)</strong>:
+                  {t.step4P1}
                 </p>
 
                 <div className="bg-slate-50 p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm space-y-2 font-mono">
-                  <div className="text-emerald-950 font-bold">
-                    • Ύψος: υ ＝ (2 · Ε) : (Β ＋ b)
+                  <div className="text-emerald-950 font-bold flex items-center flex-wrap gap-1">
+                    <span>{t.step4HeightForm}</span>
+                    <span className="text-xs font-sans text-slate-500">ή</span>
+                    <span className="font-bold">{locale === 'en' ? 'h ＝' : 'υ ＝'}</span>
+                    <MathFraction num={locale === 'en' ? '2 · A' : '2 · Ε'} den={locale === 'en' ? 'B ＋ b' : 'Β ＋ b'} />
                   </div>
-                  <div className="text-emerald-950 font-bold">
-                    • Άθροισμα Βάσεων: (Β ＋ b) ＝ (2 · Ε) : υ
+                  <div className="text-emerald-950 font-bold flex items-center flex-wrap gap-1">
+                    <span>{t.step4BaseSumForm}</span>
+                    <span className="text-xs font-sans text-slate-500">ή</span>
+                    <span className="font-bold">{locale === 'en' ? 'B ＋ b ＝' : 'Β ＋ b ＝'}</span>
+                    <MathFraction num={locale === 'en' ? '2 · A' : '2 · Ε'} den={locale === 'en' ? 'h' : 'υ'} />
                   </div>
                   <p className="text-[11px] text-slate-600 font-sans pt-1">
-                    Παράδειγμα: Αν Ε ＝ 50 cm² και (Β ＋ b) ＝ 20 cm, τότε υ ＝ (2 · 50) : 20 ＝ 100 : 20 ＝ <strong>5 cm</strong>.
+                    {t.step4Example}
                   </p>
                 </div>
               </div>
 
               <div className="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-xs 2xl:text-sm text-emerald-950 font-medium">
-                🚀 Όπως και στο τρίγωνο, διπλασιάζουμε πρώτα το εμβαδόν και μετά διαιρούμε!
+                {t.step4Tip}
               </div>
             </article>
 
@@ -262,13 +563,13 @@ export default function EmbadonTrapeziouTheoriaPage() {
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6 sm:space-y-8">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-              <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 1</span>
+              <span>{t.lab1Badge}</span>
             </div>
             <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Πώς το Τραπέζιο Γίνεται Παραλληλόγραμμο και Ορθογώνιο; (SVG)
+              {t.lab1Title}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Σύρε την μπάρα προόδου: Στο 50% το 2ο ανάποδο τραπέζιο κουμπώνει σχηματίζοντας παραλληλόγραμμο, και στο 100% το ακριανό τρίγωνο ολισθαίνει στα δεξιά σχηματίζοντας τέλειο ορθογώνιο!
+              {t.lab1Subtitle}
             </p>
           </div>
 
@@ -278,9 +579,9 @@ export default function EmbadonTrapeziouTheoriaPage() {
             <div className="lg:col-span-5 space-y-4">
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΣΤΑΔΙΟ ΑΝΑΔΙΑΤΑΞΗΣ:</span>
+                  <span>{toCleanUppercase(t.lab1StageLabel)}</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {animProgress}%
+                    {formatNum(animProgress, locale)}%
                   </span>
                 </div>
                 <input
@@ -293,24 +594,32 @@ export default function EmbadonTrapeziouTheoriaPage() {
                   className="w-full accent-indigo-600 cursor-pointer touch-manipulation"
                 />
                 <div className="flex justify-between text-[11px] font-mono text-slate-400">
-                  <span>0% (1 Τραπέζιο)</span>
-                  <span>50% (Παραλληλόγραμμο)</span>
-                  <span>100% (Ορθογώνιο)</span>
+                  <span>{t.lab1Stage0}</span>
+                  <span>{t.lab1Stage50}</span>
+                  <span>{t.lab1Stage100}</span>
                 </div>
               </div>
 
               {/* Κάρτα Επεξήγησης */}
               <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs sm:text-sm">
                 <div className="font-bold text-sky-950">
-                  {animProgress === 0 && '🔷 Στάδιο 0: Αρχικό τραπέζιο με μεγάλη βάση Β ＝ 140 και μικρή βάση b ＝ 70.'}
-                  {animProgress > 0 && animProgress < 50 && '🔄 Στάδιο 1: Ένα δεύτερο ανάποδο τραπέζιο πλησιάζει...'}
-                  {animProgress >= 50 && animProgress < 100 && '🟪 Στάδιο 2: Σχηματίστηκε παραλληλόγραμμο! Τώρα το αριστερό τρίγωνο αποκόπτεται και ολισθαίνει...'}
-                  {animProgress === 100 && '🟩 Στάδιο 3: Τέλειο ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ!'}
+                  {animProgress === 0 && t.lab1Exp0}
+                  {animProgress > 0 && animProgress < 50 && t.lab1Exp1}
+                  {animProgress >= 50 && animProgress < 100 && t.lab1Exp2}
+                  {animProgress === 100 && t.lab1Exp3}
                 </div>
                 <div className="text-slate-600 text-[11px] space-y-1 font-mono pt-1 border-t border-sky-200/60">
-                  <div>• Συνολική Βάση: Β ＋ b ＝ 140 ＋ 70 ＝ <strong>210 px</strong></div>
-                  <div>• Εμβαδόν 2 Τραπεζίων: (Β ＋ b) · υ</div>
-                  <div className="text-indigo-900 font-bold">• Εμβαδόν 1 Τραπεζίου: <strong>[(Β ＋ b) · υ] : 2</strong></div>
+                  <div>
+                    {t.lab1TotalBaseText} <strong>{formatNum(totalParallelogramBase, locale)} px</strong>
+                  </div>
+                  <div>
+                    {t.lab1TwoTrapezoidsText}: {formatNum(totalParallelogramBase, locale)} · {heightH} ＝ {formatNum(totalParallelogramBase * heightH, locale)} px
+                  </div>
+                  <div className="text-indigo-900 font-bold flex items-center flex-wrap gap-1">
+                    <span>{t.lab1OneTrapezoidText} ＝</span>
+                    <MathFraction num={`${formatNum(totalParallelogramBase, locale)} · ${heightH}`} den="2" />
+                    <span>＝ <strong>{formatNum((totalParallelogramBase * heightH) / 2, locale)} px</strong></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -321,7 +630,7 @@ export default function EmbadonTrapeziouTheoriaPage() {
                 viewBox="0 0 400 220"
                 className="w-full max-w-[400px] sm:max-w-[460px] h-auto select-none overflow-visible"
               >
-                {/* 1. Σταθερό σώμα του 1ου τραπεζίου (χωρίς το κινούμενο αριστερό τρίγωνο) */}
+                {/* 1. Σταθερό σώμα του 1ου τραπεζίου */}
                 <polygon
                   points={`
                     ${originX + slantLeft},${originY} 
@@ -347,7 +656,7 @@ export default function EmbadonTrapeziouTheoriaPage() {
                   strokeDasharray={animProgress > 50 && animProgress < 100 ? '4 3' : 'none'}
                 />
 
-                {/* 3. Δεύτερο ανάποδο τραπέζιο (μωβ): πλησιάζει από τα δεξιά (0 -> 50) */}
+                {/* 3. Δεύτερο ανάποδο τραπέζιο (μωβ) */}
                 <polygon
                   points={`
                     ${originX + slantLeft + smallBaseB + secondTrapezoidOffset},${originY} 
@@ -382,20 +691,20 @@ export default function EmbadonTrapeziouTheoriaPage() {
                 />
                 <circle cx={originX + slantLeft + 5} cy={originY + heightH - 5} r="1.5" fill="#f59e0b" />
                 <text x={originX + slantLeft - 8} y={originY + heightH / 2 + 4} fill="#f59e0b" fontSize="12" fontWeight="black" textAnchor="end">
-                  υ
+                  {locale === 'en' ? 'h' : 'υ'}
                 </text>
 
                 {/* Ετικέτες Βάσεων */}
                 {/* Μικρή βάση b επάνω */}
                 <line x1={originX + slantLeft} y1={originY - 12} x2={originX + slantLeft + smallBaseB} y2={originY - 12} stroke="#38bdf8" strokeWidth="1.5" />
                 <text x={originX + slantLeft + smallBaseB / 2} y={originY - 18} fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
-                  b (μικρή)
+                  {t.lab1SmallBaseLabel}
                 </text>
 
                 {/* Μεγάλη βάση B κάτω */}
                 <line x1={originX + (animProgress === 100 ? slantLeft : 0)} y1={originY + heightH + 18} x2={originX + bigBaseB + (animProgress === 100 ? slantLeft : 0)} y2={originY + heightH + 18} stroke="#38bdf8" strokeWidth="1.5" />
                 <text x={originX + bigBaseB / 2 + (animProgress === 100 ? slantLeft : 0)} y={originY + heightH + 34} fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
-                  Β (μεγάλη)
+                  {t.lab1BigBaseLabel}
                 </text>
 
                 {/* Ετικέτα 2ης βάσης όταν εμφανιστεί το 2ο τραπέζιο */}
@@ -404,20 +713,20 @@ export default function EmbadonTrapeziouTheoriaPage() {
                     {/* Πάνω βάση Β του 2ου τραπεζίου */}
                     <line x1={originX + slantLeft + smallBaseB} y1={originY - 12} x2={originX + slantLeft + totalParallelogramBase} y2={originY - 12} stroke="#c084fc" strokeWidth="1.5" />
                     <text x={originX + slantLeft + smallBaseB + bigBaseB / 2} y={originY - 18} fill="#c084fc" fontSize="11" fontWeight="bold" textAnchor="middle">
-                      Β (του 2ου)
+                      {t.lab1SecondBigBaseLabel}
                     </text>
 
                     {/* Κάτω βάση b του 2ου τραπεζίου */}
                     <line x1={originX + bigBaseB + (animProgress === 100 ? slantLeft : 0)} y1={originY + heightH + 18} x2={originX + totalParallelogramBase + (animProgress === 100 ? slantLeft : 0)} y2={originY + heightH + 18} stroke="#c084fc" strokeWidth="1.5" />
                     <text x={originX + bigBaseB + smallBaseB / 2 + (animProgress === 100 ? slantLeft : 0)} y={originY + heightH + 34} fill="#c084fc" fontSize="11" fontWeight="bold" textAnchor="middle">
-                      b (του 2ου)
+                      {t.lab1SecondSmallBaseLabel}
                     </text>
                   </>
                 )}
               </svg>
 
               <div className="mt-3 text-center text-xs text-slate-400">
-                Τα δύο τραπέζια φτιάχνουν ορθογώνιο με μήκος (Β ＋ b) και πλάτος υ. Άρα το ένα τραπέζιο ισούται με [(Β ＋ b) · υ] : 2.
+                {t.lab1SvgCaption}
               </div>
             </div>
 
@@ -428,13 +737,13 @@ export default function EmbadonTrapeziouTheoriaPage() {
         <section className="bg-white rounded-3xl border border-slate-200 shadow-md p-4 sm:p-8 2xl:p-12 space-y-6">
           <div className="border-b border-slate-100 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs 2xl:text-sm font-bold text-emerald-800 mb-1">
-              <span>📐 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ 2: ΥΠΟΛΟΓΙΣΤΗΣ &amp; ΜΟΝΑΔΕΣ</span>
+              <span>{t.lab2Badge}</span>
             </div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-              Υπολογιστής Εμβαδού Τραπεζίου &amp; Αυτόματη Μετατροπή
+              {t.lab2Title}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Άλλαξε τις δύο βάσεις (Β και b) και το ύψος σε cm για να υπολογίσεις το εμβαδόν του τραπεζίου και να δεις τις αυτόματες μετατροπές μονάδων:
+              {t.lab2Subtitle}
             </p>
           </div>
 
@@ -444,9 +753,9 @@ export default function EmbadonTrapeziouTheoriaPage() {
             <div className="lg:col-span-5 space-y-3.5">
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΜΕΓΑΛΗ ΒΑΣΗ (Β):</span>
+                  <span>{toCleanUppercase(t.lab2BigBLabel)}</span>
                   <span className="font-mono text-base font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {calcBigB} cm
+                    {formatNum(calcBigB, locale)} cm
                   </span>
                 </div>
                 <input
@@ -466,9 +775,9 @@ export default function EmbadonTrapeziouTheoriaPage() {
 
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΜΙΚΡΗ ΒΑΣΗ (b):</span>
+                  <span>{toCleanUppercase(t.lab2SmallBLabel)}</span>
                   <span className="font-mono text-base font-black text-sky-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {calcSmallB} cm
+                    {formatNum(calcSmallB, locale)} cm
                   </span>
                 </div>
                 <input
@@ -484,9 +793,9 @@ export default function EmbadonTrapeziouTheoriaPage() {
 
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5">
                 <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-800">
-                  <span>ΥΨΟΣ (υ):</span>
+                  <span>{toCleanUppercase(t.lab2HeightLabel)}</span>
                   <span className="font-mono text-base font-black text-amber-700 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200">
-                    {calcHeight} cm
+                    {formatNum(calcHeight, locale)} cm
                   </span>
                 </div>
                 <input
@@ -500,11 +809,17 @@ export default function EmbadonTrapeziouTheoriaPage() {
                 />
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 font-mono space-y-1">
-                <div>• Άθροισμα βάσεων: Β ＋ b ＝ {calcBigB} ＋ {calcSmallB} ＝ {sumBases} cm</div>
-                <div>• Γινόμενο: (Β ＋ b) · υ ＝ {sumBases} · {calcHeight} ＝ {parallAreaCm2} cm²</div>
-                <div className="text-emerald-800 font-black text-sm">
-                  • Εμβαδόν Τραπεζίου: [{sumBases} · {calcHeight}] : 2 ＝ <strong>{formatNum(areaCm2)} cm²</strong>
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 font-mono space-y-1">
+                <div>
+                  {t.lab2SumBasesText} {formatNum(calcBigB, locale)} ＋ {formatNum(calcSmallB, locale)} ＝ {formatNum(sumBases, locale)} cm
+                </div>
+                <div>
+                  {t.lab2ProductText} {formatNum(sumBases, locale)} · {formatNum(calcHeight, locale)} ＝ {formatNum(parallAreaCm2, locale)} cm²
+                </div>
+                <div className="text-emerald-800 font-black text-sm flex items-center flex-wrap gap-1">
+                  <span>{t.lab2TrapezoidAreaText}</span>
+                  <MathFraction num={`(${formatNum(calcBigB, locale)} ＋ ${formatNum(calcSmallB, locale)}) · ${formatNum(calcHeight, locale)}`} den="2" />
+                  <span>＝ <strong>{formatNum(areaCm2, locale)} cm²</strong></span>
                 </div>
               </div>
             </div>
@@ -512,30 +827,40 @@ export default function EmbadonTrapeziouTheoriaPage() {
             {/* Αποτελέσματα σε όλες τις Μονάδες (7 στήλες) */}
             <div className="lg:col-span-7 bg-slate-900 p-5 sm:p-7 rounded-3xl border border-slate-800 text-white space-y-3">
               <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider text-center">
-                ΜΕΤΑΤΡΟΠΗ ΣΕ ΑΛΛΕΣ ΜΟΝΑΔΕΣ ΕΠΙΦΑΝΕΙΑΣ
+                {toCleanUppercase(t.lab2TableTitle)}
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 font-mono text-xs sm:text-sm">
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε cm² (Βάση υπολογισμού):</span>
-                  <span className="text-emerald-400 font-black text-lg">{formatNum(areaCm2)} cm²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{t.lab2InCm2}</span>
+                  <span className="text-emerald-400 font-black text-lg">{formatNum(areaCm2, locale)} cm²</span>
                 </div>
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε mm² (· 100):</span>
-                  <span className="text-sky-400 font-black text-lg">{formatNum(areaMm2)} mm²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{t.lab2InMm2}</span>
+                  <span className="text-sky-400 font-black text-lg">{formatNum(areaMm2, locale)} mm²</span>
                 </div>
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε dm² (: 100):</span>
-                  <span className="text-amber-400 font-black text-lg">{formatNum(areaDm2)} dm²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{t.lab2InDm2}</span>
+                  <div className="flex items-center flex-wrap gap-1 mt-1">
+                    <span className="text-amber-400 font-black text-lg">{formatNum(areaDm2, locale)} dm²</span>
+                    <span className="text-xs text-slate-400 font-sans">
+                      (<MathFraction num={formatNum(areaCm2, locale)} den="100" /> dm²)
+                    </span>
+                  </div>
                 </div>
                 <div className="bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
-                  <span className="text-slate-400 font-sans text-xs block">Σε m² (: 10.000):</span>
-                  <span className="text-purple-400 font-black text-lg">{formatNum(areaM2)} m²</span>
+                  <span className="text-slate-400 font-sans text-xs block">{t.lab2InM2}</span>
+                  <div className="flex items-center flex-wrap gap-1 mt-1">
+                    <span className="text-purple-400 font-black text-lg">{formatNum(areaM2, locale)} m²</span>
+                    <span className="text-xs text-slate-400 font-sans">
+                      (<MathFraction num={formatNum(areaCm2, locale)} den="10.000" /> m²)
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <div className="text-[11px] text-slate-400 text-center pt-1 font-sans">
-                💡 Το εμβαδόν του τραπεζίου είναι ακριβώς το μισό του αντίστοιχου παραλληλογράμμου ({formatNum(parallAreaCm2)} cm²).
+                {t.lab2TipPre} ({formatNum(parallAreaCm2, locale)} cm²).
               </div>
             </div>
 
@@ -546,10 +871,10 @@ export default function EmbadonTrapeziouTheoriaPage() {
         <section className="space-y-6">
           <div>
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-black text-slate-900 tracking-tight">
-              Λυμένα Προβλήματα με Εμβαδόν Τραπεζίου
+              {t.problemsTitle}
             </h3>
             <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-              Εφαρμογές του τύπου Ε ＝ [(Β ＋ b) · υ] : 2 σε οικόπεδα και αγροτεμάχια.
+              {t.problemsSubtitle}
             </p>
           </div>
 
@@ -559,48 +884,52 @@ export default function EmbadonTrapeziouTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 1: ΤΡΑΠΕΖΙΟ ΟΙΚΟΠΕΔΟ
+                  {toCleanUppercase(t.prob1Badge)}
                 </span>
-                <span className="text-xs font-bold text-slate-400">Ε ＝ [(Β ＋ b) · υ] : 2</span>
+                <span className="text-xs font-bold text-slate-400">{t.prob1Category}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Υπολογισμός Εμβαδού Οικοπέδου σε Σχήμα Τραπεζίου
+                {t.prob1Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Ένα οικόπεδο έχει σχήμα τραπεζίου. Η μεγάλη του βάση είναι <strong>40 m</strong>, 
-                η μικρή του βάση είναι <strong>25 m</strong> και η κάθετη απόσταση ανάμεσα στις δύο βάσεις (το ύψος) είναι <strong>16 m</strong>. 
-                Οι πλάγιες πλευρές του είναι 18 m και 20 m. Ποιο είναι το εμβαδόν του οικοπέδου σε m²;
+                {t.prob1P1}
               </p>
 
               {/* Πίνακας Δεδομένων */}
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs sm:text-sm">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1.5">
-                  ΔΕΔΟΜΕΝΑ ΠΡΟΒΛΗΜΑΤΟΣ
+                  {toCleanUppercase(t.prob1DataHeader)}
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μεγάλη βάση (Β)</span> 40 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob1DataBigB}</span> 40 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Μικρή βάση (b)</span> 25 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob1DataSmallB}</span> 25 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Ύψος (υ)</span> 16 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob1DataHeight}</span> 16 m
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Άθροισμα βάσεων:</strong> Β ＋ b ＝ 40 ＋ 25 ＝ <strong>65 m</strong>.</div>
-                  <div>• <strong>Πολλαπλασιασμός με το ύψος:</strong> 65 · 16 ＝ <strong>1.040 m²</strong>.</div>
-                  <div>• <strong>Διαίρεση με το 2:</strong> 1.040 : 2 ＝ <strong className="text-blue-700">520 m²</strong>.</div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{t.prob1StepsHeader}</span>
+                  <div>
+                    <strong>{t.prob1Step1Label}</strong> {t.prob1Step1Text}
+                  </div>
+                  <div>
+                    <strong>{t.prob1Step2Label}</strong> {t.prob1Step2Text}
+                  </div>
+                  <div>
+                    <strong>{t.prob1Step3Label}</strong> {t.prob1Step3Text}
+                  </div>
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-950 font-medium">
-                💡 Οι πλάγιες πλευρές (18 m και 20 m) δεν χρησιμοποιούνται στον υπολογισμό του εμβαδού!
+                {t.prob1Tip}
               </div>
             </article>
 
@@ -608,48 +937,56 @@ export default function EmbadonTrapeziouTheoriaPage() {
             <article className="bg-white p-5 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-black rounded-lg uppercase">
-                  ΠΡΟΒΛΗΜΑ 2: ΕΥΡΕΣΗ ΥΨΟΥΣ &amp; ΣΤΡΕΜΜΑΤΑ
+                  {toCleanUppercase(t.prob2Badge)}
                 </span>
-                <span className="text-xs font-bold text-slate-400">υ ＝ (2 · Ε) : (Β ＋ b)</span>
+                <span className="text-xs font-bold text-slate-400">{t.prob2Category}</span>
               </div>
               <h4 className="text-lg font-black text-slate-900">
-                Εύρεση του Ύψους σε Αγροτεμάχιο
+                {t.prob2Title}
               </h4>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Ένα αγρόκτημα σε σχήμα τραπεζίου έχει έκταση <strong>1,8 στρέμματα (1.800 m²)</strong>. 
-                Οι δύο παράλληλοι φράχτες του (οι βάσεις) έχουν μήκος <strong>70 m</strong> και <strong>50 m</strong>. 
-                Πόσο είναι το ύψος (η απόσταση ανάμεσα στους δύο φράχτες);
+                {t.prob2P1}
               </p>
 
               {/* Πίνακας Δεδομένων */}
               <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs sm:text-sm">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-center mb-1.5">
-                  ΣΤΟΙΧΕΙΑ ΥΠΟΛΟΓΙΣΜΟΥ
+                  {toCleanUppercase(t.prob2DataHeader)}
                 </span>
                 <div className="grid grid-cols-3 gap-2 text-center font-mono font-bold text-[11px]">
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Εμβαδόν (Ε)</span> 1.800 m²
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob2DataArea}</span> {formatNum(1800, locale)} m²
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Βάσεις (Β, b)</span> 70 m, 50 m
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob2DataBases}</span> 70 m, 50 m
                   </div>
                   <div className="bg-white p-2 rounded-xl border border-slate-200">
-                    <span className="text-slate-400 text-[10px] block font-sans">Τύπος ύψους</span> υ ＝ (2 · Ε) : (Β ＋ b)
+                    <span className="text-slate-400 text-[10px] block font-sans">{t.prob2DataFormula}</span>
+                    <span className="inline-flex items-center gap-0.5">
+                      <span>{locale === 'en' ? 'h ＝' : 'υ ＝'}</span>
+                      <MathFraction num={locale === 'en' ? '2 · A' : '2 · Ε'} den={locale === 'en' ? 'B ＋ b' : 'Β ＋ b'} />
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs sm:text-sm font-mono pt-1">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-                  <span className="text-slate-500 font-sans block text-xs font-bold">Βήματα Επίλυσης:</span>
-                  <div>• <strong>Διπλασιάζουμε το εμβαδόν:</strong> 2 · 1.800 ＝ <strong>3.600 m²</strong>.</div>
-                  <div>• <strong>Άθροισμα βάσεων:</strong> 70 ＋ 50 ＝ <strong>120 m</strong>.</div>
-                  <div>• <strong>Υπολογισμός ύψους:</strong> 3.600 : 120 ＝ <strong className="text-amber-700">30 m</strong>.</div>
+                  <span className="text-slate-500 font-sans block text-xs font-bold">{t.prob2StepsHeader}</span>
+                  <div>
+                    <strong>{t.prob2Step1Label}</strong> {t.prob2Step1Text}
+                  </div>
+                  <div>
+                    <strong>{t.prob2Step2Label}</strong> {t.prob2Step2Text}
+                  </div>
+                  <div>
+                    <strong>{t.prob2Step3Label}</strong> {t.prob2Step3Text}
+                  </div>
                 </div>
               </div>
 
               <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-950 font-medium">
-                ⚡ Επαλήθευση: [(70 ＋ 50) · 30] : 2 ＝ (120 · 30) : 2 ＝ 3.600 : 2 ＝ 1.800 m²!
+                {t.prob2Tip}
               </div>
             </article>
 
@@ -662,20 +999,20 @@ export default function EmbadonTrapeziouTheoriaPage() {
             <span className="text-3xl sm:text-4xl flex-shrink-0">⚠️</span>
             <div className="space-y-3">
               <h3 className="text-base sm:text-lg font-black text-amber-950">
-                {toCleanUppercase('Προσοχη / Συνηθη Λαθη που πρεπει να Αποφευγετε')}
+                {toCleanUppercase(t.alertTitle)}
               </h3>
               <ul className="space-y-2 text-xs sm:text-sm text-amber-900 leading-relaxed list-disc list-inside">
                 <li>
-                  <strong>Μην ξεχνάτε τις παρενθέσεις στις βάσεις:</strong> Πρώτα <em>προσθέτουμε</em> τις δύο βάσεις (Β ＋ b) και μετά πολλαπλασιάζουμε με το ύψος. Αν πολλαπλασιάσετε μόνο τη μία βάση με το ύψος, το αποτέλεσμα θα είναι λάθος.
+                  <strong>{t.alertItem1Strong}</strong> {t.alertItem1Text}
                 </li>
                 <li>
-                  <strong>Μην ξεχνάτε τη διαίρεση με το 2:</strong> Ο τύπος (Β ＋ b) · υ υπολογίζει το εμβαδόν δύο ενωμένων τραπεζίων (παραλληλόγραμμο). Το ένα τραπέζιο απαιτεί πάντα <strong>διαίρεση με το 2</strong>.
+                  <strong>{t.alertItem2Strong}</strong> {t.alertItem2Text}
                 </li>
                 <li>
-                  <strong>Οι πλάγιες πλευρές δεν είναι ύψος:</strong> Εκτός αν το τραπέζιο είναι ορθογώνιο, οι πλάγιες κεκλιμένες πλευρές είναι πάντοτε μεγαλύτερες από το κάθετο ύψος.
+                  <strong>{t.alertItem3Strong}</strong> {t.alertItem3Text}
                 </li>
                 <li>
-                  <strong>Ίδιες μονάδες μέτρησης:</strong> Βεβαιωθείτε ότι και οι δύο βάσεις και το ύψος εκφράζονται στην ίδια μονάδα (π.χ. όλα σε m ή όλα σε cm) πριν κάνετε τις πράξεις.
+                  <strong>{t.alertItem4Strong}</strong> {t.alertItem4Text}
                 </li>
               </ul>
             </div>
@@ -686,10 +1023,10 @@ export default function EmbadonTrapeziouTheoriaPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στο Εμβαδόν Τραπεζίου!
+              {t.footerTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Δοκίμασε τις δυνάμεις σου σε 12 διαδραστικές ασκήσεις με υπολογισμούς βάσεων, ύψους, εμβαδού και μετατροπές μονάδων επιφάνειας για τη ΣΤ' Δημοτικού.
+              {t.footerDesc}
             </p>
           </div>
 
@@ -697,7 +1034,7 @@ export default function EmbadonTrapeziouTheoriaPage() {
             href="/st-dimotikou/75-embadon-trapeziou-ask"
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>🎯 {toCleanUppercase(t.footerButton)}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

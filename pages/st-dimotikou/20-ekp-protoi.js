@@ -1,39 +1,38 @@
-// pages/st-dimotikou/20-ekp-protoi.js
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// Μεγιστος αριθμος για εισαγωγη
 const MAX_ALLOWED_NUMBER = 1000;
 
-// Συναρτηση αφαιρεσης τονων για κεφαλαια (εξαιρειται το ΣΤ')
 function toCleanUppercase(str) {
   if (!str) return '';
-  const cleaned = str
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase();
-  return cleaned.replace(/\bΣΤ\b/g, "ΣΤ'");
+  const parts = str.split(/(ΣΤ')/g);
+  return parts
+    .map((part) => {
+      if (part === "ΣΤ'") return "ΣΤ'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
-// Μορφοποιηση αριθμων με ελληνικο locale και defensive checks
-function formatNumber(num) {
+function formatNumber(num, locale = 'el') {
   if (num === null || num === undefined || isNaN(Number(num))) return '0';
-  return Number(num).toLocaleString('el-GR');
+  return Number(num).toLocaleString(locale === 'en' ? 'en-US' : 'el-GR');
 }
 
 const PRESETS_2 = [
-  { n1: 12, n2: 18, label: 'Ε.Κ.Π.(12, 18)' },
-  { n1: 24, n2: 36, label: 'Ε.Κ.Π.(24, 36)' },
-  { n1: 20, n2: 50, label: 'Ε.Κ.Π.(20, 50)' },
-  { n1: 45, n2: 60, label: 'Ε.Κ.Π.(45, 60)' }
+  { n1: 12, n2: 18, labelEl: 'Ε.Κ.Π.(12, 18)', labelEn: 'LCM(12, 18)' },
+  { n1: 24, n2: 36, labelEl: 'Ε.Κ.Π.(24, 36)', labelEn: 'LCM(24, 36)' },
+  { n1: 20, n2: 50, labelEl: 'Ε.Κ.Π.(20, 50)', labelEn: 'LCM(20, 50)' },
+  { n1: 45, n2: 60, labelEl: 'Ε.Κ.Π.(45, 60)', labelEn: 'LCM(45, 60)' }
 ];
 
 const PRESETS_3 = [
-  { n1: 8, n2: 12, n3: 15, label: 'Ε.Κ.Π.(8, 12, 15)' },
-  { n1: 10, n2: 15, n3: 20, label: 'Ε.Κ.Π.(10, 15, 20)' },
-  { n1: 12, n2: 18, n3: 24, label: 'Ε.Κ.Π.(12, 18, 24)' },
-  { n1: 6, n2: 20, n3: 45, label: 'Ε.Κ.Π.(6, 20, 45)' }
+  { n1: 8, n2: 12, n3: 15, labelEl: 'Ε.Κ.Π.(8, 12, 15)', labelEn: 'LCM(8, 12, 15)' },
+  { n1: 10, n2: 15, n3: 20, labelEl: 'Ε.Κ.Π.(10, 15, 20)', labelEn: 'LCM(10, 15, 20)' },
+  { n1: 12, n2: 18, n3: 24, labelEl: 'Ε.Κ.Π.(12, 18, 24)', labelEn: 'LCM(12, 18, 24)' },
+  { n1: 6, n2: 20, n3: 45, labelEl: 'Ε.Κ.Π.(6, 20, 45)', labelEn: 'LCM(6, 20, 45)' }
 ];
 
 const EXPONENTS_UNICODE = {
@@ -48,7 +47,6 @@ const EXPONENTS_UNICODE = {
   9: '⁹'
 };
 
-// Συναρτηση που επιστρεφει τους πρωτους παραγοντες ενος αριθμου και τα βηματα της καθετης αναλυσης
 function factorize(num) {
   const parsed = Number(num);
   if (!parsed || isNaN(parsed) || parsed < 2) {
@@ -97,8 +95,134 @@ function factorize(num) {
   return { steps, factors, expr };
 }
 
+const TRANSLATIONS = {
+  el: {
+    pageTitle: "Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες - ΣΤ' Δημοτικού | LearnMaths.gr",
+    pageDescription: "Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον κανόνα των κοινών και μη κοινών πρώτων παραγόντων με τον μεγαλύτερο εκθέτη για τη ΣΤ' Δημοτικού.",
+    backText: "ΣΤ' Δημοτικού",
+    exercisesBtn: "🎯 Ασκήσεις",
+    badgeChapter: "ΚΕΦΑΛΑΙΟ 20 • ΣΤ' ΔΗΜΟΤΙΚΟΥ",
+    heroTitle: "Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες",
+    heroDesc: "Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον χρυσό κανόνα: Κοινοί και μη κοινοί πρώτοι παράγοντες με τον μεγαλύτερο εκθέτη!",
+    heroPills: "Κατακόρυφη Ανάλυση & Αυτόματη Επιλογή Μέγιστων Εκθετών",
+    heroCta: "Δοκίμασε τις Ασκήσεις",
+    theoryTitle: "Βασικές Έννοιες & Κανόνας Υπολογισμού Ε.Κ.Π.",
+    theorySubtitle: "Η μέθοδος των πρώτων παραγόντων σε τρία απλά και ξεκάθαρα βήματα.",
+    cards: [
+      {
+        badge: "ΒΗΜΑ 1",
+        sub: "Κατακόρυφη Γραμμή",
+        title: "Παραγοντοποίηση",
+        body: "Αναλύουμε κάθε αριθμό χωριστά σε γινόμενο πρώτων παραγόντων και γράφουμε τις επαναλήψεις με εκθέτες (δυνάμεις).",
+        example: "12 ＝ 2² · 3\n18 ＝ 2 · 3²",
+        tip: "💡 Διαιρούμε διαδοχικά μόνο με πρώτους αριθμούς: 2, 3, 5, 7, 11..."
+      },
+      {
+        badge: "ΒΗΜΑ 2",
+        sub: "Ο Χρυσός Κανόνας",
+        title: "Επιλογή Παραγόντων",
+        body: "Επιλέγουμε όλους τους κοινούς ΚΑΙ μη κοινούς πρώτους παράγοντες, παίρνοντας για τον καθένα τον μεγαλύτερο εκθέτη.",
+        example: "Από το 2: επιλέγουμε 2² (όχι το 2¹)\nΑπό το 3: επιλέγουμε 3² (όχι το 3¹)",
+        tip: "⚡ Στο Ε.Κ.Π. δεν αφήνουμε κανέναν παράγοντα έξω και διαλέγουμε πάντα τη μεγαλύτερη δύναμη!"
+      },
+      {
+        badge: "ΒΗΜΑ 3",
+        sub: "Γινόμενο Δυνάμεων",
+        title: "Υπολογισμός Ε.Κ.Π.",
+        body: "Σχηματίζουμε το γινόμενο των δυνάμεων που επιλέξαμε και εκτελούμε τους πολλαπλασιασμούς για το τελικό αποτέλεσμα.",
+        example: "Ε.Κ.Π.(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ 36",
+        tip: "🎯 Το αποτέλεσμα είναι το μικρότερο κοινό πολλαπλάσιο που διαιρείται ακριβώς από όλους τους αριθμούς."
+      }
+    ],
+    labBadge: "🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ",
+    labTitle: "Διαδραστικό Εργαστήριο Ε.Κ.Π. με Πρώτους Παράγοντες",
+    labDesc: "Διάλεξε 2 ή 3 αριθμούς και παρακολούθησε βήμα προς βήμα την κατακόρυφη ανάλυση και την επιλογή των μέγιστων εκθετών!",
+    tabNumbers: (c) => `${c} ΑΡΙΘΜΟΙ`,
+    inputHeader: (max) => `ΤΙΜΕΣ ΑΡΙΘΜΩΝ (2 － ${max}):`,
+    numLabels: ['1ΟΣ ΑΡΙΘΜΟΣ', '2ΟΣ ΑΡΙΘΜΟΣ', '3ΟΣ ΑΡΙΘΜΟΣ'],
+    presetHeader: "ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:",
+    tipRule: "💡 Επιλέγουμε όλους τους πρώτους παράγοντες (κοινούς και μη κοινούς), κρατώντας τον μεγαλύτερο εκθέτη!",
+    statusHeader: "ΥΠΟΛΟΓΙΣΜΟΣ Ε.Κ.Π. ΜΕ ΠΡΩΤΟΥΣ ΠΑΡΑΓΟΝΤΕΣ:",
+    step1Title: "📋 1. ΚΑΤΑΚΟΡΥΦΗ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΚΑΘΕ ΑΡΙΘΜΟΥ:",
+    powerFormLabel: "ΜΟΡΦΗ ΔΥΝΑΜΕΩΝ:",
+    step2Title: "🔍 2. ΕΦΑΡΜΟΓΗ ΚΑΝΟΝΑ (ΚΟΙΝΟΙ ΚΑΙ ΜΗ ΚΟΙΝΟΙ ΜΕ ΜΕΓΙΣΤΟ ΕΚΘΕΤΗ):",
+    forBaseLabel: (b) => `Για τη βάση ${b}:`,
+    weChooseLabel: (exp) => `Επιλέγουμε ➔ ${exp}`,
+    inNumber: (num, exp) => `στο ${num}: ${exp}`,
+    step3Title: "ΤΕΛΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ Ε.Κ.Π.:",
+    abbr: "Ε.Κ.Π.",
+    ctaTitle: "Ώρα για Εξάσκηση στο Ε.Κ.Π.!",
+    ctaDesc: "Κατάλαβες πώς βρίσκουμε το Ε.Κ.Π. με ανάλυση σε πρώτους παράγοντες; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!",
+    ctaBtn: "🎯 Έναρξη Ασκήσεων"
+  },
+  en: {
+    pageTitle: "LCM by Prime Factorization - Grade 6 | LearnMaths.gr",
+    pageDescription: "Calculate the Least Common Multiple using prime factor decomposition: take all common and non-common prime factors with the highest exponent for Grade 6.",
+    backText: "Grade 6",
+    exercisesBtn: "🎯 Exercises",
+    badgeChapter: "CHAPTER 20 • GRADE 6",
+    heroTitle: "LCM by Prime Factorization",
+    heroDesc: "Rapidly determine the Least Common Multiple of large numbers using the golden rule: Common and non-common prime factors raised to their greatest power!",
+    heroPills: "Vertical Prime Factorization & Automatic Maximum Exponent Selection",
+    heroCta: "Try the Exercises",
+    theoryTitle: "Core Concepts & Finding Rule for LCM",
+    theorySubtitle: "The prime factorization method broken down into three straightforward steps.",
+    cards: [
+      {
+        badge: "STEP 1",
+        sub: "Vertical Ladder",
+        title: "Prime Factorization",
+        body: "Decompose each number individually into a product of prime factors and express repeated factors using exponential notation (powers).",
+        example: "12 ＝ 2² · 3\n18 ＝ 2 · 3²",
+        tip: "💡 Divide successively using only prime numbers: 2, 3, 5, 7, 11..."
+      },
+      {
+        badge: "STEP 2",
+        sub: "The Golden Rule",
+        title: "Selecting Factors",
+        body: "Select all common AND non-common prime factors, taking each factor raised to its greatest exponent.",
+        example: "For base 2: select 2² (not 2¹)\nFor base 3: select 3² (not 3¹)",
+        tip: "⚡ For LCM, no factor is left out and we always choose the highest power!"
+      },
+      {
+        badge: "STEP 3",
+        sub: "Product of Powers",
+        title: "Computing the LCM",
+        body: "Multiply together all the selected powers to compute the final Least Common Multiple.",
+        example: "LCM(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ 36",
+        tip: "🎯 The resulting value is the smallest positive integer divisible by all numbers."
+      }
+    ],
+    labBadge: "🔬 INTERACTIVE LAB",
+    labTitle: "Interactive LCM Prime Factorization Lab",
+    labDesc: "Choose 2 or 3 numbers and observe vertical factor ladders and maximum exponent selection step by step!",
+    tabNumbers: (c) => `${c} NUMBERS`,
+    inputHeader: (max) => `ENTER NUMBERS (2 － ${max}):`,
+    numLabels: ['1ST NUMBER', '2ND NUMBER', '3RD NUMBER'],
+    presetHeader: "PRESET EXAMPLES:",
+    tipRule: "💡 Select all prime factors (common and non-common), retaining each with its highest exponent!",
+    statusHeader: "LCM PRIME FACTORIZATION CALCULATION:",
+    step1Title: "📋 1. VERTICAL FACTOR LADDER FOR EACH NUMBER:",
+    powerFormLabel: "POWER NOTATION:",
+    step2Title: "🔍 2. APPLYING RULE (COMMON & NON-COMMON WITH HIGHEST EXPONENT):",
+    forBaseLabel: (b) => `For prime base ${b}:`,
+    weChooseLabel: (exp) => `Select ➔ ${exp}`,
+    inNumber: (num, exp) => `in ${num}: ${exp}`,
+    step3Title: "FINAL LCM CALCULATION:",
+    abbr: "LCM",
+    ctaTitle: "Time to Practice LCM!",
+    ctaDesc: "Understood finding the LCM via prime factorization? Put your skills to the test with 10 interactive questions!",
+    ctaBtn: "🎯 Start Exercises"
+  }
+};
+
 export default function EkpProtoiPage() {
-  const [numCount, setNumCount] = useState(2); // 2 η 3 αριθμοι
+  const router = useRouter();
+  const locale = router.locale === 'en' ? 'en' : 'el';
+  const isEn = locale === 'en';
+  const t = TRANSLATIONS[locale];
+
+  const [numCount, setNumCount] = useState(2);
 
   const [num1, setNum1] = useState(12);
   const [num2, setNum2] = useState(18);
@@ -157,9 +281,9 @@ export default function EkpProtoiPage() {
       calculationFormulaParts.push(expStr);
 
       const appearances = [];
-      if (e1 > 0) appearances.push(`στο ${safeNum1}: ${base}${EXPONENTS_UNICODE[e1] || ''}`);
-      if (e2 > 0) appearances.push(`στο ${safeNum2}: ${base}${EXPONENTS_UNICODE[e2] || ''}`);
-      if (numCount === 3 && e3 > 0) appearances.push(`στο ${safeNum3}: ${base}${EXPONENTS_UNICODE[e3] || ''}`);
+      if (e1 > 0) appearances.push(t.inNumber(safeNum1, `${base}${EXPONENTS_UNICODE[e1] || ''}`));
+      if (e2 > 0) appearances.push(t.inNumber(safeNum2, `${base}${EXPONENTS_UNICODE[e2] || ''}`));
+      if (numCount === 3 && e3 > 0) appearances.push(t.inNumber(safeNum3, `${base}${EXPONENTS_UNICODE[e3] || ''}`));
 
       ruleBreakdown.push({
         base,
@@ -179,7 +303,7 @@ export default function EkpProtoiPage() {
       safeVal: safeNum1,
       color: 'text-blue-600',
       fact: f1,
-      label: '1ΟΣ ΑΡΙΘΜΟΣ',
+      label: t.numLabels[0],
       badge: 'bg-blue-100 text-blue-800 border-blue-200'
     },
     {
@@ -187,7 +311,7 @@ export default function EkpProtoiPage() {
       safeVal: safeNum2,
       color: 'text-indigo-600',
       fact: f2,
-      label: '2ΟΣ ΑΡΙΘΜΟΣ',
+      label: t.numLabels[1],
       badge: 'bg-indigo-100 text-indigo-800 border-indigo-200'
     }
   ];
@@ -198,7 +322,7 @@ export default function EkpProtoiPage() {
       safeVal: safeNum3,
       color: 'text-purple-600',
       fact: f3,
-      label: '3ΟΣ ΑΡΙΘΜΟΣ',
+      label: t.numLabels[2],
       badge: 'bg-purple-100 text-purple-800 border-purple-200'
     });
   }
@@ -207,17 +331,18 @@ export default function EkpProtoiPage() {
 
   return (
     <Layout
-      title="Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες - ΣΤ' Δημοτικού | LearnMaths.gr"
-      description="Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον κανόνα των κοινών και μη κοινών πρώτων παραγόντων με τον μεγαλύτερο εκθέτη για τη ΣΤ' Δημοτικού."
+      title={t.pageTitle}
+      description={t.pageDescription}
       backUrl="/st-dimotikou"
-      backText="ΣΤ' Δημοτικού"
+      backText={t.backText}
       showAds={true}
       actionButton={
         <Link
           href="/st-dimotikou/20-ekp-protoi-ask"
+          locale={locale}
           className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl shadow-sm transition active:scale-95 text-sm sm:text-base 2xl:text-lg"
         >
-          <span>🎯 Ασκήσεις</span>
+          <span>{t.exercisesBtn}</span>
         </Link>
       }
     >
@@ -227,26 +352,27 @@ export default function EkpProtoiPage() {
         <section className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-5 sm:p-10 2xl:p-16 rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-5xl space-y-3 sm:space-y-4 2xl:space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm 2xl:text-base font-semibold text-sky-200">
-              <span>ΚΕΦΑΛΑΙΟ 20 • ΣΤ' ΔΗΜΟΤΙΚΟΥ</span>
+              <span>{t.badgeChapter}</span>
             </div>
             <h1 className="text-2xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-black tracking-tight leading-tight">
-              Ε.Κ.Π. με Ανάλυση σε Πρώτους Παράγοντες
+              {t.heroTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-base 2xl:text-xl leading-relaxed max-w-4xl">
-              Υπολόγισε ταχύτατα το Ελάχιστο Κοινό Πολλαπλάσιο μεγάλων αριθμών εφαρμόζοντας τον χρυσό κανόνα: <strong>Κοινοί και μη κοινοί πρώτοι παράγοντες με τον μεγαλύτερο εκθέτη</strong>!
+              {t.heroDesc}
             </p>
           </div>
 
           <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-xs sm:text-sm 2xl:text-base text-sky-200">
               <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Κατακόρυφη Ανάλυση &amp; Αυτόματη Επιλογή Μέγιστων Εκθετών</span>
+              <span>{t.heroPills}</span>
             </div>
             <Link
               href="/st-dimotikou/20-ekp-protoi-ask"
+              locale={locale}
               className="inline-flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-md transition active:scale-95 text-xs sm:text-sm 2xl:text-base"
             >
-              <span>Δοκίμασε τις Ασκήσεις</span>
+              <span>{t.heroCta}</span>
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -256,95 +382,40 @@ export default function EkpProtoiPage() {
         <section className="space-y-6 2xl:space-y-8">
           <div>
             <h2 className="text-xl sm:text-3xl 2xl:text-4xl font-black text-slate-900 tracking-tight">
-              Βασικές Έννοιες &amp; Κανόνας Υπολογισμού Ε.Κ.Π.
+              {t.theoryTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base 2xl:text-xl mt-1">
-              Η μέθοδος των πρώτων παραγόντων σε τρία απλά και ξεκάθαρα βήματα.
+              {t.theorySubtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 2xl:gap-8">
-            
-            {/* ΚΑΡΤΑ 1 */}
-            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΒΗΜΑ 1
-                  </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">Κατακόρυφη Γραμμή</span>
+            {t.cards.map((card, idx) => (
+              <article key={idx} className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-2.5 py-1 bg-sky-100 text-sky-800 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
+                      {card.badge}
+                    </span>
+                    <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-slate-500">{card.sub}</span>
+                  </div>
+                  <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
+                    {card.title}
+                  </h3>
+                  <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
+                    {card.body}
+                  </p>
+
+                  <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold space-y-1 text-slate-800 whitespace-pre-line">
+                    <p>{card.example}</p>
+                  </div>
                 </div>
-                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Παραγοντοποίηση
-                </h3>
-                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Αναλύουμε κάθε αριθμό χωριστά σε <strong>γινόμενο πρώτων παραγόντων</strong> και γράφουμε τις επαναλήψεις με <strong>εκθέτες (δυνάμεις)</strong>.
-                </p>
 
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold space-y-1">
-                  <p>12 ＝ <strong className="text-sky-700">2² · 3</strong></p>
-                  <p>18 ＝ <strong className="text-sky-700">2 · 3²</strong></p>
+                <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
+                  {card.tip}
                 </div>
-              </div>
-
-              <div className="p-3 bg-sky-50 rounded-2xl border border-sky-200 text-xs 2xl:text-sm text-sky-950 font-medium">
-                💡 Διαιρούμε διαδοχικά μόνο με πρώτους αριθμούς: 2, 3, 5, 7, 11...
-              </div>
-            </article>
-
-            {/* ΚΑΡΤΑ 2 */}
-            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-1 bg-indigo-100 text-indigo-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΒΗΜΑ 2
-                  </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-indigo-600">Ο Χρυσός Κανόνας</span>
-                </div>
-                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Επιλογή Παραγόντων
-                </h3>
-                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Επιλέγουμε όλους τους <strong>κοινούς ΚΑΙ μη κοινούς</strong> πρώτους παράγοντες, παίρνοντας για τον καθένα τον <strong>μεγαλύτερο εκθέτη</strong>.
-                </p>
-
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold space-y-1">
-                  <p>Από το 2: επιλέγουμε <strong className="text-indigo-700">2²</strong> (όχι το 2¹)</p>
-                  <p>Από το 3: επιλέγουμε <strong className="text-indigo-700">3²</strong> (όχι το 3¹)</p>
-                </div>
-              </div>
-
-              <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-200 text-xs 2xl:text-sm text-indigo-950 font-medium">
-                ⚡ Στο Ε.Κ.Π. δεν αφήνουμε κανέναν παράγοντα έξω και διαλέγουμε πάντα τη μεγαλύτερη δύναμη!
-              </div>
-            </article>
-
-            {/* ΚΑΡΤΑ 3 */}
-            <article className="bg-white p-5 sm:p-7 2xl:p-10 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-5">
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="px-2.5 py-1 bg-cyan-100 text-cyan-900 text-[11px] sm:text-xs 2xl:text-sm font-black rounded-lg tracking-wider uppercase">
-                    ΒΗΜΑ 3
-                  </span>
-                  <span className="text-[11px] sm:text-xs 2xl:text-sm font-semibold text-cyan-700">Γινόμενο Δυνάμεων</span>
-                </div>
-                <h3 className="text-base sm:text-xl 2xl:text-2xl font-black text-slate-900">
-                  Υπολογισμός Ε.Κ.Π.
-                </h3>
-                <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base leading-relaxed">
-                  Σχηματίζουμε το γινόμενο των δυνάμεων που επιλέξαμε και εκτελούμε τους πολλαπλασιασμούς για το τελικό αποτέλεσμα.
-                </p>
-
-                <div className="bg-slate-50 p-3.5 sm:p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm font-mono text-center font-bold">
-                  <p>Ε.Κ.Π.(12, 18) ＝ 2² · 3² ＝ 4 · 9 ＝ <strong className="text-cyan-700">36</strong></p>
-                </div>
-              </div>
-
-              <div className="p-3 bg-cyan-50 rounded-2xl border border-cyan-200 text-xs 2xl:text-sm text-cyan-950 font-medium">
-                🎯 Το αποτέλεσμα είναι το μικρότερο κοινό πολλαπλάσιο που διαιρείται ακριβώς από όλους τους αριθμούς.
-              </div>
-            </article>
-
+              </article>
+            ))}
           </div>
         </section>
 
@@ -353,13 +424,13 @@ export default function EkpProtoiPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-5">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs 2xl:text-sm font-bold text-sky-800 mb-1">
-                <span>🔬 ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ</span>
+                <span>{t.labBadge}</span>
               </div>
               <h3 className="text-lg sm:text-2xl 2xl:text-3xl font-black text-slate-900">
-                Διαδραστικό Εργαστήριο Ε.Κ.Π. με Πρώτους Παράγοντες
+                {t.labTitle}
               </h3>
               <p className="text-slate-600 text-xs sm:text-sm 2xl:text-base mt-0.5">
-                Διάλεξε 2 ή 3 αριθμούς και παρακολούθησε βήμα προς βήμα την κατακόρυφη ανάλυση και την επιλογή των μέγιστων εκθετών!
+                {t.labDesc}
               </p>
             </div>
 
@@ -368,29 +439,28 @@ export default function EkpProtoiPage() {
               <button
                 type="button"
                 onClick={() => setNumCount(2)}
-                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 cursor-pointer ${
                   numCount === 2
                     ? 'bg-blue-600 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                2 ΑΡΙΘΜΟΙ
+                {t.tabNumbers(2)}
               </button>
               <button
                 type="button"
                 onClick={() => setNumCount(3)}
-                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 ${
+                className={`flex-1 md:flex-none px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm 2xl:text-base font-black transition-all text-center touch-manipulation active:scale-95 cursor-pointer ${
                   numCount === 3
                     ? 'bg-indigo-600 text-white shadow-sm scale-105'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                3 ΑΡΙΘΜΟΙ
+                {t.tabNumbers(3)}
               </button>
             </div>
           </div>
 
-          {/* MAIN INTERACTIVE GRID (3 COLS LEFT / 9 COLS RIGHT) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-stretch">
             
             {/* LEFT: INPUTS & PRESETS (3 COLS) */}
@@ -398,13 +468,13 @@ export default function EkpProtoiPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <span className="text-xs 2xl:text-sm font-black text-slate-700 uppercase tracking-wider block">
-                    ΤΙΜΕΣ ΑΡΙΘΜΩΝ (2 － {formatNumber(MAX_ALLOWED_NUMBER)}):
+                    {t.inputHeader(formatNumber(MAX_ALLOWED_NUMBER, locale))}
                   </span>
                   
                   <div className="space-y-2.5">
                     <div className="space-y-0.5">
                       <label className="text-[10px] font-bold text-slate-400 uppercase">
-                        1ΟΣ ΑΡΙΘΜΟΣ:
+                        {t.numLabels[0]}:
                       </label>
                       <input
                         type="text"
@@ -412,13 +482,13 @@ export default function EkpProtoiPage() {
                         value={num1}
                         onChange={(e) => handleInputChange(setNum1, e.target.value)}
                         className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-blue-200 rounded-xl shadow-xs text-blue-600 outline-none focus:border-blue-500 tracking-wider"
-                        placeholder="π.χ. 12"
+                        placeholder="12"
                       />
                     </div>
 
                     <div className="space-y-0.5">
                       <label className="text-[10px] font-bold text-slate-400 uppercase">
-                        2ΟΣ ΑΡΙΘΜΟΣ:
+                        {t.numLabels[1]}:
                       </label>
                       <input
                         type="text"
@@ -426,14 +496,14 @@ export default function EkpProtoiPage() {
                         value={num2}
                         onChange={(e) => handleInputChange(setNum2, e.target.value)}
                         className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-indigo-200 rounded-xl shadow-xs text-indigo-600 outline-none focus:border-indigo-500 tracking-wider"
-                        placeholder="π.χ. 18"
+                        placeholder="18"
                       />
                     </div>
 
                     {numCount === 3 && (
                       <div className="space-y-0.5">
                         <label className="text-[10px] font-bold text-slate-400 uppercase">
-                          3ΟΣ ΑΡΙΘΜΟΣ:
+                          {t.numLabels[2]}:
                         </label>
                         <input
                           type="text"
@@ -441,7 +511,7 @@ export default function EkpProtoiPage() {
                           value={num3}
                           onChange={(e) => handleInputChange(setNum3, e.target.value)}
                           className="w-full text-base sm:text-lg font-mono font-black text-center p-2.5 bg-white border-2 border-purple-200 rounded-xl shadow-xs text-purple-600 outline-none focus:border-purple-500 tracking-wider"
-                          placeholder="π.χ. 15"
+                          placeholder="15"
                         />
                       </div>
                     )}
@@ -451,7 +521,7 @@ export default function EkpProtoiPage() {
                 {/* PRESET EXAMPLES */}
                 <div className="space-y-2 pt-2 border-t border-slate-200">
                   <span className="text-[10px] sm:text-xs font-black uppercase text-slate-400 tracking-wider block">
-                    ΕΤΟΙΜΑ ΠΑΡΑΔΕΙΓΜΑΤΑ:
+                    {t.presetHeader}
                   </span>
                   <div className="grid grid-cols-2 gap-2">
                     {numCount === 2
@@ -463,7 +533,7 @@ export default function EkpProtoiPage() {
                               setNum1(p.n1);
                               setNum2(p.n2);
                             }}
-                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs cursor-pointer"
                           >
                             ({p.n1}, {p.n2})
                           </button>
@@ -477,7 +547,7 @@ export default function EkpProtoiPage() {
                               setNum2(p.n2);
                               setNum3(p.n3);
                             }}
-                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs"
+                            className="py-2 px-1 rounded-xl border font-mono font-black text-xs transition-all text-center touch-manipulation active:scale-95 bg-white hover:bg-slate-100 text-slate-700 border-slate-200 shadow-xs cursor-pointer"
                           >
                             ({p.n1}, {p.n2}, {p.n3})
                           </button>
@@ -487,7 +557,7 @@ export default function EkpProtoiPage() {
               </div>
 
               <div className="text-[11px] sm:text-xs text-slate-500 bg-white p-3 rounded-xl border border-slate-200">
-                💡 Επιλέγουμε <strong>όλους</strong> τους πρώτους παράγοντες (κοινούς και μη κοινούς), κρατώντας τον <strong>μεγαλύτερο εκθέτη</strong>!
+                {t.tipRule}
               </div>
             </div>
 
@@ -497,17 +567,17 @@ export default function EkpProtoiPage() {
               {/* HEADER STATUS */}
               <div className="w-full text-center">
                 <span className="text-xs 2xl:text-sm font-bold text-slate-400 uppercase tracking-wider block">
-                  ΥΠΟΛΟΓΙΣΜΟΣ Ε.Κ.Π. ΜΕ ΠΡΩΤΟΥΣ ΠΑΡΑΓΟΝΤΕΣ:
+                  {t.statusHeader}
                 </span>
                 <div className="text-lg sm:text-xl md:text-2xl font-mono font-black text-indigo-600 bg-indigo-50 px-4 sm:px-6 py-1.5 rounded-2xl border border-indigo-100 inline-block mt-2 tracking-wider shadow-sm">
-                  Ε.Κ.Π.({currentNumbersString}) ＝ <span className="text-amber-500">{formatNumber(ekp)}</span>
+                  {t.abbr}({currentNumbersString}) ＝ <span className="text-amber-500">{formatNumber(ekp, locale)}</span>
                 </div>
               </div>
 
               {/* 1. ΚΑΤΑΚΟΡΥΦΕΣ ΑΝΑΛΥΣΕΙΣ */}
               <div className="w-full space-y-2">
                 <span className="text-xs 2xl:text-sm font-black text-slate-500 uppercase tracking-wider block text-center">
-                  📋 1. ΚΑΤΑΚΟΡΥΦΗ ΠΑΡΑΓΟΝΤΟΠΟΙΗΣΗ ΚΑΘΕ ΑΡΙΘΜΟΥ:
+                  {t.step1Title}
                 </span>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 justify-center bg-slate-50 p-3 sm:p-6 rounded-3xl border border-slate-200 shadow-inner">
@@ -540,7 +610,7 @@ export default function EkpProtoiPage() {
                       {/* ΜΟΡΦΗ ΔΥΝΑΜΕΩΝ */}
                       <div className="text-center pt-2 border-t border-slate-100 w-full">
                         <span className="text-[9px] sm:text-[10px] text-slate-400 block font-bold uppercase">
-                          ΜΟΡΦΗ ΔΥΝΑΜΕΩΝ:
+                          {t.powerFormLabel}
                         </span>
                         <span className="font-mono font-black text-xs sm:text-sm text-slate-800">
                           {numObj.safeVal} ＝ <span className="text-blue-600">{numObj.fact.expr}</span>
@@ -554,7 +624,7 @@ export default function EkpProtoiPage() {
               {/* 2. ΕΠΕΞΗΓΗΣΗ ΕΠΙΛΟΓΗΣ ΜΕΓΙΣΤΩΝ ΕΚΘΕΤΩΝ */}
               <div className="w-full bg-slate-900 text-white p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3 shadow-md">
                 <span className="text-xs 2xl:text-sm font-bold text-amber-400 uppercase tracking-wider block text-center">
-                  🔍 2. ΕΦΑΡΜΟΓΗ ΚΑΝΟΝΑ (ΚΟΙΝΟΙ ΚΑΙ ΜΗ ΚΟΙΝΟΙ ΜΕ ΜΕΓΙΣΤΟ ΕΚΘΕΤΗ):
+                  {t.step2Title}
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
@@ -564,10 +634,10 @@ export default function EkpProtoiPage() {
                       className="bg-slate-800/90 p-2.5 sm:p-3 rounded-xl border border-slate-700 space-y-1 text-center font-mono"
                     >
                       <span className="text-xs text-slate-300 block">
-                        Για τη βάση <strong className="text-cyan-400 font-black">{item.base}</strong>:
+                        {t.forBaseLabel(<strong className="text-cyan-400 font-black">{item.base}</strong>)}
                       </span>
                       <div className="text-xs sm:text-sm font-black text-amber-300">
-                        Επιλέγουμε ➔ {item.expStr}
+                        {t.weChooseLabel(item.expStr)}
                       </div>
                       <span className="text-[10px] text-slate-400 block">
                         ({item.appearances})
@@ -580,16 +650,16 @@ export default function EkpProtoiPage() {
               {/* 3. ΤΕΛΙΚΟ ΑΠΟΤΕΛΕΣΜΑ */}
               <div className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-700 text-white p-4 sm:p-5 rounded-2xl text-center shadow-lg font-mono space-y-1.5">
                 <span className="text-xs font-sans uppercase tracking-wider block text-blue-200 font-bold">
-                  ΤΕΛΙΚΟΣ ΥΠΟΛΟΓΙΣΜΟΣ Ε.Κ.Π.:
+                  {t.step3Title}
                 </span>
                 <div className="text-base sm:text-lg md:text-xl font-black tracking-wide flex flex-wrap justify-center items-center gap-1.5 sm:gap-2">
-                  <span>Ε.Κ.Π.({currentNumbersString}) ＝</span>
+                  <span>{t.abbr}({currentNumbersString}) ＝</span>
                   <span className="text-amber-300">
                     {calculationFormulaParts.length > 0 ? calculationFormulaParts.join(' · ') : '1'}
                   </span>
                   <span> ＝ </span>
                   <span className="text-amber-400 text-lg sm:text-xl md:text-2xl font-black bg-white/10 px-3 py-1 rounded-xl shadow-xs inline-block">
-                    {formatNumber(ekp)}
+                    {formatNumber(ekp, locale)}
                   </span>
                 </div>
               </div>
@@ -603,18 +673,19 @@ export default function EkpProtoiPage() {
         <section className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 sm:p-8 2xl:p-12 rounded-3xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
           <div className="space-y-2 max-w-2xl 2xl:max-w-4xl">
             <h3 className="text-xl sm:text-2xl 2xl:text-4xl font-black tracking-tight">
-              Ώρα για Εξάσκηση στο Ε.Κ.Π.!
+              {t.ctaTitle}
             </h3>
             <p className="text-emerald-100 text-xs sm:text-sm 2xl:text-lg">
-              Κατάλαβες πώς βρίσκουμε το Ε.Κ.Π. με ανάλυση σε πρώτους παράγοντες; Δοκίμασε τις διαδραστικές ασκήσεις με 10 απαιτητικά θέματα για να εμπεδώσεις τις γνώσεις σου!
+              {t.ctaDesc}
             </p>
           </div>
 
           <Link
             href="/st-dimotikou/20-ekp-protoi-ask"
+            locale={locale}
             className="inline-flex items-center justify-center gap-2 bg-white text-emerald-950 hover:bg-emerald-50 font-black px-6 py-3.5 2xl:px-8 2xl:py-4 rounded-2xl shadow-md transition active:scale-95 text-sm sm:text-base 2xl:text-lg shrink-0 w-full sm:w-auto"
           >
-            <span>🎯 {toCleanUppercase('Έναρξη Ασκήσεων')}</span>
+            <span>{t.ctaBtn}</span>
             <span aria-hidden="true">→</span>
           </Link>
         </section>

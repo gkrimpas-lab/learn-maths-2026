@@ -1,9 +1,32 @@
 // pages/e-dimotikou/26-embado-sximaton-ask.js
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 
-// --- ΒΟΗΘΗΤΙΚΕΣ ΣΥΝΑΡΤΗΣΕΙΣ --- //
+function toCleanUppercase(str) {
+  if (!str) return '';
+  const parts = str.split(/(Ε')/g);
+  return parts
+    .map((part) => {
+      if (part === "Ε'") return "Ε'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
+}
+
+function Fraction({ numerator, denominator, className = '' }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-center align-middle mx-1 text-center font-mono leading-none ${className}`}>
+      <span className="px-1 text-[0.9em] border-b-2 border-current pb-0.5 w-full block">
+        {numerator}
+      </span>
+      <span className="px-1 text-[0.9em] pt-0.5 w-full block">
+        {denominator}
+      </span>
+    </span>
+  );
+}
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -18,123 +41,271 @@ function shuffleArray(array) {
   return arr;
 }
 
+const translations = {
+  el: {
+    pageTitle: "Ασκήσεις: Εμβαδόν Βασικών Σχημάτων - Ε' Δημοτικού | LearnMaths.gr",
+    pageDescription: "Απαιτητικές ασκήσεις μαθηματικών Ε' Δημοτικού στο εμβαδόν σχημάτων: τετράγωνο, ορθογώνιο, ορθογώνιο τρίγωνο και σύνθετες επιφάνειες.",
+    backText: "Ε' Δημοτικού",
+    theoryBtn: "Θεωρία",
+    badgeHeader: "Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ",
+    mainTitle: "📝 Ασκήσεις: Εμβαδόν Βασικών Σχημάτων",
+    subtitle: "Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!",
+    newExercisesBtn: "Νέες Ασκήσεις",
+    submitBtn: "Έλεγχος Απαντήσεων",
+    scoreLabel: "Σκορ:",
+    successRate: "Επιτυχία:",
+    footerPrompt: "Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!",
+    correctFeedbackPrefix: "Η σωστή απάντηση είναι:",
+    q1Badge: "ΕΜΒΑΔΟΝ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ",
+    q2Badge: "ΕΥΡΕΣΗ ΚΑΘΕΤΗΣ ΠΛΕΥΡΑΣ ΑΠΟ ΕΜΒΑΔΟΝ",
+    q3Badge: "ΣΧΕΣΗ ΟΡΘΟΓΩΝΙΟΥ ΜΕ ΟΡΘΟΓΩΝΙΟ ΤΡΙΓΩΝΟ",
+    q4Badge: "ΣΥΓΚΡΙΣΗ ΕΜΒΑΔΟΥ ΤΕΤΡΑΓΩΝΟΥ ΚΑΙ ΟΡΘΟΓΩΝΙΟΥ",
+    q5Badge: "ΕΜΒΑΔΟΝ ΤΕΤΡΑΓΩΝΟΥ ΑΠΟ ΠΕΡΙΜΕΤΡΟ",
+    q6Badge: "ΕΜΒΑΔΟΝ ΟΡΘΟΓΩΝΙΟΥ ΜΕ ΣΧΕΣΗ ΔΙΑΣΤΑΣΕΩΝ",
+    q7Badge: "ΕΜΒΑΔΟΝ ΣΥΝΘΕΤΟΥ ΣΧΗΜΑΤΟΣ ( ΟΡΘΟΓΩΝΙΟ ＋ ΤΡΙΓΩΝΟ )",
+    q8Badge: "ΑΦΑΙΡΕΣΗ ΕΠΙΦΑΝΕΙΑΣ ΑΠΟ ΟΡΘΟΓΩΝΙΟ"
+  },
+  en: {
+    pageTitle: "Exercises: Area of Basic Shapes - 5th Grade | LearnMaths.gr",
+    pageDescription: "Challenging 5th Grade math exercises on the area of plane figures: square, rectangle, right triangle, and composite shapes.",
+    backText: "5th Grade",
+    theoryBtn: "Theory",
+    badgeHeader: "5TH GRADE • PRACTICE",
+    mainTitle: "📝 Exercises: Area of Basic Geometric Shapes",
+    subtitle: "Every time you click 'New Exercises', fresh problems are generated from the pool!",
+    newExercisesBtn: "New Exercises",
+    submitBtn: "Check Answers",
+    scoreLabel: "Score:",
+    successRate: "Success:",
+    footerPrompt: "Fill in your answers and click 'Check Answers'!",
+    correctFeedbackPrefix: "The correct answer is:",
+    q1Badge: "AREA OF RIGHT TRIANGLE",
+    q2Badge: "FIND LEG LENGTH FROM AREA",
+    q3Badge: "RELATION OF RECTANGLE TO RIGHT TRIANGLE",
+    q4Badge: "COMPARING AREA OF SQUARE AND RECTANGLE",
+    q5Badge: "SQUARE AREA FROM PERIMETER",
+    q6Badge: "RECTANGLE AREA WITH PROPORTIONAL SIDES",
+    q7Badge: "COMPOSITE SHAPE AREA ( RECTANGLE ＋ TRIANGLE )",
+    q8Badge: "AREA SUBTRACTION FROM RECTANGLE"
+  }
+};
+
 // 1. ΖΕΥΓΟΣ 1 (q1, q2): Εμβαδόν Ορθογώνιου Τριγώνου & Ανάστροφος Υπολογισμός (Input)
-function makeRightTriangleAreaQuestion(isReverse = false) {
+function makeRightTriangleAreaQuestion(isReverse, isEn) {
+  const formatNum = (n) => n.toLocaleString(isEn ? 'en-US' : 'el-GR');
+
   if (!isReverse) {
-    // q1: Ε = (α · β) : 2
     const side1 = [6, 8, 10, 12, 14, 16][getRandomInt(0, 5)];
     const side2 = [5, 7, 9, 11, 15][getRandomInt(0, 4)];
     const area = (side1 * side2) / 2;
 
+    const unit = isEn ? 'cm² (area)' : 'cm² (εμβαδόν)';
+    const prompt = isEn
+      ? `A right triangle has perpendicular legs with lengths of ${formatNum(side1)} cm and ${formatNum(side2)} cm. How many cm² is its area?`
+      : `Ένα ορθογώνιο τρίγωνο έχει κάθετες πλευρές μήκους ${formatNum(side1)} cm και ${formatNum(side2)} cm. Πόσα cm² είναι το εμβαδόν του;`;
+
+    const explanation = isEn ? (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>The right triangle area formula is: A ＝</span>
+        <Fraction numerator="Base · Height" denominator="2" />
+        <span>. Therefore:</span>
+        <Fraction numerator={`${formatNum(side1)} · ${formatNum(side2)}`} denominator="2" />
+        <span>＝</span>
+        <Fraction numerator={formatNum(side1 * side2)} denominator="2" />
+        <span>＝ {formatNum(area)} cm².</span>
+      </span>
+    ) : (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>Ο τύπος του εμβαδού ορθογώνιου τριγώνου είναι: Ε ＝</span>
+        <Fraction numerator="Βάση · Ύψος" denominator="2" />
+        <span>. Επομένως:</span>
+        <Fraction numerator={`${formatNum(side1)} · ${formatNum(side2)}`} denominator="2" />
+        <span>＝</span>
+        <Fraction numerator={formatNum(side1 * side2)} denominator="2" />
+        <span>＝ {formatNum(area)} cm².</span>
+      </span>
+    );
+
     return {
       type: 'input',
       correct: area,
-      unit: 'cm² (εμβαδόν)',
-      prompt: `Ένα ορθογώνιο τρίγωνο έχει κάθετες πλευρές μήκους ${side1} cm και ${side2} cm. Πόσα cm² είναι το εμβαδόν του;`,
-      explanation: `Ο τύπος του εμβαδού ορθογώνιου τριγώνου είναι: Ε ＝ ( Βάση · Ύψος ) ： 2. Επομένως: (${side1} · ${side2}) ： 2 ＝ ${side1 * side2} ： 2 ＝ ${area} cm².`
+      unit,
+      prompt,
+      explanation
     };
   } else {
-    // q2: Εύρεση δεύτερης κάθετης πλευράς όταν δίνεται το εμβαδόν και η μία πλευρά
-    // β = (2 · Ε) : α
     const side1 = [8, 10, 12, 16][getRandomInt(0, 3)];
     const side2 = [6, 7, 9, 11][getRandomInt(0, 3)];
     const area = (side1 * side2) / 2;
 
+    const unit = isEn ? 'cm (leg length)' : 'cm (μήκος κάθετης πλευράς)';
+    const prompt = isEn
+      ? `The area of a right triangle is ${formatNum(area)} cm² and one of its perpendicular legs measures ${formatNum(side1)} cm. How many cm is the other perpendicular leg?`
+      : `Το εμβαδόν ενός ορθογώνιου τριγώνου είναι ${formatNum(area)} cm² και η μία κάθετη πλευρά του έχει μήκος ${formatNum(side1)} cm. Πόσα cm είναι η άλλη κάθετη πλευρά του;`;
+
+    const explanation = isEn ? (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>Double the area and divide by the known leg:</span>
+        <Fraction numerator={`2 · ${formatNum(area)}`} denominator={formatNum(side1)} />
+        <span>＝</span>
+        <Fraction numerator={formatNum(2 * area)} denominator={formatNum(side1)} />
+        <span>＝ {formatNum(side2)} cm.</span>
+      </span>
+    ) : (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>Διπλασιάζουμε το εμβαδόν και διαιρούμε με τη γνωστή πλευρά:</span>
+        <Fraction numerator={`2 · ${formatNum(area)}`} denominator={formatNum(side1)} />
+        <span>＝</span>
+        <Fraction numerator={formatNum(2 * area)} denominator={formatNum(side1)} />
+        <span>＝ {formatNum(side2)} cm.</span>
+      </span>
+    );
+
     return {
       type: 'input',
       correct: side2,
-      unit: 'cm (μήκος κάθετης πλευράς)',
-      prompt: `Το εμβαδόν ενός ορθογώνιου τριγώνου είναι ${area} cm² και η μία κάθετη πλευρά του έχει μήκος ${side1} cm. Πόσα cm είναι η άλλη κάθετη πλευρά του;`,
-      explanation: `Διπλασιάζουμε το εμβαδόν και διαιρούμε με τη γνωστή πλευρά: ( 2 · ${area} ) ： ${side1} ＝ ${2 * area} ： ${side1} ＝ ${side2} cm.`
+      unit,
+      prompt,
+      explanation
     };
   }
 }
 
 // 2. ΖΕΥΓΟΣ 2 (q3, q4): Σχέση Ορθογωνίου με Τρίγωνο & Σύγκριση Σχημάτων (MCQ)
-function makeShapeRelationshipQuestion(isComparison = false) {
+function makeShapeRelationshipQuestion(isComparison, isEn) {
+  const formatNum = (n) => n.toLocaleString(isEn ? 'en-US' : 'el-GR');
+
   if (!isComparison) {
-    // q3: Γιατί διαιρούμε με το 2 στον τύπο του τριγώνου
-    const options = [
-      'Επειδή η διαγώνιος χωρίζει το ορθογώνιο σε δύο απολύτως ίσα ορθογώνια τρίγωνα',
-      'Επειδή το τρίγωνο έχει 3 κορυφές',
-      'Επειδή οι πλευρές του τριγώνου είναι πάντοτε ζυγοί αριθμοί',
-      'Επειδή το εμβαδόν του είναι ίσο με την περίμετρο'
-    ];
+    const correctEl = 'Επειδή η διαγώνιος χωρίζει το ορθογώνιο σε δύο απολύτως ίσα ορθογώνια τρίγωνα';
+    const correctEn = 'Because the diagonal divides the rectangle into two congruent right triangles';
+
+    const rawOptions = isEn
+      ? [
+          correctEn,
+          'Because the triangle has 3 vertices',
+          'Because the side lengths of a triangle are always even numbers',
+          'Because its area is always equal to its perimeter'
+        ]
+      : [
+          correctEl,
+          'Επειδή το τρίγωνο έχει 3 κορυφές',
+          'Επειδή οι πλευρές του τριγώνου είναι πάντοτε ζυγοί αριθμοί',
+          'Επειδή το εμβαδόν του είναι ίσο με την περίμετρο'
+        ];
+
+    const prompt = isEn
+      ? 'Why do we always divide by 2 in the right triangle area formula [ ( a · b ) : 2 ]?'
+      : 'Για ποιον λόγο στον μαθηματικό τύπο του εμβαδού ορθογώνιου τριγώνου διαιρούμε πάντα διά 2 [ ( α · β ) ： 2 ];';
+
+    const explanation = isEn
+      ? 'Every right triangle is exactly half of a rectangle with the same dimensions, because the diagonal splits the rectangle into two identical triangles.'
+      : 'Κάθε ορθογώνιο τρίγωνο αποτελεί ακριβώς το μισό ενός ορθογωνίου με τις ίδιες διαστάσεις, καθώς η διαγώνιος του ορθογωνίου το κόβει σε δύο πανομοιότυπα τρίγωνα.';
 
     return {
       type: 'mcq',
-      correct: 'Επειδή η διαγώνιος χωρίζει το ορθογώνιο σε δύο απολύτως ίσα ορθογώνια τρίγωνα',
-      options,
-      prompt: `Για ποιον λόγο στον μαθηματικό τύπο του εμβαδού ορθογώνιου τριγώνου διαιρούμε πάντα διά 2 [ ( α · β ) ： 2 ];`,
-      explanation: `Κάθε ορθογώνιο τρίγωνο αποτελεί ακριβώς το μισό ενός ορθογωνίου με τις ίδιες διαστάσεις, καθώς η διαγώνιος του ορθογωνίου το κόβει σε δύο πανομοιότυπα τρίγωνα.`
+      correct: isEn ? correctEn : correctEl,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt,
+      explanation
     };
   } else {
-    // q4: Σύγκριση εμβαδού τετραγώνου και ορθογωνίου
     const sqSide = 6;
-    const sqArea = sqSide * sqSide; // 36 cm²
+    const sqArea = sqSide * sqSide;
     const rectL = 9;
     const rectW = 4;
-    const rectArea = rectL * rectW; // 36 cm²
+    const rectArea = rectL * rectW;
 
-    const options = [
-      'Έχουν ακριβώς το ίδιο εμβαδόν ( 36 cm² )',
-      'Το τετράγωνο έχει μεγαλύτερο εμβαδόν',
-      'Το ορθογώνιο έχει μεγαλύτερο εμβαδόν',
-      'Δεν μπορούμε να συγκρίνουμε τετράγωνο με ορθογώνιο'
-    ];
+    const correctEl = `Έχουν ακριβώς το ίδιο εμβαδόν ( ${formatNum(sqArea)} cm² )`;
+    const correctEn = `They have exactly the same area ( ${formatNum(sqArea)} cm² )`;
+
+    const rawOptions = isEn
+      ? [
+          correctEn,
+          'The square has a larger area',
+          'The rectangle has a larger area',
+          'A square cannot be compared with a rectangle'
+        ]
+      : [
+          correctEl,
+          'Το τετράγωνο έχει μεγαλύτερο εμβαδόν',
+          'Το ορθογώνιο έχει μεγαλύτερο εμβαδόν',
+          'Δεν μπορούμε να συγκρίνουμε τετράγωνο με ορθογώνιο'
+        ];
+
+    const prompt = isEn
+      ? `A square has a side length of ${formatNum(sqSide)} cm and a rectangle has a length of ${formatNum(rectL)} cm and a width of ${formatNum(rectW)} cm. What is the relation between their areas?`
+      : `Ένα τετράγωνο έχει πλευρά ${formatNum(sqSide)} cm και ένα ορθογώνιο έχει μήκος ${formatNum(rectL)} cm και πλάτος ${formatNum(rectW)} cm. Ποια σχέση έχουν τα εμβαδά τους;`;
+
+    const explanation = isEn
+      ? `Square area: ${formatNum(sqSide)} · ${formatNum(sqSide)} ＝ ${formatNum(sqArea)} cm². Rectangle area: ${formatNum(rectL)} · ${formatNum(rectW)} ＝ ${formatNum(rectArea)} cm². Both figures have identical areas (${formatNum(sqArea)} cm²)!`
+      : `Εμβαδόν τετραγώνου: ${formatNum(sqSide)} · ${formatNum(sqSide)} ＝ ${formatNum(sqArea)} cm². Εμβαδόν ορθογωνίου: ${formatNum(rectL)} · ${formatNum(rectW)} ＝ ${formatNum(rectArea)} cm². Άρα τα δύο σχήματα είναι ισεμβαδικά (έχουν ακριβώς το ίδιο εμβαδόν ${formatNum(sqArea)} cm²)!`;
 
     return {
       type: 'mcq',
-      correct: 'Έχουν ακριβώς το ίδιο εμβαδόν ( 36 cm² )',
-      options,
-      prompt: `Ένα τετράγωνο έχει πλευρά ${sqSide} cm και ένα ορθογώνιο έχει μήκος ${rectL} cm και πλάτος ${rectW} cm. Ποια σχέση έχουν τα εμβαδά τους;`,
-      explanation: `Εμβαδόν τετραγώνου: ${sqSide} · ${sqSide} ＝ ${sqArea} cm². Εμβαδόν ορθογωνίου: ${rectL} · ${rectW} ＝ ${rectArea} cm². Άρα τα δύο σχήματα είναι ισεμβαδικά (έχουν ακριβώς το ίδιο εμβαδόν 36 cm²)!`
+      correct: isEn ? correctEn : correctEl,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt,
+      explanation
     };
   }
 }
 
 // 3. ΖΕΥΓΟΣ 3 (q5, q6): Εμβαδόν Τετραγώνου & Ορθογωνίου με Εφαρμογές (Input & MCQ)
-function makeSquareAndRectangleQuestion(isMCQ = false) {
+function makeSquareAndRectangleQuestion(isMCQ, isEn) {
+  const formatNum = (n) => n.toLocaleString(isEn ? 'en-US' : 'el-GR');
+
   if (!isMCQ) {
-    // q5: Εμβαδόν τετραγώνου από γνωστή περίμετρο (Input)
-    // Π = 4 · α => α = Π : 4 => Ε = α · α
     const side = [5, 6, 8, 9, 11][getRandomInt(0, 4)];
     const perimeter = 4 * side;
     const area = side * side;
 
+    const unit = isEn ? 'cm² (area)' : 'cm² (εμβαδόν)';
+    const prompt = isEn
+      ? `The perimeter of a square is ${formatNum(perimeter)} cm. How many cm² is its area?`
+      : `Η περίμετρος ενός τετραγώνου είναι ${formatNum(perimeter)} cm. Πόσα cm² είναι το εμβαδόν του;`;
+
+    const explanation = isEn
+      ? `First find the side length by dividing perimeter by 4: ${formatNum(perimeter)} ： 4 ＝ ${formatNum(side)} cm. Then calculate area: ${formatNum(side)} · ${formatNum(side)} ＝ ${formatNum(area)} cm².`
+      : `Πρώτα βρίσκουμε την πλευρά του τετραγώνου διαιρώντας την περίμετρο με το 4: ${formatNum(perimeter)} ： 4 ＝ ${formatNum(side)} cm. Στη συνέχεια υπολογίζουμε το εμβαδόν: ${formatNum(side)} · ${formatNum(side)} ＝ ${formatNum(area)} cm².`;
+
     return {
       type: 'input',
       correct: area,
-      unit: 'cm² (εμβαδόν)',
-      prompt: `Η περίμετρος ενός τετραγώνου είναι ${perimeter} cm. Πόσα cm² είναι το εμβαδόν του;`,
-      explanation: `Πρώτα βρίσκουμε την πλευρά του τετραγώνου διαιρώντας την περίμετρο με το 4: ${perimeter} ： 4 ＝ ${side} cm. Στη συνέχεια υπολογίζουμε το εμβαδόν: ${side} · ${side} ＝ ${area} cm².`
+      unit,
+      prompt,
+      explanation
     };
   } else {
-    // q6: Ορθογώνιο με μήκος διπλάσιο του πλάτους (MCQ)
     const width = [4, 5, 6, 7][getRandomInt(0, 3)];
     const length = width * 2;
     const area = length * width;
 
     const distractors = [area + 12, area - 8, length + width, 2 * (length + width)];
-    const options = shuffleArray([`${area} cm²`, ...distractors.slice(0, 3).map((d) => `${d} cm²`)]);
+    const rawOptions = [area, ...distractors.slice(0, 3)].map((val) => `${formatNum(val)} cm²`);
+
+    const prompt = isEn
+      ? `A rectangle has a width of ${formatNum(width)} cm and its length is double its width. What is its area?`
+      : `Ένα ορθογώνιο έχει πλάτος ${formatNum(width)} cm και το μήκος του είναι διπλάσιο από το πλάτος. Πόσο είναι το εμβαδόν του;`;
+
+    const explanation = isEn
+      ? `Length is: 2 · ${formatNum(width)} ＝ ${formatNum(length)} cm. Area is: Length · Width ＝ ${formatNum(length)} · ${formatNum(width)} ＝ ${formatNum(area)} cm².`
+      : `Το μήκος είναι: 2 · ${formatNum(width)} ＝ ${formatNum(length)} cm. Το εμβαδόν είναι: Μήκος · Πλάτος ＝ ${formatNum(length)} · ${formatNum(width)} ＝ ${formatNum(area)} cm².`;
 
     return {
       type: 'mcq',
-      correct: `${area} cm²`,
-      options,
-      prompt: `Ένα ορθογώνιο έχει πλάτος ${width} cm και το μήκος του είναι διπλάσιο από το πλάτος. Πόσο είναι το εμβαδόν του;`,
-      explanation: `Το μήκος είναι: 2 · ${width} ＝ ${length} cm. Το εμβαδόν είναι: Μήκος · Πλάτος ＝ ${length} · ${width} ＝ ${area} cm².`
+      correct: `${formatNum(area)} cm²`,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt,
+      explanation
     };
   }
 }
 
 // 4. ΖΕΥΓΟΣ 4 (q7, q8): Σύνθετο Σχήμα & Τεμαχισμός Επιφάνειας (Input & MCQ)
-function makeCompositeShapeQuestion(isMCQ = false) {
+function makeCompositeShapeQuestion(isMCQ, isEn) {
+  const formatNum = (n) => n.toLocaleString(isEn ? 'en-US' : 'el-GR');
+
   if (!isMCQ) {
-    // q7: Σχήμα αποτελούμενο από ένα ορθογώνιο και ένα ορθογώνιο τρίγωνο (Input)
-    // Ορθογώνιο: 10 x 6 = 60 cm²
-    // Τρίγωνο προσαρτημένο: βάση 4 cm, ύψος 6 cm => (4 x 6) : 2 = 12 cm²
-    // Συνολικό εμβαδόν: 60 + 12 = 72 cm²
     const rectL = 10;
     const commonH = [6, 8][getRandomInt(0, 1)];
     const triBase = [4, 6][getRandomInt(0, 1)];
@@ -142,49 +313,86 @@ function makeCompositeShapeQuestion(isMCQ = false) {
     const triArea = (triBase * commonH) / 2;
     const totalArea = rectArea + triArea;
 
+    const unit = isEn ? 'cm² (total area)' : 'cm² (συνολικό εμβαδόν)';
+    const prompt = isEn
+      ? `A composite shape consists of a rectangle with dimensions ${formatNum(rectL)} cm × ${formatNum(commonH)} cm and an adjacent right triangle with base ${formatNum(triBase)} cm and height ${formatNum(commonH)} cm. How many cm² is the total area of the shape?`
+      : `Ένα γεωμετρικό σχήμα αποτελείται από ένα ορθογώνιο διαστάσεων ${formatNum(rectL)} cm × ${formatNum(commonH)} cm και ένα ορθογώνιο τρίγωνο κολλημένο στην πλευρά του, με βάση ${formatNum(triBase)} cm και ύψος ${formatNum(commonH)} cm. Πόσα cm² είναι το συνολικό εμβαδόν του σύνθετου σχήματος;`;
+
+    const explanation = isEn ? (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>Rectangle area ＝ {formatNum(rectL)} · ${formatNum(commonH)} ＝ {formatNum(rectArea)} cm².</span>
+        <span>Triangle area ＝</span>
+        <Fraction numerator={`${formatNum(triBase)} · ${formatNum(commonH)}`} denominator="2" />
+        <span>＝</span>
+        <Fraction numerator={formatNum(triBase * commonH)} denominator="2" />
+        <span>＝ {formatNum(triArea)} cm². Total area: {formatNum(rectArea)} ＋ {formatNum(triArea)} ＝ {formatNum(totalArea)} cm².</span>
+      </span>
+    ) : (
+      <span className="inline-flex items-center flex-wrap gap-1">
+        <span>Εμβαδόν ορθογωνίου ＝ {formatNum(rectL)} · ${formatNum(commonH)} ＝ {formatNum(rectArea)} cm².</span>
+        <span>Εμβαδόν τριγώνου ＝</span>
+        <Fraction numerator={`${formatNum(triBase)} · ${formatNum(commonH)}`} denominator="2" />
+        <span>＝</span>
+        <Fraction numerator={formatNum(triBase * commonH)} denominator="2" />
+        <span>＝ {formatNum(triArea)} cm². Συνολικό εμβαδόν: {formatNum(rectArea)} ＋ {formatNum(triArea)} ＝ {formatNum(totalArea)} cm².</span>
+      </span>
+    );
+
     return {
       type: 'input',
       correct: totalArea,
-      unit: 'cm² (συνολικό εμβαδόν)',
-      prompt: `Ένα γεωμετρικό σχήμα αποτελείται από ένα ορθογώνιο διαστάσεων ${rectL} cm × ${commonH} cm και ένα ορθογώνιο τρίγωνο κολλημένο στην πλευρά του, με βάση ${triBase} cm και ύψος ${commonH} cm. Πόσα cm² είναι το συνολικό εμβαδόν του σύνθετου σχήματος;`,
-      explanation: `Υπολογίζουμε τα επιμέρους εμβαδά: Εμβαδόν ορθογωνίου ＝ ${rectL} · ${commonH} ＝ ${rectArea} cm². Εμβαδόν τριγώνου ＝ ( ${triBase} · ${commonH} ) ： 2 ＝ ${triBase * commonH} ： 2 ＝ ${triArea} cm². Συνολικό εμβαδόν: ${rectArea} ＋ ${triArea} ＝ ${totalArea} cm².`
+      unit,
+      prompt,
+      explanation
     };
   } else {
-    // q8: Αφαίρεση επιφάνειας (τετράγωνο μέσα σε ορθογώνιο) (MCQ)
     const rectL = 12;
     const rectW = 8;
-    const rectArea = rectL * rectW; // 96 cm²
+    const rectArea = rectL * rectW;
     const holeSide = 4;
-    const holeArea = holeSide * holeSide; // 16 cm²
-    const remainingArea = rectArea - holeArea; // 80 cm²
+    const holeArea = holeSide * holeSide;
+    const remainingArea = rectArea - holeArea;
 
     const distractors = [remainingArea + 16, remainingArea - 10, rectArea / 2];
-    const options = shuffleArray([`${remainingArea} cm²`, ...distractors.map((d) => `${d} cm²`)]);
+    const rawOptions = [remainingArea, ...distractors].map((val) => `${formatNum(val)} cm²`);
+
+    const prompt = isEn
+      ? `From a rectangular sheet of cardboard with dimensions ${formatNum(rectL)} cm × ${formatNum(rectW)} cm, a square piece with side ${formatNum(holeSide)} cm is cut out and removed. What is the remaining area?`
+      : `Από ένα ορθογώνιο χαρτόνι διαστάσεων ${formatNum(rectL)} cm × ${formatNum(rectW)} cm κόβουμε και αφαιρούμε ένα τετράγωνο κομμάτι με πλευρά ${formatNum(holeSide)} cm. Πόσο είναι το εμβαδόν του χαρτονιού που απομένει;`;
+
+    const explanation = isEn
+      ? `Initial area: ${formatNum(rectL)} · ${formatNum(rectW)} ＝ ${formatNum(rectArea)} cm². Removed square area: ${formatNum(holeSide)} · ${formatNum(holeSide)} ＝ ${formatNum(holeArea)} cm². Remaining area: ${formatNum(rectArea)} － ${formatNum(holeArea)} ＝ ${formatNum(remainingArea)} cm².`
+      : `Αρχικό εμβαδόν: ${formatNum(rectL)} · ${formatNum(rectW)} ＝ ${formatNum(rectArea)} cm². Εμβαδόν κομματιού που κόπηκε: ${formatNum(holeSide)} · ${formatNum(holeSide)} ＝ ${formatNum(holeArea)} cm². Εμβαδόν που απέμεινε: ${formatNum(rectArea)} － ${formatNum(holeArea)} ＝ ${formatNum(remainingArea)} cm².`;
 
     return {
       type: 'mcq',
-      correct: `${remainingArea} cm²`,
-      options,
-      prompt: `Από ένα ορθογώνιο χαρτόνι διαστάσεων ${rectL} cm × ${rectW} cm κόβουμε και αφαιρούμε ένα τετράγωνο κομμάτι με πλευρά ${holeSide} cm. Πόσο είναι το εμβαδόν του χαρτονιού που απομένει;`,
-      explanation: `Αρχικό εμβαδόν: ${rectL} · ${rectW} ＝ ${rectArea} cm². Εμβαδόν κομματιού που κόπηκε: ${holeSide} · ${holeSide} ＝ ${holeArea} cm². Εμβαδόν που απέμεινε: ${rectArea} － ${holeArea} ＝ ${remainingArea} cm².`
+      correct: `${formatNum(remainingArea)} cm²`,
+      options: shuffleArray([...new Set(rawOptions)]),
+      prompt,
+      explanation
     };
   }
 }
 
-function generateQuestions() {
+function generateQuestions(isEn) {
   return {
-    q1: makeRightTriangleAreaQuestion(false),
-    q2: makeRightTriangleAreaQuestion(true),
-    q3: makeShapeRelationshipQuestion(false),
-    q4: makeShapeRelationshipQuestion(true),
-    q5: makeSquareAndRectangleQuestion(false),
-    q6: makeSquareAndRectangleQuestion(true),
-    q7: makeCompositeShapeQuestion(false),
-    q8: makeCompositeShapeQuestion(true)
+    q1: makeRightTriangleAreaQuestion(false, isEn),
+    q2: makeRightTriangleAreaQuestion(true, isEn),
+    q3: makeShapeRelationshipQuestion(false, isEn),
+    q4: makeShapeRelationshipQuestion(true, isEn),
+    q5: makeSquareAndRectangleQuestion(false, isEn),
+    q6: makeSquareAndRectangleQuestion(true, isEn),
+    q7: makeCompositeShapeQuestion(false, isEn),
+    q8: makeCompositeShapeQuestion(true, isEn)
   };
 }
 
 export default function EmbadoSximatonAskPage() {
+  const router = useRouter();
+  const currentLocale = router?.locale === 'en' ? 'en' : 'el';
+  const isEn = currentLocale === 'en';
+  const t = translations[currentLocale];
+
   const [questions, setQuestions] = useState(null);
   const [answers, setAnswers] = useState({
     q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: ''
@@ -193,7 +401,7 @@ export default function EmbadoSximatonAskPage() {
   const [score, setScore] = useState(0);
 
   const loadNewQuestions = () => {
-    setQuestions(generateQuestions());
+    setQuestions(generateQuestions(isEn));
     setAnswers({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '' });
     setSubmitted(false);
     setScore(0);
@@ -201,7 +409,7 @@ export default function EmbadoSximatonAskPage() {
 
   useEffect(() => {
     loadNewQuestions();
-  }, []);
+  }, [currentLocale]);
 
   if (!questions) return null;
 
@@ -210,10 +418,9 @@ export default function EmbadoSximatonAskPage() {
     setAnswers((prev) => ({ ...prev, [key]: val }));
   };
 
-  // Αυστηρός έλεγχος εισόδου: μόνο αριθμοί 0-9, το πολύ ένα κόμμα, όριο 10 ψηφία
   const handleStrictNumberInput = (key, rawVal) => {
     if (submitted) return;
-    let clean = rawVal.replace('.', ',').replace(/[^0-9,]/g, '');
+    let clean = rawVal.replace(/\./g, ',').replace(/[^0-9,]/g, '');
     const parts = clean.split(',');
     if (parts.length > 2) {
       clean = parts[0] + ',' + parts.slice(1).join('');
@@ -235,28 +442,19 @@ export default function EmbadoSximatonAskPage() {
 
     let currentScore = 0;
 
-    // q1
-    if (Math.abs(parseUserFloat(answers.q1) - questions.q1.correct) < 0.01) currentScore += 1;
-    // q2
-    if (Math.abs(parseUserFloat(answers.q2) - questions.q2.correct) < 0.01) currentScore += 1;
-    // q3
+    if (Math.abs(parseUserFloat(answers.q1) - questions.q1.correct) < 0.05) currentScore += 1;
+    if (Math.abs(parseUserFloat(answers.q2) - questions.q2.correct) < 0.05) currentScore += 1;
     if (answers.q3 === questions.q3.correct) currentScore += 1;
-    // q4
     if (answers.q4 === questions.q4.correct) currentScore += 1;
-    // q5
-    if (Math.abs(parseUserFloat(answers.q5) - questions.q5.correct) < 0.01) currentScore += 1;
-    // q6
+    if (Math.abs(parseUserFloat(answers.q5) - questions.q5.correct) < 0.05) currentScore += 1;
     if (answers.q6 === questions.q6.correct) currentScore += 1;
-    // q7
-    if (Math.abs(parseUserFloat(answers.q7) - questions.q7.correct) < 0.01) currentScore += 1;
-    // q8
+    if (Math.abs(parseUserFloat(answers.q7) - questions.q7.correct) < 0.05) currentScore += 1;
     if (answers.q8 === questions.q8.correct) currentScore += 1;
 
     setScore(currentScore);
     setSubmitted(true);
   };
 
-  // Render Component για Ερωτήσεις MCQ
   const renderMCQ = (qKey, qData, numLabel, badgeTitle, accentColor) => {
     const isCorrect = answers[qKey] === qData.correct;
     return (
@@ -277,7 +475,7 @@ export default function EmbadoSximatonAskPage() {
           </span>
           <div className="space-y-1">
             <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
-              {badgeTitle}
+              {toCleanUppercase(badgeTitle)}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
               {qData.prompt}
@@ -307,7 +505,7 @@ export default function EmbadoSximatonAskPage() {
                   disabled={submitted}
                   className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 shrink-0"
                 />
-                <span>{opt}</span>
+                <span className="break-words whitespace-normal leading-snug flex-1">{opt}</span>
               </label>
             );
           })}
@@ -316,13 +514,13 @@ export default function EmbadoSximatonAskPage() {
         {submitted && (
           <div className="mt-4 sm:pl-11 2xl:pl-13 text-xs sm:text-sm 2xl:text-base leading-relaxed">
             {isCorrect ? (
-              <p className="text-emerald-800 font-semibold bg-emerald-50 p-3 rounded-2xl border border-emerald-200/60 font-mono">
+              <div className="text-emerald-800 font-semibold bg-emerald-50 p-3 rounded-2xl border border-emerald-200/60 font-mono">
                 {qData.explanation}
-              </p>
+              </div>
             ) : (
-              <p className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
-                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-950">{qData.correct}</strong>. {qData.explanation}
-              </p>
+              <div className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
+                {t.correctFeedbackPrefix} <strong className="font-bold text-rose-950">{qData.correct}</strong>. {qData.explanation}
+              </div>
             )}
           </div>
         )}
@@ -330,10 +528,9 @@ export default function EmbadoSximatonAskPage() {
     );
   };
 
-  // Render Component για Ερωτήσεις Input (αυστηρός περιορισμός 10 ψηφίων)
   const renderInput = (qKey, qData, numLabel, badgeTitle, accentColor) => {
     const userVal = parseUserFloat(answers[qKey]);
-    const isCorrect = !isNaN(userVal) && Math.abs(userVal - qData.correct) < 0.01;
+    const isCorrect = !isNaN(userVal) && Math.abs(userVal - qData.correct) < 0.05;
     return (
       <div
         className={`bg-white p-5 sm:p-7 2xl:p-9 rounded-3xl shadow-sm border transition-all ${
@@ -352,7 +549,7 @@ export default function EmbadoSximatonAskPage() {
           </span>
           <div className="space-y-1">
             <span className="text-[11px] 2xl:text-xs font-black tracking-wider text-slate-400">
-              {badgeTitle}
+              {toCleanUppercase(badgeTitle)}
             </span>
             <h3 className="text-base sm:text-lg 2xl:text-xl font-bold text-slate-900 leading-snug">
               {qData.prompt}
@@ -384,13 +581,17 @@ export default function EmbadoSximatonAskPage() {
         {submitted && (
           <div className="mt-4 sm:pl-11 2xl:pl-13 text-xs sm:text-sm 2xl:text-base leading-relaxed">
             {isCorrect ? (
-              <p className="text-emerald-800 font-semibold bg-emerald-50 p-3 rounded-2xl border border-emerald-200/60 font-mono">
+              <div className="text-emerald-800 font-semibold bg-emerald-50 p-3 rounded-2xl border border-emerald-200/60 font-mono">
                 {qData.explanation}
-              </p>
+              </div>
             ) : (
-              <p className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
-                Η σωστή απάντηση είναι: <strong className="font-bold text-rose-950">{qData.correct.toLocaleString('el-GR')} {qData.unit}</strong>. {qData.explanation}
-              </p>
+              <div className="text-rose-800 font-medium bg-rose-50 p-3 rounded-2xl border border-rose-200/60 font-mono">
+                {t.correctFeedbackPrefix}{' '}
+                <strong className="font-bold text-rose-950">
+                  {qData.correct.toLocaleString(isEn ? 'en-US' : 'el-GR')} {qData.unit}
+                </strong>
+                . {qData.explanation}
+              </div>
             )}
           </div>
         )}
@@ -400,34 +601,33 @@ export default function EmbadoSximatonAskPage() {
 
   return (
     <Layout
-      title="Ασκήσεις: Εμβαδόν Βασικών Σχημάτων - Ε' Δημοτικού | LearnMaths.gr"
-      description="Απαιτητικές ασκήσεις μαθηματικών Ε' Δημοτικού στο εμβαδόν σχημάτων: τετράγωνο, ορθογώνιο, ορθογώνιο τρίγωνο και σύνθετες επιφάνειες."
+      title={t.pageTitle}
+      description={t.pageDescription}
       backUrl="/e-dimotikou"
-      backText="Ε' Δημοτικού"
+      backText={t.backText}
       hideFooter={true}
       actionButton={
         <Link
           href="/e-dimotikou/26-embado-sximaton"
           className="bg-indigo-100 hover:bg-indigo-200 text-indigo-900 font-bold px-4 py-2 2xl:px-6 2xl:py-2.5 rounded-xl text-sm 2xl:text-base transition shadow-sm flex items-center gap-2 whitespace-nowrap"
         >
-          <span>📖</span> Θεωρία
+          <span>📖</span> {t.theoryBtn}
         </Link>
       }
     >
-      {/* Container πλήρους εύρους για 2K / 4K και responsive για κινητά */}
-      <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto px-3 sm:px-6 lg:px-12 py-6 space-y-8">
+      <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 py-6 pb-28 sm:pb-36 overflow-x-hidden space-y-8">
         
-        {/* HEADER BANNER - Ίδια χρωματική παλέτα με τη θεωρία */}
+        {/* HEADER BANNER */}
         <div className="bg-gradient-to-br from-indigo-950 via-blue-900 to-sky-900 text-white p-6 sm:p-8 2xl:p-12 rounded-3xl shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1.5 max-w-4xl">
             <span className="bg-white/10 border border-white/20 text-sky-200 text-xs 2xl:text-sm font-black px-3 py-1 rounded-full tracking-wider inline-block">
-              Ε' ΔΗΜΟΤΙΚΟΥ • ΕΞΑΣΚΗΣΗ
+              {toCleanUppercase(t.badgeHeader)}
             </span>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl 2xl:text-5xl font-black tracking-tight pt-1">
-              📝 Ασκήσεις: Εμβαδόν Βασικών Σχημάτων
+              {t.mainTitle}
             </h1>
             <p className="text-sky-100 text-xs sm:text-sm md:text-base 2xl:text-lg">
-              Κάθε φορά που πατάς «Νέες Ασκήσεις», δημιουργούνται νέα παραδείγματα από τη δεξαμενή!
+              {t.subtitle}
             </p>
           </div>
 
@@ -436,32 +636,31 @@ export default function EmbadoSximatonAskPage() {
             onClick={loadNewQuestions}
             className="bg-amber-400 text-slate-950 font-black px-4 py-2.5 sm:px-5 sm:py-3 2xl:px-7 2xl:py-4 rounded-2xl shadow-lg hover:bg-amber-300 transition active:scale-95 text-xs sm:text-sm 2xl:text-base whitespace-nowrap self-stretch sm:self-auto text-center"
           >
-            🔄 Νέες Ασκήσεις
+            🔄 {t.newExercisesBtn}
           </button>
         </div>
 
-        {/* ΦΟΡΜΑ ΑΣΚΗΣΕΩΝ & PB SAFE AREA */}
-        <form onSubmit={handleSubmit} className="space-y-6 pb-28 sm:pb-32">
-          {renderInput('q1', questions.q1, 1, 'ΕΜΒΑΔΟΝ ΟΡΘΟΓΩΝΙΟΥ ΤΡΙΓΩΝΟΥ', 'bg-blue-600')}
-          {renderInput('q2', questions.q2, 2, 'ΕΥΡΕΣΗ ΚΑΘΕΤΗΣ ΠΛΕΥΡΑΣ ΑΠΟ ΕΜΒΑΔΟΝ', 'bg-blue-600')}
+        {/* ΦΟΡΜΑ ΑΣΚΗΣΕΩΝ */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {renderInput('q1', questions.q1, 1, t.q1Badge, 'bg-blue-600')}
+          {renderInput('q2', questions.q2, 2, t.q2Badge, 'bg-blue-600')}
 
-          {renderMCQ('q3', questions.q3, 3, 'ΣΧΕΣΗ ΟΡΘΟΓΩΝΙΟΥ ΜΕ ΟΡΘΟΓΩΝΙΟ ΤΡΙΓΩΝΟ', 'bg-indigo-600')}
-          {renderMCQ('q4', questions.q4, 4, 'ΣΥΓΚΡΙΣΗ ΕΜΒΑΔΟΥ ΤΕΤΡΑΓΩΝΟΥ ΚΑΙ ΟΡΘΟΓΩΝΙΟΥ', 'bg-indigo-600')}
+          {renderMCQ('q3', questions.q3, 3, t.q3Badge, 'bg-indigo-600')}
+          {renderMCQ('q4', questions.q4, 4, t.q4Badge, 'bg-indigo-600')}
 
-          {renderInput('q5', questions.q5, 5, 'ΕΜΒΑΔΟΝ ΤΕΤΡΑΓΩΝΟΥ ΑΠΟ ΠΕΡΙΜΕΤΡΟ', 'bg-teal-600')}
-          {renderMCQ('q6', questions.q6, 6, 'ΕΜΒΑΔΟΝ ΟΡΘΟΓΩΝΙΟΥ ΜΕ ΣΧΕΣΗ ΔΙΑΣΤΑΣΕΩΝ', 'bg-teal-600')}
+          {renderInput('q5', questions.q5, 5, t.q5Badge, 'bg-teal-600')}
+          {renderMCQ('q6', questions.q6, 6, t.q6Badge, 'bg-teal-600')}
 
-          {renderInput('q7', questions.q7, 7, 'ΕΜΒΑΔΟΝ ΣΥΝΘΕΤΟΥ ΣΧΗΜΑΤΟΣ ( ΟΡΘΟΓΩΝΙΟ ＋ ΤΡΙΓΩΝΟ )', 'bg-purple-600')}
-          {renderMCQ('q8', questions.q8, 8, 'ΑΦΑΙΡΕΣΗ ΕΠΙΦΑΝΕΙΑΣ ΑΠΟ ΟΡΘΟΓΩΝΙΟ', 'bg-purple-600')}
+          {renderInput('q7', questions.q7, 7, t.q7Badge, 'bg-purple-600')}
+          {renderMCQ('q8', questions.q8, 8, t.q8Badge, 'bg-purple-600')}
 
-          {/* ΚΟΥΜΠΙ ΥΠΟΒΟΛΗΣ */}
           {!submitted && (
             <div className="text-center pt-4">
               <button
                 type="submit"
                 className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white text-base sm:text-lg 2xl:text-xl font-black px-10 py-4 2xl:px-14 2xl:py-5 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95"
               >
-                🎯 Έλεγχος Απαντήσεων
+                🎯 {t.submitBtn}
               </button>
             </div>
           )}
@@ -469,16 +668,16 @@ export default function EmbadoSximatonAskPage() {
       </div>
 
       {/* FIXED BOTTOM SCORE BAR */}
-      <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 2xl:py-5 z-50">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2400px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div className="fixed bottom-0 left-0 w-full z-50 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl py-3.5 px-4 sm:px-6 2xl:py-5">
+        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
           <div className="flex items-center gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 2xl:px-5 2xl:py-2 rounded-xl text-base sm:text-lg 2xl:text-xl flex items-center gap-2 shadow-sm">
-              <span>🏆 Σκορ:</span>
+              <span>🏆 {t.scoreLabel}</span>
               <span className="text-xl sm:text-2xl 2xl:text-3xl font-mono">{score} / 8</span>
             </div>
             {submitted && (
               <span className="text-xs sm:text-sm 2xl:text-base font-bold text-slate-300">
-                Επιτυχία: <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
+                {t.successRate} <span className="text-emerald-400 font-black">{Math.round((score / 8) * 100)}%</span>
               </span>
             )}
           </div>
@@ -490,11 +689,11 @@ export default function EmbadoSximatonAskPage() {
                 onClick={loadNewQuestions}
                 className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-5 py-2 2xl:px-7 2xl:py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm 2xl:text-base flex items-center gap-2 active:scale-95"
               >
-                <span>🔄</span> Νέες Ασκήσεις
+                <span>🔄</span> {t.newExercisesBtn}
               </button>
             ) : (
               <p className="text-xs 2xl:text-sm text-slate-400 hidden sm:block">
-                Συμπλήρωσε τις ασκήσεις και πάτα «Έλεγχος Απαντήσεων»!
+                {t.footerPrompt}
               </p>
             )}
           </div>
