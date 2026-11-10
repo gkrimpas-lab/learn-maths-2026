@@ -1,12 +1,9 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import AdSlot from './AdSlot';
-import Script from 'next/script';
 import { LAYOUT } from '../shared/layout-config';
 
-const GA_MEASUREMENT_ID = 'G-LNBTZ4JKCB';
 const SITE_URL = 'https://learnmaths.gr';
 
 export default function Layout({
@@ -36,22 +33,6 @@ export default function Layout({
   
   const greekUrl = `${SITE_URL}${cleanPath}`;
   const englishUrl = `${SITE_URL}/en${cleanPath}`;
-
-  // Αυτόματη καταγραφή κάθε σελίδας στο Google Analytics κατά την πλοήγηση
-  useEffect(() => {
-    const handleRouteChange = (url) => {
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('config', GA_MEASUREMENT_ID, {
-          page_path: url,
-        });
-      }
-    };
-
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
 
   const ogImageUrl = image.startsWith('http') ? image : `${SITE_URL}${image}`;
 
@@ -128,22 +109,6 @@ export default function Layout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </Head>
-
-      {/* Google Analytics (GA4) */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
-            page_path: window.location.pathname + window.location.search,
-          });
-        `}
-      </Script>
 
       <div className="flex-1 flex flex-col">
         {!hideNav && (
