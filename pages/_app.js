@@ -26,11 +26,31 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <>
-      {/* 1. Φόρτωση Google Tag (gtag.js) σε global επίπεδο */}
+      {/* 1. Αρχικοποίηση Consent Mode v2 πριν φορτώσει το gtag.js */}
+      <Script
+        id="google-consent-mode"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              'analytics_storage': 'granted',
+              'ad_storage': 'denied',
+              'ad_user_data': 'denied',
+              'ad_personalization': 'denied'
+            });
+          `,
+        }}
+      />
+
+      {/* 2. Φόρτωση Google Tag (gtag.js) */}
       <Script
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
+
+      {/* 3. Εκτέλεση Config */}
       <Script
         id="google-analytics-init"
         strategy="afterInteractive"
