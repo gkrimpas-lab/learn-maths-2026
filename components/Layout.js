@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 import AdSlot from './AdSlot';
 import { LAYOUT } from '../shared/layout-config';
 
@@ -24,6 +25,29 @@ export default function Layout({
   const router = useRouter();
   const { locale, asPath } = router;
   const currentPath = asPath.split('?')[0];
+
+  // State για το Έξυπνο Banner ανίχνευσης ξένης γλώσσας
+  const [showLanguageBanner, setShowLanguageBanner] = useState(false);
+
+  useEffect(() => {
+    // Εμφάνιση μόνο αν ο χρήστης είναι στην ελληνική έκδοση και ο browser του είναι ξένος
+    if (typeof window !== 'undefined' && locale === 'el') {
+      const isDismissed = sessionStorage.getItem('dismissed_lang_banner');
+      const browserLang = navigator.language || navigator.userLanguage || '';
+      const isNonGreekBrowser = browserLang && !browserLang.toLowerCase().startsWith('el');
+
+      if (isNonGreekBrowser && !isDismissed) {
+        setShowLanguageBanner(true);
+      }
+    }
+  }, [locale]);
+
+  const handleDismissBanner = () => {
+    setShowLanguageBanner(false);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('dismissed_lang_banner', 'true');
+    }
+  };
 
   // Υπολογισμός Canonical & Alternate URLs
   const cleanPath = currentPath === '/' ? '' : currentPath;
@@ -110,6 +134,36 @@ export default function Layout({
         />
       </Head>
 
+      {/* 🇬🇧 ΕΞΥΠΝΟ BANNER ΠΡΟΤΡΟΠΗΣ ΑΓΓΛΙΚΗΣ ΕΚΔΟΣΗΣ ΓΙΑ ΞΕΝΟΥΣ BROWSERS */}
+      {showLanguageBanner && (
+        <div className="bg-indigo-900 text-white px-4 py-2.5 text-xs sm:text-sm font-medium shadow-md transition-all sticky top-0 z-[60] border-b border-indigo-750">
+          <div className={`${LAYOUT.CONTAINER} flex flex-wrap justify-between items-center gap-2`}>
+            <div className="flex items-center gap-2">
+              <span className="text-base" aria-hidden="true">🌍</span>
+              <span>
+                Looking for English? We noticed your browser language isn&apos;t Greek.
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                href={currentPath}
+                locale="en"
+                className="bg-white text-indigo-900 hover:bg-indigo-50 px-3 py-1 rounded-lg font-bold transition shadow-sm text-xs"
+              >
+                Switch to English ➔
+              </Link>
+              <button
+                onClick={handleDismissBanner}
+                className="text-indigo-200 hover:text-white p-1 text-sm font-bold transition"
+                aria-label="Dismiss language suggestion"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 flex flex-col">
         {!hideNav && (
           <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50 transition-all border-b border-gray-100 w-full">
@@ -141,17 +195,17 @@ export default function Layout({
                   </div>
                 )}
 
-                {/* Language Switcher Button */}
+                {/* ΕΥΔΙΑΚΡΙΤΟ LANGUAGE SWITCHER BUTTON */}
                 <Link
                   href={currentPath}
                   locale={locale === 'el' ? 'en' : 'el'}
                   hrefLang={locale === 'el' ? 'en' : 'el'}
                   lang={locale === 'el' ? 'en' : 'el'}
-                  className="bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+                  className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm flex items-center gap-2 shrink-0 hover:scale-105 active:scale-95"
                   title={locale === 'el' ? "Switch to English" : "Αλλαγή σε Ελληνικά"}
                 >
-                  <span aria-hidden="true">{locale === 'el' ? '🇬🇧' : '🇬🇷'}</span>
-                  <span>{locale === 'el' ? 'EN' : 'ΕΛ'}</span>
+                  <span className="text-sm sm:text-base" aria-hidden="true">{locale === 'el' ? '🇬🇧' : '🇬🇷'}</span>
+                  <span>{locale === 'el' ? 'English' : 'Ελληνικά'}</span>
                 </Link>
               </div>
             </div>
