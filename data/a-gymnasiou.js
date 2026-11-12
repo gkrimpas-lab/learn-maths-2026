@@ -568,4 +568,29 @@ export const A_GYMNASIOU_CHAPTERS = [
     active: false,
     keywords: ['ασκήσεις γεωμετρία', 'επαναληπτικές ασκήσεις γεωμετρίας']
   },
+  {
+    id: '40-trigona',
+    section: 'geometry',
+    slug: '40-trigona',
+    icon: '📐',
+    title: 'Τα Τρίγωνα: Στοιχεία και Κατηγορίες',
+    titleEn: 'Triangles: Elements and Classification',
+    desc: 'Πρωτεύοντα στοιχεία τριγώνου (κορυφές, πλευρές, γωνίες), κατηγορίες τριγώνων ως προς τα μήκη των πλευρών και το είδος των γωνιών τους.',
+    descEn: 'Primary elements of a triangle (vertices, sides, angles), classification by side lengths and angle types.',
+    badge: 'ΚΕΦΑΛΑΙΟ 05',
+    badgeEn: 'CHAPTER 05',
+    active: true,
+    keywords: [
+      'ασκήσεις γεωμετρία',
+      'τρίγωνα',
+      'ισοσκελές τρίγωνο',
+      'ορθογώνιο τρίγωνο',
+      'πρωτεύοντα στοιχεία',
+      'geometry exercises',
+      'triangles',
+      'isosceles triangle',
+      'right triangle',
+      'primary elements'
+    ]
+  },
 ];
