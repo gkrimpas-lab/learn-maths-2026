@@ -585,7 +585,7 @@ export default function TrigonaTheory() {
       showAds={true}
       actionButton={
         <Link
-          href="/a-gymnasiou/39-trigona-ask"
+          href="/a-gymnasiou/40-trigona-ask"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
         >
           <span>🎯 {toCleanUppercase(t.btnExercises)}</span>
@@ -608,7 +608,7 @@ export default function TrigonaTheory() {
             </p>
             <div>
               <Link
-                href="/a-gymnasiou/39-trigona-ask"
+                href="/a-gymnasiou/40-trigona-ask"
                 className="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold rounded-xl sm:rounded-2xl shadow-lg transition-transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>🎯 {toCleanUppercase(t.btnGoExercises)}</span>
@@ -1226,7 +1226,7 @@ export default function TrigonaTheory() {
             {t.bottomDesc}
           </p>
           <Link
-            href="/a-gymnasiou/39-trigona-ask"
+            href="/a-gymnasiou/40-trigona-ask"
             className="inline-flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-3.5 bg-white text-emerald-800 font-black rounded-xl sm:rounded-2xl shadow-lg hover:bg-emerald-50 transition-all text-xs sm:text-base"
           >
             <span>🎯 {toCleanUppercase(t.bottomBtn)}</span>
