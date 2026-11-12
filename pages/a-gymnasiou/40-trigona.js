@@ -15,13 +15,13 @@ function toCleanUppercase(str) {
     .join('');
 }
 
-// Επαναχρησιμοποιήσιμο Component Γωνίας (Σύμβολο ^ κεντραρισμένο ακριβώς πάνω από το γράμμα)
+// Επαναχρησιμοποιήσιμο Component Γωνίας (Το γράμμα μένει στη γραμμή, το ^ τοποθετείται από πάνω)
 function Angle({ children, className = "" }) {
   return (
-    <span className={`inline-flex flex-col items-center justify-end align-baseline leading-none mx-[1px] ${className}`}>
+    <span className={`relative inline-block leading-none mx-[1px] ${className}`}>
       <svg
         viewBox="0 0 12 6"
-        className="w-[0.75em] h-[0.38em] mb-[1px] shrink-0 text-current overflow-visible"
+        className="w-[0.75em] h-[0.36em] absolute -top-[0.38em] left-1/2 -translate-x-1/2 text-current overflow-visible pointer-events-none"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
@@ -31,7 +31,7 @@ function Angle({ children, className = "" }) {
       >
         <path d="M1 5 L6 1 L11 5" />
       </svg>
-      <span className="leading-none">{children}</span>
+      <span>{children}</span>
     </span>
   );
 }
@@ -248,11 +248,8 @@ const translations = {
     card4Title: "Διπλή Ταξινόμηση & Βασικές Ιδιότητες",
     card4Desc: "Κάθε τρίγωνο ανήκει ταυτόχρονα σε μία κατηγορία ως προς τις πλευρές και σε μία κατηγορία ως προς τις γωνίες:",
     card4RuleFormula: (
-      <span className="inline-flex flex-wrap items-center justify-center gap-1.5">
-        <span>Άθροισμα Γωνιών:</span>
-        <span className="inline-flex items-center gap-1">
-          <Angle>Α</Angle> ＋ <Angle>Β</Angle> ＋ <Angle>Γ</Angle> ＝ 180°
-        </span>
+      <span>
+        Άθροισμα Γωνιών: <Angle>Α</Angle> ＋ <Angle>Β</Angle> ＋ <Angle>Γ</Angle> ＝ 180°
       </span>
     ),
     card4Comb1Title: "Εφικτοί Συνδυασμοί:",
