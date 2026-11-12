@@ -15,6 +15,27 @@ function toCleanUppercase(str) {
     .join('');
 }
 
+// Επαναχρησιμοποιήσιμο Component Γωνίας (Σύμβολο ^ κεντραρισμένο ακριβώς πάνω από το γράμμα)
+function Angle({ children, className = "" }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-end align-baseline leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 12 6"
+        className="w-[0.75em] h-[0.38em] mb-[1px] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 5 L6 1 L11 5" />
+      </svg>
+      <span className="leading-none">{children}</span>
+    </span>
+  );
+}
+
 // Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
 function Radical({ children, className = "" }) {
   return (
@@ -128,7 +149,7 @@ export default function TrigonaExercises() {
     if (q1Variant === 0) {
       q1Prompt = q1IsCorrect
         ? (isEl
-            ? 'Τα πρωτεύοντα στοιχεία ενός τριγώνου είναι συνολικά 6: οι 3 κορυφές, οι 3 πλευρές και οι 3 γωνίες του (9 μαζί με τις κορυφές, ή 6 τα γραμμικά/γωνιακά στοιχεία).'
+            ? 'Τα πρωτεύοντα στοιχεία ενός τριγώνου είναι συνολικά 6: οι 3 πλευρές και οι 3 εσωτερικές γωνίες του (μαζί με τις 3 κορυφές).'
             : 'A triangle is defined by 3 non-collinear vertices, 3 sides, and 3 interior angles.')
         : (isEl
             ? 'Οποιαδήποτε τρία σημεία του επιπέδου, ακόμη κι αν βρίσκονται πάνω στην ίδια ευθεία, σχηματίζουν πάντοτε ένα τρίγωνο.'
@@ -178,7 +199,7 @@ export default function TrigonaExercises() {
       ...triObj.sides,
       `${targetVertex}${triObj.v[(targetIdx + 1) % 3]}`,
       `${triObj.v[(targetIdx + 2) % 3]}${targetVertex}`,
-      isEl ? `Η γωνία ${targetVertex}̂` : `Angle ∠${targetVertex}`
+      isEl ? `Η γωνία ${targetVertex}` : `Angle ∠${targetVertex}`
     ];
 
     qList.push({
@@ -190,6 +211,13 @@ export default function TrigonaExercises() {
       type: 'mcq',
       correct: oppSide,
       options: ensureFourUniqueOptions(oppSide, () => q2Distractors[randInt(0, q2Distractors.length - 1)]),
+      renderOption: (opt) => {
+        if (isEl && opt.startsWith('Η γωνία ')) {
+          const letter = opt.replace('Η γωνία ', '');
+          return <span>Η γωνία <Angle>{letter}</Angle></span>;
+        }
+        return opt;
+      },
       explanation: isEl
         ? `Η απέναντι πλευρά της κορυφής ${targetVertex} σχηματίζεται από τις άλλες δύο κορυφές του τριγώνου, άρα είναι η πλευρά ${oppSide}.`
         : `The side opposite vertex ${targetVertex} connects the other two vertices, which gives side ${oppSide}.`
@@ -298,7 +326,7 @@ export default function TrigonaExercises() {
             ? 'Ένα τρίγωνο μπορεί να έχει δύο ορθές γωνίες (90° και 90°).'
             : 'A triangle can have two right angles (90° and 90°).');
       q5Expl = isEl
-        ? 'Το άθροισμα των γωνιών κάθε τριγώνου είναι 180°, οπότε δεν μπορεί να έχει δύο ορθές γωνίες. Αντίθετα, το ισόπλευρο έχει 3 ίσες πλευρές (άρα και τουλάχιστον 2 ίσες) και γωνίες 180° ÷ 3 ＝ 60°.'
+        ? 'Το άθροισμα των γωνιών κάθε τριγώνου είναι 180°, οπότε δεν μπορεί να έχει δύο ορθές γωνίες. Αντίθετα, το ισόπλευρο έχει 3 ίσες πλευρές (άρα και τουλάχιστον 2 ίσες) και γωνίες 60°.'
         : 'Since the angles of a triangle sum to 180°, it can have at most one right angle. An equilateral triangle has 3 equal sides and 60° angles.';
     } else {
       q5Prompt = q5IsCorrect
@@ -325,16 +353,16 @@ export default function TrigonaExercises() {
 
     // Q6: MCQ - Υποτείνουσα & Κάθετες Πλευρές Ορθογωνίου Τριγώνου
     const rightConfigsEl = [
-      { tri: 'ΑΒΓ', rightV: 'Α̂', hyp: 'ΒΓ', legs: 'ΑΒ και ΑΓ' },
-      { tri: 'ΑΒΓ', rightV: 'Β̂', hyp: 'ΑΓ', legs: 'ΑΒ και ΒΓ' },
-      { tri: 'ΔΕΖ', rightV: 'Ε̂', hyp: 'ΔΖ', legs: 'ΔΕ και ΕΖ' },
-      { tri: 'ΚΛΜ', rightV: 'Μ̂', hyp: 'ΚΛ', legs: 'ΚΜ και ΛΜ' }
+      { tri: 'ΑΒΓ', rightLetter: 'Α', hyp: 'ΒΓ', legs: 'ΑΒ και ΑΓ' },
+      { tri: 'ΑΒΓ', rightLetter: 'Β', hyp: 'ΑΓ', legs: 'ΑΒ και ΒΓ' },
+      { tri: 'ΔΕΖ', rightLetter: 'Ε', hyp: 'ΔΖ', legs: 'ΔΕ και ΕΖ' },
+      { tri: 'ΚΛΜ', rightLetter: 'Μ', hyp: 'ΚΛ', legs: 'ΚΜ και ΛΜ' }
     ];
     const rightConfigsEn = [
-      { tri: 'ABC', rightV: '∠A', hyp: 'BC', legs: 'AB and AC' },
-      { tri: 'ABC', rightV: '∠B', hyp: 'AC', legs: 'AB and BC' },
-      { tri: 'DEF', rightV: '∠E', hyp: 'DF', legs: 'DE and EF' },
-      { tri: 'KLM', rightV: '∠M', hyp: 'KL', legs: 'KM and LM' }
+      { tri: 'ABC', rightLetter: 'A', hyp: 'BC', legs: 'AB and AC' },
+      { tri: 'ABC', rightLetter: 'B', hyp: 'AC', legs: 'AB and BC' },
+      { tri: 'DEF', rightLetter: 'E', hyp: 'DF', legs: 'DE and EF' },
+      { tri: 'KLM', rightLetter: 'M', hyp: 'KL', legs: 'KM and LM' }
     ];
     const rCfg = isEl ? rightConfigsEl[randInt(0, 3)] : rightConfigsEn[randInt(0, 3)];
     const q6Distractors = isEl
@@ -344,15 +372,27 @@ export default function TrigonaExercises() {
     qList.push({
       id: 6,
       title: isEl ? 'Υποτείνουσα Ορθογωνίου Τριγώνου' : 'Hypotenuse of a Right Triangle',
-      prompt: isEl
-        ? `Το τρίγωνο ${rCfg.tri} είναι ορθογώνιο με ορθή γωνία ${rCfg.rightV} ＝ 90°. Ποια είναι η υποτείνουσά του;`
-        : `Triangle ${rCfg.tri} is a right triangle with right angle ${rCfg.rightV} ＝ 90°. Which side is its hypotenuse?`,
+      prompt: isEl ? (
+        <span>
+          Το τρίγωνο {rCfg.tri} είναι ορθογώνιο με ορθή γωνία <Angle>{rCfg.rightLetter}</Angle> ＝ 90°. Ποια είναι η υποτείνουσά του;
+        </span>
+      ) : (
+        <span>
+          Triangle {rCfg.tri} is a right triangle with right angle ∠{rCfg.rightLetter} ＝ 90°. Which side is its hypotenuse?
+        </span>
+      ),
       type: 'mcq',
       correct: rCfg.hyp,
       options: ensureFourUniqueOptions(rCfg.hyp, () => q6Distractors[randInt(0, q6Distractors.length - 1)]),
-      explanation: isEl
-        ? `Η υποτείνουσα βρίσκεται πάντα απέναντι από την ορθή γωνία ${rCfg.rightV}, άρα είναι η πλευρά ${rCfg.hyp} (ενώ κάθετες πλευρές είναι οι ${rCfg.legs}).`
-        : `The hypotenuse always lies opposite the right angle ${rCfg.rightV}, so it is side ${rCfg.hyp} (while ${rCfg.legs} are the legs).`
+      explanation: isEl ? (
+        <span>
+          Η υποτείνουσα βρίσκεται πάντα απέναντι από την ορθή γωνία <Angle>{rCfg.rightLetter}</Angle>, άρα είναι η πλευρά {rCfg.hyp} (ενώ κάθετες πλευρές είναι οι {rCfg.legs}).
+        </span>
+      ) : (
+        <span>
+          The hypotenuse always lies opposite the right angle ∠{rCfg.rightLetter}, so it is side {rCfg.hyp} (while {rCfg.legs} are the legs).
+        </span>
+      )
     });
 
     // Q7: MCQ - Διπλή Ταξινόμηση (Εφικτοί & Αδύνατοι Συνδυασμοί)
@@ -393,18 +433,28 @@ export default function TrigonaExercises() {
     qList.push({
       id: 8,
       title: isEl ? 'Γωνίες Ισοσκελούς Τριγώνου' : 'Angles of an Isosceles Triangle',
-      prompt: isEl
-        ? `Ένα ισοσκελές τρίγωνο ΑΒΓ (ΑΒ ＝ ΑΓ) έχει γωνία κορυφής Α̂ ＝ ${vertexAngle}°. Πόσες μοίρες είναι καθεμία από τις γωνίες της βάσης του (Β̂ και Γ̂);`
-        : `An isosceles triangle ABC (AB ＝ AC) has vertex angle ∠A ＝ ${vertexAngle}°. How many degrees is each base angle (∠B and ∠C)?`,
+      prompt: isEl ? (
+        <span>
+          Ένα ισοσκελές τρίγωνο ΑΒΓ (ΑΒ ＝ ΑΓ) έχει γωνία κορυφής <Angle>Α</Angle> ＝ {vertexAngle}°. Πόσες μοίρες είναι καθεμία από τις γωνίες της βάσης του (<Angle>Β</Angle> και <Angle>Γ</Angle>);
+        </span>
+      ) : (
+        <span>
+          An isosceles triangle ABC (AB ＝ AC) has vertex angle ∠A ＝ {vertexAngle}°. How many degrees is each base angle (∠B and ∠C)?
+        </span>
+      ),
       type: 'input',
       correct: baseAngle,
       unit: '°',
       explanation: (
         <span className="inline-flex flex-wrap items-center gap-1.5 leading-relaxed break-words [overflow-wrap:anywhere]">
           <span>
-            {isEl
-              ? 'Το άθροισμα των γωνιών είναι 180° και οι γωνίες της βάσης είναι ίσες (Β̂ ＝ Γ̂):'
-              : 'The angle sum is 180° and the base angles are equal (∠B ＝ ∠C):'}
+            {isEl ? (
+              <>
+                Το άθροισμα των γωνιών είναι 180° και οι γωνίες της βάσης είναι ίσες (<Angle>Β</Angle> ＝ <Angle>Γ</Angle>):
+              </>
+            ) : (
+              'The angle sum is 180° and the base angles are equal (∠B ＝ ∠C):'
+            )}
           </span>
           <span className="inline-flex items-center gap-1 font-mono">
             (180° － {vertexAngle}°) ＝ {180 - vertexAngle}° ⇒{' '}
@@ -493,7 +543,8 @@ export default function TrigonaExercises() {
     // Q11: MCQ + tableData - Υπολογισμός γωνιών και κατηγοριοποίηση τριγώνου
     const kAngle = randInt(25, 42);
     const lAngle = randInt(25, 42);
-    const mAngle = 180 - kAngle - lAngle; // πάντα > 90° (αμβλεία!)
+    const adjK = kAngle === lAngle ? kAngle + 1 : kAngle;
+    const adjM = 180 - adjK - lAngle; // πάντα > 90° (αμβλεία!)
     const q11Correct = isEl ? 'Αμβλυγώνιο σκαληνό τρίγωνο' : 'Obtuse scalene triangle';
     const q11Distractors = isEl
       ? [
@@ -510,8 +561,6 @@ export default function TrigonaExercises() {
           'Acute isosceles triangle',
           'Right isosceles triangle'
         ];
-    const adjK = kAngle === lAngle ? kAngle + 1 : kAngle;
-    const adjM = 180 - adjK - lAngle;
 
     qList.push({
       id: 11,
