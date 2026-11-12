@@ -15,6 +15,27 @@ function toCleanUppercase(str) {
     .join('');
 }
 
+// Επαναχρησιμοποιήσιμο Component Γωνίας (Σύμβολο ^ κεντραρισμένο ακριβώς πάνω από το γράμμα)
+function Angle({ children, className = "" }) {
+  return (
+    <span className={`inline-flex flex-col items-center justify-end align-baseline leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 12 6"
+        className="w-[0.75em] h-[0.38em] mb-[1px] shrink-0 text-current overflow-visible"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M1 5 L6 1 L11 5" />
+      </svg>
+      <span className="leading-none">{children}</span>
+    </span>
+  );
+}
+
 // Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum) - Responsive
 function Radical({ children, className = "" }) {
   return (
@@ -179,11 +200,22 @@ const translations = {
     card1Title: "Ορισμός & Πρωτεύοντα Στοιχεία",
     card1Desc: "Αν πάρουμε τρία σημεία Α, Β, Γ που δεν βρίσκονται στην ίδια ευθεία (μη συνευθειακά) και τα ενώσουμε ανά δύο με ευθύγραμμα τμήματα, σχηματίζεται το τρίγωνο ΑΒΓ.",
     card1ElementsTitle: "Τα 6 Πρωτεύοντα Στοιχεία του Τριγώνου:",
-    card1Vertices: "3 Κορυφές: Τα σημεία Α, Β και Γ.",
-    card1Sides: "3 Πλευρές: Τα ευθύγραμμα τμήματα ΒΓ (ή α), ΑΓ (ή β) και ΑΒ (ή γ).",
-    card1Angles: "3 Γωνίες: Οι εσωτερικές γωνίες Α̂ (ΒΑ̂Γ), Β̂ (ΑΒ̂Γ) και Γ̂ (ΑΓ̂Β).",
+    card1VerticesTitle: "3 Κορυφές:",
+    card1VerticesDesc: "Τα σημεία Α, Β και Γ.",
+    card1SidesTitle: "3 Πλευρές:",
+    card1SidesDesc: "Τα ευθύγραμμα τμήματα ΒΓ (ή α), ΑΓ (ή β) και ΑΒ (ή γ).",
+    card1AnglesTitle: "3 Γωνίες:",
+    card1AnglesDesc: (
+      <>
+        Οι εσωτερικές γωνίες <Angle>Α</Angle> (Β<Angle>Α</Angle>Γ), <Angle>Β</Angle> (Α<Angle>Β</Angle>Γ) και <Angle>Γ</Angle> (Α<Angle>Γ</Angle>Β).
+      </>
+    ),
     card1OppNoteTitle: "Απέναντι & Προσκείμενα Στοιχεία:",
-    card1OppNoteDesc: "Η πλευρά ΒΓ βρίσκεται απέναντι από την κορυφή Α (γι' αυτό συμβολίζεται και με α), ενώ οι γωνίες Β̂ και Γ̂ λέγονται προσκείμενες στην πλευρά ΒΓ.",
+    card1OppNoteDesc: (
+      <>
+        Η πλευρά ΒΓ βρίσκεται απέναντι από την κορυφή Α (γι' αυτό συμβολίζεται και με α), ενώ οι γωνίες <Angle>Β</Angle> και <Angle>Γ</Angle> λέγονται προσκείμενες στην πλευρά ΒΓ.
+      </>
+    ),
 
     // Card 2
     card2Badge: "2",
@@ -192,7 +224,11 @@ const translations = {
     card2ScaleneTitle: "1. Σκαληνό Τρίγωνο:",
     card2ScaleneDesc: "Έχει και τις τρεις πλευρές του άνισες (α ≠ β ≠ γ). Επίσης, όλες οι γωνίες του είναι άνισες μεταξύ τους.",
     card2IsoTitle: "2. Ισοσκελές Τρίγωνο:",
-    card2IsoDesc: "Έχει τουλάχιστον δύο ίσες πλευρές (π.χ. ΑΒ ＝ ΑΓ), οι οποίες ονομάζονται σκέλη. Η τρίτη πλευρά ΒΓ λέγεται βάση, η απέναντι γωνία Α̂ λέγεται γωνία κορυφής και οι γωνίες της βάσης είναι ίσες (Β̂ ＝ Γ̂).",
+    card2IsoDesc: (
+      <>
+        Έχει τουλάχιστον δύο ίσες πλευρές (π.χ. ΑΒ ＝ ΑΓ), οι οποίες ονομάζονται σκέλη. Η τρίτη πλευρά ΒΓ λέγεται βάση, η απέναντι γωνία <Angle>Α</Angle> λέγεται γωνία κορυφής και οι γωνίες της βάσης είναι ίσες (<Angle>Β</Angle> ＝ <Angle>Γ</Angle>).
+      </>
+    ),
     card2EquiTitle: "3. Ισόπλευρο Τρίγωνο:",
     card2EquiDesc: "Έχει και τις τρεις πλευρές του ίσες (ΑΒ ＝ ΒΓ ＝ ΑΓ). Κάθε ισόπλευρο τρίγωνο είναι ταυτόχρονα και ισοσκελές, ενώ όλες οι γωνίες του είναι ίσες με 60°.",
 
@@ -211,7 +247,14 @@ const translations = {
     card4Badge: "4",
     card4Title: "Διπλή Ταξινόμηση & Βασικές Ιδιότητες",
     card4Desc: "Κάθε τρίγωνο ανήκει ταυτόχρονα σε μία κατηγορία ως προς τις πλευρές και σε μία κατηγορία ως προς τις γωνίες:",
-    card4RuleFormula: "Άθροισμα Γωνιών: Α̂ ＋ Β̂ ＋ Γ̂ ＝ 180°",
+    card4RuleFormula: (
+      <span className="inline-flex flex-wrap items-center justify-center gap-1.5">
+        <span>Άθροισμα Γωνιών:</span>
+        <span className="inline-flex items-center gap-1">
+          <Angle>Α</Angle> ＋ <Angle>Β</Angle> ＋ <Angle>Γ</Angle> ＝ 180°
+        </span>
+      </span>
+    ),
     card4Comb1Title: "Εφικτοί Συνδυασμοί:",
     card4Comb1Desc: "Ένα ισοσκελές ή ένα σκαληνό τρίγωνο μπορεί να είναι οξυγώνιο, ορθογώνιο ή αμβλυγώνιο (π.χ. ορθογώνιο ισοσκελές με γωνίες 90°, 45°, 45°).",
     card4Comb2Title: "Αδύνατοι Συνδυασμοί:",
@@ -234,7 +277,6 @@ const translations = {
     labInvalidDesc: "Για να σχηματιστεί τρίγωνο, το άθροισμα οποιωνδήποτε δύο πλευρών πρέπει να είναι μεγαλύτερο από την τρίτη (τριγωνική ανισότητα).",
     labDiagSides: "ΚΑΤΗΓΟΡΙΑ ΩΣ ΠΡΟΣ ΤΙΣ ΠΛΕΥΡΕΣ",
     labDiagAngles: "ΚΑΤΗΓΟΡΙΑ ΩΣ ΠΡΟΣ ΤΙΣ ΓΩΝΙΕΣ",
-    labDiagAnglesValues: "ΥΠΟΛΟΓΙΣΜΕΝΕΣ ΓΩΝΙΕΣ",
     labDiagPerimeter: "ΠΕΡΙΜΕΤΡΟΣ",
     typeScalene: "Σκαληνό",
     typeIsosceles: "Ισοσκελές",
@@ -250,7 +292,11 @@ const translations = {
     solvedTitle: "Λυμένα Προβλήματα Εφαρμογής",
     prob1Badge: "ΠΡΟΒΛΗΜΑ 1: ΠΡΩΤΕΥΟΝΤΑ ΣΤΟΙΧΕΙΑ & ΤΑΞΙΝΟΜΗΣΗ",
     prob1Title: "Αναγνώριση στοιχείων και κατηγορίας τριγώνου",
-    prob1DescPre: "Δίνεται τρίγωνο ΚΛΜ με πλευρές ΚΛ ＝ 6 cm, ΛΜ ＝ 8 cm, ΚΜ ＝ 10 cm και γωνίες Κ̂ ＝ 53°, Λ̂ ＝ 90°, Μ̂ ＝ 37°.",
+    prob1DescPre: (
+      <>
+        Δίνεται τρίγωνο ΚΛΜ με πλευρές ΚΛ ＝ 6 cm, ΛΜ ＝ 8 cm, ΚΜ ＝ 10 cm και γωνίες <Angle>Κ</Angle> ＝ 53°, <Angle>Λ</Angle> ＝ 90°, <Angle>Μ</Angle> ＝ 37°.
+      </>
+    ),
     prob1DescPost: "Να προσδιοριστούν: α) η πλευρά που βρίσκεται απέναντι από την κορυφή Κ, β) η κατηγορία του τριγώνου ως προς τις πλευρές και τις γωνίες, και γ) η υποτείνουσα και οι κάθετες πλευρές του.",
     prob1ColQuestion: "Ερώτημα",
     prob1ColAnalysis: "Ανάλυση Δεδομένων",
@@ -262,17 +308,29 @@ const translations = {
     prob1Row2A: "6 cm ≠ 8 cm ≠ 10 cm (όλες άνισες)",
     prob1Row2R: "Σκαληνό τρίγωνο",
     prob1Row3Q: "β) Είδος ως προς γωνίες",
-    prob1Row3A: "Έχει μία ορθή γωνία (Λ̂ ＝ 90°)",
+    prob1Row3A: (
+      <>
+        Έχει μία ορθή γωνία (<Angle>Λ</Angle> ＝ 90°)
+      </>
+    ),
     prob1Row3R: "Ορθογώνιο τρίγωνο",
     prob1Row4Q: "γ) Υποτείνουσα & Κάθετες",
-    prob1Row4A: "Απέναντι από Λ̂ ＝ 90° είναι η ΚΜ",
+    prob1Row4A: (
+      <>
+        Απέναντι από <Angle>Λ</Angle> ＝ 90° είναι η ΚΜ
+      </>
+    ),
     prob1Row4R: "Υποτείνουσα: ΚΜ, Κάθετες: ΚΛ, ΛΜ",
     prob1ResSummary: "Συμπέρασμα:",
     prob1ResText: "Το τρίγωνο ΚΛΜ είναι ορθογώνιο και σκαληνό, με υποτείνουσα ΚΜ ＝ 10 cm.",
 
     prob2Badge: "ΠΡΟΒΛΗΜΑ 2: ΙΣΟΣΚΕΛΕΣ ΤΡΙΓΩΝΟ & ΠΕΡΙΜΕΤΡΟΣ",
     prob2Title: "Υπολογισμός πλευρών ισοσκελούς τριγώνου",
-    prob2DescPre: "Ένα ισοσκελές τρίγωνο ΑΒΓ έχει περίμετρο Π ＝ 28 cm. Η βάση του ΒΓ έχει μήκος 8 cm, ενώ η γωνία κορυφής Α̂ είναι 44° και καθεμία από τις γωνίες της βάσης είναι 68°.",
+    prob2DescPre: (
+      <>
+        Ένα ισοσκελές τρίγωνο ΑΒΓ έχει περίμετρο Π ＝ 28 cm. Η βάση του ΒΓ έχει μήκος 8 cm, ενώ η γωνία κορυφής <Angle>Α</Angle> είναι 44° και καθεμία από τις γωνίες της βάσης είναι 68°.
+      </>
+    ),
     prob2DescPost: "Να υπολογιστούν τα μήκη των δύο ίσων πλευρών (σκελών) ΑΒ και ΑΓ και να χαρακτηριστεί το τρίγωνο ως προς τις γωνίες του.",
     prob2ColStep: "Στάδιο",
     prob2ColExpr: "Σχέση / Τύπος",
@@ -284,7 +342,11 @@ const translations = {
     prob2Step2Expr: "2 · ΑΒ ＝ 28 － 8",
     prob2Step2Calc: "2 · ΑΒ ＝ 20 ⇒ ΑΒ ＝ ΑΓ ＝ 10 cm",
     prob2Step3: "3. Έλεγχος Γωνιών",
-    prob2Step3Expr: "Α̂ ＝ 44°, Β̂ ＝ 68°, Γ̂ ＝ 68°",
+    prob2Step3Expr: (
+      <>
+        <Angle>Α</Angle> ＝ 44°, <Angle>Β</Angle> ＝ 68°, <Angle>Γ</Angle> ＝ 68°
+      </>
+    ),
     prob2Step3Calc: "Όλες μικρότερες από 90° (οξείες)",
     prob2ResSide: "Μήκη πλευρών:",
     prob2ResSideVal: "ΑΒ ＝ 10 cm, ΑΓ ＝ 10 cm, ΒΓ ＝ 8 cm.",
@@ -323,9 +385,12 @@ const translations = {
     card1Title: "Definition & Primary Elements",
     card1Desc: "Given three non-collinear points A, B, and C, connecting them pairwise with line segments forms triangle ABC.",
     card1ElementsTitle: "The 6 Primary Elements of a Triangle:",
-    card1Vertices: "3 Vertices: The points A, B, and C.",
-    card1Sides: "3 Sides: The line segments BC (or a), AC (or b), and AB (or c).",
-    card1Angles: "3 Angles: The interior angles ∠A (∠BAC), ∠B (∠ABC), and ∠C (∠ACB).",
+    card1VerticesTitle: "3 Vertices:",
+    card1VerticesDesc: "The points A, B, and C.",
+    card1SidesTitle: "3 Sides:",
+    card1SidesDesc: "The line segments BC (or a), AC (or b), and AB (or c).",
+    card1AnglesTitle: "3 Angles:",
+    card1AnglesDesc: "The interior angles ∠A (∠BAC), ∠B (∠ABC), and ∠C (∠ACB).",
     card1OppNoteTitle: "Opposite & Adjacent Elements:",
     card1OppNoteDesc: "Side BC lies opposite to vertex A (hence denoted by a), while angles ∠B and ∠C are adjacent to side BC.",
 
@@ -378,7 +443,6 @@ const translations = {
     labInvalidDesc: "To form a valid triangle, the sum of any two sides must be strictly greater than the third side (triangle inequality).",
     labDiagSides: "CLASSIFICATION BY SIDES",
     labDiagAngles: "CLASSIFICATION BY ANGLES",
-    labDiagAnglesValues: "COMPUTED ANGLES",
     labDiagPerimeter: "PERIMETER",
     typeScalene: "Scalene",
     typeIsosceles: "Isosceles",
@@ -658,9 +722,9 @@ export default function TrigonaTheory() {
                 </svg>
                 <div className="space-y-1.5 text-xs sm:text-sm text-slate-700">
                   <span className="font-bold text-indigo-900 block">{t.card1ElementsTitle}</span>
-                  <div>• <strong>{t.card1Vertices.split(':')[0]}:</strong> {t.card1Vertices.split(':')[1]}</div>
-                  <div>• <strong>{t.card1Sides.split(':')[0]}:</strong> {t.card1Sides.split(':')[1]}</div>
-                  <div>• <strong>{t.card1Angles.split(':')[0]}:</strong> {t.card1Angles.split(':')[1]}</div>
+                  <div>• <strong>{t.card1VerticesTitle}</strong> {t.card1VerticesDesc}</div>
+                  <div>• <strong>{t.card1SidesTitle}</strong> {t.card1SidesDesc}</div>
+                  <div>• <strong>{t.card1AnglesTitle}</strong> {t.card1AnglesDesc}</div>
                 </div>
               </div>
 
