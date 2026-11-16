@@ -921,4 +921,107 @@ export const A_GYMNASIOU_CHAPTERS = [
       'perpendicular bisector'
     ]
   },
+  {
+  id: '51-sterea',
+  section: 'geometry',
+  slug: '51-sterea',
+  icon: '🧊',
+  title: 'Στερεά Γεωμετρικά Σχήματα, Όψεις Στερεών & Ορθό Πρίσμα',
+  titleEn: '3D Geometric Solids, Views of Solids & Right Prism',
+  desc: 'Πολύεδρα και μη πολύεδρα, μπροστινή, πλαϊνή όψη και κάτοψη 3D κατασκευών κύβων, πρίσμα, ορθό πρίσμα και τα στοιχεία του (βάσεις, έδρες, ακμές, κορυφές).',
+  descEn: 'Polyhedra and non-polyhedra, front, side, and top views of 3D cube assemblies, prism, right prism, and its elements (bases, faces, edges, vertices).',
+  badge: 'ΚΕΦΑΛΑΙΟ 13',
+  badgeEn: 'CHAPTER 13',
+  active: true,
+  keywords: [
+    'στερεά γεωμετρικά σχήματα',
+    'πολύεδρα',
+    'όψεις στερεών',
+    'κάτοψη',
+    'πρίσμα',
+    'ορθό πρίσμα',
+    'έδρες ακμές κορυφές',
+    '3D geometric solids',
+    'views of solids',
+    'right prism'
+  ]
+  },
+  {
+  id: '52-gnosta-sterea',
+  section: 'geometry',
+  slug: '52-gnosta-sterea',
+  icon: '📦',
+  title: 'Κύβος, Ορθογώνιο Παραλληλεπίπεδο, Πυραμίδα & Κανονικό Τετράεδρο',
+  titleEn: 'Cube, Rectangular Parallelepiped, Pyramid & Regular Tetrahedron',
+  desc: 'Κύβος και διαγώνιοι κύβου, ορθογώνιο παραλληλεπίπεδο, πυραμίδα και τα στοιχεία της (βάση, κορυφή, ύψος, ακμές, έδρες), κανονικό τετράεδρο και αναπτύγματα στερεών.',
+  descEn: 'Cube and cube diagonals, rectangular parallelepiped, pyramid and its elements (base, apex, height, edges, faces), regular tetrahedron, and nets of solids.',
+  badge: 'ΚΕΦΑΛΑΙΟ 14',
+  badgeEn: 'CHAPTER 14',
+  active: true,
+  keywords: [
+    'κύβος',
+    'διαγώνιοι κύβου',
+    'ορθογώνιο παραλληλεπίπεδο',
+    'πυραμίδα',
+    'στοιχεία πυραμίδας',
+    'κανονικό τετράεδρο',
+    'αναπτύγματα στερεών',
+    'cube diagonals',
+    'rectangular parallelepiped',
+    'pyramid',
+    'regular tetrahedron',
+    'nets of solids'
+  ]
+},
+{
+  id: '53-kilindros-konos-sfaira',
+  section: 'geometry',
+  slug: '53-kilindros-konos-sfaira',
+  icon: '🌐',
+  title: 'Κύλινδρος, Κώνος και Σφαίρα • Μέγιστος Κύκλος & Σφαιρικό Τρίγωνο',
+  titleEn: 'Cylinder, Cone and Sphere • Great Circle & Spherical Triangle',
+  desc: 'Στοιχεία κυλίνδρου και κώνου (βάση, ακτίνα ρ, ύψος, γενέτειρα), αναπτύγματα κυλίνδρου και κώνου, σφαίρα (Ο, ρ), μέγιστος κύκλος και σφαιρικό τρίγωνο.',
+  descEn: 'Elements of cylinder and cone (base, radius ρ, height, generator), cylinder and cone nets, sphere (O, ρ), great circle, and spherical triangle.',
+  badge: 'ΚΕΦΑΛΑΙΟ 15',
+  badgeEn: 'CHAPTER 15',
+  active: true,
+  keywords: [
+    'κύλινδρος',
+    'κώνος',
+    'σφαίρα',
+    'στοιχεία κυλίνδρου',
+    'στοιχεία κώνου',
+    'μέγιστος κύκλος',
+    'σφαιρικό τρίγωνο',
+    'ανάπτυγμα κυλίνδρου',
+    'ανάπτυγμα κώνου',
+    'cylinder cone sphere',
+    'great circle',
+    'spherical triangle'
+  ]
+},
+{
+  id: '54-epanalipsi-5',
+  section: 'geometry',
+  slug: '54-epanalipsi-5',
+  icon: '🏆',
+  title: 'Επαναληπτικές Ασκήσεις: Ενότητες 13, 14 και 15',
+  titleEn: 'Review Exercises: Units 13, 14 and 15',
+  desc: 'Επαναληπτικό τεστ 15 ερωτήσεων στα Κεφάλαια 13, 14 και 15 (στερεά γεωμετρικά σχήματα, όψεις, ορθό πρίσμα, κύβος, παραλληλεπίπεδο, πυραμίδα, τετράεδρο, κύλινδρος, κώνος, σφαίρα & σφαιρικό τρίγωνο).',
+  descEn: '15-question review test covering Chapters 13, 14, and 15 (3D solids, views, right prism, cube, parallelepiped, pyramid, tetrahedron, cylinder, cone, sphere & spherical triangle).',
+  badge: 'ΕΠΑΝΑΛΗΨΗ 5',
+  badgeEn: 'REVIEW 5',
+  isReview: true,
+  active: true,
+  keywords: [
+    'επανάληψη 5',
+    'επαναληπτικό τεστ στερεά',
+    'ορθό πρίσμα',
+    'κύβος παραλληλεπίπεδο πυραμίδα',
+    'κύλινδρος κώνος σφαίρα',
+    'σφαιρικό τρίγωνο',
+    'review 5 geometry',
+    '3D solids review test'
+  ]
+}
 ];

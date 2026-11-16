@@ -959,7 +959,7 @@ export default function Epanalipsi4Exercises() {
         <section className="bg-gradient-to-r from-indigo-900 via-blue-900 to-indigo-950 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 mb-6 sm:mb-8 shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="px-2.5 py-1 bg-white/10 rounded-full text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/10">
+              <span className="inline-block max-w-full px-3 py-1 bg-white/10 rounded-xl text-indigo-200 text-[11px] sm:text-xs font-bold uppercase tracking-wider border border-white/10 leading-snug break-words">
                 {toCleanUppercase(t.heroBadge)}
               </span>
               <h1 className="text-xl sm:text-3xl lg:text-4xl font-black mt-2 leading-tight break-words [overflow-wrap:anywhere]">
