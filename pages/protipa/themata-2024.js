@@ -986,6 +986,19 @@ const QUESTIONS_2024 = [
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX εκφωνήσεων σε απλό κείμενο για JSON-LD
+function extractPlainText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractPlainText).join(' ');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      return `${node.props.num}/${node.props.den}`;
+    }
+    return extractPlainText(node.props.children);
+  }
+  return '';
+}
+
 export default function Themata2024Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -1069,6 +1082,42 @@ export default function Themata2024Page() {
     q => answers[q.id] === q.correctRaw
   ).length;
 
+  const schema2024 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2024", "item": "https://learnmaths.gr/protipa/themata-2024" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Επίσημα Θέματα Μαθηματικών Προτύπων Γυμνασίων 2024 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ με τα 25 επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2024 (026–050), χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2024.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        const cleanPrompt = extractPlainText(q.promptText).replace(/\s+/g, ' ').trim();
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2024`,
+          "text": cleanPrompt,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
+
   const renderQuestionVisual = (q) => {
     if (q.hasSvg === 'axis31') {
       return (
@@ -1076,16 +1125,12 @@ export default function Themata2024Page() {
           <svg width="380" height="90" viewBox="0 0 380 90" className="select-none font-mono">
             <line x1="20" y1="45" x2="350" y2="45" stroke="#334155" strokeWidth="2" />
             <polygon points="350,40 360,45 350,50" fill="#334155" />
-            {/* 0 */}
             <line x1="40" y1="37" x2="40" y2="53" stroke="#475569" strokeWidth="2" />
             <text x="40" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1e293b">0</text>
-            {/* a */}
             <line x1="120" y1="37" x2="120" y2="53" stroke="#2563eb" strokeWidth="2" />
             <text x="120" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#2563eb">α</text>
-            {/* 5 */}
             <line x1="200" y1="37" x2="200" y2="53" stroke="#475569" strokeWidth="2" />
             <text x="200" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1e293b">5</text>
-            {/* x */}
             <line x1="280" y1="37" x2="280" y2="53" stroke="#dc2626" strokeWidth="2" />
             <text x="280" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">χ</text>
           </svg>
@@ -1139,9 +1184,7 @@ export default function Themata2024Page() {
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="180" height="180" viewBox="0 0 180 180" className="select-none font-sans">
             <rect x="20" y="20" width="140" height="140" fill="#0f172a" stroke="#0f172a" strokeWidth="2" />
-            {/* Αριστερό ημικύκλιο (λευκό) */}
             <path d="M 20,20 A 70,70 0 0,1 20,160 Z" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
-            {/* Δεξί ημικύκλιο (λευκό) */}
             <path d="M 160,20 A 70,70 0 0,0 160,160 Z" fill="#ffffff" stroke="#0f172a" strokeWidth="1.5" />
           </svg>
         </div>
@@ -1178,23 +1221,16 @@ export default function Themata2024Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="300" height="200" viewBox="0 0 300 200" className="select-none font-sans bg-slate-900 rounded-xl">
-            {/* Νησιά & Λιμάνια */}
-            {/* Αστυπάλαια */}
             <circle cx="70" cy="55" r="4" fill="#ffffff" />
             <text x="70" y="45" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#94a3b8">ΑΣΤΥΠΑΛΑΙΑ</text>
-            {/* Κως */}
             <circle cx="160" cy="40" r="3" fill="#cbd5e1" />
             <text x="160" y="30" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">ΚΩΣ</text>
-            {/* Νίσυρος */}
             <circle cx="165" cy="75" r="4" fill="#ffffff" />
             <text x="195" y="78" fontSize="10" fontWeight="bold" fill="#f8fafc">ΝΙΣΥΡΟΣ</text>
-            {/* Τήλος */}
             <circle cx="190" cy="110" r="3" fill="#cbd5e1" />
             <text x="215" y="113" fontSize="9" fontWeight="bold" fill="#64748b">ΤΗΛΟΣ</text>
-            {/* Κάρπαθος */}
             <circle cx="150" cy="170" r="4" fill="#ffffff" />
             <text x="150" y="188" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#f8fafc">ΚΑΡΠΑΘΟΣ</text>
-            {/* Γραμμές σύνδεσης */}
             <line x1="165" y1="75" x2="150" y2="170" stroke="#38bdf8" strokeWidth="1.8" strokeDasharray="3 3" />
             <line x1="165" y1="75" x2="70" y2="55" stroke="#f43f5e" strokeWidth="1.8" strokeDasharray="3 3" />
           </svg>
@@ -1207,10 +1243,11 @@ export default function Themata2024Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2024 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2024: 25 θέματα Μαθηματικών (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2024 – Επίσημα Θέματα & Αναλυτικές Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα επίσημα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2024: 25 ερωτήσεις πολλαπλής επιλογής (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
+      schemaData={schema2024}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -1223,7 +1260,7 @@ export default function Themata2024Page() {
                 Επίσημα Θέματα 2024 • 25 Ερωτήσεις Μαθηματικών
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2024
+                Θέματα Προτύπων Γυμνασίων 2024 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -1237,6 +1274,10 @@ export default function Themata2024Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2024. Περιλαμβάνει και τις 25 ερωτήσεις (026–050) με αυτόματη βαθμολόγηση (2 μόρια/θέμα, Άριστα: 50), χρονόμετρο 60 λεπτών και αναλυτικές λύσεις.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
             <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα (Άριστα: 50)</strong></span>
@@ -1249,7 +1290,7 @@ export default function Themata2024Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2024
+              Αποτέλεσμα Εξέτασης Προτύπων 2024
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
               <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
@@ -1347,20 +1388,30 @@ export default function Themata2024Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium whitespace-pre-line">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -1384,7 +1435,7 @@ export default function Themata2024Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
