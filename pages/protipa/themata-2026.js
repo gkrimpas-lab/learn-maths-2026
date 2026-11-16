@@ -2889,10 +2889,44 @@ export default function Themata2026Page() {
 
   const answeredCount = Object.keys(answers).length;
 
-  // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
   const correctCount = QUESTIONS_2026.filter(
     q => answers[q.id] === q.correctRaw
   ).length;
+
+  const schema2026 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2026", "item": "https://learnmaths.gr/protipa/themata-2026" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Θέματα Μαθηματικών Προτύπων Γυμνασίων 2026 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ 20 ερωτήσεων πολλαπλής επιλογής στα Μαθηματικά για τις εξετάσεις των Προτύπων Γυμνασίων 2026 με χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2026.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2026`,
+          "text": q.promptText,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
 
   const renderQuestionSvg = (svgType) => {
     if (svgType === 'grid23') {
@@ -2916,12 +2950,8 @@ export default function Themata2026Page() {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200">
           <svg width="260" height="145" viewBox="0 0 250 130" className="select-none">
-            {/* Ορθογώνιο ΑΒΓΔ */}
             <rect x="25" y="25" width="195" height="75" fill="none" stroke="#1e293b" strokeWidth="2.5" />
-            {/* Ευθεία Ε-Γ */}
             <line x1="105" y1="100" x2="220" y2="25" stroke="#1e293b" strokeWidth="2.5" />
-            
-            {/* Σκιασμένος τομέας που ακουμπά ακριβώς πάνω στην ευθεία Ε-Γ */}
             <path
               d="M 105 100 L 57 100 A 48 48 0 0 1 145.2 73.8 Z"
               fill="#cbd5e1"
@@ -2943,7 +2973,6 @@ export default function Themata2026Page() {
     if (svgType === 'pie25') {
       return (
         <div className="space-y-4 p-3 sm:p-5 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Κυκλικό Διάγραμμα */}
           <div className="flex flex-col items-center">
             <svg width="170" height="170" viewBox="0 0 160 160" className="select-none overflow-visible font-sans">
               <defs>
@@ -2952,43 +2981,27 @@ export default function Themata2026Page() {
                 </pattern>
               </defs>
               <circle cx="80" cy="80" r="52" fill="#ffffff" stroke="#000000" strokeWidth="2" />
-              
-              {/* Τομέας Κ (περίπου 90° - 1/4) */}
               <path d="M 80 80 L 80 28 A 52 52 0 0 1 132 80 Z" fill="#000000" />
-              
-              {/* Τομέας Λ */}
               <path d="M 80 80 L 132 80 A 52 52 0 0 1 64 129.8 Z" fill="url(#hatch_diag2)" stroke="#000000" strokeWidth="1.2" />
-              
-              {/* Ετικέτες έξω από τον κύκλο */}
               <text x="124" y="42" fill="#000000" fontSize="14" fontWeight="bold">Κ</text>
               <text x="114" y="136" fill="#000000" fontSize="14" fontWeight="bold">Λ</text>
               <text x="14" y="85" fill="#000000" fontSize="14" fontWeight="bold">Μ</text>
             </svg>
           </div>
 
-          {/* 4 Ραβδογράμματα Α, Β, Γ, Δ ακριβώς όπως στην εικόνα */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200">
             {[
-              // A: K=20px, Λ=25px, M=68px (Κ, Λ πολύ μικρά σε σχέση με το Μ)
               { label: 'A', rects: [{x: 20, y: 65, h: 20}, {x: 52, y: 60, h: 25}, {x: 84, y: 17, h: 68}] },
-              // B: K=75px, Λ=30px, M=75px (Κ και Μ ίσα και ψηλά)
               { label: 'B', rects: [{x: 20, y: 10, h: 75}, {x: 52, y: 55, h: 30}, {x: 84, y: 10, h: 75}] },
-              // Γ: K=42px, Λ=52px, M=75px (Σωστή κλιμάκωση Κ < Λ < Μ)
               { label: 'Γ', rects: [{x: 20, y: 43, h: 42}, {x: 52, y: 33, h: 52}, {x: 84, y: 10, h: 75}] },
-              // Δ: K=48px, Λ=38px, M=73px (Κ > Λ - λάθος σειρά)
               { label: 'Δ', rects: [{x: 20, y: 37, h: 48}, {x: 52, y: 47, h: 38}, {x: 84, y: 12, h: 73}] }
             ].map((item) => (
               <div key={item.label} className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center shadow-xs">
                 <svg width="120" height="105" viewBox="0 0 120 105" className="select-none font-sans">
-                  {/* Άξονας βάσης */}
                   <line x1="8" y1="85" x2="112" y2="85" stroke="#cbd5e1" strokeWidth="1.5" />
-                  
-                  {/* Στήλες */}
                   {item.rects.map((r, ri) => (
                     <rect key={ri} x={r.x} y={r.y} width="16" height={r.h} fill="#52525b" />
                   ))}
-                  
-                  {/* Ετικέτες στηλών */}
                   <text x="28" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Κ</text>
                   <text x="60" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Λ</text>
                   <text x="92" y="99" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Μ</text>
@@ -3000,6 +3013,7 @@ export default function Themata2026Page() {
         </div>
       );
     }
+
     if (svgType === 'line31') {
       return (
         <div className="flex justify-center p-4 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto">
@@ -3017,7 +3031,6 @@ export default function Themata2026Page() {
     if (svgType === 'triangle36') {
       return (
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 p-4 bg-slate-50 rounded-2xl border border-slate-200">
-          {/* Αριστερό Σχήμα: 9 ίσα ισόπλευρα τρίγωνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
@@ -3038,31 +3051,19 @@ export default function Themata2026Page() {
             </svg>
           </div>
 
-          {/* Δεξί Σχήμα: Με 2 συμμετρικές διαγώνιες και σωστά σκιασμένα τα 3,5 τρίγωνα */}
           <div className="flex flex-col items-center">
             <svg width="150" height="135" viewBox="0 0 160 145" className="select-none">
-              {/* Λευκό φόντο τριγώνου */}
               <polygon points="80,12 10,133 150,133" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-
-              {/* 1. Πάνω σκιασμένο τμήμα (πάνω από την πάνω διαγώνιο) */}
               <polygon points="56.6,52.3 103.3,52.3 10,133" fill="#94a3b8" />
-
-              {/* 2. Κάτω σκιασμένο τμήμα (κάτω από την κάτω διαγώνιο) */}
               <polygon points="10,133 103.3,133 126.6,92.6" fill="#94a3b8" />
-
-              {/* Γραμμές βασικού πλέγματος */}
               <line x1="56.6" y1="52.3" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2" />
               <line x1="56.6" y1="52.3" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="103.3" y1="52.3" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="33.3" y1="92.6" x2="56.6" y2="133" stroke="#1e293b" strokeWidth="2" />
               <line x1="126.6" y1="92.6" x2="103.3" y2="133" stroke="#1e293b" strokeWidth="2" />
-
-              {/* ΟΙ 2 ΔΙΑΓΩΝΙΕΣ ΓΡΑΜΜΕΣ ΤΟΥ ΣΧΗΜΑΤΟΣ */}
               <line x1="10" y1="133" x2="103.3" y2="52.3" stroke="#1e293b" strokeWidth="2.5" />
               <line x1="10" y1="133" x2="126.6" y2="92.6" stroke="#1e293b" strokeWidth="2.5" />
-
-              {/* Κόμβοι (κουκκίδες) */}
               {[
                 [80, 12],
                 [56.6, 52.3], [103.3, 52.3],
@@ -3082,10 +3083,11 @@ export default function Themata2026Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2026 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2026: 20 θέματα, 2 μόρια ανά θέμα τα πρώτα 10, 3 μόρια ανά θέμα τα υπόλοιπα 10 (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2026 (Ενδεικτικά & Επίσημα) με Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2026: 20 ερωτήσεις πολλαπλής επιλογής, 2 μόρια τα πρώτα 10 & 3 μόρια τα υπόλοιπα 10 (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις με σχήματα."
+      schemaData={schema2026}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων 2026"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -3095,10 +3097,10 @@ export default function Themata2026Page() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider text-blue-100">
-                Επισημα Θεματα 2026 • 20 Ερωτησεις
+                Θέματα Προτύπων 2026 • 20 Ερωτήσεις & Αναλυτικές Λύσεις
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2026
+                Θέματα Προτύπων Γυμνασίων 2026 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -3112,9 +3114,13 @@ export default function Themata2026Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα θέματα Μαθηματικών για τις εισαγωγικές εξετάσεις στα Πρότυπα Γυμνάσια 2026. Περιλαμβάνει και τα 20 θέματα (Ομάδα Α & Ομάδα Β) με αυτόματη βαθμολόγηση στην κλίμακα 0–50 και αναλυτική μαθηματική επεξήγηση με οπτικά σχήματα.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 - 3 μόρια /θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 – 3 μόρια / θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: 60 λεπτά' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
@@ -3124,10 +3130,10 @@ export default function Themata2026Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2026
+              Αποτέλεσμα Εξέτασης Προτύπων 2026
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
-              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικο Σκορ</span>
+              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
               <span className="text-3xl sm:text-4xl font-mono font-black text-blue-700">
                 {score} / 50
               </span>
@@ -3184,7 +3190,7 @@ export default function Themata2026Page() {
                   {q.promptText}
                 </p>
 
-                {/* ΕΙΔΙΚΟ COMPONENT ΕΚΦΩΝΗΣΗΣ (π.χ. Κλάσματα Θέματος 21) */}
+                {/* ΕΙΔΙΚΟ COMPONENT ΕΚΦΩΝΗΣΗΣ */}
                 {q.customPromptComponent}
 
                 {/* SVG ΕΑΝ ΥΠΑΡΧΕΙ */}
@@ -3229,20 +3235,30 @@ export default function Themata2026Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <p className="font-medium">{q.explain}</p>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -3266,7 +3282,7 @@ export default function Themata2026Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 20`}
