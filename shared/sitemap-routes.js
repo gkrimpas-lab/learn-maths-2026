@@ -2,19 +2,19 @@ export const SITEMAP_ROUTES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/epikoinonia', changefreq: 'weekly', priority: '0.9' },
 
-  // --- Πρότυπα Σχολεία ---
-  { path: '/protipa/protipa', changefreq: 'weekly', priority: '0.9' },
-  { path: '/protipa/01-proto-test', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/02-deytero-test', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/pragmatika-themata', changefreq: 'weekly', priority: '0.8' },
-  { path: '/protipa/test-prosomoiosis', changefreq: 'weekly', priority: '0.8' },
-  { path: '/protipa/themata-2020', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2021', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2022', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2023', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2024', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2025', changefreq: 'monthly', priority: '0.7' },
-  { path: '/protipa/themata-2026', changefreq: 'monthly', priority: '0.7' },
+ // --- Πρότυπα Σχολεία ---
+  { path: '/protipa/protipa', changefreq: 'weekly', priority: '0.95' },
+  { path: '/protipa/themata-2026', changefreq: 'weekly', priority: '0.95' },
+  { path: '/protipa/test-prosomoiosis', changefreq: 'weekly', priority: '0.9' },
+  { path: '/protipa/pragmatika-themata', changefreq: 'weekly', priority: '0.85' },
+  { path: '/protipa/01-proto-test', changefreq: 'monthly', priority: '0.8' },
+  { path: '/protipa/02-deytero-test', changefreq: 'monthly', priority: '0.8' },
+  { path: '/protipa/themata-2025', changefreq: 'monthly', priority: '0.8' },
+  { path: '/protipa/themata-2024', changefreq: 'monthly', priority: '0.75' },
+  { path: '/protipa/themata-2023', changefreq: 'monthly', priority: '0.75' },
+  { path: '/protipa/themata-2022', changefreq: 'monthly', priority: '0.75' },
+  { path: '/protipa/themata-2021', changefreq: 'monthly', priority: '0.75' },
+  { path: '/protipa/themata-2020', changefreq: 'monthly', priority: '0.75' },
 
   // --- Δ' Δημοτικού ---
   { path: '/d-dimotikou', changefreq: 'weekly', priority: '0.9' },
