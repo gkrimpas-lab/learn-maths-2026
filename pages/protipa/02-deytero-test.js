@@ -3038,7 +3038,7 @@ const QUESTIONS = [
   }
 ];
 
-const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά σύμφωνα με το διαγώνισμα
+const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
 export default function DeuteroTestProsomoiosisPage() {
   const router = useRouter();
@@ -3124,13 +3124,47 @@ export default function DeuteroTestProsomoiosisPage() {
 
   const answeredCount = Object.keys(answers).length;
 
+  const schemaProtoTest2 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Τεστ Προσομοίωσης Προτύπων 2026", "item": "https://learnmaths.gr/protipa/test-prosomoiosis" },
+        { "@type": "ListItem", "position": 4, "name": "2ο Τεστ Προσομοίωσης – Ενδεικτικά Θέματα 2026", "item": "https://learnmaths.gr/protipa/02-deytero-test" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Ενδεικτικά Θέματα Προτύπων 2026 – 2ο Τεστ Προσομοίωσης Μαθηματικών",
+      "description": "2ο Διαγνωστικό Τεστ Προσομοίωσης με ενδεικτικά θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2026: 20 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, βαθμολογία 0-50 και αναλυτικές λύσεις με SVG σχήματα.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS.map((q) => ({
+        "@type": "Question",
+        "eduQuestionType": "Multiple choice",
+        "name": `Ενδεικτικό Θέμα ${q.id} (2ο Τεστ) - Πρότυπα 2026`,
+        "text": q.prompt,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": q.correct
+        }
+      }))
+    }
+  ];
+
   return (
     <Layout
-      title="🎯 2ο Τεστ Προσομοίωσης Προτύπων - LearnMaths.gr"
-      description="2ο Διαγνωστικό Τεστ Προσομοίωσης Μαθηματικών για τα Πρότυπα Σχολεία: 20 θέματα αυξημένης δυσκολίας, 60 λεπτά, βαθμολογία 0-50 με αναλυτικές λύσεις και σχήματα."
+      title="Ενδεικτικά Θέματα Προτύπων 2026 – 2ο Τεστ Προσομοίωσης | LearnMaths.gr"
+      description="2ο Τεστ Προσομοίωσης με ενδεικτικά θέματα Προτύπων 2026 στα Μαθηματικά: 20 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση 0-50 και αναλυτικές λύσεις με σχήματα."
+      schemaData={schemaProtoTest2}
       backUrl="/protipa/test-prosomoiosis"
-      backText="Τεστ Προσομοίωσης"
-      hideFooter={true}
+      backText="Τεστ Προσομοίωσης 2026"
+      showAds={true}
     >
       <div className={`${LAYOUT.CONTAINER} py-6 sm:py-8 space-y-6 pb-28 sm:pb-32 max-w-[1920px] 2xl:max-w-[2400px]`}>
 
@@ -3139,10 +3173,10 @@ export default function DeuteroTestProsomoiosisPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black tracking-wider text-sky-200">
-                2ο ΤΕΣΤ • 20 ΘΕΜΑΤΑ (ΑΡΙΣΤΑ: 50 ΜΟΡΙΑ)
+                Ενδεικτικά Θέματα Προτύπων 2026 • 2ο Τεστ (20 Θέματα)
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                2ο Τεστ Προσομοίωσης Εξετάσεων Προτύπων
+                Ενδεικτικά Θέματα Προτύπων 2026 – 2ο Τεστ Προσομοίωσης
               </h1>
             </div>
 
@@ -3156,9 +3190,13 @@ export default function DeuteroTestProsomoiosisPage() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-sky-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου σε 20 προχωρημένα ενδεικτικά θέματα Μαθηματικών για τις εξετάσεις των Προτύπων Γυμνασίων 2026 με αναλυτικές λύσεις, διαγράμματα και πολλαπλούς τρόπους επίλυσης.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-sky-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2,5 μόρια / σωστό</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2,5 μόρια / σωστό (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: Ενεργό (60\')' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
@@ -3168,7 +3206,7 @@ export default function DeuteroTestProsomoiosisPage() {
           <div className="bg-white border-2 border-indigo-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Ολοκλήρωση 2ου Τεστ!
+              Ολοκλήρωση 2ου Τεστ Προσομοίωσης!
             </h2>
             <div className="inline-block bg-indigo-50 border border-indigo-200 px-6 py-2 rounded-2xl">
               <span className="text-xs font-bold text-indigo-800 uppercase block">Τελικό Σκορ</span>
@@ -3263,20 +3301,30 @@ export default function DeuteroTestProsomoiosisPage() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση & Λύση:</span>
-                    </div>
-                    <div className="font-medium pt-1">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-indigo-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
