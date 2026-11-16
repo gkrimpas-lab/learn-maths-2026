@@ -875,6 +875,19 @@ const QUESTIONS_2021 = [
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX εκφωνήσεων σε απλό κείμενο για JSON-LD
+function extractPlainText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractPlainText).join(' ');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      return `${node.props.num}/${node.props.den}`;
+    }
+    return extractPlainText(node.props.children);
+  }
+  return '';
+}
+
 export default function Themata2021Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -957,12 +970,47 @@ export default function Themata2021Page() {
     q => answers[q.id] === q.correctRaw
   ).length;
 
+  const schema2021 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2021", "item": "https://learnmaths.gr/protipa/themata-2021" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Επίσημα Θέματα Μαθηματικών Προτύπων Γυμνασίων 2021 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ με τα 25 επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2021 (026–050), χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2021.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        const cleanPrompt = extractPlainText(q.promptText).replace(/\s+/g, ' ').trim();
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2021`,
+          "text": cleanPrompt,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
+
   const renderQuestionVisual = (q) => {
     if (q.hasSvg === 'busGraph46') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="420" height="180" viewBox="0 0 420 180" className="select-none font-sans mx-auto block">
-            {/* Πλέγμα φόντου */}
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(i => (
               <line key={`v-${i}`} x1={40 + i * 26} y1="20" x2={40 + i * 26} y2="135" stroke="#f1f5f9" strokeWidth="1" />
             ))}
@@ -970,18 +1018,15 @@ export default function Themata2021Page() {
               <line key={`h-${i}`} x1="40" y1={20 + i * 28.75} x2="385" y2={20 + i * 28.75} stroke="#f1f5f9" strokeWidth="1" />
             ))}
 
-            {/* Άξονες */}
             <line x1="40" y1="135" x2="395" y2="135" stroke="#334155" strokeWidth="1.8" />
             <polygon points="395,131 403,135 395,139" fill="#334155" />
 
             <line x1="40" y1="135" x2="40" y2="15" stroke="#334155" strokeWidth="1.8" />
             <polygon points="36,15 40,7 44,15" fill="#334155" />
 
-            {/* Ετικέτες αξόνων */}
             <text x="390" y="160" fontSize="10" fontWeight="bold" textAnchor="end" fill="#334155">Χρόνος σε λεπτά</text>
             <text x="22" y="75" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#334155" transform="rotate(-90 22 75)">Απόσταση</text>
 
-            {/* Αριθμοί χρόνου 0-13 */}
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(i => (
               <g key={i}>
                 <line x1={40 + i * 26} y1="135" x2={40 + i * 26} y2="140" stroke="#334155" strokeWidth="1" />
@@ -989,7 +1034,6 @@ export default function Themata2021Page() {
               </g>
             ))}
 
-            {/* Τεθλασμένη γραμμή διαδρομής (στάση μεταξύ 8 και 10) */}
             <polyline
               points={`40,135 ${40 + 8 * 26},75 ${40 + 10 * 26},75 ${40 + 13.5 * 26},20`}
               fill="none"
@@ -997,7 +1041,6 @@ export default function Themata2021Page() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Σημεία καμπής */}
             <circle cx={40 + 8 * 26} cy="75" r="3.5" fill="#2563eb" />
             <circle cx={40 + 10 * 26} cy="75" r="3.5" fill="#2563eb" />
           </svg>
@@ -1010,10 +1053,11 @@ export default function Themata2021Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2021 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2021: 25 θέματα Μαθηματικών (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2021 – Επίσημα Θέματα & Αναλυτικές Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα επίσημα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2021: 25 ερωτήσεις πολλαπλής επιλογής (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
+      schemaData={schema2021}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -1026,7 +1070,7 @@ export default function Themata2021Page() {
                 Επίσημα Θέματα 2021 • 25 Ερωτήσεις Μαθηματικών
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2021
+                Θέματα Προτύπων Γυμνασίων 2021 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -1040,6 +1084,10 @@ export default function Themata2021Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2021. Περιλαμβάνει και τις 25 ερωτήσεις (026–050) με αυτόματη βαθμολόγηση (2 μόρια/θέμα, Άριστα: 50), χρονόμετρο 60 λεπτών και αναλυτικές λύσεις.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
             <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα (Άριστα: 50)</strong></span>
@@ -1052,7 +1100,7 @@ export default function Themata2021Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2021
+              Αποτέλεσμα Εξέτασης Προτύπων 2021
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
               <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
@@ -1150,20 +1198,30 @@ export default function Themata2021Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium whitespace-pre-line">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -1187,7 +1245,7 @@ export default function Themata2021Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
