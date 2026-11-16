@@ -24,13 +24,21 @@ export default function Layout({
 }) {
   const router = useRouter();
   const { locale, asPath } = router;
-  const currentPath = asPath.split('?')[0];
+
+  // Καθαρισμός path από ?query, #hash, trailing slash και percent-encoding
+  const rawPath = asPath.split('?')[0].split('#')[0];
+  let decodedPath = rawPath;
+  try {
+    decodedPath = decodeURI(rawPath);
+  } catch {
+    decodedPath = rawPath;
+  }
+  const cleanPath = decodedPath === '/' ? '' : decodedPath.replace(/\/$/, '');
 
   // State για το Έξυπνο Banner ανίχνευσης ξένης γλώσσας
   const [showLanguageBanner, setShowLanguageBanner] = useState(false);
 
   useEffect(() => {
-    // Εμφάνιση μόνο αν ο χρήστης είναι στην ελληνική έκδοση και ο browser του είναι ξένος
     if (typeof window !== 'undefined' && locale === 'el') {
       const isDismissed = sessionStorage.getItem('dismissed_lang_banner');
       const browserLang = navigator.language || navigator.userLanguage || '';
@@ -50,11 +58,10 @@ export default function Layout({
   };
 
   // Υπολογισμός Canonical & Alternate URLs
-  const cleanPath = currentPath === '/' ? '' : currentPath;
-  const canonicalUrl = locale === 'en' 
-    ? `${SITE_URL}/en${cleanPath}` 
+  const canonicalUrl = locale === 'en'
+    ? `${SITE_URL}/en${cleanPath}`
     : `${SITE_URL}${cleanPath}`;
-  
+
   const greekUrl = `${SITE_URL}${cleanPath}`;
   const englishUrl = `${SITE_URL}/en${cleanPath}`;
 
@@ -146,7 +153,7 @@ export default function Layout({
             </div>
             <div className="flex items-center gap-3">
               <Link
-                href={currentPath}
+                href={cleanPath || '/'}
                 locale="en"
                 className="bg-white text-indigo-900 hover:bg-indigo-50 px-3 py-1 rounded-lg font-bold transition shadow-sm text-xs"
               >
@@ -197,7 +204,7 @@ export default function Layout({
 
                 {/* ΕΥΔΙΑΚΡΙΤΟ LANGUAGE SWITCHER BUTTON */}
                 <Link
-                  href={currentPath}
+                  href={cleanPath || '/'}
                   locale={locale === 'el' ? 'en' : 'el'}
                   hrefLang={locale === 'el' ? 'en' : 'el'}
                   lang={locale === 'el' ? 'en' : 'el'}
@@ -233,9 +240,15 @@ export default function Layout({
         <footer className="bg-gray-800 text-gray-400 py-6 text-center text-xs sm:text-sm border-t border-gray-700 w-full mt-12">
           <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-4`}>
             <p>© {new Date().getFullYear()} LearnMaths.gr — {locale === 'en' ? 'Curated by: Dimitrios Gkrimpas' : 'Επιμέλεια: Δημήτρης Γκρίμπας'}</p>
-            <div className="flex items-center gap-4 text-xs font-semibold">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold">
+              <Link href="/st-dimotikou" locale={locale} className="hover:text-white transition">
+                {locale === 'en' ? 'Grade 6 Math' : "ΣΤ' Δημοτικού"}
+              </Link>
+              <Link href="/protipa/protipa" locale={locale} className="text-amber-400 hover:text-amber-300 transition">
+                {locale === 'en' ? 'Model Schools 2026' : '🎯 Θέματα Προτύπων 2026'}
+              </Link>
               <Link href="/epikoinonia" locale={locale} className="hover:text-white transition">
-                {locale === 'en' ? '👨‍🏫 About the Creator & Contact' : '👨‍🏫 Σχετικά με τον Δημιουργό & Επικοινωνία'}
+                {locale === 'en' ? '👨‍🏫 About & Contact' : '👨‍🏫 Σχετικά & Επικοινωνία'}
               </Link>
             </div>
           </div>
