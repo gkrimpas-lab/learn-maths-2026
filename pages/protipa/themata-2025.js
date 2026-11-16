@@ -1956,6 +1956,19 @@ const QUESTIONS_2025 = [
 ]
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX εκφωνήσεων (π.χ. Θέμα 26 & 32) σε απλό κείμενο για JSON-LD
+function extractPlainText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractPlainText).join(' ');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      return `${node.props.num}/${node.props.den}`;
+    }
+    return extractPlainText(node.props.children);
+  }
+  return '';
+}
+
 export default function Themata2025Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -1999,7 +2012,6 @@ export default function Themata2025Page() {
     let s = 0;
     QUESTIONS_2025.forEach((q, index) => {
       if (currentAnswers[q.id] === q.correctRaw) {
-        // Τα πρώτα 10 θέματα (index 0-9) παίρνουν 2 μόρια, τα υπόλοιπα 10 (index 10-19) παίρνουν 3 μόρια
         s += index < 10 ? 2 : 3;
       }
     });
@@ -2035,10 +2047,45 @@ export default function Themata2025Page() {
 
   const answeredCount = Object.keys(answers).length;
 
-  // Υπολογισμός συνολικού πλήθους σωστών απαντήσεων
   const correctCount = QUESTIONS_2025.filter(
     q => answers[q.id] === q.correctRaw
   ).length;
+
+  const schema2025 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2025", "item": "https://learnmaths.gr/protipa/themata-2025" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Επίσημα Θέματα Μαθηματικών Προτύπων Γυμνασίων 2025 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ με τα 20 επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2025, χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2025.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        const cleanPrompt = extractPlainText(q.promptText).replace(/\s+/g, ' ').trim();
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2025`,
+          "text": cleanPrompt,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
 
   const renderQuestionVisual = (q) => {
     if (q.hasTable === 'table23') {
@@ -2116,7 +2163,6 @@ export default function Themata2025Page() {
       return (
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-x-auto my-3">
           <svg width="370" height="195" viewBox="0 0 370 195" className="select-none">
-            {/* Οριζόντιες γραμμές 0, 5, 10, 15, 20, 25, 30 */}
             {[0, 5, 10, 15, 20, 25, 30].map((val) => {
               const y = 140 - (val / 30) * 120;
               return (
@@ -2127,7 +2173,6 @@ export default function Themata2025Page() {
               );
             })}
 
-            {/* Στήλες ραβδογράμματος */}
             {[
               { lines: ['Αυγό', 'κότας'], val: 15, isAnimal: true },
               { lines: ['Γάλα', 'αγελάδας'], val: 15, isAnimal: true },
@@ -2146,7 +2191,6 @@ export default function Themata2025Page() {
               return (
                 <g key={idx}>
                   <rect x={x} y={y} width="22" height={h} fill={col.isAnimal ? '#0284c7' : '#0369a1'} rx="2" />
-                  
                   {col.lines.length === 1 ? (
                     <text x={cx} y="156" fontSize="8" fontWeight="bold" textAnchor="middle" fill="#334155">
                       {col.lines[0]}
@@ -2168,7 +2212,6 @@ export default function Themata2025Page() {
     if (q.hasSvg === 'cube34') {
       const cx = 105;
       const cy = 76;
-      
       const ux = 22;
       const uy = 12.7;
       const vx = -22;
@@ -2246,12 +2289,7 @@ export default function Themata2025Page() {
         <div className="flex justify-center p-3 bg-slate-50 rounded-2xl border border-slate-200 my-3">
           <svg width="180" height="180" viewBox="0 0 160 160" className="select-none">
             <rect x="20" y="20" width="120" height="120" fill="#ffffff" stroke="#1e293b" strokeWidth="2.5" />
-            <polygon
-              points="80,50 110,80 80,110 50,80"
-              fill="#64748b"
-              stroke="#1e293b"
-              strokeWidth="2"
-            />
+            <polygon points="80,50 110,80 80,110 50,80" fill="#64748b" stroke="#1e293b" strokeWidth="2" />
             <polygon points="50,20 80,50 50,80 20,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
             <polygon points="110,20 140,50 110,80 80,50" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
             <polygon points="20,110 50,80 80,110 50,140" fill="#ffffff" stroke="#1e293b" strokeWidth="2" />
@@ -2316,10 +2354,11 @@ export default function Themata2025Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2025 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2025: 20 θέματα, 2 μόρια ανά θέμα τα 10 πρώτα, 3 μόρια ανά θέμα τα υπόλοιπα 10 (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2025 – Επίσημα Θέματα & Αναλυτικές Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα επίσημα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2025: 20 ερωτήσεις πολλαπλής επιλογής, 2 μόρια τα 10 πρώτα & 3 μόρια τα υπόλοιπα 10 (0-50 μόρια), χρονόμετρο και αναλυτικές λύσεις με σχήματα."
+      schemaData={schema2025}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -2329,10 +2368,10 @@ export default function Themata2025Page() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider text-blue-100">
-                Επισημα Θεματα 2025 • 20 Ερωτησεις
+                Επίσημα Θέματα 2025 • 20 Ερωτήσεις & Αναλυτικές Λύσεις
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2025
+                Θέματα Προτύπων Γυμνασίων 2025 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -2346,9 +2385,13 @@ export default function Themata2025Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2025. Περιλαμβάνει και τα 20 θέματα με αυτόματη βαθμολόγηση (0–50 μόρια), χρονόμετρο 60 λεπτών και αναλυτικές λύσεις με σχήματα.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 20</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 - 3 μόρια /θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα τα πρώτα 10 – 3 μόρια / θέμα τα υπόλοιπα 10 (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: 60 λεπτά' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
@@ -2358,10 +2401,10 @@ export default function Themata2025Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2025
+              Αποτέλεσμα Εξέτασης Προτύπων 2025
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
-              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικο Σκορ</span>
+              <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
               <span className="text-3xl sm:text-4xl font-mono font-black text-blue-700">
                 {score} / 50
               </span>
@@ -2380,7 +2423,7 @@ export default function Themata2025Page() {
 
         {/* LIST OF 20 QUESTIONS */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {QUESTIONS_2025.map((q, qIdx) => {
+          {QUESTIONS_2025.map((q) => {
             const userChoice = answers[q.id];
             const isCorrect = userChoice === q.correctRaw;
             const pointsValue = q.officialNumber <= 30 ? 2 : 3;
@@ -2414,9 +2457,9 @@ export default function Themata2025Page() {
                 </div>
 
                 {/* ΕΚΦΩΝΗΣΗ */}
-                <p className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed whitespace-pre-line">
+                <div className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed whitespace-pre-line">
                   {q.promptText}
-                </p>
+                </div>
 
                 {/* ΣΧΗΜΑΤΑ / ΠΙΝΑΚΕΣ */}
                 {renderQuestionVisual(q)}
@@ -2460,20 +2503,30 @@ export default function Themata2025Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium whitespace-pre-line">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -2497,7 +2550,7 @@ export default function Themata2025Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 20`}
