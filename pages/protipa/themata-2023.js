@@ -1000,6 +1000,19 @@ const QUESTIONS_2023 = [
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX εκφωνήσεων σε απλό κείμενο για JSON-LD
+function extractPlainText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractPlainText).join(' ');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      return `${node.props.num}/${node.props.den}`;
+    }
+    return extractPlainText(node.props.children);
+  }
+  return '';
+}
+
 export default function Themata2023Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -1082,30 +1095,62 @@ export default function Themata2023Page() {
     q => answers[q.id] === q.correctRaw
   ).length;
 
+  const schema2023 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2023", "item": "https://learnmaths.gr/protipa/themata-2023" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Επίσημα Θέματα Μαθηματικών Προτύπων Γυμνασίων 2023 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ με τα 25 επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2023 (026–050), χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2023.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        const cleanPrompt = extractPlainText(q.promptText).replace(/\s+/g, ' ').trim();
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2023`,
+          "text": cleanPrompt,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
+
   const renderQuestionVisual = (q) => {
     if (q.hasSvg === 'pattern28') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="560" height="60" viewBox="0 0 560 60" className="select-none mx-auto block">
-            {/* 1η Τετράδα (Σχήματα 1 - 4) */}
             <rect x="10" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
             <circle cx="64" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
             <polygon points="104,14 91,42 117,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
             <rect x="134" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
-            {/* 2η Τετράδα (Σχήματα 5 - 8) */}
             <rect x="176" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
             <circle cx="230" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
             <polygon points="270,14 257,42 283,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
             <rect x="300" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
-            {/* 3η Τετράδα (Σχήματα 9 - 12) */}
             <rect x="342" y="18" width="30" height="22" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
             <circle cx="396" cy="29" r="13" fill="none" stroke="#000000" strokeWidth="2.5" />
             <polygon points="436,14 423,42 449,42" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinejoin="round" />
             <rect x="466" y="17" width="24" height="24" fill="none" stroke="#000000" strokeWidth="2.5" rx="1" />
 
-            {/* Αποσιωπητικά (...) */}
             <circle cx="510" cy="30" r="3" fill="#000000" />
             <circle cx="522" cy="30" r="3" fill="#000000" />
             <circle cx="534" cy="30" r="3" fill="#000000" />
@@ -1120,13 +1165,10 @@ export default function Themata2023Page() {
           <svg width="380" height="90" viewBox="0 0 380 90" className="select-none font-mono">
             <line x1="20" y1="45" x2="350" y2="45" stroke="#334155" strokeWidth="2" />
             <polygon points="350,40 360,45 350,50" fill="#334155" />
-            {/* a */}
             <line x1="60" y1="37" x2="60" y2="53" stroke="#2563eb" strokeWidth="2" />
             <text x="60" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#2563eb">α</text>
-            {/* 5/3 */}
             <line x1="180" y1="37" x2="180" y2="53" stroke="#16a34a" strokeWidth="2" />
             <text x="180" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#16a34a">5/3</text>
-            {/* 9/4 */}
             <line x1="300" y1="37" x2="300" y2="53" stroke="#dc2626" strokeWidth="2" />
             <text x="300" y="70" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">9/4</text>
           </svg>
@@ -1138,28 +1180,23 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="260" height="260" viewBox="0 0 260 260" className="select-none font-sans">
-            {/* Κάνναβος */}
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => (
               <g key={i}>
                 <line x1={20 + i * 22} y1="20" x2={20 + i * 22} y2="240" stroke="#e2e8f0" strokeWidth="1.5" />
                 <line x1="20" y1={20 + i * 22} x2="240" y2={20 + i * 22} stroke="#e2e8f0" strokeWidth="1.5" />
               </g>
             ))}
-            {/* Σημείο Ο */}
             <circle cx="42" cy="152" r="4.5" fill="#0f172a" />
             <text x="30" y="146" fontSize="11" fontWeight="bold" fill="#0f172a">Ο</text>
             <line x1="42" y1="152" x2="75" y2="152" stroke="#0f172a" strokeWidth="2.5" />
             <polygon points="75,148 83,152 75,156" fill="#0f172a" />
 
-            {/* Σημείο Α */}
             <circle cx="174" cy="108" r="4.5" fill="#2563eb" />
             <text x="165" y="100" fontSize="11" fontWeight="bold" fill="#2563eb">Α</text>
 
-            {/* Σημείο Β */}
             <circle cx="174" cy="196" r="4.5" fill="#0f172a" />
             <text x="165" y="212" fontSize="11" fontWeight="bold" fill="#0f172a">Β</text>
 
-            {/* Σημείο Γ */}
             <circle cx="218" cy="42" r="4.5" fill="#0f172a" />
             <text x="210" y="34" fontSize="11" fontWeight="bold" fill="#0f172a">Γ</text>
           </svg>
@@ -1237,7 +1274,6 @@ export default function Themata2023Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="450" height="125" viewBox="0 0 450 125" className="select-none font-sans mx-auto block">
-            {/* 1ο σχέδιο */}
             <g transform="translate(15, 10)">
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
               <rect x="15" y="15" width="105" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
@@ -1245,7 +1281,6 @@ export default function Themata2023Page() {
               <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">1ο σχέδιο</text>
             </g>
 
-            {/* 2ο σχέδιο */}
             <g transform="translate(165, 10)">
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
               <rect x="0" y="0" width="52.5" height="30" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
@@ -1257,7 +1292,6 @@ export default function Themata2023Page() {
               <text x="60" y="98" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">2ο σχέδιο</text>
             </g>
 
-            {/* 3ο σχέδιο */}
             <g transform="translate(315, 10)">
               <rect x="0" y="0" width="120" height="75" fill="#ffffff" stroke="#000000" strokeWidth="1.8" />
               <rect x="0" y="0" width="52.5" height="60" fill="#a8a29e" stroke="#000000" strokeWidth="1.2" />
@@ -1321,10 +1355,11 @@ export default function Themata2023Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2023 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2023: 25 θέματα Μαθηματικών (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2023 – Επίσημα Θέματα & Αναλυτικές Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα επίσημα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2023: 25 ερωτήσεις πολλαπλής επιλογής (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
+      schemaData={schema2023}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -1337,7 +1372,7 @@ export default function Themata2023Page() {
                 Επίσημα Θέματα 2023 • 25 Ερωτήσεις Μαθηματικών
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2023
+                Θέματα Προτύπων Γυμνασίων 2023 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -1351,6 +1386,10 @@ export default function Themata2023Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2023. Περιλαμβάνει και τις 25 ερωτήσεις (026–050) με αυτόματη βαθμολόγηση (2 μόρια/θέμα, Άριστα: 50), χρονόμετρο 60 λεπτών και αναλυτικές λύσεις.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
             <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα (Άριστα: 50)</strong></span>
@@ -1363,7 +1402,7 @@ export default function Themata2023Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2023
+              Αποτέλεσμα Εξέτασης Προτύπων 2023
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
               <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
@@ -1461,20 +1500,30 @@ export default function Themata2023Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium whitespace-pre-line">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -1498,7 +1547,7 @@ export default function Themata2023Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
