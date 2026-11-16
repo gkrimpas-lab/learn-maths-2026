@@ -989,6 +989,19 @@ const QUESTIONS_2022 = [
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX εκφωνήσεων σε απλό κείμενο για JSON-LD
+function extractPlainText(node) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map(extractPlainText).join(' ');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      return `${node.props.num}/${node.props.den}`;
+    }
+    return extractPlainText(node.props.children);
+  }
+  return '';
+}
+
 export default function Themata2022Page() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -1071,16 +1084,50 @@ export default function Themata2022Page() {
     q => answers[q.id] === q.correctRaw
   ).length;
 
+  const schema2022 = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Θέματα Προτύπων Γυμνασίων 2022", "item": "https://learnmaths.gr/protipa/themata-2022" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Επίσημα Θέματα Μαθηματικών Προτύπων Γυμνασίων 2022 (Με Λύσεις)",
+      "description": "Διαδραστικό τεστ με τα 25 επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2022 (026–050), χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση (0-50) και αναλυτικές λύσεις.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS_2022.map((q) => {
+        const correctOpt = q.options.find((o) => o.raw === q.correctRaw);
+        const cleanPrompt = extractPlainText(q.promptText).replace(/\s+/g, ' ').trim();
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": `Θέμα ${q.officialNumber} - Πρότυπα 2022`,
+          "text": cleanPrompt,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": correctOpt ? `${correctOpt.key}: ${correctOpt.raw}` : q.correctRaw
+          }
+        };
+      })
+    }
+  ];
+
   const renderQuestionVisual = (q) => {
     if (q.hasSvg === 'transportChart28') {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="320" height="180" viewBox="0 0 320 180" className="select-none font-sans">
-            {/* Άξονες */}
             <line x1="45" y1="20" x2="45" y2="135" stroke="#94a3b8" strokeWidth="1.5" />
             <line x1="45" y1="135" x2="300" y2="135" stroke="#94a3b8" strokeWidth="1.5" />
 
-            {/* Διαγραμμίσεις 0, 10, 20, 30 */}
             {[0, 10, 20, 30].map((v) => {
               const y = 135 - (v / 30) * 110;
               return (
@@ -1091,7 +1138,6 @@ export default function Themata2022Page() {
               );
             })}
 
-            {/* Στήλες */}
             {[
               { label: 'Πεζοί', val: 15 },
               { label: 'ΙΧ αυτοκίνητο', val: 18 },
@@ -1120,13 +1166,10 @@ export default function Themata2022Page() {
           <svg width="360" height="85" viewBox="0 0 360 85" className="select-none font-mono">
             <line x1="20" y1="40" x2="330" y2="40" stroke="#334155" strokeWidth="2" />
             <polygon points="330,35 340,40 330,45" fill="#334155" />
-            {/* 7/9 */}
             <line x1="70" y1="32" x2="70" y2="48" stroke="#475569" strokeWidth="2" />
             <text x="70" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1e293b">7/9</text>
-            {/* 10/9 */}
             <line x1="170" y1="32" x2="170" y2="48" stroke="#475569" strokeWidth="2" />
             <text x="170" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#1e293b">10/9</text>
-            {/* a/b */}
             <line x1="270" y1="32" x2="270" y2="48" stroke="#2563eb" strokeWidth="2" />
             <text x="270" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#2563eb">α/β</text>
           </svg>
@@ -1138,11 +1181,8 @@ export default function Themata2022Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="220" height="150" viewBox="0 0 220 150" className="select-none">
-            {/* Οριζόντιο τμήμα */}
             <rect x="20" y="45" width="180" height="50" fill="#cbd5e1" stroke="#0f172a" strokeWidth="2" />
-            {/* Κατακόρυφο τμήμα */}
             <rect x="120" y="15" width="30" height="115" fill="#cbd5e1" stroke="#0f172a" strokeWidth="2" />
-            {/* Κεντρικό κοινό ορθογώνιο */}
             <rect x="120" y="45" width="30" height="50" fill="#64748b" stroke="#0f172a" strokeWidth="1.5" />
           </svg>
         </div>
@@ -1153,7 +1193,6 @@ export default function Themata2022Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="260" height="160" viewBox="0 0 260 160" className="select-none font-sans">
-            {/* Ελικοειδής διάδρομος λαγουμιού */}
             <path
               d="M 40,25 L 200,25 C 230,25 230,70 200,70 L 60,70 C 30,70 30,115 60,115 L 190,115 C 210,115 210,145 190,145"
               fill="none"
@@ -1168,7 +1207,6 @@ export default function Themata2022Page() {
               strokeWidth="8"
               strokeLinecap="round"
             />
-            {/* Σημεία Α και Β */}
             <text x="20" y="28" fontSize="12" fontWeight="bold" fill="#0f172a">A ➔</text>
             <text x="210" y="150" fontSize="12" fontWeight="bold" fill="#0f172a">⬆ B</text>
           </svg>
@@ -1180,14 +1218,12 @@ export default function Themata2022Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="260" height="170" viewBox="0 0 260 170" className="select-none font-sans">
-            {/* Κάνναβος */}
             {[0, 1, 2, 3, 4, 5, 6].map(i => (
               <line key={`v-${i}`} x1={20 + i * 35} y1="15" x2={20 + i * 35} y2="155" stroke="#e2e8f0" strokeWidth="1.2" />
             ))}
             {[0, 1, 2, 3, 4].map(i => (
               <line key={`h-${i}`} x1="20" y1={15 + i * 35} x2="230" y2={15 + i * 35} stroke="#e2e8f0" strokeWidth="1.2" />
             ))}
-            {/* Πλατεία (σχήμα L) */}
             <polygon
               points="55,50 125,50 125,120 195,120 195,155 55,155"
               fill="#cbd5e1"
@@ -1196,7 +1232,6 @@ export default function Themata2022Page() {
             />
             <text x="90" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">ΠΛΑΤΕΙΑ</text>
 
-            {/* Κήπος (τετράγωνο 1x1) */}
             <rect x="195" y="50" width="35" height="35" fill="#e2e8f0" stroke="#0f172a" strokeWidth="2" />
             <text x="212" y="42" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">ΚΗΠΟΣ</text>
           </svg>
@@ -1208,31 +1243,24 @@ export default function Themata2022Page() {
       return (
         <div className="flex justify-center p-3 bg-white/80 rounded-2xl border border-slate-200/90 overflow-x-auto my-3">
           <svg width="250" height="200" viewBox="0 0 250 200" className="select-none font-sans">
-            {/* Κορυφή Β */}
             <circle cx="105" cy="25" r="4" fill="#0f172a" />
             <text x="105" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Β</text>
 
-            {/* Σημείο Δ */}
             <circle cx="65" cy="95" r="4" fill="#0f172a" />
             <text x="50" y="95" fontSize="11" fontWeight="bold" fill="#0f172a">Δ</text>
 
-            {/* Σημείο Ζ */}
             <circle cx="170" cy="95" r="4" fill="#0f172a" />
             <text x="178" y="95" fontSize="11" fontWeight="bold" fill="#0f172a">Ζ</text>
 
-            {/* Σημείο Ε */}
             <circle cx="130" cy="165" r="4" fill="#0f172a" />
             <text x="130" y="180" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">Ε</text>
 
-            {/* Αρχή Α */}
             <circle cx="30" cy="165" r="4" fill="#0f172a" />
             <text x="20" y="170" fontSize="11" fontWeight="bold" fill="#0f172a">Α</text>
 
-            {/* Τέλος Γ */}
             <circle cx="230" cy="165" r="4" fill="#0f172a" />
             <text x="238" y="170" fontSize="11" fontWeight="bold" fill="#0f172a">Γ</text>
 
-            {/* Γραμμές διαδρομών */}
             <line x1="30" y1="165" x2="65" y2="95" stroke="#0f172a" strokeWidth="2" />
             <line x1="65" y1="95" x2="105" y2="25" stroke="#0f172a" strokeWidth="2" />
             <line x1="105" y1="25" x2="170" y2="95" stroke="#0f172a" strokeWidth="2" />
@@ -1250,10 +1278,11 @@ export default function Themata2022Page() {
 
   return (
     <Layout
-      title="🏛️ Πραγματικά Θέματα 2022 - Πρότυπα Σχολεία | LearnMaths.gr"
-      description="Επίσημα θέματα εξετάσεων εισαγωγής στα Πρότυπα Σχολεία 2022: 25 θέματα Μαθηματικών (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
-      backUrl="/protipa/pragmatika-themata"
-      backText="Πραγματικά Θέματα"
+      title="Θέματα Προτύπων 2022 – Επίσημα Θέματα & Αναλυτικές Λύσεις | LearnMaths.gr"
+      description="Λύσε online τα επίσημα θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2022: 25 ερωτήσεις πολλαπλής επιλογής (026–050), 2 μόρια ανά θέμα (Άριστα: 50 μόρια), χρονόμετρο και αναλυτικές λύσεις."
+      schemaData={schema2022}
+      backUrl="/protipa/protipa"
+      backText="Θέματα Προτύπων"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -1266,7 +1295,7 @@ export default function Themata2022Page() {
                 Επίσημα Θέματα 2022 • 25 Ερωτήσεις Μαθηματικών
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Εξετάσεις Προτύπων 2022
+                Θέματα Προτύπων Γυμνασίων 2022 – Online Τεστ & Λύσεις
               </h1>
             </div>
 
@@ -1280,6 +1309,10 @@ export default function Themata2022Page() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-blue-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου στα επίσημα θέματα Μαθηματικών των εξετάσεων εισαγωγής στα Πρότυπα Γυμνάσια 2022. Περιλαμβάνει και τις 25 ερωτήσεις (026–050) με αυτόματη βαθμολόγηση (2 μόρια/θέμα, Άριστα: 50), χρονόμετρο 60 λεπτών και αναλυτικές λύσεις.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-blue-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
             <span>🎯 Βαθμολογία: <strong>2 μόρια / θέμα (Άριστα: 50)</strong></span>
@@ -1292,7 +1325,7 @@ export default function Themata2022Page() {
           <div className="bg-white border-2 border-blue-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Αποτέλεσμα Εξέτασης 2022
+              Αποτέλεσμα Εξέτασης Προτύπων 2022
             </h2>
             <div className="inline-block bg-blue-50 border border-blue-200 px-6 py-2.5 rounded-2xl">
               <span className="text-xs font-bold text-blue-800 uppercase block">Τελικό Σκορ</span>
@@ -1390,20 +1423,30 @@ export default function Themata2022Page() {
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <div className="font-medium whitespace-pre-line">{q.explain}</div>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-blue-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium whitespace-pre-line">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -1427,7 +1470,7 @@ export default function Themata2022Page() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
