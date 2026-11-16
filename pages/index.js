@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
@@ -6,11 +5,11 @@ import { LAYOUT } from '../shared/layout-config';
 
 const I18N = {
   el: {
-    pageTitle: "LearnMaths.gr - Ασκήσεις Μαθηματικών & Θέματα Προτύπων",
-    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών, άλγεβρα, γεωμετρία (Πυθαγόρειο θεώρημα κ.ά.) και επίσημα θέματα εξετάσεων & τεστ προσομοίωσης για Πρότυπα Σχολεία.",
+    pageTitle: "LearnMaths.gr - Ασκήσεις Μαθηματικών & Θέματα Προτύπων 2026",
+    pageDesc: "Διαδραστικές ασκήσεις μαθηματικών, άλγεβρα, γεωμετρία (Πυθαγόρειο θεώρημα κ.ά.), ενδεικτικά & επίσημα θέματα εξετάσεων 2026 και τεστ προσομοίωσης για Πρότυπα Γυμνάσια.",
     navPrimary: "Δημοτικό",
     navMiddle: "Γυμνάσιο",
-    navProtipa: "🎯 Πρότυπα",
+    navProtipa: "🎯 Πρότυπα 2026",
     navContact: "✉️ Επικοινωνία",
     heroSubtitle: "Μάθε τα Μαθηματικά εύκολα, γρήγορα και διαδραστικά: πλούσιες ασκήσεις άλγεβρας και γεωμετρίας από το Δημοτικό έως το Γυμνάσιο!",
     quickPrimary: "Δημοτικό 🎒",
@@ -19,10 +18,10 @@ const I18N = {
     appBadgeImg: "https://play.google.com/intl/en_us/badges/static/images/badges/el_badge_web_generic.png",
 
     // Protipa Banner
-    protypaBadge: "🎯 ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΠΡΟΤΥΠΩΝ & ΠΡΟΣΟΜΟΙΩΣΗ",
-    protypaTitle: "Θέματα Προτύπων & Τεστ Προσομοίωσης",
-    protypaDesc: "Ολοκληρωμένη προετοιμασία εξετάσεων: επίσημα θέματα προτύπων παλαιότερων ετών με λύσεις, τεστ προσομοίωσης και δωρεάν λήψη όλων των θεμάτων σε PDF!",
-    protypaBtn: "🚀 Θέματα & Προσομοίωση",
+    protypaBadge: "🎯 ΕΝΔΕΙΚΤΙΚΑ & ΕΠΙΣΗΜΑ ΘΕΜΑΤΑ ΠΡΟΤΥΠΩΝ 2026",
+    protypaTitle: "Θέματα Προτύπων 2026 & Τεστ Προσομοίωσης",
+    protypaDesc: "Ολοκληρωμένη προετοιμασία εξετάσεων: ενδεικτικά & επίσημα θέματα προτύπων 2026 (και 2020–2025) με αναλυτικές λύσεις, τεστ προσομοίωσης και δωρεάν PDF!",
+    protypaBtn: "🚀 Θέματα Προτύπων 2026",
 
     // Primary School Section
     primarySectionTitle: "🎒 Μαθηματικά Δημοτικού",
@@ -50,9 +49,9 @@ const I18N = {
 
     // SEO Overview
     seoMainTitle: "Διαδραστικές Ασκήσεις Μαθηματικών & Προετοιμασία Εξετάσεων",
-    seoMainDesc: "Στο LearnMaths.gr μαθητές Δημοτικού και Γυμνασίου βρίσκουν πλούσιες ασκήσεις μαθηματικών, διαδραστική άλγεβρα, ασκήσεις γεωμετρίας (όπως το Πυθαγόρειο θεώρημα) και επίσημα θέματα εξετάσεων με τεστ προσομοίωσης για τα Πρότυπα Σχολεία.",
-    seoCard1Title: "Θέματα Προτύπων & Προσομοίωση",
-    seoCard1Desc: "Επίσημα θέματα προτύπων προηγούμενων ετών, διαδραστικά τεστ προσομοίωσης, αναλυτικές απαντήσεις και δωρεάν αρχεία PDF.",
+    seoMainDesc: "Στο LearnMaths.gr μαθητές Δημοτικού και Γυμνασίου βρίσκουν πλούσιες ασκήσεις μαθηματικών, διαδραστική άλγεβρα, ασκήσεις γεωμετρίας (όπως το Πυθαγόρειο θεώρημα) και ενδεικτικά & επίσημα θέματα εξετάσεων 2026 με τεστ προσομοίωσης για τα Πρότυπα Σχολεία.",
+    seoCard1Title: "Θέματα Προτύπων 2026 & Προσομοίωση",
+    seoCard1Desc: "Ενδεικτικά και επίσημα θέματα προτύπων (2020–2026), διαδραστικά τεστ προσομοίωσης, αναλυτικές απαντήσεις και δωρεάν αρχεία PDF.",
     seoCard2Title: "Ασκήσεις Άλγεβρας & Γεωμετρίας",
     seoCard2Desc: "Από κλάσματα, ΕΚΠ και εξισώσεις μέχρι το Πυθαγόρειο θεώρημα, οι μαθητές λύνουν ασκήσεις άλγεβρας και γεωμετρίας με δυναμικούς προσομοιωτές.",
     seoCard3Title: "Μελέτη & Εξάσκηση Online",
@@ -61,20 +60,20 @@ const I18N = {
     // FAQ
     faqTitle: "Συχνές Ερωτήσεις (FAQ)",
     faq1Q: "Είναι το περιεχόμενο του LearnMaths.gr δωρεάν;",
-    faq1A: "Ναι, όλο το εκπαιδευτικό υλικό, η θεωρία, οι ασκήσεις μαθηματικών, τα εργαλεία άλγεβρας και τα θέματα για τα Πρότυπα Σχολεία διατίθενται εντελώς δωρεάν.",
+    faq1A: "Ναι, όλο το εκπαιδευτικό υλικό, η θεωρία, οι ασκήσεις μαθηματικών, τα εργαλεία άλγεβρας και τα θέματα για τα Πρότυπα Σχολεία 2026 διατίθενται εντελώς δωρεάν.",
     faq2Q: "Ποιες τάξεις και αντικείμενα καλύπτει η πλατφόρμα;",
     faq2A: "Καλύπτει τάξεις Δημοτικού (Δ΄, Ε΄, ΣΤ΄) και Γυμνασίου (Α΄, Β΄, Γ΄), περιλαμβάνει ενότητες άλγεβρας και γεωμετρίας (όπως το Πυθαγόρειο θεώρημα) και ειδική ενότητα προετοιμασίας για Πρότυπα Σχολεία.",
-    faq3Q: "Περιλαμβάνονται επίσημα θέματα και τεστ προσομοίωσης για Πρότυπα;",
-    faq3A: "Βεβαίως! Παρέχονται επίσημα θέματα προτύπων προηγούμενων ετών με πλήρεις λύσεις, τεστ προσομοίωσης με αυτόματη βαθμολόγηση και δυνατότητα δωρεάν λήψης των θεμάτων σε PDF.",
+    faq3Q: "Περιλαμβάνονται ενδεικτικά & επίσημα θέματα 2026 για Πρότυπα;",
+    faq3A: "Βεβαίως! Παρέχονται τα θέματα προτύπων 2026 καθώς και παλαιότερων ετών (2020–2025) με πλήρεις λύσεις, τεστ προσομοίωσης με αυτόματη βαθμολόγηση και δωρεάν PDF.",
     faq4Q: "Πώς βοηθούν οι διαδραστικές ασκήσεις στην κατανόηση;",
     faq4A: "Αντί για στείρα αποστήθιση τύπων, οι μαθητές χειρίζονται οπτικά μοντέλα (ράβδους κλασμάτων, ζυγαριές εξισώσεων, καρτεσιανούς άξονες και γεωμετρικά σχήματα), αποκτώντας ουσιαστική μαθηματική αντίληψη."
   },
   en: {
-    pageTitle: "LearnMaths.gr - Mathematics Exercises & Entrance Exams Prep",
-    pageDesc: "Interactive math exercises, algebra, geometry (Pythagorean theorem), official past papers, and mock simulation tests for Model Magnet Schools.",
+    pageTitle: "LearnMaths.gr - Mathematics Exercises & Model Schools 2026 Prep",
+    pageDesc: "Interactive math exercises, algebra, geometry (Pythagorean theorem), official 2026 past papers, and mock simulation tests for Model Magnet Schools.",
     navPrimary: "Elementary",
     navMiddle: "Middle School",
-    navProtipa: "🎯 Exam Prep",
+    navProtipa: "🎯 Exam Prep 2026",
     navContact: "✉️ Contact",
     heroSubtitle: "Learn Mathematics easily, quickly, and interactively: rich algebra and geometry exercises from Elementary to Middle School!",
     quickPrimary: "Elementary 🎒",
@@ -83,10 +82,10 @@ const I18N = {
     appBadgeImg: "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
 
     // Protipa Banner
-    protypaBadge: "🎯 OFFICIAL EXAM PAPERS & MOCK TESTS",
-    protypaTitle: "Model & Magnet School Entrance",
-    protypaDesc: "Prepare for standardized entrance examinations with official past papers, full simulation tests, and free downloadable PDFs!",
-    protypaBtn: "🚀 Access Exam Materials",
+    protypaBadge: "🎯 OFFICIAL 2026 EXAM PAPERS & MOCK TESTS",
+    protypaTitle: "Model School Entrance 2026 & Mock Tests",
+    protypaDesc: "Prepare for standardized entrance examinations with official 2026 past papers, full simulation tests, and free downloadable PDFs!",
+    protypaBtn: "🚀 Access 2026 Exam Materials",
 
     // Primary School Section
     primarySectionTitle: "🎒 Elementary Mathematics",
@@ -114,9 +113,9 @@ const I18N = {
 
     // SEO Overview
     seoMainTitle: "Interactive Mathematics Aligned with Curriculum Standards",
-    seoMainDesc: "LearnMaths.gr helps students gain deep conceptual understanding through interactive exercises, algebra simulators, geometry modules, and past entrance exam preparation.",
-    seoCard1Title: "Model School Preparation",
-    seoCard1Desc: "Comprehensive collection of past entrance exam papers, step-by-step solutions, and downloadable PDF material.",
+    seoMainDesc: "LearnMaths.gr helps students gain deep conceptual understanding through interactive exercises, algebra simulators, geometry modules, and 2026 entrance exam preparation.",
+    seoCard1Title: "Model School 2026 Preparation",
+    seoCard1Desc: "Comprehensive collection of 2020–2026 past entrance exam papers, step-by-step solutions, and downloadable PDF material.",
     seoCard2Title: "Algebra & Geometry Exercises",
     seoCard2Desc: "From fractions and equations to the Pythagorean theorem, students learn through interactive experimentation.",
     seoCard3Title: "Study Anywhere",
@@ -125,11 +124,11 @@ const I18N = {
     // FAQ
     faqTitle: "Frequently Asked Questions (FAQ)",
     faq1Q: "Is LearnMaths.gr completely free?",
-    faq1A: "Yes, all educational resources, theory lessons, interactive tools, and entrance examination materials are provided completely free for students and educators.",
+    faq1A: "Yes, all educational resources, theory lessons, interactive tools, and 2026 entrance examination materials are provided completely free for students and educators.",
     faq2Q: "Which grades are covered by the platform?",
     faq2A: "The platform covers Elementary school (Grades 4, 5, 6), all Middle School grades (Grades 7, 8, 9), and includes a dedicated section for Model School entrance preparation.",
-    faq3Q: "Are official exam papers and mock tests included?",
-    faq3A: "Yes, official past papers with detailed solutions, automatic mock simulation tests, and free downloadable PDFs are fully accessible.",
+    faq3Q: "Are official 2026 exam papers and mock tests included?",
+    faq3A: "Yes, official 2026 and past papers (2020–2025) with detailed solutions, automatic mock simulation tests, and free downloadable PDFs are fully accessible.",
     faq4Q: "How do interactive exercises enhance mathematical understanding?",
     faq4A: "Rather than rote memorization, students manipulate visual models (such as fraction bars, equation balance scales, and geometry tools), fostering deep conceptual understanding."
   }
@@ -140,29 +139,7 @@ export default function Home() {
   const locale = router.locale === 'en' ? 'en' : 'el';
   const t = I18N[locale];
 
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "LearnMaths.gr",
-    "url": "https://learnmaths.gr",
-    "description": t.pageDesc,
-    "keywords": [
-      "ασκήσεις μαθηματικά",
-      "ασκήσεις μαθηματικών",
-      "ασκήσεις άλγεβρα",
-      "ασκήσεις γεωμετρία",
-      "πυθαγόρειο θεώρημα",
-      "θέματα πρότυπα",
-      "θέματα προτύπων",
-      "τεστ προσομοίωσης",
-      "προσομοίωση προτύπων",
-      "επίσημα θέματα προτύπων"
-    ],
-    "inLanguage": "el-GR"
-  };
-
   const faqSchema = {
-    "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
       {
@@ -196,14 +173,14 @@ export default function Home() {
       <a href="#gymnasio" className="hover:text-indigo-600 transition font-semibold text-xs sm:text-sm">
         {t.navMiddle}
       </a>
-      <Link 
+      <Link
         href="/protipa/protipa"
         locale={locale}
         className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition duration-300"
       >
         {t.navProtipa}
       </Link>
-      <Link 
+      <Link
         href="/epikoinonia"
         locale={locale}
         className="text-gray-600 hover:text-blue-600 font-semibold transition border-l pl-3 sm:pl-4 border-gray-200 text-xs sm:text-sm"
@@ -217,21 +194,11 @@ export default function Home() {
     <Layout
       title={t.pageTitle}
       description={t.pageDesc}
+      schemaData={faqSchema}
       customNavContent={navLinks}
       fullWidth={true}
       showAds={true}
     >
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      </Head>
-
       {/* 1. HERO SECTION */}
       <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-8 sm:py-10 md:py-12 text-center shadow-md -mt-2">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-4">
@@ -246,14 +213,14 @@ export default function Home() {
 
           {/* Quick Jump Buttons */}
           <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3 pt-1">
-            <a 
-              href="#demotiko" 
+            <a
+              href="#demotiko"
               className="bg-white text-blue-700 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full font-bold shadow-sm hover:bg-gray-100 transition text-xs sm:text-sm active:scale-95"
             >
               {t.quickPrimary}
             </a>
-            <a 
-              href="#gymnasio" 
+            <a
+              href="#gymnasio"
               className="bg-indigo-500 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full font-bold shadow-sm hover:bg-indigo-600 transition border border-indigo-400 text-xs sm:text-sm active:scale-95"
             >
               {t.quickMiddle}
@@ -334,7 +301,7 @@ export default function Home() {
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.modulesTitle}</p>
                   <p className="text-gray-500 text-xs leading-relaxed">{t.classDDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/d-dimotikou"
                   locale={locale}
                   className="block w-full text-center bg-teal-500 text-white py-2.5 rounded-xl font-black hover:bg-teal-600 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
@@ -352,9 +319,9 @@ export default function Home() {
               <div className="p-5 text-center flex-1 flex flex-col justify-between space-y-4">
                 <div>
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.modulesTitle}</p>
-                  <p className="text-gray-500 text-xs leading-relaxed">{t.classEDDesc}</p>
+                  <p className="text-gray-500 text-xs leading-relaxed">{t.classEDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/e-dimotikou"
                   locale={locale}
                   className="block w-full text-center bg-cyan-500 text-white py-2.5 rounded-xl font-black hover:bg-cyan-600 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
@@ -374,7 +341,7 @@ export default function Home() {
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.modulesTitle}</p>
                   <p className="text-gray-600 text-xs leading-relaxed">{t.classSTDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/st-dimotikou"
                   locale={locale}
                   className="block w-full text-center bg-blue-600 text-white py-2.5 rounded-xl font-black hover:bg-blue-700 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
@@ -413,7 +380,7 @@ export default function Home() {
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.modulesTitle}</p>
                   <p className="text-gray-600 text-xs leading-relaxed">{t.classA_GymDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/a-gymnasiou"
                   locale={locale}
                   className="block w-full text-center bg-indigo-600 text-white py-2.5 rounded-xl font-black hover:bg-indigo-700 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
@@ -433,7 +400,7 @@ export default function Home() {
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.classB_GymModuleTitle}</p>
                   <p className="text-gray-500 text-xs leading-relaxed">{t.classB_GymDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/b-gymnasiou"
                   locale={locale}
                   className="block w-full text-center bg-indigo-600 text-white py-2.5 rounded-xl font-black hover:bg-indigo-700 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
@@ -453,7 +420,7 @@ export default function Home() {
                   <p className="text-gray-800 font-bold mb-1.5 text-sm sm:text-base">{t.modulesTitle}</p>
                   <p className="text-gray-600 text-xs leading-relaxed">{t.classG_GymDesc}</p>
                 </div>
-                <Link 
+                <Link
                   href="/g-gymnasiou"
                   locale={locale}
                   className="block w-full text-center bg-purple-600 text-white py-2.5 rounded-xl font-black hover:bg-purple-700 transition shadow-sm text-xs sm:text-sm touch-manipulation active:scale-95"
