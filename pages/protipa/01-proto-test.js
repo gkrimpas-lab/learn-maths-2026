@@ -3725,6 +3725,19 @@ const QUESTIONS = [
 
 const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
 
+// Helper για ασφαλή μετατροπή JSX επιλογών (π.χ. <Fraction num="21" den="25" />) σε string
+function extractOptionText(opt) {
+  if (typeof opt === 'string' || typeof opt === 'number') return String(opt);
+  if (Array.isArray(opt)) return opt.map(extractOptionText).join('');
+  if (opt && typeof opt === 'object' && opt.props) {
+    if (opt.props.num !== undefined && opt.props.den !== undefined) {
+      return `${opt.props.num}/${opt.props.den}`;
+    }
+    return extractOptionText(opt.props.children);
+  }
+  return '';
+}
+
 export default function ProtoTestProsomoiosisPage() {
   const router = useRouter();
   const [answers, setAnswers] = useState({});
@@ -3735,7 +3748,6 @@ export default function ProtoTestProsomoiosisPage() {
 
   const timerRef = useRef(null);
 
-  // Ανάγνωση του query param `timer` (0 ή 1)
   useEffect(() => {
     if (router.isReady) {
       const { timer } = router.query;
@@ -3747,7 +3759,6 @@ export default function ProtoTestProsomoiosisPage() {
     }
   }, [router.isReady, router.query]);
 
-  // Αντίστροφη μέτρηση
   useEffect(() => {
     if (!timerEnabled || submitted) return;
 
@@ -3765,9 +3776,9 @@ export default function ProtoTestProsomoiosisPage() {
     return () => clearInterval(timerRef.current);
   }, [timerEnabled, submitted]);
 
-  const handleSelect = (qId, option) => {
+  const handleSelect = (qId, optionVal) => {
     if (submitted) return;
-    setAnswers(prev => ({ ...prev, [qId]: option }));
+    setAnswers(prev => ({ ...prev, [qId]: optionVal }));
   };
 
   const calculateScore = (currentAnswers) => {
@@ -3809,12 +3820,46 @@ export default function ProtoTestProsomoiosisPage() {
 
   const answeredCount = Object.keys(answers).length;
 
+  const schemaProtoTest = [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
+        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
+        { "@type": "ListItem", "position": 3, "name": "Τεστ Προσομοίωσης Προτύπων 2026", "item": "https://learnmaths.gr/protipa/test-prosomoiosis" },
+        { "@type": "ListItem", "position": 4, "name": "1ο Τεστ Προσομοίωσης – Ενδεικτικά Θέματα 2026", "item": "https://learnmaths.gr/protipa/01-proto-test" }
+      ]
+    },
+    {
+      "@type": "Quiz",
+      "name": "Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης Μαθηματικών",
+      "description": "1ο Διαγνωστικό Τεστ Προσομοίωσης με ενδεικτικά θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2026: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, βαθμολογία 0-50 και αναλυτικές λύσεις με SVG σχήματα.",
+      "educationalLevel": "ΣΤ' Δημοτικού",
+      "inLanguage": "el",
+      "isAccessibleForFree": true,
+      "provider": {
+        "@id": "https://learnmaths.gr/#organization"
+      },
+      "hasPart": QUESTIONS.map((q) => ({
+        "@type": "Question",
+        "eduQuestionType": "Multiple choice",
+        "name": `Ενδεικτικό Θέμα ${q.id} - Πρότυπα 2026`,
+        "text": q.prompt,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": q.correct
+        }
+      }))
+    }
+  ];
+
   return (
     <Layout
-      title="🎯 1ο Τεστ Προσομοίωσης Προτύπων - LearnMaths.gr"
-      description="1ο Διαγνωστικό Τεστ Προσομοίωσης Μαθηματικών για τα Πρότυπα Σχολεία: 25 θέματα, 60 λεπτά, βαθμολογία 0-50 με αναλυτικές λύσεις."
+      title="Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης | LearnMaths.gr"
+      description="1ο Τεστ Προσομοίωσης με ενδεικτικά θέματα Προτύπων 2026 στα Μαθηματικά: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση 0-50 και αναλυτικές λύσεις με σχήματα."
+      schemaData={schemaProtoTest}
       backUrl="/protipa/test-prosomoiosis"
-      backText="Τεστ Προσομοίωσης"
+      backText="Τεστ Προσομοίωσης 2026"
       hideFooter={true}
     >
       <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
@@ -3824,10 +3869,10 @@ export default function ProtoTestProsomoiosisPage() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black tracking-wider text-purple-100">
-                1ο Τεστ • 25 Θέματα (Άριστα: 50 Μόρια)
+                Ενδεικτικά Θέματα Προτύπων 2026 • 1ο Τεστ (25 Θέματα)
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                1ο Τεστ Προσομοίωσης Εξετάσεων
+                Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης
               </h1>
             </div>
 
@@ -3841,9 +3886,13 @@ export default function ProtoTestProsomoiosisPage() {
             )}
           </div>
 
+          <p className="text-xs sm:text-sm text-purple-100/95 leading-relaxed max-w-3xl">
+            Εξασκήσου σε 25 επιλεγμένα ενδεικτικά θέματα Μαθηματικών για τις εξετάσεις των Προτύπων Γυμνασίων 2026 (αριθμητική, κλάσματα, ποσοστά, εξισώσεις, γεωμετρία και συνδυαστική λογική) με αναλυτικές λύσεις βήμα-βήμα.
+          </p>
+
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-purple-100 border-t border-white/20 pt-3">
             <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2 μόρια / σωστό</strong></span>
+            <span>🎯 Βαθμολογία: <strong>2 μόρια / σωστό (Άριστα: 50)</strong></span>
             <span>{timerEnabled ? '⏳ Χρονόμετρο: Ενεργό (60\')' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
           </div>
         </div>
@@ -3853,7 +3902,7 @@ export default function ProtoTestProsomoiosisPage() {
           <div className="bg-white border-2 border-indigo-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Ολοκλήρωση Τεστ!
+              Ολοκλήρωση 1ου Τεστ Προσομοίωσης!
             </h2>
             <div className="inline-block bg-indigo-50 border border-indigo-200 px-6 py-2 rounded-2xl">
               <span className="text-xs font-bold text-indigo-800 uppercase block">Τελικό Σκορ</span>
@@ -3912,11 +3961,12 @@ export default function ProtoTestProsomoiosisPage() {
                 {/* ΕΠΙΛΟΓΕΣ */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                   {q.options.map((opt, optIdx) => {
-                    const isSelected = userChoice === opt;
+                    const optVal = extractOptionText(opt);
+                    const isSelected = userChoice === optVal;
                     let btnStyle = 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50';
 
                     if (submitted) {
-                      if (opt === q.correct) {
+                      if (optVal === q.correct) {
                         btnStyle = 'bg-emerald-600 text-white border-emerald-600 shadow-sm font-black';
                       } else if (isSelected && !isCorrect) {
                         btnStyle = 'bg-rose-600 text-white border-rose-600 font-black';
@@ -3932,36 +3982,46 @@ export default function ProtoTestProsomoiosisPage() {
                         key={optIdx}
                         type="button"
                         disabled={submitted}
-                        onClick={() => handleSelect(q.id, opt)}
+                        onClick={() => handleSelect(q.id, optVal)}
                         className={`p-3 rounded-2xl border text-left text-xs sm:text-sm transition flex items-center gap-3 ${btnStyle}`}
                       >
                         <span className={`w-6 h-6 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 border ${
-                          isSelected || (submitted && opt === q.correct)
+                          isSelected || (submitted && optVal === q.correct)
                             ? 'bg-white/20 border-white/40 text-white'
                             : 'bg-slate-100 border-slate-200 text-slate-700'
                         }`}>
                           {String.fromCharCode(65 + optIdx)}
                         </span>
-                        <span className="font-mono font-bold leading-tight">{opt}</span>
+                        <span className="font-mono font-bold leading-tight flex items-center">{opt}</span>
                       </button>
                     );
                   })}
                 </div>
 
-                {/* ΕΠΕΞΗΓΗΣΗ ΜΕΤΑ ΤΗΝ ΥΠΟΒΟΛΗ */}
-                {submitted && (
-                  <div className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed border ${
-                    isCorrect 
-                      ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200' 
-                      : 'bg-rose-100/60 text-rose-950 border-rose-200'
-                  }`}>
-                    <div className="font-black mb-1 flex items-center gap-1.5">
+                {/* ΕΠΕΞΗΓΗΣΗ: Πάντα στο DOM για SEO (σε <details> πριν την υποβολή, ανοιχτή μετά) */}
+                <details
+                  open={submitted}
+                  className={`group rounded-2xl text-xs sm:text-sm leading-relaxed border transition ${
+                    submitted
+                      ? isCorrect
+                        ? 'bg-emerald-100/60 text-emerald-950 border-emerald-200'
+                        : 'bg-rose-100/60 text-rose-950 border-rose-200'
+                      : 'bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
+                    <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>Μαθηματική Επεξήγηση:</span>
-                    </div>
-                    <p className="font-medium">{q.explain}</p>
+                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                    </span>
+                    {!submitted && (
+                      <span className="text-xs font-bold text-indigo-600 group-open:rotate-180 transition-transform">▼</span>
+                    )}
+                  </summary>
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium">
+                    {q.explain}
                   </div>
-                )}
+                </details>
               </div>
             );
           })}
@@ -3985,7 +4045,7 @@ export default function ProtoTestProsomoiosisPage() {
       {/* FIXED BOTTOM SCORE & TIMER BAR */}
       <div className="fixed bottom-0 left-0 w-full bg-slate-900 text-white border-t border-slate-800 shadow-2xl py-3 px-4 sm:px-6 z-50">
         <div className={`${LAYOUT.CONTAINER} flex flex-col sm:flex-row justify-between items-center gap-3`}>
-          
+
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
               {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
