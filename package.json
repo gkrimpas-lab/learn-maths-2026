@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@vercel/analytics": "^1.2.0",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

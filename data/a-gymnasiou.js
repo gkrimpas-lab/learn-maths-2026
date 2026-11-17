@@ -1023,5 +1023,86 @@ export const A_GYMNASIOU_CHAPTERS = [
     'review 5 geometry',
     '3D solids review test'
   ]
-}
+},
+{
+  id: '55-mikos',
+  section: 'geometry',
+  slug: '55-mikos',
+  icon: '📏',
+  title: 'Μέτρηση Μήκους, Ευθύγραμμα Τμήματα & Περίμετρος Πολυγώνων',
+  titleEn: 'Measuring Length, Line Segments & Polygon Perimeter',
+  desc: 'Μονάδες μήκους (SI), πολλαπλάσια και υποδιαιρέσεις του μέτρου, μετατροπές, σύγκριση, άθροισμα και διαφορά ευθυγράμμων τμημάτων και περίμετρος πολυγώνων.',
+  descEn: 'Metric length units (SI), multiples and submultiples of the meter, unit conversions, comparing, adding and subtracting line segments, and polygon perimeter.',
+  badge: 'ΚΕΦΑΛΑΙΟ 16',
+  badgeEn: 'CHAPTER 16',
+  active: true,
+  keywords: [
+    'μέτρηση μήκους',
+    'μονάδες μήκους',
+    'υποδιαιρέσεις μέτρου',
+    'πολλαπλάσια μέτρου',
+    'μετατροπές μονάδων',
+    'ευθύγραμμα τμήματα',
+    'άθροισμα τμημάτων',
+    'διαφορά τμημάτων',
+    'περίμετρος πολυγώνου',
+    'length measurement',
+    'metric units',
+    'unit conversions',
+    'line segments',
+    'polygon perimeter'
+  ]
+},
+{
+  id: '56-metrisi-gonion',
+  section: 'geometry',
+  slug: '56-metrisi-gonion',
+  icon: '📐',
+  title: 'Μέτρηση Γωνιών, Μέτρο Τόξου & Γωνίες Τριγώνου και Τετραπλεύρου',
+  titleEn: 'Measuring Angles, Arc Measure & Triangle and Quadrilateral Angles',
+  desc: 'Μέτρο γωνίας και μονάδες μέτρησης (μοίρες, πρώτα, δεύτερα), σύγκριση, πρόσθεση και αφαίρεση γωνιών, μέτρο τόξου και υπολογισμός γωνιών τριγώνου και τετραπλεύρου.',
+  descEn: 'Angle measure and units (degrees, minutes, seconds), comparing, adding and subtracting angles, arc measure, and finding triangle and quadrilateral angles.',
+  badge: 'ΚΕΦΑΛΑΙΟ 17',
+  badgeEn: 'CHAPTER 17',
+  active: true,
+  keywords: [
+    'μέτρηση γωνιών',
+    'μέτρο γωνίας',
+    'μοίρες πρώτα δεύτερα',
+    'πρόσθεση αφαίρεση γωνιών',
+    'μέτρο τόξου',
+    'επίκεντρη γωνία',
+    'γωνίες τριγώνου',
+    'γωνίες τετραπλεύρου',
+    'measuring angles',
+    'angle measure',
+    'arc measure',
+    'triangle angles',
+    'quadrilateral angles'
+  ]
+},
+{
+  id: '57-epanalipsi-6',
+  section: 'geometry',
+  slug: '57-epanalipsi-6',
+  icon: '🏆',
+  title: 'Επαναληπτικές Ασκήσεις: Ενότητες 16 και 17',
+  titleEn: 'Review Exercises: Units 16 and 17',
+  desc: 'Επαναληπτικό διαγώνισμα στα Κεφάλαια 16 και 17 με 4 ασκήσεις ανά κεφάλαιο και 4 δύσκολα συνδυαστικά προβλήματα σε μονάδες μήκους, τμήματα, περίμετρο, γωνίες, τόξα και πολύγωνα.',
+  descEn: 'Review test covering Chapters 16 and 17 with 4 exercises per chapter and 4 challenging multi-step problems on length units, segments, perimeter, angles, arcs, and polygons.',
+  badge: 'ΕΠΑΝΑΛΗΨΗ 7',
+  badgeEn: 'REVIEW 7',
+  isReview: true,
+  active: true,
+  keywords: [
+    'επανάληψη γεωμετρία α γυμνασίου',
+    'επανάληψη κεφάλαιο 16 17',
+    'μέτρηση μήκους επανάληψη',
+    'μέτρηση γωνιών επανάληψη',
+    'διαγώνισμα α γυμνασίου',
+    'grade 7 geometry review',
+    'measuring length and angles review',
+    'chapters 16 and 17 test'
+  ]
+},
 ];
