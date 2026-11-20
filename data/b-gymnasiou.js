@@ -85,6 +85,39 @@ export const B_GYMNASIOU_CHAPTERS = [
     active: true,
     keywords: ['πραγματικοί αριθμοί', 'άρρητοι αριθμοί', 'ασκήσεις μαθηματικά']
   },
+  {
+    id: '06-pragmatikoi',
+    section: 'algebra',
+    slug: '06-pragmatikoi',
+    icon: '√',
+    title: 'Πραγματικοί Αριθμοί, Τετράγωνοι Αριθμοί & Δυνάμεις',
+    titleEn: 'Real Numbers, Square Numbers & Integer Powers',
+    desc: 'Πραγματικοί και άρρητοι αριθμοί, γεωμετρική τοποθέτηση άρρητων στην ευθεία ℝ, τετράγωνοι αριθμοί, δυνάμεις με βάση πραγματικό και εκθέτη ακέραιο και ιδιότητες δυνάμεων.',
+    descEn: 'Real and irrational numbers, locating irrationals on the real number line ℝ, square numbers, powers with real bases and integer exponents, and exponent properties.',
+    badge: 'ΚΕΦΑΛΑΙΟ 6',
+    badgeEn: 'CHAPTER 6',
+    active: true,
+    keywords: [
+      'ασκήσεις άλγεβρα',
+      'πραγματικοί αριθμοί',
+      'άρρητοι αριθμοί',
+      'τετράγωνοι αριθμοί',
+      'τοποθέτηση άρρητων στην ευθεία',
+      'τετραγωνική ρίζα',
+      'δυνάμεις με ακέραιο εκθέτη',
+      'αρνητικός εκθέτης',
+      'ιδιότητες δυνάμεων',
+      'algebra exercises',
+      'real numbers',
+      'irrational numbers',
+      'square numbers',
+      'real number line',
+      'square root',
+      'integer exponents',
+      'negative exponent',
+      'exponent properties'
+    ]
+  },
 
   // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {
