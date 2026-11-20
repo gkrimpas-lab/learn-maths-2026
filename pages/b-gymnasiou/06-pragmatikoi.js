@@ -259,7 +259,6 @@ export default function PragmatikoiTheoryPage() {
   };
 
   const currentRoot = rootConfigs[selectedRoot];
-  // Συντεταγμένες SVG για τον άξονα R (0 -> x=80, 1 μονάδα = 140px)
   const originX = 80;
   const originY = 230;
   const unitPx = 135;
@@ -268,7 +267,7 @@ export default function PragmatikoiTheoryPage() {
   const pointBX = pointAX;
   const pointBY = originY - currentRoot.legB * unitPx;
 
-  const startAngle = Math.atan2(pointBY - originY, pointBX - originX); // αρνητική γωνία σε rad
+  const startAngle = Math.atan2(pointBY - originY, pointBX - originX);
   const currentAngle = startAngle * (1 - compassProgress / 100);
   const radiusPx = currentRoot.hyp * unitPx;
   const tipX = originX + radiusPx * Math.cos(currentAngle);
@@ -291,7 +290,9 @@ export default function PragmatikoiTheoryPage() {
 
     if (n === 0) {
       return {
-        step: isEn ? 'Any non-zero real number to the 0th power equals 1' : 'Κάθε μη μηδενικός πραγματικός στη μηδενική ισούται με 1',
+        step: isEn
+          ? 'Any non-zero real number to the 0th power equals 1'
+          : 'Κάθε μη μηδενικός πραγματικός στη μηδενική ισούται με 1',
         valueNode: <span>1</span>,
         signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
       };
@@ -301,10 +302,7 @@ export default function PragmatikoiTheoryPage() {
       const b = Number(baseChoice);
       const powVal = Math.pow(b, absN);
       return {
-        step:
-          n > 0
-            ? `${b} · `.repeat(n).slice(0, -3)
-            : null,
+        step: n > 0 ? `${b} · `.repeat(n).slice(0, -3) : null,
         isNegExp: n < 0,
         negDen: `${b}^${absN}`,
         valueNode: n > 0 ? <span>{powVal}</span> : <Frac num="1" den={String(powVal)} />,
@@ -379,18 +377,33 @@ export default function PragmatikoiTheoryPage() {
     ? 'Chapter 6: Real Numbers & Integer Powers | 8th Grade'
     : "Κεφάλαιο 6: Πραγματικοί Αριθμοί & Δυνάμεις | Β' Γυμνασίου";
 
+  // Κουμπιά πλοήγησης πάνω δεξιά (Ασκήσεις + Επιστροφή στη Β' Γυμνασίου όπως στην εικόνα)
   const actionButton = (
-    <Link
-      href="/b-gymnasiou/06-pragmatikoi-ask"
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-colors"
-    >
-      <span>{toCleanUppercase(isEn ? 'PRACTICE EXERCISES' : 'ΕΞΑΣΚΗΣΗ ΣΤΙΣ ΑΣΚΗΣΕΙΣ')}</span>
-      <span aria-hidden="true">→</span>
-    </Link>
+    <div className="flex items-center gap-2">
+      <Link
+        href="/b-gymnasiou/06-pragmatikoi-ask"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-sm transition-colors"
+      >
+        <span aria-hidden="true">🎯</span>
+        <span>{toCleanUppercase(isEn ? 'EXERCISES' : 'ΑΣΚΗΣΕΙΣ')}</span>
+      </Link>
+      <Link
+        href="/b-gymnasiou"
+        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition-colors"
+      >
+        <span aria-hidden="true">🔙</span>
+        <span>{isEn ? '8th Grade' : "Β' Γυμνασίου"}</span>
+      </Link>
+    </div>
   );
 
   return (
-    <Layout title={pageTitle} actionButton={actionButton}>
+    <Layout
+      title={pageTitle}
+      actionButton={actionButton}
+      backUrl="/b-gymnasiou"
+      backLabel={isEn ? '8th Grade' : "Β' Γυμνασίου"}
+    >
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 8k:px-32 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
         {/* 1. HERO BANNER */}
         <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-8 lg:p-10 2xl:p-12 shadow-xl mb-8">
@@ -506,25 +519,21 @@ export default function PragmatikoiTheoryPage() {
                   ℝ ({isEn ? 'Real Numbers' : 'Πραγματικοί'})
                 </text>
 
-                {/* Ρητοί Q */}
                 <rect x="22" y="46" width="275" height="124" rx="16" fill="#ffffff" stroke="#0284c7" strokeWidth="2" />
                 <text x="36" y="68" fontSize="14" fontWeight="800" fill="#0369a1">
                   ℚ: -3/4, 0,25, 1,(3)
                 </text>
 
-                {/* Ακέραιοι Z */}
                 <rect x="36" y="78" width="215" height="80" rx="14" fill="#f0f9ff" stroke="#0d9488" strokeWidth="2" />
                 <text x="48" y="99" fontSize="13" fontWeight="800" fill="#0f766e">
                   ℤ: -5, -1, 0
                 </text>
 
-                {/* Φυσικοί N */}
                 <rect x="50" y="108" width="160" height="40" rx="10" fill="#ecfdf5" stroke="#059669" strokeWidth="2" />
                 <text x="64" y="133" fontSize="13" fontWeight="800" fill="#047857">
                   ℕ: 0, 1, 2, 3, ...
                 </text>
 
-                {/* Άρρητοι I */}
                 <rect x="310" y="46" width="128" height="124" rx="16" fill="#fef3c7" stroke="#d97706" strokeWidth="2" strokeDasharray="5 3" />
                 <text x="322" y="70" fontSize="13" fontWeight="800" fill="#92400e">
                   {isEn ? 'Irrational (𝕀)' : 'Άρρητοι (𝕀)'}
@@ -611,12 +620,10 @@ export default function PragmatikoiTheoryPage() {
                 role="img"
                 aria-label="Geometric construction of square root of 2 on the number line"
               >
-                {/* Άξονας x */}
                 <line x1="30" y1="150" x2="430" y2="150" stroke="#334155" strokeWidth="2.5" />
                 <polygon points="430,150 420,145 420,155" fill="#334155" />
                 <text x="435" y="155" fontSize="14" fontWeight="800" fill="#334155">ℝ</text>
 
-                {/* Υποδιαιρέσεις 0, 1, 2 */}
                 <circle cx="80" cy="150" r="4" fill="#0f172a" />
                 <text x="75" y="172" fontSize="13" fontWeight="700" fill="#0f172a">0</text>
 
@@ -626,16 +633,13 @@ export default function PragmatikoiTheoryPage() {
                 <circle cx="320" cy="150" r="4" fill="#0f172a" />
                 <text x="316" y="172" fontSize="13" fontWeight="700" fill="#0f172a">2</text>
 
-                {/* Ορθογώνιο τρίγωνο */}
                 <polygon points="80,150 200,150 200,30" fill="#d1fae5" fillOpacity="0.6" stroke="#059669" strokeWidth="2.5" />
-                {/* Ορθή γωνία */}
                 <polyline points="186,150 186,136 200,136" fill="none" stroke="#059669" strokeWidth="2" />
 
                 <text x="135" y="143" fontSize="13" fontWeight="700" fill="#065f46">1</text>
                 <text x="208" y="95" fontSize="13" fontWeight="700" fill="#065f46">1</text>
                 <text x="108" y="82" fontSize="14" fontWeight="800" fill="#4f46e5">ρ = √2</text>
 
-                {/* Τόξο διαβήτη ακτίνας ρ = 120 * √2 ≈ 169.7 */}
                 <path
                   d="M 200 30 A 169.7 169.7 0 0 1 249.7 150"
                   fill="none"
@@ -808,7 +812,6 @@ export default function PragmatikoiTheoryPage() {
               </h2>
             </div>
 
-            {/* Επιλογή Καρτέλας Εργαστηρίου */}
             <div className="flex flex-wrap gap-2 bg-slate-100 p-1.5 rounded-2xl">
               <button
                 type="button"
@@ -837,7 +840,6 @@ export default function PragmatikoiTheoryPage() {
 
           {activeLabTab === 'irrational' ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 items-center">
-              {/* Controls */}
               <div className="lg:col-span-5 space-y-5 min-w-0">
                 <div>
                   <label className="block text-sm font-extrabold text-slate-800 mb-2">
@@ -910,7 +912,6 @@ export default function PragmatikoiTheoryPage() {
                 </div>
               </div>
 
-              {/* Dynamic SVG Number Line */}
               <div className="lg:col-span-7 min-w-0">
                 <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3 sm:p-4">
                   <svg
@@ -919,7 +920,6 @@ export default function PragmatikoiTheoryPage() {
                     role="img"
                     aria-label="Interactive compass construction on real number line"
                   >
-                    {/* Grid lines */}
                     {[0, 1, 2, 3].map((unit) => {
                       const gx = originX + unit * unitPx;
                       return (
@@ -947,7 +947,6 @@ export default function PragmatikoiTheoryPage() {
                       );
                     })}
 
-                    {/* Άξονας R */}
                     <line
                       x1="35"
                       y1={originY}
@@ -970,7 +969,6 @@ export default function PragmatikoiTheoryPage() {
                       ℝ
                     </text>
 
-                    {/* Ορθογώνιο τρίγωνο */}
                     <polygon
                       points={`${originX},${originY} ${pointAX},${pointAY} ${pointBX},${pointBY}`}
                       fill="#c7d2fe"
@@ -979,7 +977,6 @@ export default function PragmatikoiTheoryPage() {
                       strokeWidth="2.5"
                     />
 
-                    {/* Ορθή γωνία */}
                     <polyline
                       points={`${pointAX - 14},${pointAY} ${pointAX - 14},${pointAY - 14} ${pointAX},${pointAY - 14}`}
                       fill="none"
@@ -987,7 +984,6 @@ export default function PragmatikoiTheoryPage() {
                       strokeWidth="2"
                     />
 
-                    {/* Ετικέτες πλευρών */}
                     <text
                       x={(originX + pointAX) / 2 - 12}
                       y={originY + 42}
@@ -1007,7 +1003,6 @@ export default function PragmatikoiTheoryPage() {
                       {currentRoot.legB}
                     </text>
 
-                    {/* Τόξο Διαβήτη */}
                     {compassProgress > 0 && (
                       <path
                         d={`M ${pointBX} ${pointBY} A ${radiusPx} ${radiusPx} 0 0 1 ${tipX} ${tipY}`}
@@ -1018,7 +1013,6 @@ export default function PragmatikoiTheoryPage() {
                       />
                     )}
 
-                    {/* Ακτίνα ρ διαβήτη */}
                     <line
                       x1={originX}
                       y1={originY}
@@ -1030,7 +1024,6 @@ export default function PragmatikoiTheoryPage() {
                     <circle cx={originX} cy={originY} r="5" fill="#059669" />
                     <circle cx={tipX} cy={tipY} r="6" fill="#dc2626" />
 
-                    {/* Ετικέτα ρ */}
                     <text
                       x={(originX + tipX) / 2 - 22}
                       y={(originY + tipY) / 2 - 12}
@@ -1041,7 +1034,6 @@ export default function PragmatikoiTheoryPage() {
                       ρ = √{currentRoot.label}
                     </text>
 
-                    {/* Σημείο προσγείωσης */}
                     {compassProgress >= 95 && (
                       <g>
                         <circle cx={landedX} cy={originY} r="6.5" fill="#dc2626" />
@@ -1071,7 +1063,6 @@ export default function PragmatikoiTheoryPage() {
               </div>
             </div>
           ) : (
-            /* TAB 2: ΕΞΕΡΕΥΝΗΤΗΣ ΔΥΝΑΜΕΩΝ α^ν */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 items-center">
               <div className="lg:col-span-5 space-y-5 min-w-0">
                 <div>
@@ -1232,7 +1223,6 @@ export default function PragmatikoiTheoryPage() {
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-              {/* Εποπτικό SVG */}
               <div className="md:col-span-5 min-w-0">
                 <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
                   <svg
@@ -1241,7 +1231,6 @@ export default function PragmatikoiTheoryPage() {
                     role="img"
                     aria-label="Square garden of area 18 and number line bounds"
                   >
-                    {/* Τετράγωνο */}
                     <rect
                       x="30"
                       y="25"
@@ -1258,7 +1247,6 @@ export default function PragmatikoiTheoryPage() {
                       α = √18
                     </text>
 
-                    {/* Ευθεία πραγματικών */}
                     <line x1="175" y1="115" x2="345" y2="115" stroke="#334155" strokeWidth="2.5" />
                     <polygon points="345,115 336,110 336,120" fill="#334155" />
 
@@ -1272,7 +1260,6 @@ export default function PragmatikoiTheoryPage() {
                       5 (√25)
                     </text>
 
-                    {/* Θέση √18 */}
                     <circle cx="230" cy="115" r="6" fill="#dc2626" />
                     <text x="215" y="96" fontSize="13" fontWeight="900" fill="#dc2626">
                       √18 ≈ 4,24
@@ -1281,7 +1268,6 @@ export default function PragmatikoiTheoryPage() {
                 </div>
               </div>
 
-              {/* Πίνακας Βημάτων Desktop / Stacked Cards Mobile */}
               <div className="md:col-span-7 min-w-0 space-y-4">
                 <div className="hidden sm:block overflow-hidden rounded-2xl border border-slate-200">
                   <table className="w-full table-fixed text-sm text-left">
@@ -1348,7 +1334,6 @@ export default function PragmatikoiTheoryPage() {
                   </table>
                 </div>
 
-                {/* Mobile Stacked Cards */}
                 <div className="sm:hidden space-y-2.5">
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
                     <div className="font-extrabold text-indigo-800 mb-1">
@@ -1386,7 +1371,6 @@ export default function PragmatikoiTheoryPage() {
                   </div>
                 </div>
 
-                {/* Πλαίσιο Τελικής Απάντησης */}
                 <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span>{isEn ? 'Final Answer:' : 'Τελική Απάντηση:'}</span>
                   <span>α = 3</span>
@@ -1416,7 +1400,6 @@ export default function PragmatikoiTheoryPage() {
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-              {/* Εποπτικό SVG Δομής Δυνάμεων */}
               <div className="md:col-span-5 min-w-0">
                 <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
                   <svg
@@ -1449,7 +1432,6 @@ export default function PragmatikoiTheoryPage() {
                 </div>
               </div>
 
-              {/* Πίνακας Βημάτων Desktop / Stacked Cards Mobile */}
               <div className="md:col-span-7 min-w-0 space-y-4">
                 <div className="hidden sm:block overflow-hidden rounded-2xl border border-slate-200">
                   <table className="w-full table-fixed text-sm text-left">
@@ -1499,7 +1481,6 @@ export default function PragmatikoiTheoryPage() {
                   </table>
                 </div>
 
-                {/* Mobile Stacked Cards */}
                 <div className="sm:hidden space-y-2.5">
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
                     <div className="font-extrabold text-amber-800 mb-1">
