@@ -118,6 +118,38 @@ export const B_GYMNASIOU_CHAPTERS = [
       'exponent properties'
     ]
   },
+  {
+    id: '07-epanalipsi-1',
+    section: 'algebra',
+    slug: '07-epanalipsi-1',
+    icon: '🏆',
+    title: 'Επαναληπτικό Τεστ 1 (Κεφάλαια 1–6)',
+    titleEn: 'Review Test 1 (Chapters 1–6)',
+    desc: '18 επαναληπτικές ασκήσεις και συνδυαστικά προβλήματα στις δυνάμεις ρητών με ακέραιο εκθέτη, την τυποποιημένη μορφή, τις αριθμητικές παραστάσεις, τις τετραγωνικές ρίζες και τους πραγματικούς αριθμούς.',
+    descEn: '18 comprehensive exercises and combined problems covering integer exponents, scientific notation, numerical expressions, square roots, and real numbers.',
+    badge: 'ΕΠΑΝΑΛΗΨΗ 1',
+    badgeEn: 'REVIEW 1',
+    isReview: true,
+    active: true,
+    keywords: [
+      'επαναληπτικό τεστ άλγεβρα',
+      'ασκήσεις β γυμνασίου',
+      'δυνάμεις με ακέραιο εκθέτη',
+      'τυποποιημένη μορφή',
+      'αριθμητικές παραστάσεις',
+      'τετραγωνική ρίζα',
+      'πραγματικοί αριθμοί',
+      'άρρητοι αριθμοί',
+      'algebra review test',
+      '8th grade math test',
+      'integer exponents',
+      'scientific notation',
+      'numerical expressions',
+      'square roots',
+      'real numbers',
+      'irrational numbers'
+    ]
+  },
 
   // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {
