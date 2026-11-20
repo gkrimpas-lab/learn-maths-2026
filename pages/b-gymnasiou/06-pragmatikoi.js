@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
@@ -91,1010 +91,1554 @@ const Radical = ({ children, index = null }) => (
   </span>
 );
 
-// --- Βοηθητικές Συναρτήσεις Παραγωγής Ασκήσεων ---
-const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const shuffle = (arr) => {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
+// --- Custom Slider με πλήρη υποστήριξη Mouse & Touch ---
+const CustomSlider = ({
+  min,
+  max,
+  step = 1,
+  value,
+  onChange,
+  accentColor = 'indigo',
+  ariaLabel = 'Slider',
+}) => {
+  const trackRef = useRef(null);
+  const [dragging, setDragging] = useState(false);
+
+  const updateFromClientX = (clientX) => {
+    if (!trackRef.current) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const raw = min + ratio * (max - min);
+    const snapped = Math.round(raw / step) * step;
+    const clamped = Math.max(min, Math.min(max, Number(snapped.toFixed(4))));
+    onChange(clamped);
+  };
+
+  useEffect(() => {
+    if (!dragging) return;
+    const handleMove = (e) => {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      updateFromClientX(clientX);
+    };
+    const handleUp = () => setDragging(false);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleUp);
+    window.addEventListener('touchmove', handleMove, { passive: true });
+    window.addEventListener('touchend', handleUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleUp);
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('touchend', handleUp);
+    };
+  }, [dragging, min, max, step]);
+
+  const pct = ((value - min) / (max - min)) * 100;
+  const fillClass =
+    accentColor === 'emerald'
+      ? 'bg-emerald-600'
+      : accentColor === 'amber'
+      ? 'bg-amber-600'
+      : 'bg-indigo-600';
+  const ringClass =
+    accentColor === 'emerald'
+      ? 'border-emerald-600 focus:ring-emerald-300'
+      : accentColor === 'amber'
+      ? 'border-amber-600 focus:ring-amber-300'
+      : 'border-indigo-600 focus:ring-indigo-300';
+
+  return (
+    <div
+      ref={trackRef}
+      role="slider"
+      tabIndex={0}
+      aria-label={ariaLabel}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      onMouseDown={(e) => {
+        setDragging(true);
+        updateFromClientX(e.clientX);
+      }}
+      onTouchStart={(e) => {
+        setDragging(true);
+        updateFromClientX(e.touches[0].clientX);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          onChange(Math.min(max, Number((value + step).toFixed(4))));
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          onChange(Math.max(min, Number((value - step).toFixed(4))));
+        }
+      }}
+      className="relative w-full h-8 flex items-center cursor-pointer select-none touch-none"
+    >
+      <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full ${fillClass} transition-all duration-75`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div
+        className={`absolute w-6 h-6 rounded-full bg-white border-4 ${ringClass} shadow-md transform -translate-x-1/2 transition-transform ${
+          dragging ? 'scale-110' : 'hover:scale-105'
+        }`}
+        style={{ left: `${pct}%` }}
+      />
+    </div>
+  );
 };
 
-function sanitizeInput(val) {
-  if (val === null || val === undefined) return '';
-  return String(val)
-    .trim()
-    .replace(/\s+/g, '')
-    .replace(/,/g, '.')
-    .replace(/^\+/, '');
-}
-
-function ensureFourUniqueOptions(correctOpt, distractorPool) {
-  const seen = new Set([correctOpt.key]);
-  const result = [correctOpt];
-  for (const d of shuffle(distractorPool)) {
-    if (!seen.has(d.key)) {
-      seen.add(d.key);
-      result.push(d);
-    }
-    if (result.length === 4) break;
-  }
-  let fallbackIdx = 1;
-  while (result.length < 4) {
-    const fk = `fallback_${fallbackIdx++}`;
-    if (!seen.has(fk)) {
-      seen.add(fk);
-      result.push({ key: fk, labelEl: String(fallbackIdx * 7), labelEn: String(fallbackIdx * 7) });
-    }
-  }
-  return shuffle(result);
-}
-
-// --- Γεννήτρια 12 Δυναμικών Ερωτήσεων Κεφαλαίου 6 ---
-function generateQuestions() {
-  const questions = [];
-
-  // Q1 (TF): Ρητός vs Άρρητος αριθμός
-  {
-    const mode = randInt(1, 3);
-    if (mode === 1) {
-      const sq = pickRandom([4, 9, 16, 25, 36, 49, 64, 81]);
-      const r = Math.sqrt(sq);
-      questions.push({
-        id: 1,
-        type: 'tf',
-        promptEl: (
-          <span>
-            Ο αριθμός <Radical>{sq}</Radical> είναι άρρητος αριθμός.
-          </span>
-        ),
-        promptEn: (
-          <span>
-            The number <Radical>{sq}</Radical> is an irrational number.
-          </span>
-        ),
-        correct: 'false',
-        correctTextEl: 'Λάθος',
-        correctTextEn: 'False',
-        explanationEl: (
-          <span>
-            Το {sq} είναι τετράγωνος αριθμός, άρα <Radical>{sq}</Radical> = {r} ∈ ℕ ⊂ ℚ (είναι ρητός αριθμός).
-          </span>
-        ),
-        explanationEn: (
-          <span>
-            {sq} is a square number, so <Radical>{sq}</Radical> = {r} ∈ ℕ ⊂ ℚ (it is a rational number).
-          </span>
-        ),
-      });
-    } else if (mode === 2) {
-      const irr = pickRandom([2, 3, 5, 6, 7, 10, 11]);
-      questions.push({
-        id: 1,
-        type: 'tf',
-        promptEl: (
-          <span>
-            Ο αριθμός <Radical>{irr}</Radical> είναι πραγματικός και άρρητος αριθμός.
-          </span>
-        ),
-        promptEn: (
-          <span>
-            The number <Radical>{irr}</Radical> is a real and irrational number.
-          </span>
-        ),
-        correct: 'true',
-        correctTextEl: 'Σωστό',
-        correctTextEn: 'True',
-        explanationEl: (
-          <span>
-            Το {irr} δεν είναι τετράγωνος αριθμός, άρα ο <Radical>{irr}</Radical> έχει άπειρα μη περιοδικά δεκαδικά ψηφία (είναι άρρητος, άρα και πραγματικός: 𝕀 ⊂ ℝ).
-          </span>
-        ),
-        explanationEn: (
-          <span>
-            {irr} is not a square number, so <Radical>{irr}</Radical> has infinite non-repeating decimals (irrational, hence real: 𝕀 ⊂ ℝ).
-          </span>
-        ),
-      });
-    } else {
-      questions.push({
-        id: 1,
-        type: 'tf',
-        promptEl: 'Κάθε περιοδικός δεκαδικός αριθμός, όπως ο 0,(3), είναι ρητός αριθμός.',
-        promptEn: 'Every repeating decimal number, such as 0.(3), is a rational number.',
-        correct: 'true',
-        correctTextEl: 'Σωστό',
-        correctTextEn: 'True',
-        explanationEl: (
-          <span>
-            Κάθε περιοδικός δεκαδικός γράφεται ως κλάσμα (π.χ. 0,(3) = <Frac num="1" den="3" />), άρα ανήκει στους ρητούς (ℚ).
-          </span>
-        ),
-        explanationEn: (
-          <span>
-            Every repeating decimal can be written as a fraction (e.g. 0.(3) = <Frac num="1" den="3" />), so it belongs to ℚ.
-          </span>
-        ),
-      });
-    }
-  }
-
-  // Q2 (MCQ): Αναγνώριση άρρητου ανάμεσα σε 4 επιλογές
-  {
-    const irrChoice = pickRandom([3, 5, 7, 11, 13]);
-    const sq1 = pickRandom([4, 9, 16]);
-    const sq2 = pickRandom([25, 36, 49]);
-    const correctOpt = {
-      key: `sqrt_${irrChoice}`,
-      labelEl: <Radical>{irrChoice}</Radical>,
-      labelEn: <Radical>{irrChoice}</Radical>,
-    };
-    const distractors = [
-      { key: `sqrt_${sq1}`, labelEl: <Radical>{sq1}</Radical>, labelEn: <Radical>{sq1}</Radical> },
-      { key: `sqrt_${sq2}`, labelEl: <Radical>{sq2}</Radical>, labelEn: <Radical>{sq2}</Radical> },
-      { key: 'frac', labelEl: <Frac num="-7" den="4" />, labelEn: <Frac num="-7" den="4" /> },
-      { key: 'dec', labelEl: '2,35', labelEn: '2.35' },
-    ];
-    questions.push({
-      id: 2,
-      type: 'mcq',
-      promptEl: 'Ποιος από τους παρακάτω αριθμούς είναι άρρητος;',
-      promptEn: 'Which of the following numbers is irrational?',
-      options: ensureFourUniqueOptions(correctOpt, distractors),
-      correct: correctOpt.key,
-      correctTextEl: <Radical>{irrChoice}</Radical>,
-      correctTextEn: <Radical>{irrChoice}</Radical>,
-      explanationEl: (
-        <span>
-          Οι <Radical>{sq1}</Radical> = {Math.sqrt(sq1)}, <Radical>{sq2}</Radical> = {Math.sqrt(sq2)}, <Frac num="-7" den="4" /> και 2,35 είναι ρητοί, ενώ ο <Radical>{irrChoice}</Radical> είναι άρρητος.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          <Radical>{sq1}</Radical> = {Math.sqrt(sq1)}, <Radical>{sq2}</Radical> = {Math.sqrt(sq2)}, <Frac num="-7" den="4" /> and 2.35 are rational, while <Radical>{irrChoice}</Radical> is irrational.
-        </span>
-      ),
-    });
-  }
-
-  // Q3 (MCQ): Τοποθέτηση άρρητου στην ευθεία (Πυθαγόρειο Θεώρημα / ακτίνα ρ)
-  {
-    const configs = [
-      {
-        a: 1,
-        b: 1,
-        res: 2,
-        wrong1: 1,
-        wrong2: 3,
-        wrong3: 4,
-      },
-      {
-        a: 2,
-        b: 1,
-        res: 5,
-        wrong1: 3,
-        wrong2: 4,
-        wrong3: 6,
-      },
-      {
-        a: 2,
-        b: 2,
-        res: 8,
-        wrong1: 4,
-        wrong2: 6,
-        wrong3: 10,
-      },
-      {
-        a: 3,
-        b: 1,
-        res: 10,
-        wrong1: 4,
-        wrong2: 8,
-        wrong3: 9,
-      },
-    ];
-    const c = pickRandom(configs);
-    const correctOpt = {
-      key: `r_${c.res}`,
-      labelEl: <Radical>{c.res}</Radical>,
-      labelEn: <Radical>{c.res}</Radical>,
-    };
-    const distractors = [
-      { key: `r_${c.wrong1}`, labelEl: <Radical>{c.wrong1}</Radical>, labelEn: <Radical>{c.wrong1}</Radical> },
-      { key: `r_${c.wrong2}`, labelEl: <Radical>{c.wrong2}</Radical>, labelEn: <Radical>{c.wrong2}</Radical> },
-      { key: `r_${c.wrong3}`, labelEl: <Radical>{c.wrong3}</Radical>, labelEn: <Radical>{c.wrong3}</Radical> },
-      { key: `num_${c.a + c.b}`, labelEl: String(c.a + c.b), labelEn: String(c.a + c.b) },
-    ];
-    questions.push({
-      id: 3,
-      type: 'mcq',
-      promptEl: `Για να τοποθετήσουμε έναν άρρητο αριθμό στην ευθεία ℝ, κατασκευάζουμε ορθογώνιο τρίγωνο με κάθετες πλευρές ${c.a} και ${c.b}. Ποιος αριθμός αντιστοιχεί στην υποτείνουσα (ακτίνα διαβήτη ρ);`,
-      promptEn: `To locate an irrational number on the real axis ℝ, we draw a right triangle with legs ${c.a} and ${c.b}. Which number corresponds to the hypotenuse (compass radius ρ)?`,
-      options: ensureFourUniqueOptions(correctOpt, distractors),
-      correct: correctOpt.key,
-      correctTextEl: <Radical>{c.res}</Radical>,
-      correctTextEn: <Radical>{c.res}</Radical>,
-      explanationEl: (
-        <span>
-          Από το Πυθαγόρειο Θεώρημα: ρ² = {c.a}² + {c.b}² = {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ = <Radical>{c.res}</Radical>.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          By the Pythagorean Theorem: ρ² = {c.a}² + {c.b}² = {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ = <Radical>{c.res}</Radical>.
-        </span>
-      ),
-      renderFeedbackDiagram: () => (
-        <div className="mt-3 max-w-sm rounded-xl bg-white border border-slate-200 p-2.5">
-          <svg viewBox="0 0 300 140" className="w-full h-auto max-w-full block">
-            <line x1="20" y1="115" x2="280" y2="115" stroke="#334155" strokeWidth="2" />
-            <polygon points="50,115 160,115 160,30" fill="#d1fae5" stroke="#059669" strokeWidth="2" />
-            <polyline points="148,115 148,103 160,103" fill="none" stroke="#059669" strokeWidth="1.5" />
-            <text x="100" y="132" fontSize="12" fontWeight="700" fill="#065f46">{c.a}</text>
-            <text x="166" y="78" fontSize="12" fontWeight="700" fill="#065f46">{c.b}</text>
-            <text x="72" y="65" fontSize="13" fontWeight="800" fill="#4f46e5">ρ = √{c.res}</text>
-            <path d="M 160 30 A 139 139 0 0 1 189 115" fill="none" stroke="#4f46e5" strokeWidth="2" strokeDasharray="4 3" />
-            <circle cx="189" cy="115" r="4.5" fill="#dc2626" />
-            <text x="182" y="133" fontSize="12" fontWeight="800" fill="#dc2626">√{c.res}</text>
-          </svg>
-        </div>
-      ),
-    });
-  }
-
-  // Q4 (Input): Διαδοχικοί ακέραιοι που περιέχουν το √N (ζητάμε τον μικρότερο ακέραιο)
-  {
-    const n = pickRandom([3, 5, 7, 11, 14, 19, 29, 40]);
-    const low = Math.floor(Math.sqrt(n));
-    const high = low + 1;
-    questions.push({
-      id: 4,
-      type: 'input',
-      unitEl: '(ακέραιος)',
-      unitEn: '(integer)',
-      promptEl: (
-        <span>
-          Αν ισχύει κ &lt; <Radical>{n}</Radical> &lt; κ + 1, όπου κ ∈ ℕ, ποια είναι η τιμή του κ;
-        </span>
-      ),
-      promptEn: (
-        <span>
-          If k &lt; <Radical>{n}</Radical> &lt; k + 1, where k ∈ ℕ, what is the value of k?
-        </span>
-      ),
-      correct: String(low),
-      correctTextEl: String(low),
-      correctTextEn: String(low),
-      explanationEl: (
-        <span>
-          Ανάμεσα στους τετράγωνους αριθμούς: {low * low} &lt; {n} &lt; {high * high} ⇒ <Radical>{low * low}</Radical> &lt; <Radical>{n}</Radical> &lt; <Radical>{high * high}</Radical> ⇒ {low} &lt; <Radical>{n}</Radical> &lt; {high}. Άρα κ = {low}.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Between square numbers: {low * low} &lt; {n} &lt; {high * high} ⇒ {low} &lt; <Radical>{n}</Radical> &lt; {high}. Thus k = {low}.
-        </span>
-      ),
-    });
-  }
-
-  // Q5 (Input): Τετράγωνοι αριθμοί - Άθροισμα/Διαφορά ριζών
-  {
-    const a = pickRandom([4, 9, 16, 25]);
-    const b = pickRandom([36, 49, 64, 81]);
-    const ans = Math.sqrt(a) + Math.sqrt(b);
-    questions.push({
-      id: 5,
-      type: 'input',
-      promptEl: (
-        <span>
-          Υπολογίστε την τιμή της παράστασης: <Radical>{a}</Radical> + <Radical>{b}</Radical>
-        </span>
-      ),
-      promptEn: (
-        <span>
-          Calculate the value of the expression: <Radical>{a}</Radical> + <Radical>{b}</Radical>
-        </span>
-      ),
-      correct: String(ans),
-      correctTextEl: String(ans),
-      correctTextEn: String(ans),
-      explanationEl: (
-        <span>
-          Επειδή {a} = {Math.sqrt(a)}² και {b} = {Math.sqrt(b)}², έχουμε: <Radical>{a}</Radical> + <Radical>{b}</Radical> = {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Since {a} = {Math.sqrt(a)}² and {b} = {Math.sqrt(b)}², we get: <Radical>{a}</Radical> + <Radical>{b}</Radical> = {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.
-        </span>
-      ),
-    });
-  }
-
-  // Q6 (TF): Πρόσημο και μηδενικός εκθέτης
-  {
-    const mode = randInt(1, 2);
-    if (mode === 1) {
-      const base = pickRandom([3, 5, 7, 11]);
-      questions.push({
-        id: 6,
-        type: 'tf',
-        promptEl: (
-          <span>
-            Ισχύει η ισότητα: (-{base})<sup>0</sup> = -1.
-          </span>
-        ),
-        promptEn: (
-          <span>
-            The equality (-{base})<sup>0</sup> = -1 holds true.
-          </span>
-        ),
-        correct: 'false',
-        correctTextEl: 'Λάθος',
-        correctTextEn: 'False',
-        explanationEl: (
-          <span>
-            Κάθε μη μηδενικός πραγματικός αριθμός (με παρένθεση) υψωμένος στη μηδενική δύναμη ισούται με +1: (-{base})<sup>0</sup> = 1. (Αντίθετα, -{base}<sup>0</sup> = -1).
-          </span>
-        ),
-        explanationEn: (
-          <span>
-            Any non-zero real number (in parentheses) raised to the 0th power equals +1: (-{base})<sup>0</sup> = 1.
-          </span>
-        ),
-      });
-    } else {
-      const exp = pickRandom([-2, -4, -6]);
-      questions.push({
-        id: 6,
-        type: 'tf',
-        promptEl: (
-          <span>
-            Η δύναμη (-2)<sup>{exp}</sup> είναι θετικός αριθμός.
-          </span>
-        ),
-        promptEn: (
-          <span>
-            The power (-2)<sup>{exp}</sup> is a positive number.
-          </span>
-        ),
-        correct: 'true',
-        correctTextEl: 'Σωστό',
-        correctTextEn: 'True',
-        explanationEl: (
-          <span>
-            Ο εκθέτης {exp} είναι άρτιος ακέραιος, άρα (-2)<sup>{exp}</sup> = <Frac num="1" den={<span>(-2)<sup>{Math.abs(exp)}</sup></span>} /> = <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} /> &gt; 0.
-          </span>
-        ),
-        explanationEn: (
-          <span>
-            The exponent {exp} is an even integer, so (-2)<sup>{exp}</sup> = <Frac num="1" den={<span>(-2)<sup>{Math.abs(exp)}</sup></span>} /> = <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} /> &gt; 0.
-          </span>
-        ),
-      });
-    }
-  }
-
-  // Q7 (MCQ): Δύναμη με αρνητικό εκθέτη α^(-ν)
-  {
-    const base = pickRandom([2, 3, 4, 5]);
-    const exp = base === 2 ? pickRandom([2, 3, 4]) : 2;
-    const denVal = Math.pow(base, exp);
-    const correctOpt = {
-      key: `1/${denVal}`,
-      labelEl: <Frac num="1" den={String(denVal)} />,
-      labelEn: <Frac num="1" den={String(denVal)} />,
-    };
-    const distractors = [
-      { key: `-${denVal}`, labelEl: `-${denVal}`, labelEn: `-${denVal}` },
-      { key: `-1/${denVal}`, labelEl: <span>-<Frac num="1" den={String(denVal)} /></span>, labelEn: <span>-<Frac num="1" den={String(denVal)} /></span> },
-      { key: `${denVal}`, labelEl: String(denVal), labelEn: String(denVal) },
-      { key: `1/${base * exp}`, labelEl: <Frac num="1" den={String(base * exp)} />, labelEn: <Frac num="1" den={String(base * exp)} /> },
-    ];
-    questions.push({
-      id: 7,
-      type: 'mcq',
-      promptEl: (
-        <span>
-          Ποια είναι η τιμή της δύναμης {base}<sup>-{exp}</sup>;
-        </span>
-      ),
-      promptEn: (
-        <span>
-          What is the value of the power {base}<sup>-{exp}</sup>?
-        </span>
-      ),
-      options: ensureFourUniqueOptions(correctOpt, distractors),
-      correct: correctOpt.key,
-      correctTextEl: <Frac num="1" den={String(denVal)} />,
-      correctTextEn: <Frac num="1" den={String(denVal)} />,
-      explanationEl: (
-        <span>
-          Από τον ορισμό του αρνητικού εκθέτη: {base}<sup>-{exp}</sup> = <Frac num="1" den={<span>{base}<sup>{exp}</sup></span>} /> = <Frac num="1" den={String(denVal)} />.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          By the negative exponent definition: {base}<sup>-{exp}</sup> = <Frac num="1" den={<span>{base}<sup>{exp}</sup></span>} /> = <Frac num="1" den={String(denVal)} />.
-        </span>
-      ),
-    });
-  }
-
-  // Q8 (Input): Αρνητικός εκθέτης κλάσματος (1/β)^(-ν)
-  {
-    const den = pickRandom([2, 3, 4, 5]);
-    const exp = den === 2 ? pickRandom([2, 3, 4]) : 2;
-    const ans = Math.pow(den, exp);
-    questions.push({
-      id: 8,
-      type: 'input',
-      promptEl: (
-        <span className="inline-flex items-center">
-          Υπολογίστε την τιμή της δύναμης (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup>:
-        </span>
-      ),
-      promptEn: (
-        <span className="inline-flex items-center">
-          Calculate the value of (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup>:
-        </span>
-      ),
-      correct: String(ans),
-      correctTextEl: String(ans),
-      correctTextEn: String(ans),
-      explanationEl: (
-        <span>
-          Αντιστρέφουμε το κλάσμα: (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup> = (<Frac num={String(den)} den="1" />)<sup>{exp}</sup> = {den}<sup>{exp}</sup> = {ans}.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Invert the fraction: (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup> = {den}<sup>{exp}</sup> = {ans}.
-        </span>
-      ),
-    });
-  }
-
-  // Q9 (MCQ): Γινόμενο δυνάμεων με ίδια βάση α^μ · α^ν
-  {
-    const base = pickRandom(['α', 'x', '2', '5']);
-    const m = pickRandom([4, 5, 6]);
-    const n = pickRandom([-2, -3, -7]);
-    const sum = m + n;
-    const correctOpt = {
-      key: `${base}^${sum}`,
-      labelEl: <span>{base}<sup>{sum}</sup></span>,
-      labelEn: <span>{base}<sup>{sum}</sup></span>,
-    };
-    const distractors = [
-      { key: `${base}^${m * n}`, labelEl: <span>{base}<sup>{m * n}</sup></span>, labelEn: <span>{base}<sup>{m * n}</sup></span> },
-      { key: `${base}^${m - n}`, labelEl: <span>{base}<sup>{m - n}</sup></span>, labelEn: <span>{base}<sup>{m - n}</sup></span> },
-      { key: `${base}^${-sum}`, labelEl: <span>{base}<sup>{-sum}</sup></span>, labelEn: <span>{base}<sup>{-sum}</sup></span> },
-      { key: `2${base}^${sum}`, labelEl: <span>2{base}<sup>{sum}</sup></span>, labelEn: <span>2{base}<sup>{sum}</sup></span> },
-    ];
-    questions.push({
-      id: 9,
-      type: 'mcq',
-      promptEl: (
-        <span>
-          Σε μία δύναμη της βάσης {base} (με {base} ≠ 0), το γινόμενο {base}<sup>{m}</sup> · {base}<sup>{n}</sup> ισούται με:
-        </span>
-      ),
-      promptEn: (
-        <span>
-          Written as a single power of {base} ({base} ≠ 0), the product {base}<sup>{m}</sup> · {base}<sup>{n}</sup> equals:
-        </span>
-      ),
-      options: ensureFourUniqueOptions(correctOpt, distractors),
-      correct: correctOpt.key,
-      correctTextEl: <span>{base}<sup>{sum}</sup></span>,
-      correctTextEn: <span>{base}<sup>{sum}</sup></span>,
-      explanationEl: (
-        <span>
-          Προσθέτουμε τους εκθέτες: {base}<sup>{m}</sup> · {base}<sup>{n}</sup> = {base}<sup>{m} + ({n})</sup> = {base}<sup>{sum}</sup>.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Add the exponents: {base}<sup>{m}</sup> · {base}<sup>{n}</sup> = {base}<sup>{m} + ({n})</sup> = {base}<sup>{sum}</sup>.
-        </span>
-      ),
-    });
-  }
-
-  // Q10 (MCQ): Πηλίκο δυνάμεων α^μ / α^ν με αρνητικό εκθέτη στον παρονομαστή
-  {
-    const base = pickRandom(['α', '3', '7']);
-    const m = pickRandom([2, 3, -1]);
-    const n = pickRandom([-2, -3, -4]);
-    const diff = m - n;
-    const correctOpt = {
-      key: `${base}^${diff}`,
-      labelEl: <span>{base}<sup>{diff}</sup></span>,
-      labelEn: <span>{base}<sup>{diff}</sup></span>,
-    };
-    const distractors = [
-      { key: `${base}^${m + n}`, labelEl: <span>{base}<sup>{m + n}</sup></span>, labelEn: <span>{base}<sup>{m + n}</sup></span> },
-      { key: `${base}^${n - m}`, labelEl: <span>{base}<sup>{n - m}</sup></span>, labelEn: <span>{base}<sup>{n - m}</sup></span> },
-      { key: `${base}^${m * n}`, labelEl: <span>{base}<sup>{m * n}</sup></span>, labelEn: <span>{base}<sup>{m * n}</sup></span> },
-      { key: `1`, labelEl: '1', labelEn: '1' },
-    ];
-    questions.push({
-      id: 10,
-      type: 'mcq',
-      promptEl: (
-        <span className="inline-flex items-center">
-          Το πηλίκο <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> (όπου {base} ≠ 0) ισούται με:
-        </span>
-      ),
-      promptEn: (
-        <span className="inline-flex items-center">
-          The quotient <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> (where {base} ≠ 0) equals:
-        </span>
-      ),
-      options: ensureFourUniqueOptions(correctOpt, distractors),
-      correct: correctOpt.key,
-      correctTextEl: <span>{base}<sup>{diff}</sup></span>,
-      correctTextEn: <span>{base}<sup>{diff}</sup></span>,
-      explanationEl: (
-        <span>
-          Αφαιρούμε τους εκθέτες (προσέχοντας το πρόσημο): <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> = {base}<sup>{m} - ({n})</sup> = {base}<sup>{m} + {Math.abs(n)}</sup> = {base}<sup>{diff}</sup>.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Subtract the exponents carefully: <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> = {base}<sup>{m} - ({n})</sup> = {base}<sup>{diff}</sup>.
-        </span>
-      ),
-    });
-  }
-
-  // Q11 (Input): Δύναμη άρρητου (√k)^2ν
-  {
-    const k = pickRandom([2, 3, 5, 7]);
-    const exp = pickRandom([2, 4]);
-    const ans = Math.pow(k, exp / 2);
-    questions.push({
-      id: 11,
-      type: 'input',
-      promptEl: (
-        <span>
-          Υπολογίστε την τιμή της δύναμης (<Radical>{k}</Radical>)<sup>{exp}</sup>:
-        </span>
-      ),
-      promptEn: (
-        <span>
-          Calculate the value of (<Radical>{k}</Radical>)<sup>{exp}</sup>:
-        </span>
-      ),
-      correct: String(ans),
-      correctTextEl: String(ans),
-      correctTextEn: String(ans),
-      explanationEl: (
-        <span>
-          Γράφουμε το {exp} = 2 · {exp / 2}: (<Radical>{k}</Radical>)<sup>{exp}</sup> = ((<Radical>{k}</Radical>)<sup>2</sup>)<sup>{exp / 2}</sup> = {k}<sup>{exp / 2}</sup> = {ans}.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Write {exp} = 2 · {exp / 2}: (<Radical>{k}</Radical>)<sup>{exp}</sup> = ((<Radical>{k}</Radical>)<sup>2</sup>)<sup>{exp / 2}</sup> = {k}<sup>{exp / 2}</sup> = {ans}.
-        </span>
-      ),
-    });
-  }
-
-  // Q12 (Input - Συνδυαστικό πρόβλημα δυνάμεων με tableData)
-  {
-    const b = pickRandom([2, 3]);
-    const p1 = pickRandom([-2, -3]);
-    const p2 = pickRandom([2, 3]);
-    const p3 = p1 + p2 * 2 - 1; // ώστε το πηλίκο να δίνει b^1 = b
-    const fracExp = pickRandom([-2, -3]);
-    const term2 = Math.pow(2, Math.abs(fracExp));
-    const totalAns = b + term2;
-
-    questions.push({
-      id: 12,
-      type: 'input',
-      promptEl: (
-        <span className="inline-flex flex-wrap items-center gap-x-1">
-          <span>Υπολογίστε την τιμή της παράστασης:</span>
-          <span className="inline-flex items-center font-bold">
-            Π = <Frac num={<span>{b}<sup>{p1}</sup> · ({b}<sup>{p2}</sup>)<sup>2</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> + (<Frac num="1" den="2" />)<sup>{fracExp}</sup>
-          </span>
-        </span>
-      ),
-      promptEn: (
-        <span className="inline-flex flex-wrap items-center gap-x-1">
-          <span>Calculate the value of the expression:</span>
-          <span className="inline-flex items-center font-bold">
-            Π = <Frac num={<span>{b}<sup>{p1}</sup> · ({b}<sup>{p2}</sup>)<sup>2</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> + (<Frac num="1" den="2" />)<sup>{fracExp}</sup>
-          </span>
-        </span>
-      ),
-      correct: String(totalAns),
-      correctTextEl: String(totalAns),
-      correctTextEn: String(totalAns),
-      explanationEl: (
-        <span>
-          Εφαρμόζουμε διαδοχικά τις ιδιότητες των δυνάμεων και βρίσκουμε Π = {b} + {term2} = {totalAns}.
-        </span>
-      ),
-      explanationEn: (
-        <span>
-          Applying the properties of exponents step-by-step yields Π = {b} + {term2} = {totalAns}.
-        </span>
-      ),
-      tableData: [
-        {
-          stepEl: '1. Δύναμη δύναμης',
-          stepEn: '1. Power of a power',
-          calc: (
-            <span>
-              ({b}<sup>{p2}</sup>)<sup>2</sup> = {b}<sup>{p2 * 2}</sup>
-            </span>
-          ),
-        },
-        {
-          stepEl: '2. Απλοποίηση κλάσματος',
-          stepEn: '2. Simplify fraction',
-          calc: (
-            <span>
-              <Frac num={<span>{b}<sup>{p1}</sup> · {b}<sup>{p2 * 2}</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> = {b}<sup>{p1 + p2 * 2} - ({p3})</sup> = {b}<sup>1</sup> = {b}
-            </span>
-          ),
-        },
-        {
-          stepEl: '3. Αρνητικός εκθέτης & άθροισμα',
-          stepEn: '3. Negative exponent & sum',
-          calc: (
-            <span>
-              (<Frac num="1" den="2" />)<sup>{fracExp}</sup> = 2<sup>{Math.abs(fracExp)}</sup> = {term2} ⇒ Π = {b} + {term2} = {totalAns}
-            </span>
-          ),
-        },
-      ],
-    });
-  }
-
-  return questions;
-}
-
-export default function PragmatikoiExercisesPage() {
+export default function PragmatikoiTheoryPage() {
   const router = useRouter();
   const isEn = router?.locale === 'en';
 
-  const [questions, setQuestions] = useState([]);
-  const [answers, setAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  // --- State Διαδραστικού Εργαστηρίου ---
+  const [activeLabTab, setActiveLabTab] = useState('irrational'); // 'irrational' | 'powers'
 
-  const initExercises = useCallback(() => {
-    setQuestions(generateQuestions());
-    setAnswers({});
-    setSubmitted(false);
-  }, []);
+  // Tab 1: Τοποθέτηση άρρητων στην ευθεία
+  const [selectedRoot, setSelectedRoot] = useState('sqrt2'); // 'sqrt2' | 'sqrt3' | 'sqrt5' | 'sqrt8'
+  const [compassProgress, setCompassProgress] = useState(75); // 0 - 100
 
-  useEffect(() => {
-    initExercises();
-  }, [initExercises]);
+  // Tab 2: Δύναμη α^ν με πραγματική βάση & ακέραιο εκθέτη
+  const [baseChoice, setBaseChoice] = useState('2'); // '2' | '3' | 'half' | 'neg2' | 'sqrt2'
+  const [exponentVal, setExponentVal] = useState(-2); // -4 to 4
 
-  const handleSelect = (qId, val) => {
-    if (submitted) return;
-    setAnswers((prev) => ({ ...prev, [qId]: val }));
+  // Δεδομένα για Tab 1 (Άρρητοι)
+  const rootConfigs = {
+    sqrt2: {
+      label: '2',
+      legA: 1,
+      legB: 1,
+      hyp: Math.SQRT2,
+      approx: '1,414...',
+      approxEn: '1.414...',
+      formulaEl: '1² + 1² = 2 ⇒ ρ = √2',
+      formulaEn: '1² + 1² = 2 ⇒ ρ = √2',
+      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 1 και 1.',
+      descEn: 'Right triangle with perpendicular legs 1 and 1.',
+    },
+    sqrt3: {
+      label: '3',
+      legA: Math.SQRT2,
+      legB: 1,
+      hyp: Math.sqrt(3),
+      approx: '1,732...',
+      approxEn: '1.732...',
+      formulaEl: '(√2)² + 1² = 3 ⇒ ρ = √3',
+      formulaEn: '(√2)² + 1² = 3 ⇒ ρ = √3',
+      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές √2 και 1.',
+      descEn: 'Right triangle with perpendicular legs √2 and 1.',
+    },
+    sqrt5: {
+      label: '5',
+      legA: 2,
+      legB: 1,
+      hyp: Math.sqrt(5),
+      approx: '2,236...',
+      approxEn: '2.236...',
+      formulaEl: '2² + 1² = 5 ⇒ ρ = √5',
+      formulaEn: '2² + 1² = 5 ⇒ ρ = √5',
+      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 1.',
+      descEn: 'Right triangle with perpendicular legs 2 and 1.',
+    },
+    sqrt8: {
+      label: '8',
+      legA: 2,
+      legB: 2,
+      hyp: Math.sqrt(8),
+      approx: '2,828...',
+      approxEn: '2.828...',
+      formulaEl: '2² + 2² = 8 ⇒ ρ = √8 = 2√2',
+      formulaEn: '2² + 2² = 8 ⇒ ρ = √8 = 2√2',
+      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 2.',
+      descEn: 'Right triangle with perpendicular legs 2 and 2.',
+    },
   };
 
-  const handleReset = () => {
-    initExercises();
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+  const currentRoot = rootConfigs[selectedRoot];
+  // Συντεταγμένες SVG για τον άξονα R (0 -> x=80, 1 μονάδα = 140px)
+  const originX = 80;
+  const originY = 230;
+  const unitPx = 135;
+  const pointAX = originX + currentRoot.legA * unitPx;
+  const pointAY = originY;
+  const pointBX = pointAX;
+  const pointBY = originY - currentRoot.legB * unitPx;
+
+  const startAngle = Math.atan2(pointBY - originY, pointBX - originX); // αρνητική γωνία σε rad
+  const currentAngle = startAngle * (1 - compassProgress / 100);
+  const radiusPx = currentRoot.hyp * unitPx;
+  const tipX = originX + radiusPx * Math.cos(currentAngle);
+  const tipY = originY + radiusPx * Math.sin(currentAngle);
+  const landedX = originX + radiusPx;
+
+  // Δεδομένα για Tab 2 (Δυνάμεις)
+  const baseConfigs = {
+    '2': { label: '2', numVal: 2, isFrac: false, isRoot: false },
+    '3': { label: '3', numVal: 3, isFrac: false, isRoot: false },
+    half: { label: '1/2', numVal: 0.5, isFrac: true, num: 1, den: 2, isRoot: false },
+    neg2: { label: '-2', numVal: -2, isFrac: false, isRoot: false },
+    sqrt2: { label: '√2', numVal: Math.SQRT2, isFrac: false, isRoot: true },
+  };
+  const currentBase = baseConfigs[baseChoice];
+
+  const renderPowerResult = () => {
+    const n = exponentVal;
+    const absN = Math.abs(n);
+
+    if (n === 0) {
+      return {
+        step: isEn ? 'Any non-zero real number to the 0th power equals 1' : 'Κάθε μη μηδενικός πραγματικός στη μηδενική ισούται με 1',
+        valueNode: <span>1</span>,
+        signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
+      };
     }
-  };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
-
-  const isQuestionCorrect = (q) => {
-    const userVal = answers[q.id];
-    if (userVal === undefined || userVal === '') return false;
-    if (q.type === 'input') {
-      return sanitizeInput(userVal) === sanitizeInput(q.correct);
+    if (baseChoice === '2' || baseChoice === '3') {
+      const b = Number(baseChoice);
+      const powVal = Math.pow(b, absN);
+      return {
+        step:
+          n > 0
+            ? `${b} · `.repeat(n).slice(0, -3)
+            : null,
+        isNegExp: n < 0,
+        negDen: `${b}^${absN}`,
+        valueNode: n > 0 ? <span>{powVal}</span> : <Frac num="1" den={String(powVal)} />,
+        signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
+      };
     }
-    return userVal === q.correct;
+
+    if (baseChoice === 'half') {
+      const powVal = Math.pow(2, absN);
+      return {
+        isNegExp: n < 0,
+        negDen: `(1/2)^${absN}`,
+        valueNode: n > 0 ? <Frac num="1" den={String(powVal)} /> : <span>{powVal}</span>,
+        signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
+      };
+    }
+
+    if (baseChoice === 'neg2') {
+      const powVal = Math.pow(2, absN);
+      const isEven = absN % 2 === 0;
+      const signedVal = isEven ? powVal : -powVal;
+      return {
+        isNegExp: n < 0,
+        negDen: `(-2)^${absN}`,
+        valueNode:
+          n > 0 ? (
+            <span>{signedVal}</span>
+          ) : isEven ? (
+            <Frac num="1" den={String(powVal)} />
+          ) : (
+            <span>
+              -<Frac num="1" den={String(powVal)} />
+            </span>
+          ),
+        signLabel: isEven
+          ? isEn
+            ? 'Positive (+) — even exponent'
+            : 'Θετικό (+) — άρτιος εκθέτης'
+          : isEn
+          ? 'Negative (-) — odd exponent'
+          : 'Αρνητικό (-) — περιττός εκθέτης',
+      };
+    }
+
+    // sqrt2
+    const halfExp = Math.floor(absN / 2);
+    const rem = absN % 2;
+    const intPart = Math.pow(2, halfExp);
+    const posDisplay =
+      rem === 0 ? (
+        <span>{intPart}</span>
+      ) : intPart === 1 ? (
+        <Radical>2</Radical>
+      ) : (
+        <span>
+          {intPart}
+          <Radical>2</Radical>
+        </span>
+      );
+
+    return {
+      isNegExp: n < 0,
+      negDen: `(√2)^${absN}`,
+      valueNode: n > 0 ? posDisplay : <Frac num="1" den={posDisplay} />,
+      signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
+    };
   };
 
-  const answeredCount = questions.filter((q) => {
-    const v = answers[q.id];
-    return v !== undefined && String(v).trim() !== '';
-  }).length;
-
-  const score = submitted ? questions.filter(isQuestionCorrect).length : 0;
-  const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
+  const powerInfo = renderPowerResult();
 
   const pageTitle = isEn
-    ? 'Chapter 6 Exercises: Real Numbers & Powers | 8th Grade'
-    : "Ασκήσεις Κεφαλαίου 6: Πραγματικοί Αριθμοί & Δυνάμεις | Β' Γυμνασίου";
+    ? 'Chapter 6: Real Numbers & Integer Powers | 8th Grade'
+    : "Κεφάλαιο 6: Πραγματικοί Αριθμοί & Δυνάμεις | Β' Γυμνασίου";
 
   const actionButton = (
     <Link
-      href="/b-gymnasiou/06-pragmatikoi"
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition-colors"
+      href="/b-gymnasiou/06-pragmatikoi-ask"
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-colors"
     >
-      <span aria-hidden="true">←</span>
-      <span>{toCleanUppercase(isEn ? 'BACK TO THEORY' : 'ΕΠΙΣΤΡΟΦΗ ΣΤΗ ΘΕΩΡΙΑ')}</span>
+      <span>{toCleanUppercase(isEn ? 'PRACTICE EXERCISES' : 'ΕΞΑΣΚΗΣΗ ΣΤΙΣ ΑΣΚΗΣΕΙΣ')}</span>
+      <span aria-hidden="true">→</span>
     </Link>
   );
 
   return (
     <Layout title={pageTitle} actionButton={actionButton}>
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 8k:px-32 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
-        {/* Header */}
-        <header className="rounded-3xl bg-gradient-to-r from-indigo-900 to-blue-800 text-white p-6 sm:p-8 shadow-lg mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-indigo-100 text-xs font-extrabold tracking-wider mb-3">
-              <span>
+        {/* 1. HERO BANNER */}
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white p-6 sm:p-8 lg:p-10 2xl:p-12 shadow-xl mb-8">
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-indigo-100 text-xs sm:text-sm font-extrabold tracking-wider mb-4">
+                <span>
+                  {toCleanUppercase(
+                    isEn ? 'CHAPTER 6 • 8TH GRADE' : "ΚΕΦΑΛΑΙΟ 6 • Β' ΓΥΜΝΑΣΙΟΥ"
+                  )}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight mb-3">
+                {isEn
+                  ? 'Real Numbers, Square Numbers & Powers with Integer Exponents'
+                  : 'Πραγματικοί Αριθμοί, Τετράγωνοι Αριθμοί & Δυνάμεις με Ακέραιο Εκθέτη'}
+              </h1>
+              <p className="text-indigo-100 text-sm sm:text-base lg:text-lg leading-relaxed">
+                {isEn
+                  ? 'Discover irrational numbers on the real number line, explore square numbers and square roots, and master powers with real bases and integer exponents.'
+                  : 'Γνώρισε τους άρρητους αριθμούς και τη γεωμετρική τους τοποθέτηση στην ευθεία ℝ, μελέτησε τους τετράγωνους αριθμούς και κατανόησε τις δυνάμεις με πραγματική βάση και ακέραιο εκθέτη.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3 shrink-0">
+              <Link
+                href="/b-gymnasiou/06-pragmatikoi-ask"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-lg transition-all"
+              >
+                <span>
+                  {toCleanUppercase(
+                    isEn ? 'SOLVE 12 EXERCISES' : 'ΛΥΣΕ 12 ΑΣΚΗΣΕΙΣ'
+                  )}
+                </span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <a
+                href="#interactive-lab"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm sm:text-base border border-white/20 transition-all"
+              >
+                <span>
+                  {toCleanUppercase(
+                    isEn ? 'INTERACTIVE LAB' : 'ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ'
+                  )}
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* 2. 4 MODULAR CARDS ΘΕΩΡΙΑΣ */}
+        <section className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-10">
+          {/* ΚΑΡΤΑ 1: Πραγματικοί Αριθμοί (Ρητοί & Άρρητοι) */}
+          <article className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-9 h-9 rounded-xl bg-indigo-600 text-white font-black flex items-center justify-center text-base shrink-0">
+                  1
+                </span>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                  {isEn
+                    ? 'Rational, Irrational & Real Numbers (ℝ)'
+                    : 'Ρητοί, Άρρητοι & Πραγματικοί Αριθμοί (ℝ)'}
+                </h2>
+              </div>
+
+              <p className="text-slate-700 text-sm sm:text-base leading-relaxed mb-4">
+                {isEn ? (
+                  <>
+                    Every <strong>rational number (ℚ)</strong> can be written as a fraction{' '}
+                    <Frac num="α" den="β" /> (with <span className="font-semibold">β ≠ 0</span>) and has a
+                    terminating or repeating decimal expansion. Numbers with{' '}
+                    <strong>infinite non-repeating decimals</strong> are called{' '}
+                    <strong>irrational (𝕀)</strong>, such as <Radical>2</Radical>, <Radical>3</Radical>,
+                    and <span className="font-semibold">π ≈ 3.14159...</span>
+                  </>
+                ) : (
+                  <>
+                    Κάθε <strong>ρητός αριθμός (ℚ)</strong> γράφεται ως κλάσμα <Frac num="α" den="β" />{' '}
+                    (με <span className="font-semibold">β ≠ 0</span>) και έχει πεπερασμένη ή περιοδική
+                    δεκαδική μορφή. Οι αριθμοί με{' '}
+                    <strong>άπειρα μη περιοδικά δεκαδικά ψηφία</strong> ονομάζονται{' '}
+                    <strong>άρρητοι (𝕀)</strong>, όπως οι <Radical>2</Radical>, <Radical>3</Radical>,{' '}
+                    <span className="font-semibold">π ≈ 3,14159...</span>
+                  </>
+                )}
+              </p>
+
+              <div className="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 mb-4 text-sm sm:text-base">
+                <p className="font-bold text-indigo-950 mb-1">
+                  {isEn
+                    ? 'Set of Real Numbers: ℝ = ℚ ∪ 𝕀'
+                    : 'Σύνολο Πραγματικών Αριθμών: ℝ = ℚ ∪ 𝕀'}
+                </p>
+                <p className="text-slate-700 text-xs sm:text-sm">
+                  {isEn
+                    ? 'Rational and irrational numbers together form the set ℝ. Every real number corresponds to a unique point on the number line.'
+                    : 'Οι ρητοί μαζί με τους άρρητους αποτελούν το σύνολο ℝ. Κάθε πραγματικός αριθμός αντιστοιχεί σε ένα μοναδικό σημείο της ευθείας.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Εποπτικό SVG Διάγραμμα Συνόλων N ⊂ Z ⊂ Q ⊂ R */}
+            <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3">
+              <svg
+                viewBox="0 0 460 190"
+                className="w-full h-auto max-w-full block"
+                role="img"
+                aria-label="Venn diagram of Real Numbers R"
+              >
+                <rect x="8" y="8" width="444" height="174" rx="20" fill="#eef2ff" stroke="#4f46e5" strokeWidth="2.5" />
+                <text x="24" y="34" fontSize="15" fontWeight="800" fill="#312e81">
+                  ℝ ({isEn ? 'Real Numbers' : 'Πραγματικοί'})
+                </text>
+
+                {/* Ρητοί Q */}
+                <rect x="22" y="46" width="275" height="124" rx="16" fill="#ffffff" stroke="#0284c7" strokeWidth="2" />
+                <text x="36" y="68" fontSize="14" fontWeight="800" fill="#0369a1">
+                  ℚ: -3/4, 0,25, 1,(3)
+                </text>
+
+                {/* Ακέραιοι Z */}
+                <rect x="36" y="78" width="215" height="80" rx="14" fill="#f0f9ff" stroke="#0d9488" strokeWidth="2" />
+                <text x="48" y="99" fontSize="13" fontWeight="800" fill="#0f766e">
+                  ℤ: -5, -1, 0
+                </text>
+
+                {/* Φυσικοί N */}
+                <rect x="50" y="108" width="160" height="40" rx="10" fill="#ecfdf5" stroke="#059669" strokeWidth="2" />
+                <text x="64" y="133" fontSize="13" fontWeight="800" fill="#047857">
+                  ℕ: 0, 1, 2, 3, ...
+                </text>
+
+                {/* Άρρητοι I */}
+                <rect x="310" y="46" width="128" height="124" rx="16" fill="#fef3c7" stroke="#d97706" strokeWidth="2" strokeDasharray="5 3" />
+                <text x="322" y="70" fontSize="13" fontWeight="800" fill="#92400e">
+                  {isEn ? 'Irrational (𝕀)' : 'Άρρητοι (𝕀)'}
+                </text>
+                <text x="325" y="98" fontSize="14" fontWeight="700" fill="#78350f">
+                  √2 ≈ 1,414...
+                </text>
+                <text x="325" y="122" fontSize="14" fontWeight="700" fill="#78350f">
+                  √3 ≈ 1,732...
+                </text>
+                <text x="325" y="146" fontSize="14" fontWeight="700" fill="#78350f">
+                  π ≈ 3,141...
+                </text>
+              </svg>
+            </div>
+          </article>
+
+          {/* ΚΑΡΤΑ 2: Τετράγωνοι Αριθμοί & Τοποθέτηση Άρρητων στην Ευθεία */}
+          <article className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-9 h-9 rounded-xl bg-emerald-600 text-white font-black flex items-center justify-center text-base shrink-0">
+                  2
+                </span>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                  {isEn
+                    ? 'Square Numbers & Locating Irrationals on ℝ'
+                    : 'Τετράγωνοι Αριθμοί & Τοποθέτηση Άρρητων στην Ευθεία'}
+                </h2>
+              </div>
+
+              <p className="text-slate-700 text-sm sm:text-base leading-relaxed mb-3">
+                {isEn ? (
+                  <>
+                    <strong>Square numbers</strong> are natural numbers that are squares of integers:{' '}
+                    <span className="font-semibold">1, 4, 9, 16, 25, 36, 49, 64, 81, 100...</span> Their
+                    square roots are natural numbers (e.g. <Radical>25</Radical> = 5), whereas roots of
+                    non-square positive numbers (like <Radical>2</Radical>, <Radical>5</Radical>) are{' '}
+                    <strong>irrational</strong>.
+                  </>
+                ) : (
+                  <>
+                    <strong>Τετράγωνοι αριθμοί</strong> λέγονται οι φυσικοί αριθμοί που είναι τετράγωνα
+                    ακεραίων: <span className="font-semibold">1, 4, 9, 16, 25, 36, 49, 64, 81, 100...</span>{' '}
+                    Οι τετραγωνικές τους ρίζες είναι φυσικοί αριθμοί (π.χ. <Radical>25</Radical> = 5), ενώ
+                    οι ρίζες θετικών μη τετράγωνων αριθμών (π.χ. <Radical>2</Radical>, <Radical>5</Radical>)
+                    είναι <strong>άρρητοι</strong>.
+                  </>
+                )}
+              </p>
+
+              <p className="text-slate-700 text-xs sm:text-sm leading-relaxed mb-4">
+                {isEn ? (
+                  <>
+                    To locate <Radical>2</Radical> on the real axis, we construct a right triangle with
+                    legs <span className="font-semibold">1</span> and <span className="font-semibold">1</span>.
+                    By the Pythagorean Theorem, the hypotenuse is{' '}
+                    <span className="font-semibold">
+                      ρ = <Radical>1² + 1²</Radical> = <Radical>2</Radical>
+                    </span>
+                    . With a compass centered at O and radius <span className="font-semibold">ρ</span>, we
+                    mark <Radical>2</Radical> on the line.
+                  </>
+                ) : (
+                  <>
+                    Για να τοποθετήσουμε τον <Radical>2</Radical> στον άξονα ℝ, κατασκευάζουμε ορθογώνιο
+                    τρίγωνο με κάθετες <span className="font-semibold">1</span> και{' '}
+                    <span className="font-semibold">1</span>. Από το Πυθαγόρειο Θεώρημα η υποτείνουσα είναι{' '}
+                    <span className="font-semibold">
+                      ρ = <Radical>1² + 1²</Radical> = <Radical>2</Radical>
+                    </span>
+                    . Με διαβήτη κέντρου Ο και ακτίνας <span className="font-semibold">ρ</span>, μεταφέρουμε
+                    το μήκος πάνω στον άξονα.
+                  </>
+                )}
+              </p>
+            </div>
+
+            {/* Εποπτικό SVG Κατασκευής √2 με ακτίνα ρ */}
+            <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3">
+              <svg
+                viewBox="0 0 460 190"
+                className="w-full h-auto max-w-full block"
+                role="img"
+                aria-label="Geometric construction of square root of 2 on the number line"
+              >
+                {/* Άξονας x */}
+                <line x1="30" y1="150" x2="430" y2="150" stroke="#334155" strokeWidth="2.5" />
+                <polygon points="430,150 420,145 420,155" fill="#334155" />
+                <text x="435" y="155" fontSize="14" fontWeight="800" fill="#334155">ℝ</text>
+
+                {/* Υποδιαιρέσεις 0, 1, 2 */}
+                <circle cx="80" cy="150" r="4" fill="#0f172a" />
+                <text x="75" y="172" fontSize="13" fontWeight="700" fill="#0f172a">0</text>
+
+                <circle cx="200" cy="150" r="4" fill="#0f172a" />
+                <text x="196" y="172" fontSize="13" fontWeight="700" fill="#0f172a">1</text>
+
+                <circle cx="320" cy="150" r="4" fill="#0f172a" />
+                <text x="316" y="172" fontSize="13" fontWeight="700" fill="#0f172a">2</text>
+
+                {/* Ορθογώνιο τρίγωνο */}
+                <polygon points="80,150 200,150 200,30" fill="#d1fae5" fillOpacity="0.6" stroke="#059669" strokeWidth="2.5" />
+                {/* Ορθή γωνία */}
+                <polyline points="186,150 186,136 200,136" fill="none" stroke="#059669" strokeWidth="2" />
+
+                <text x="135" y="143" fontSize="13" fontWeight="700" fill="#065f46">1</text>
+                <text x="208" y="95" fontSize="13" fontWeight="700" fill="#065f46">1</text>
+                <text x="108" y="82" fontSize="14" fontWeight="800" fill="#4f46e5">ρ = √2</text>
+
+                {/* Τόξο διαβήτη ακτίνας ρ = 120 * √2 ≈ 169.7 */}
+                <path
+                  d="M 200 30 A 169.7 169.7 0 0 1 249.7 150"
+                  fill="none"
+                  stroke="#4f46e5"
+                  strokeWidth="2.2"
+                  strokeDasharray="6 4"
+                />
+                <circle cx="249.7" cy="150" r="5" fill="#dc2626" />
+                <text x="242" y="174" fontSize="14" fontWeight="800" fill="#dc2626">√2</text>
+              </svg>
+            </div>
+          </article>
+
+          {/* ΚΑΡΤΑ 3: Δύναμη με Βάση Πραγματικό & Εκθέτη Ακέραιο */}
+          <article className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-9 h-9 rounded-xl bg-amber-600 text-white font-black flex items-center justify-center text-base shrink-0">
+                  3
+                </span>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                  {isEn
+                    ? 'Power with Real Base & Integer Exponent'
+                    : 'Δύναμη με Βάση Πραγματικό & Εκθέτη Ακέραιο'}
+                </h2>
+              </div>
+
+              <p className="text-slate-700 text-sm sm:text-base leading-relaxed mb-4">
+                {isEn
+                  ? 'Let α ∈ ℝ* (non-zero real number) and ν ∈ ℕ* (positive integer). We extend the definition of powers to all integers:'
+                  : 'Έστω α ∈ ℝ* (μη μηδενικός πραγματικός αριθμός) και ν ∈ ℕ* (θετικός ακέραιος). Ορίζουμε τη δύναμη για κάθε ακέραιο εκθέτη:'}
+              </p>
+
+              <div className="space-y-3">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-bold text-slate-800 text-sm sm:text-base">
+                    {isEn ? '1. Positive exponent (ν > 0):' : '1. Θετικός εκθέτης (ν > 0):'}
+                  </span>
+                  <span className="font-mono font-bold text-indigo-700 text-sm sm:text-base">
+                    α<sup>ν</sup> = α · α · ... · α ({isEn ? 'ν factors' : 'ν παράγοντες'})
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-bold text-slate-800 text-sm sm:text-base">
+                    {isEn ? '2. Zero exponent (α ≠ 0):' : '2. Μηδενικός εκθέτης (α ≠ 0):'}
+                  </span>
+                  <span className="font-mono font-bold text-emerald-700 text-base sm:text-lg">
+                    α<sup>0</sup> = 1
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-bold text-amber-950 text-sm sm:text-base">
+                    {isEn ? '3. Negative exponent (α ≠ 0):' : '3. Αρνητικός εκθέτης (α ≠ 0):'}
+                  </span>
+                  <span className="font-bold text-amber-900 text-base sm:text-lg inline-flex items-center">
+                    α<sup>-ν</sup> = <Frac num="1" den={<span>α<sup>ν</sup></span>} />
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs sm:text-sm text-slate-600 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="font-bold text-slate-800">
+                {isEn ? 'Special Case (Fraction):' : 'Ειδική περίπτωση κλάσματος:'}
+              </span>
+              <span className="inline-flex items-center font-semibold text-slate-900">
+                (<Frac num="α" den="β" />)<sup>-ν</sup> = (<Frac num="β" den="α" />)<sup>ν</sup>
+              </span>
+              <span>(α, β ≠ 0)</span>
+            </div>
+          </article>
+
+          {/* ΚΑΡΤΑ 4: Ιδιότητες Δυνάμεων με Ακέραιο Εκθέτη */}
+          <article className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-7 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="w-9 h-9 rounded-xl bg-purple-600 text-white font-black flex items-center justify-center text-base shrink-0">
+                  4
+                </span>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900">
+                  {isEn
+                    ? 'Properties of Powers (α, β ∈ ℝ*, μ, ν ∈ ℤ)'
+                    : 'Ιδιότητες Δυνάμεων (α, β ∈ ℝ*, μ, ν ∈ ℤ)'}
+                </h2>
+              </div>
+
+              <p className="text-slate-700 text-sm sm:text-base leading-relaxed mb-4">
+                {isEn
+                  ? 'All five classic laws of exponents hold identically for real bases (α, β ≠ 0) and any integer exponents (μ, ν ∈ ℤ):'
+                  : 'Όλες οι ιδιότητες των δυνάμεων ισχύουν απαράλλαχτες για μη μηδενικές πραγματικές βάσεις (α, β ≠ 0) και οποιουσδήποτε ακέραιους εκθέτες (μ, ν ∈ ℤ):'}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base">
+                <div className="p-3 rounded-2xl bg-purple-50/70 border border-purple-100">
+                  <div className="text-xs font-bold text-purple-800 mb-1">
+                    {isEn ? 'Product of same base' : 'Γινόμενο ίδιων βάσεων'}
+                  </div>
+                  <div className="font-bold text-slate-900">
+                    α<sup>μ</sup> · α<sup>ν</sup> = α<sup>μ + ν</sup>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-purple-50/70 border border-purple-100">
+                  <div className="text-xs font-bold text-purple-800 mb-1">
+                    {isEn ? 'Quotient of same base' : 'Πηλίκο ίδιων βάσεων'}
+                  </div>
+                  <div className="font-bold text-slate-900 inline-flex items-center">
+                    <Frac num={<span>α<sup>μ</sup></span>} den={<span>α<sup>ν</sup></span>} /> = α<sup>μ - ν</sup>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-purple-50/70 border border-purple-100">
+                  <div className="text-xs font-bold text-purple-800 mb-1">
+                    {isEn ? 'Power of a power' : 'Δύναμη δύναμης'}
+                  </div>
+                  <div className="font-bold text-slate-900">
+                    (α<sup>μ</sup>)<sup>ν</sup> = α<sup>μ · ν</sup>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-purple-50/70 border border-purple-100">
+                  <div className="text-xs font-bold text-purple-800 mb-1">
+                    {isEn ? 'Power of product / quotient' : 'Δύναμη γινομένου / πηλίκου'}
+                  </div>
+                  <div className="font-bold text-slate-900 flex flex-wrap items-center gap-x-2">
+                    <span>(α · β)<sup>ν</sup> = α<sup>ν</sup> · β<sup>ν</sup></span>
+                    <span>|</span>
+                    <span className="inline-flex items-center">
+                      (<Frac num="α" den="β" />)<sup>ν</sup> = <Frac num={<span>α<sup>ν</sup></span>} den={<span>β<sup>ν</sup></span>} />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 text-xs sm:text-sm text-slate-600">
+              {isEn ? (
+                <>
+                  <strong>Sign Rule:</strong> If α &gt; 0, then α<sup>ν</sup> &gt; 0 always. If α &lt; 0,
+                  then α<sup>ν</sup> &gt; 0 when ν is even and α<sup>ν</sup> &lt; 0 when ν is odd.
+                </>
+              ) : (
+                <>
+                  <strong>Πρόσημο δύναμης:</strong> Αν α &gt; 0, τότε α<sup>ν</sup> &gt; 0 για κάθε ν ∈ ℤ.
+                  Αν α &lt; 0, τότε α<sup>ν</sup> &gt; 0 για ν άρτιο και α<sup>ν</sup> &lt; 0 για ν περιττό.
+                </>
+              )}
+            </div>
+          </article>
+        </section>
+
+        {/* 3. ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ (INTERACTIVE LAB) */}
+        <section
+          id="interactive-lab"
+          className="bg-white rounded-3xl border-2 border-indigo-200 shadow-lg p-5 sm:p-8 mb-10"
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-slate-200">
+            <div>
+              <span className="inline-block px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-extrabold tracking-wide mb-2">
                 {toCleanUppercase(
-                  isEn ? 'CHAPTER 6 • 8TH GRADE' : "ΚΕΦΑΛΑΙΟ 6 • Β' ΓΥΜΝΑΣΙΟΥ"
+                  isEn ? 'INTERACTIVE EXPLORATION LAB' : 'ΔΙΑΔΡΑΣΤΙΚΟ ΕΡΓΑΣΤΗΡΙΟ ΕΞΕΡΕΥΝΗΣΗΣ'
                 )}
               </span>
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">
+                {isEn
+                  ? 'Visualize Irrational Numbers & Integer Powers'
+                  : 'Οπτικοποίηση Άρρητων Αριθμών & Δυνάμεων'}
+              </h2>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
-              {isEn
-                ? 'Exercises: Real Numbers, Square Roots & Powers'
-                : 'Ασκήσεις: Πραγματικοί Αριθμοί, Τετράγωνοι & Δυνάμεις'}
-            </h1>
-          </div>
 
-          <div className="flex flex-wrap gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={handleReset}
-              className="px-5 py-3 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow transition-colors"
-            >
-              {toCleanUppercase(isEn ? 'NEW EXERCISES' : 'ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}
-            </button>
-          </div>
-        </header>
-
-        {/* Λίστα 12 Ασκήσεων */}
-        <div className="space-y-6">
-          {questions.map((q, idx) => {
-            const userVal = answers[q.id] ?? '';
-            const correct = submitted && isQuestionCorrect(q);
-            const wrong = submitted && !correct;
-
-            return (
-              <article
-                key={q.id}
-                className={`rounded-3xl bg-white border-2 p-5 sm:p-7 shadow-sm transition-colors ${
-                  submitted
-                    ? correct
-                      ? 'border-emerald-400 bg-emerald-50/20'
-                      : 'border-rose-300 bg-rose-50/20'
-                    : 'border-slate-200'
+            {/* Επιλογή Καρτέλας Εργαστηρίου */}
+            <div className="flex flex-wrap gap-2 bg-slate-100 p-1.5 rounded-2xl">
+              <button
+                type="button"
+                onClick={() => setActiveLabTab('irrational')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${
+                  activeLabTab === 'irrational'
+                    ? 'bg-indigo-600 text-white shadow'
+                    : 'text-slate-700 hover:bg-white/70'
                 }`}
               >
-                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-extrabold">
-                    {toCleanUppercase(
-                      isEn ? `EXERCISE ${idx + 1} OF 12` : `ΑΣΚΗΣΗ ${idx + 1} ΑΠΟ 12`
-                    )}
-                  </span>
+                {isEn ? '1. Irrationals on ℝ' : '1. Άρρητοι στην Ευθεία ℝ'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveLabTab('powers')}
+                className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${
+                  activeLabTab === 'powers'
+                    ? 'bg-indigo-600 text-white shadow'
+                    : 'text-slate-700 hover:bg-white/70'
+                }`}
+              >
+                {isEn ? '2. Powers α^ν Explorer' : '2. Εξερευνητής Δυνάμεων α^ν'}
+              </button>
+            </div>
+          </div>
 
-                  {submitted && (
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-black ${
-                        correct
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-rose-100 text-rose-800'
-                      }`}
-                    >
-                      {toCleanUppercase(
-                        correct
-                          ? isEn
-                            ? 'CORRECT'
-                            : 'ΣΩΣΤΟ'
-                          : isEn
-                          ? 'INCORRECT'
-                          : 'ΛΑΘΟΣ'
-                      )}
+          {activeLabTab === 'irrational' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 items-center">
+              {/* Controls */}
+              <div className="lg:col-span-5 space-y-5 min-w-0">
+                <div>
+                  <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                    {isEn
+                      ? 'Select irrational number to construct:'
+                      : 'Επίλεξε άρρητο αριθμό προς κατασκευή:'}
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {(['sqrt2', 'sqrt3', 'sqrt5', 'sqrt8']).map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => {
+                          setSelectedRoot(key);
+                          setCompassProgress(75);
+                        }}
+                        className={`py-2.5 px-2 rounded-xl font-black text-sm sm:text-base border-2 transition-all ${
+                          selectedRoot === key
+                            ? 'border-indigo-600 bg-indigo-50 text-indigo-800 shadow-sm'
+                            : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300'
+                        }`}
+                      >
+                        <Radical>{rootConfigs[key].label}</Radical>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between text-sm font-bold text-slate-700 mb-1">
+                    <span>
+                      {isEn
+                        ? 'Compass rotation progress (radius ρ):'
+                        : 'Περιστροφή διαβήτη (ακτίνα ρ):'}
                     </span>
-                  )}
-                </div>
-
-                {/* Εκφώνηση */}
-                <div className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed mb-5">
-                  {isEn ? q.promptEn : q.promptEl}
-                </div>
-
-                {/* Τύπος TF */}
-                {q.type === 'tf' && (
-                  <div className="grid grid-cols-2 gap-3 max-w-md">
-                    {[
-                      { val: 'true', label: isEn ? 'True' : 'Σωστό' },
-                      { val: 'false', label: isEn ? 'False' : 'Λάθος' },
-                    ].map((opt) => {
-                      const selected = userVal === opt.val;
-                      return (
-                        <button
-                          key={opt.val}
-                          type="button"
-                          disabled={submitted}
-                          onClick={() => handleSelect(q.id, opt.val)}
-                          className={`py-3 px-4 rounded-2xl border-2 font-extrabold text-sm sm:text-base transition-all ${
-                            selected
-                              ? 'border-indigo-600 bg-indigo-50 text-indigo-900 shadow-sm'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300'
-                          } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
-                        >
-                          {opt.label}
-                        </button>
-                      );
-                    })}
+                    <span className="text-indigo-700 font-black">{compassProgress}%</span>
                   </div>
-                )}
+                  <CustomSlider
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={compassProgress}
+                    onChange={setCompassProgress}
+                    accentColor="indigo"
+                    ariaLabel="Compass rotation progress"
+                  />
+                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                    <span>0% ({isEn ? 'Triangle' : 'Τρίγωνο'})</span>
+                    <span>100% ({isEn ? 'On axis ℝ' : 'Πάνω στον ℝ'})</span>
+                  </div>
+                </div>
 
-                {/* Τύπος MCQ */}
-                {q.type === 'mcq' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {q.options.map((opt, optIdx) => {
-                      const selected = userVal === opt.key;
-                      const letter = ['Α', 'Β', 'Γ', 'Δ'][optIdx];
+                <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 space-y-1.5">
+                  <div className="text-xs font-extrabold uppercase tracking-wider text-indigo-700">
+                    {isEn ? 'Pythagorean Construction' : 'Πυθαγόρεια Κατασκευή'}
+                  </div>
+                  <p className="text-sm text-slate-800 font-medium">
+                    {isEn ? currentRoot.descEn : currentRoot.descEl}
+                  </p>
+                  <p className="text-base font-black text-indigo-950">
+                    {isEn ? currentRoot.formulaEn : currentRoot.formulaEl}
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-700">
+                    {isEn ? 'Decimal approximation:' : 'Δεκαδική προσέγγιση:'}{' '}
+                    <span className="font-bold text-emerald-700">
+                      <Radical>{currentRoot.label}</Radical> ≈{' '}
+                      {isEn ? currentRoot.approxEn : currentRoot.approx}
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* Dynamic SVG Number Line */}
+              <div className="lg:col-span-7 min-w-0">
+                <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3 sm:p-4">
+                  <svg
+                    viewBox="0 0 560 310"
+                    className="w-full h-auto max-w-full block"
+                    role="img"
+                    aria-label="Interactive compass construction on real number line"
+                  >
+                    {/* Grid lines */}
+                    {[0, 1, 2, 3].map((unit) => {
+                      const gx = originX + unit * unitPx;
                       return (
-                        <button
-                          key={opt.key}
-                          type="button"
-                          disabled={submitted}
-                          onClick={() => handleSelect(q.id, opt.key)}
-                          className={`p-3.5 rounded-2xl border-2 text-left font-bold text-sm sm:text-base flex items-center gap-3 transition-all ${
-                            selected
-                              ? 'border-indigo-600 bg-indigo-50 text-indigo-950 shadow-sm'
-                              : 'border-slate-200 bg-white text-slate-800 hover:border-indigo-300'
-                          } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
-                        >
-                          <span
-                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${
-                              selected
-                                ? 'bg-indigo-600 text-white'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}
+                        <g key={unit}>
+                          <line
+                            x1={gx}
+                            y1="25"
+                            x2={gx}
+                            y2="255"
+                            stroke="#e2e8f0"
+                            strokeWidth="1.5"
+                            strokeDasharray="4 4"
+                          />
+                          <circle cx={gx} cy={originY} r="4.5" fill="#0f172a" />
+                          <text
+                            x={gx - 4}
+                            y={originY + 24}
+                            fontSize="14"
+                            fontWeight="800"
+                            fill="#0f172a"
                           >
-                            {letter}
-                          </span>
-                          <span className="inline-flex flex-wrap items-center">
-                            {isEn ? opt.labelEn : opt.labelEl}
-                          </span>
-                        </button>
+                            {unit}
+                          </text>
+                        </g>
                       );
                     })}
-                  </div>
-                )}
 
-                {/* Τύπος INPUT */}
-                {q.type === 'input' && (
-                  <div className="flex flex-wrap items-center gap-3 max-w-md">
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      disabled={submitted}
-                      value={userVal}
-                      onChange={(e) => handleSelect(q.id, e.target.value)}
-                      placeholder={isEn ? 'Type your answer...' : 'Γράψε την απάντηση...'}
-                      className="w-44 sm:w-52 px-4 py-3 rounded-2xl border-2 border-slate-300 focus:border-indigo-600 focus:outline-none font-bold text-base text-slate-900 bg-white disabled:bg-slate-100"
+                    {/* Άξονας R */}
+                    <line
+                      x1="35"
+                      y1={originY}
+                      x2="525"
+                      y2={originY}
+                      stroke="#1e293b"
+                      strokeWidth="3"
                     />
-                    {(q.unitEl || q.unitEn) && (
-                      <span className="text-xs sm:text-sm font-bold text-slate-500">
-                        {isEn ? q.unitEn : q.unitEl}
-                      </span>
+                    <polygon
+                      points={`525,${originY} 513,${originY - 6} 513,${originY + 6}`}
+                      fill="#1e293b"
+                    />
+                    <text
+                      x="532"
+                      y={originY + 5}
+                      fontSize="16"
+                      fontWeight="900"
+                      fill="#1e293b"
+                    >
+                      ℝ
+                    </text>
+
+                    {/* Ορθογώνιο τρίγωνο */}
+                    <polygon
+                      points={`${originX},${originY} ${pointAX},${pointAY} ${pointBX},${pointBY}`}
+                      fill="#c7d2fe"
+                      fillOpacity="0.55"
+                      stroke="#4338ca"
+                      strokeWidth="2.5"
+                    />
+
+                    {/* Ορθή γωνία */}
+                    <polyline
+                      points={`${pointAX - 14},${pointAY} ${pointAX - 14},${pointAY - 14} ${pointAX},${pointAY - 14}`}
+                      fill="none"
+                      stroke="#4338ca"
+                      strokeWidth="2"
+                    />
+
+                    {/* Ετικέτες πλευρών */}
+                    <text
+                      x={(originX + pointAX) / 2 - 12}
+                      y={originY + 42}
+                      fontSize="13"
+                      fontWeight="800"
+                      fill="#3730a3"
+                    >
+                      {selectedRoot === 'sqrt3' ? '√2' : currentRoot.legA}
+                    </text>
+                    <text
+                      x={pointAX + 10}
+                      y={(pointAY + pointBY) / 2 + 4}
+                      fontSize="13"
+                      fontWeight="800"
+                      fill="#3730a3"
+                    >
+                      {currentRoot.legB}
+                    </text>
+
+                    {/* Τόξο Διαβήτη */}
+                    {compassProgress > 0 && (
+                      <path
+                        d={`M ${pointBX} ${pointBY} A ${radiusPx} ${radiusPx} 0 0 1 ${tipX} ${tipY}`}
+                        fill="none"
+                        stroke="#059669"
+                        strokeWidth="2.8"
+                        strokeDasharray="6 4"
+                      />
                     )}
+
+                    {/* Ακτίνα ρ διαβήτη */}
+                    <line
+                      x1={originX}
+                      y1={originY}
+                      x2={tipX}
+                      y2={tipY}
+                      stroke="#059669"
+                      strokeWidth="3"
+                    />
+                    <circle cx={originX} cy={originY} r="5" fill="#059669" />
+                    <circle cx={tipX} cy={tipY} r="6" fill="#dc2626" />
+
+                    {/* Ετικέτα ρ */}
+                    <text
+                      x={(originX + tipX) / 2 - 22}
+                      y={(originY + tipY) / 2 - 12}
+                      fontSize="14"
+                      fontWeight="900"
+                      fill="#047857"
+                    >
+                      ρ = √{currentRoot.label}
+                    </text>
+
+                    {/* Σημείο προσγείωσης */}
+                    {compassProgress >= 95 && (
+                      <g>
+                        <circle cx={landedX} cy={originY} r="6.5" fill="#dc2626" />
+                        <rect
+                          x={landedX - 24}
+                          y={originY + 32}
+                          width="48"
+                          height="24"
+                          rx="6"
+                          fill="#fee2e2"
+                          stroke="#dc2626"
+                          strokeWidth="1.5"
+                        />
+                        <text
+                          x={landedX - 14}
+                          y={originY + 49}
+                          fontSize="14"
+                          fontWeight="900"
+                          fill="#b91c1c"
+                        >
+                          √{currentRoot.label}
+                        </text>
+                      </g>
+                    )}
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* TAB 2: ΕΞΕΡΕΥΝΗΤΗΣ ΔΥΝΑΜΕΩΝ α^ν */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 items-center">
+              <div className="lg:col-span-5 space-y-5 min-w-0">
+                <div>
+                  <label className="block text-sm font-extrabold text-slate-800 mb-2">
+                    {isEn ? '1. Choose real base α:' : '1. Επίλεξε πραγματική βάση α:'}
+                  </label>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      { id: '2', node: '2' },
+                      { id: '3', node: '3' },
+                      { id: 'half', node: <Frac num="1" den="2" /> },
+                      { id: 'neg2', node: '-2' },
+                      { id: 'sqrt2', node: <Radical>2</Radical> },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setBaseChoice(item.id)}
+                        className={`py-2 px-1 rounded-xl font-black text-sm border-2 flex items-center justify-center transition-all ${
+                          baseChoice === item.id
+                            ? 'border-indigo-600 bg-indigo-50 text-indigo-800 shadow-sm'
+                            : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300'
+                        }`}
+                      >
+                        {item.node}
+                      </button>
+                    ))}
                   </div>
-                )}
+                </div>
 
-                {/* Feedback ΜΟΝΟ μετά την υποβολή (No-Giveaway Κανόνας) */}
-                {submitted && (
-                  <div className="mt-5 pt-4 border-t border-slate-200 space-y-3">
-                    <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
-                      <span className="font-bold text-slate-700">
-                        {isEn ? 'Correct answer:' : 'Σωστή απάντηση:'}
-                      </span>
-                      <span className="inline-flex flex-wrap items-center gap-x-1 break-words [overflow-wrap:anywhere] max-w-full px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-black">
-                        {isEn ? q.correctTextEn : q.correctTextEl}
-                      </span>
-                    </div>
+                <div>
+                  <div className="flex items-center justify-between text-sm font-bold text-slate-700 mb-1">
+                    <span>
+                      {isEn ? '2. Integer exponent ν:' : '2. Ακέραιος εκθέτης ν:'}
+                    </span>
+                    <span className="text-indigo-700 font-black text-base">
+                      ν = {exponentVal}
+                    </span>
+                  </div>
+                  <CustomSlider
+                    min={-4}
+                    max={4}
+                    step={1}
+                    value={exponentVal}
+                    onChange={setExponentVal}
+                    accentColor="emerald"
+                    ariaLabel="Integer exponent slider"
+                  />
+                  <div className="flex justify-between text-xs text-slate-500 mt-1">
+                    <span>-4</span>
+                    <span>-2</span>
+                    <span>0</span>
+                    <span>+2</span>
+                    <span>+4</span>
+                  </div>
+                </div>
+              </div>
 
-                    <div className="text-sm sm:text-base text-slate-700 leading-relaxed flex flex-wrap items-center gap-x-1 gap-y-1">
-                      <span className="font-extrabold text-slate-900">
-                        {isEn ? 'Explanation:' : 'Επεξήγηση:'}
-                      </span>
-                      <span>{isEn ? q.explanationEn : q.explanationEl}</span>
-                    </div>
+              <div className="lg:col-span-7 min-w-0">
+                <div className="rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 sm:p-8 shadow-md space-y-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-4">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-300">
+                      {isEn ? 'Step-by-step evaluation' : 'Βήμα προς βήμα υπολογισμός'}
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/10 text-xs font-bold text-emerald-300">
+                      {powerInfo.signLabel}
+                    </span>
+                  </div>
 
-                    {/* Πίνακας Βημάτων (όπου υπάρχει) */}
-                    {q.tableData && (
-                      <div className="overflow-hidden rounded-2xl border border-slate-200 mt-3">
-                        <table className="w-full table-fixed text-xs sm:text-sm text-left bg-white">
-                          <thead className="bg-slate-100 text-slate-800 font-extrabold">
-                            <tr>
-                              <th className="w-1/3 px-3 sm:px-4 py-2.5">
-                                {isEn ? 'Step' : 'Βήμα'}
-                              </th>
-                              <th className="w-2/3 px-3 sm:px-4 py-2.5">
-                                {isEn ? 'Analysis' : 'Ανάλυση'}
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-200">
-                            {q.tableData.map((row, rIdx) => (
-                              <tr key={rIdx}>
-                                <td className="px-3 sm:px-4 py-2.5 font-bold text-slate-800">
-                                  {isEn ? row.stepEn : row.stepEl}
-                                </td>
-                                <td className="px-3 sm:px-4 py-2.5">
-                                  <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                    {row.calc}
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                  <div className="flex flex-wrap items-center gap-3 text-xl sm:text-3xl font-black">
+                    <span className="inline-flex items-center">
+                      ({baseChoice === 'half' ? (
+                        <Frac num="1" den="2" />
+                      ) : baseChoice === 'sqrt2' ? (
+                        <Radical>2</Radical>
+                      ) : (
+                        currentBase.label
+                      )})<sup>{exponentVal}</sup>
+                    </span>
+
+                    <span className="text-indigo-300">=</span>
+
+                    {powerInfo.isNegExp && (
+                      <>
+                        <Frac
+                          num="1"
+                          den={
+                            <span>
+                              ({baseChoice === 'half' ? (
+                                <Frac num="1" den="2" />
+                              ) : baseChoice === 'sqrt2' ? (
+                                <Radical>2</Radical>
+                              ) : (
+                                currentBase.label
+                              )})<sup>{Math.abs(exponentVal)}</sup>
+                            </span>
+                          }
+                        />
+                        <span className="text-indigo-300">=</span>
+                      </>
                     )}
 
-                    {/* Εποπτικό SVG Διάγραμμα ΜΟΝΟ στο feedback */}
-                    {q.renderFeedbackDiagram && q.renderFeedbackDiagram()}
+                    <span className="px-4 py-2 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 inline-flex items-center">
+                      {powerInfo.valueNode}
+                    </span>
                   </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* Sticky Bottom Score Bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-lg">
-        <div className="w-full max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 py-3 flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-xs sm:text-sm text-indigo-200 leading-relaxed">
+                    {exponentVal < 0
+                      ? isEn
+                        ? 'Negative exponent rule: we invert the base (1 / α^|ν|) and turn the exponent positive.'
+                        : 'Κανόνας αρνητικού εκθέτη: αντιστρέφουμε τη βάση (1 / α^|ν|) και ο εκθέτης γίνεται θετικός.'
+                      : exponentVal === 0
+                      ? isEn
+                        ? 'Zero exponent rule: any non-zero real number raised to 0 equals 1.'
+                        : 'Κανόνας μηδενικού εκθέτη: κάθε μη μηδενικός πραγματικός υψωμένος στη 0 ισούται με 1.'
+                      : isEn
+                      ? 'Positive exponent rule: multiply the base by itself ν times.'
+                      : 'Κανόνας θετικού εκθέτη: πολλαπλασιάζουμε τη βάση με τον εαυτό της ν φορές.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* 4. 2 ΛΥΜΕΝΑ ΠΡΟΒΛΗΜΑΤΑ ΕΦΑΡΜΟΓΗΣ */}
+        <section className="space-y-8 mb-10">
           <div className="flex items-center gap-3">
-            <span className="text-xs sm:text-sm font-extrabold text-slate-700">
-              {isEn ? 'Answered:' : 'Απαντημένες:'}{' '}
-              <span className="text-indigo-700 font-black">
-                {answeredCount} / {questions.length}
-              </span>
-            </span>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">
+              {isEn
+                ? 'Solved Application Problems'
+                : 'Λυμένα Προβλήματα Εφαρμογής'}
+            </h2>
+          </div>
 
-            {submitted && (
-              <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs sm:text-sm font-black">
+          {/* ΠΡΟΒΛΗΜΑ 1 */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-extrabold mb-3">
+              <span>{toCleanUppercase(isEn ? 'PROBLEM 1' : 'ΠΡΟΒΛΗΜΑ 1')}</span>
+            </div>
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-5 leading-relaxed">
+              {isEn ? (
+                <>
+                  A square garden has an area of <span className="text-indigo-700">18 m²</span>. Find the
+                  exact length of its side <span className="font-semibold">α</span>, determine whether it
+                  is a rational or irrational number, and show between which two consecutive integers it
+                  lies.
+                </>
+              ) : (
+                <>
+                  Ένας τετράγωνος κήπος έχει εμβαδόν <span className="text-indigo-700">18 m²</span>. Να
+                  βρείτε το ακριβές μήκος της πλευράς του <span className="font-semibold">α</span>, να
+                  εξετάσετε αν είναι ρητός ή άρρητος αριθμός και να προσδιορίσετε ανάμεσα σε ποιους δύο
+                  διαδοχικούς ακέραιους αριθμούς βρίσκεται.
+                </>
+              )}
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              {/* Εποπτικό SVG */}
+              <div className="md:col-span-5 min-w-0">
+                <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                  <svg
+                    viewBox="0 0 360 220"
+                    className="w-full h-auto max-w-full block"
+                    role="img"
+                    aria-label="Square garden of area 18 and number line bounds"
+                  >
+                    {/* Τετράγωνο */}
+                    <rect
+                      x="30"
+                      y="25"
+                      width="115"
+                      height="115"
+                      fill="#d1fae5"
+                      stroke="#059669"
+                      strokeWidth="2.5"
+                    />
+                    <text x="58" y="88" fontSize="14" fontWeight="800" fill="#065f46">
+                      Ε = 18 m²
+                    </text>
+                    <text x="65" y="158" fontSize="13" fontWeight="800" fill="#0f172a">
+                      α = √18
+                    </text>
+
+                    {/* Ευθεία πραγματικών */}
+                    <line x1="175" y1="115" x2="345" y2="115" stroke="#334155" strokeWidth="2.5" />
+                    <polygon points="345,115 336,110 336,120" fill="#334155" />
+
+                    <circle cx="205" cy="115" r="4.5" fill="#0f172a" />
+                    <text x="188" y="138" fontSize="12" fontWeight="700" fill="#0f172a">
+                      4 (√16)
+                    </text>
+
+                    <circle cx="315" cy="115" r="4.5" fill="#0f172a" />
+                    <text x="298" y="138" fontSize="12" fontWeight="700" fill="#0f172a">
+                      5 (√25)
+                    </text>
+
+                    {/* Θέση √18 */}
+                    <circle cx="230" cy="115" r="6" fill="#dc2626" />
+                    <text x="215" y="96" fontSize="13" fontWeight="900" fill="#dc2626">
+                      √18 ≈ 4,24
+                    </text>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Πίνακας Βημάτων Desktop / Stacked Cards Mobile */}
+              <div className="md:col-span-7 min-w-0 space-y-4">
+                <div className="hidden sm:block overflow-hidden rounded-2xl border border-slate-200">
+                  <table className="w-full table-fixed text-sm text-left">
+                    <thead className="bg-slate-100 text-slate-800 font-extrabold">
+                      <tr>
+                        <th className="w-1/3 px-4 py-3">{isEn ? 'Step' : 'Βήμα'}</th>
+                        <th className="w-2/3 px-4 py-3">{isEn ? 'Analysis' : 'Ανάλυση'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '1. Side length' : '1. Μήκος πλευράς'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span>Ε = α² = 18 ⇒ α =</span>
+                            <Radical>18</Radical>
+                            <span>=</span>
+                            <Radical>9 · 2</Radical>
+                            <span>= 3</span>
+                            <Radical>2</Radical>
+                            <span>m</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '2. Classification' : '2. Χαρακτηρισμός'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span>
+                              {isEn
+                                ? 'Since 18 is not a square number,'
+                                : 'Επειδή το 18 δεν είναι τετράγωνος αριθμός, ο'}
+                            </span>
+                            <Radical>18</Radical>
+                            <span>
+                              {isEn ? 'is an irrational number (𝕀).' : 'είναι άρρητος αριθμός (𝕀).'}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '3. Integer bounds' : '3. Φράγματα ακεραίων'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span>16 &lt; 18 &lt; 25 ⇒</span>
+                            <Radical>16</Radical>
+                            <span>&lt;</span>
+                            <Radical>18</Radical>
+                            <span>&lt;</span>
+                            <Radical>25</Radical>
+                            <span>⇒ 4 &lt;</span>
+                            <Radical>18</Radical>
+                            <span>&lt; 5</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Stacked Cards */}
+                <div className="sm:hidden space-y-2.5">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-indigo-800 mb-1">
+                      {isEn ? '1. Side length' : '1. Μήκος πλευράς'}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span>Ε = α² = 18 ⇒ α =</span>
+                      <Radical>18</Radical>
+                      <span>= 3</span>
+                      <Radical>2</Radical>
+                      <span>m</span>
+                    </div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-indigo-800 mb-1">
+                      {isEn ? '2. Classification' : '2. Χαρακτηρισμός'}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span>
+                        {isEn ? '18 is not a square number ⇒' : 'Το 18 δεν είναι τετράγωνος ⇒'}
+                      </span>
+                      <Radical>18</Radical>
+                      <span>∈ 𝕀 ({isEn ? 'irrational' : 'άρρητος'})</span>
+                    </div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-indigo-800 mb-1">
+                      {isEn ? '3. Integer bounds' : '3. Φράγματα ακεραίων'}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span>16 &lt; 18 &lt; 25 ⇒ 4 &lt;</span>
+                      <Radical>18</Radical>
+                      <span>&lt; 5</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Πλαίσιο Τελικής Απάντησης */}
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span>{isEn ? 'Final Answer:' : 'Τελική Απάντηση:'}</span>
+                  <span>α = 3</span>
+                  <Radical>2</Radical>
+                  <span>
+                    m ({isEn ? 'irrational, between 4 and 5' : 'άρρητος, ανάμεσα στο 4 και το 5'})
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ΠΡΟΒΛΗΜΑ 2 */}
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-5 sm:p-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-extrabold mb-3">
+              <span>{toCleanUppercase(isEn ? 'PROBLEM 2' : 'ΠΡΟΒΛΗΜΑ 2')}</span>
+            </div>
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 mb-5 leading-relaxed flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              <span>
                 {isEn
-                  ? `Score: ${score}/${questions.length} (${percentage}%)`
-                  : `Βαθμολογία: ${score}/${questions.length} (${percentage}%)`}
+                  ? 'Simplify and calculate the value of the expression:'
+                  : 'Να απλοποιήσετε και να υπολογίσετε την τιμή της παράστασης:'}
               </span>
-            )}
+              <span className="inline-flex items-center font-black text-indigo-700">
+                Α = <Frac num={<span>3<sup>-2</sup> · (3<sup>4</sup>)<sup>2</sup></span>} den={<span>3<sup>5</sup></span>} /> + (<Frac num="1" den="2" />)<sup>-3</sup>
+              </span>
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+              {/* Εποπτικό SVG Δομής Δυνάμεων */}
+              <div className="md:col-span-5 min-w-0">
+                <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                  <svg
+                    viewBox="0 0 360 210"
+                    className="w-full h-auto max-w-full block"
+                    role="img"
+                    aria-label="Exponent laws flowchart for Problem 2"
+                  >
+                    <rect x="15" y="15" width="330" height="50" rx="12" fill="#eef2ff" stroke="#4f46e5" strokeWidth="2" />
+                    <text x="30" y="45" fontSize="13" fontWeight="800" fill="#312e81">
+                      1) (3⁴)² = 3⁴·² = 3⁸
+                    </text>
+
+                    <line x1="180" y1="65" x2="180" y2="85" stroke="#64748b" strokeWidth="2" />
+                    <polygon points="180,85 175,77 185,77" fill="#64748b" />
+
+                    <rect x="15" y="85" width="330" height="50" rx="12" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
+                    <text x="30" y="115" fontSize="13" fontWeight="800" fill="#92400e">
+                      2) 3⁻² · 3⁸ / 3⁵ = 3⁻²⁺⁸⁻⁵ = 3¹ = 3
+                    </text>
+
+                    <line x1="180" y1="135" x2="180" y2="152" stroke="#64748b" strokeWidth="2" />
+                    <polygon points="180,152 175,144 185,144" fill="#64748b" />
+
+                    <rect x="15" y="152" width="330" height="45" rx="12" fill="#d1fae5" stroke="#059669" strokeWidth="2" />
+                    <text x="30" y="180" fontSize="13" fontWeight="800" fill="#065f46">
+                      3) (1/2)⁻³ = 2³ = 8 ⇒ Α = 3 + 8 = 11
+                    </text>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Πίνακας Βημάτων Desktop / Stacked Cards Mobile */}
+              <div className="md:col-span-7 min-w-0 space-y-4">
+                <div className="hidden sm:block overflow-hidden rounded-2xl border border-slate-200">
+                  <table className="w-full table-fixed text-sm text-left">
+                    <thead className="bg-slate-100 text-slate-800 font-extrabold">
+                      <tr>
+                        <th className="w-1/3 px-4 py-3">{isEn ? 'Step' : 'Βήμα'}</th>
+                        <th className="w-2/3 px-4 py-3">{isEn ? 'Analysis' : 'Ανάλυση'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '1. Power of a power' : '1. Δύναμη δύναμης'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span>(3<sup>4</sup>)<sup>2</sup> = 3<sup>4 · 2</sup> = 3<sup>8</sup></span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '2. Same-base fraction' : '2. Κλάσμα ίδιων βάσεων'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <Frac num={<span>3<sup>-2</sup> · 3<sup>8</sup></span>} den={<span>3<sup>5</sup></span>} />
+                            <span>=</span>
+                            <Frac num={<span>3<sup>-2 + 8</sup></span>} den={<span>3<sup>5</sup></span>} />
+                            <span>=</span>
+                            <Frac num={<span>3<sup>6</sup></span>} den={<span>3<sup>5</sup></span>} />
+                            <span>= 3<sup>6 - 5</sup> = 3<sup>1</sup> = 3</span>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-3 font-bold text-slate-800">
+                          {isEn ? '3. Negative fraction power' : '3. Αρνητικός εκθέτης κλάσματος'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                            <span>(<Frac num="1" den="2" />)<sup>-3</sup> = (<Frac num="2" den="1" />)<sup>3</sup> = 2<sup>3</sup> = 8</span>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Stacked Cards */}
+                <div className="sm:hidden space-y-2.5">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-amber-800 mb-1">
+                      {isEn ? '1. Power of a power' : '1. Δύναμη δύναμης'}
+                    </div>
+                    <div>(3<sup>4</sup>)<sup>2</sup> = 3<sup>8</sup></div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-amber-800 mb-1">
+                      {isEn ? '2. Same-base fraction' : '2. Κλάσμα ίδιων βάσεων'}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <Frac num={<span>3<sup>-2</sup> · 3<sup>8</sup></span>} den={<span>3<sup>5</sup></span>} />
+                      <span>= 3<sup>6 - 5</sup> = 3</span>
+                    </div>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
+                    <div className="font-extrabold text-amber-800 mb-1">
+                      {isEn ? '3. Negative exponent' : '3. Αρνητικός εκθέτης'}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                      <span>(<Frac num="1" den="2" />)<sup>-3</sup> = 2<sup>3</sup> = 8</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-sm sm:text-base">
+                  {isEn ? 'Final Answer: Α = 3 + 8 = 11' : 'Τελική Απάντηση: Α = 3 + 8 = 11'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. YELLOW ALERT BOX: ΚΛΑΣΙΚΑ ΛΑΘΗ ΜΑΘΗΤΩΝ */}
+        <section className="rounded-3xl bg-amber-50 border-2 border-amber-300 p-5 sm:p-8 mb-10 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-10 h-10 rounded-2xl bg-amber-500 text-white font-black flex items-center justify-center text-xl shrink-0">
+              !
+            </span>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-amber-950">
+              {isEn
+                ? 'Watch Out! Classic Student Mistakes'
+                : 'Προσοχή! Τα 4 πιο Κλασικά Λάθη των Μαθητών'}
+            </h2>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            {!submitted ? (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow transition-colors"
-              >
-                {toCleanUppercase(isEn ? 'CHECK ANSWERS' : 'ΕΛΕΓΧΟΣ')}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow transition-colors"
-              >
-                {toCleanUppercase(isEn ? 'NEW EXERCISES' : 'ΝΕΕΣ ΑΣΚΗΣΕΙΣ')}
-              </button>
-            )}
+          <ul className="space-y-3 text-sm sm:text-base text-amber-950">
+            <li className="flex items-start gap-2.5">
+              <span className="font-black text-amber-600 mt-0.5">✕</span>
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                <span>
+                  {isEn
+                    ? 'Thinking that a negative exponent makes the number negative:'
+                    : 'Να νομίζουμε ότι ο αρνητικός εκθέτης κάνει τον αριθμό αρνητικό:'}
+                </span>
+                <span className="font-bold text-red-700 line-through">2<sup>-3</sup> = -8</span>
+                <span>→</span>
+                <span className="font-bold text-emerald-800 inline-flex items-center">
+                  {isEn ? 'Correct:' : 'Σωστό:'} 2<sup>-3</sup> = <Frac num="1" den={<span>2<sup>3</sup></span>} /> = <Frac num="1" den="8" />
+                </span>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <span className="font-black text-amber-600 mt-0.5">✕</span>
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                <span>
+                  {isEn
+                    ? 'Forgetting parentheses with negative bases:'
+                    : 'Να ξεχνάμε τις παρενθέσεις στις αρνητικές βάσεις:'}
+                </span>
+                <span className="font-bold text-slate-900">-3<sup>2</sup> = -9</span>
+                <span>{isEn ? 'while' : 'ενώ'}</span>
+                <span className="font-bold text-emerald-800">(-3)<sup>2</sup> = +9</span>.
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <span className="font-black text-amber-600 mt-0.5">✕</span>
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                <span>
+                  {isEn
+                    ? 'Distributing a square root over addition:'
+                    : 'Να «σπάμε» τη ρίζα σε άθροισμα:'}
+                </span>
+                <span className="font-bold text-red-700 line-through inline-flex items-center">
+                  <Radical>9 + 16</Radical> = <Radical>9</Radical> + <Radical>16</Radical> = 7
+                </span>
+                <span>→</span>
+                <span className="font-bold text-emerald-800 inline-flex items-center">
+                  {isEn ? 'Correct:' : 'Σωστό:'} <Radical>9 + 16</Radical> = <Radical>25</Radical> = 5
+                </span>
+              </div>
+            </li>
+
+            <li className="flex items-start gap-2.5">
+              <span className="font-black text-amber-600 mt-0.5">✕</span>
+              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                <span>
+                  {isEn
+                    ? 'Multiplying exponents instead of adding them when multiplying same-base powers:'
+                    : 'Να πολλαπλασιάζουμε τους εκθέτες αντί να τους προσθέτουμε:'}
+                </span>
+                <span className="font-bold text-red-700 line-through">α<sup>2</sup> · α<sup>3</sup> = α<sup>6</sup></span>
+                <span>→</span>
+                <span className="font-bold text-emerald-800">
+                  {isEn ? 'Correct:' : 'Σωστό:'} α<sup>2</sup> · α<sup>3</sup> = α<sup>2 + 3</sup> = α<sup>5</sup>
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        {/* 6. BOTTOM CALLOUT BANNER */}
+        <section className="rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 sm:p-8 lg:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black mb-2">
+              {isEn
+                ? 'Ready to test your knowledge on Real Numbers & Powers?'
+                : 'Έτοιμος να δοκιμάσεις τις γνώσεις σου στους Πραγματικούς & τις Δυνάμεις;'}
+            </h2>
+            <p className="text-emerald-100 text-sm sm:text-base">
+              {isEn
+                ? 'Solve 12 dynamically generated exercises with instant step-by-step feedback and diagrams.'
+                : 'Λύσε 12 δυναμικά παραγόμενες ασκήσεις με άμεση διόρθωση, πίνακες βημάτων και επεξηγηματικά σχήματα.'}
+            </p>
           </div>
-        </div>
+
+          <Link
+            href="/b-gymnasiou/06-pragmatikoi-ask"
+            className="shrink-0 inline-flex items-center gap-2 px-7 py-4 rounded-2xl bg-white text-emerald-900 hover:bg-emerald-50 font-black text-sm sm:text-base shadow-md transition-all"
+          >
+            <span>
+              {toCleanUppercase(isEn ? 'START EXERCISES' : 'ΞΕΚΙΝΑ ΤΙΣ ΑΣΚΗΣΕΙΣ')}
+            </span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        </section>
       </div>
     </Layout>
   );
