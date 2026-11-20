@@ -1619,14 +1619,7 @@ export default function Epanalipsi2Exercises() {
       backUrl="/a-gymnasiou"
       backText={t.backNav}
       showAds={true}
-      actionButton={
-        <Link
-          href="/a-gymnasiou"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md transition-all duration-200"
-        >
-          <span>📚 {toCleanUppercase(t.theoryBtn)}</span>
-        </Link>
-      }
+      
     >
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
         

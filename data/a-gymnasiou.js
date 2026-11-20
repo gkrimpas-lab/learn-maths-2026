@@ -1090,8 +1090,8 @@ export const A_GYMNASIOU_CHAPTERS = [
   titleEn: 'Review Exercises: Units 16 and 17',
   desc: 'Επαναληπτικό διαγώνισμα στα Κεφάλαια 16 και 17 με 4 ασκήσεις ανά κεφάλαιο και 4 δύσκολα συνδυαστικά προβλήματα σε μονάδες μήκους, τμήματα, περίμετρο, γωνίες, τόξα και πολύγωνα.',
   descEn: 'Review test covering Chapters 16 and 17 with 4 exercises per chapter and 4 challenging multi-step problems on length units, segments, perimeter, angles, arcs, and polygons.',
-  badge: 'ΕΠΑΝΑΛΗΨΗ 7',
-  badgeEn: 'REVIEW 7',
+  badge: 'ΕΠΑΝΑΛΗΨΗ 6',
+  badgeEn: 'REVIEW 6',
   isReview: true,
   active: true,
   keywords: [

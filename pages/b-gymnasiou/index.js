@@ -16,6 +16,7 @@ const I18N = {
     statusSoon: "ΣΥΝΤΟΜΑ ΔΙΑΘΕΣΙΜΟ",
     theoryBtn: "Θεωρία",
     exercisesBtn: "Ασκήσεις",
+    startReviewBtn: "ΕΝΑΡΞΗ ΕΠΑΝΑΛΗΨΗΣ",
     seoOverviewTitle: "📚 Ύλη & Ασκήσεις Μαθηματικών Β' Γυμνασίου",
     seoCol1Title: "Ασκήσεις Άλγεβρας: Δυνάμεις & Ρίζες",
     seoCol1Text: "Πλούσιες διαδραστικές ασκήσεις άλγεβρας στις δυνάμεις με ακέραιο εκθέτη, την τυποποιημένη μορφή αριθμών, τους άρρητους αριθμούς, τον υπολογισμό τετραγωνικής ρίζας και τις συναρτήσεις με live γραφικές παραστάσεις.",
@@ -33,6 +34,7 @@ const I18N = {
     statusSoon: "COMING SOON",
     theoryBtn: "Theory",
     exercisesBtn: "Exercises",
+    startReviewBtn: "START REVIEW",
     seoOverviewTitle: "📚 Grade 8 Mathematics: Core Topics",
     seoCol1Title: "Algebra Exercises: Powers & Roots",
     seoCol1Text: "Comprehensive algebra problem sets covering integer exponents, scientific notation, irrational numbers, square root calculations, and real-time interactive function graphing.",
@@ -131,6 +133,7 @@ export default function BGymnasiouIndex() {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {sectionChapters.map((ch) => {
                   const isItemActive = ch.active;
+                  const isReviewItem = Boolean(ch.isReview);
                   const badgeLabel = locale === 'en' && ch.badgeEn ? ch.badgeEn : ch.badge;
                   const chapterTitle = locale === 'en' && ch.titleEn ? ch.titleEn : ch.title;
                   const chapterDesc = locale === 'en' && ch.descEn ? ch.descEn : ch.desc;
@@ -168,24 +171,37 @@ export default function BGymnasiouIndex() {
                         </div>
 
                         {isItemActive ? (
-                          <div className="grid grid-cols-2 gap-3 pt-2">
-                            <Link
-                              href={`/b-gymnasiou/${ch.slug}`}
-                              locale={locale}
-                              className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
-                            >
-                              <span aria-hidden="true">📖</span>
-                              <span>{t.theoryBtn}</span>
-                            </Link>
-                            <Link
-                              href={`/b-gymnasiou/${ch.slug}-ask`}
-                              locale={locale}
-                              className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
-                            >
-                              <span aria-hidden="true">🎯</span>
-                              <span>{t.exercisesBtn}</span>
-                            </Link>
-                          </div>
+                          isReviewItem ? (
+                            <div className="pt-2">
+                              <Link
+                                href={`/b-gymnasiou/${ch.slug}`}
+                                locale={locale}
+                                className="w-full text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-black py-3 px-4 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
+                              >
+                                <span aria-hidden="true">🎯</span>
+                                <span>{t.startReviewBtn}</span>
+                              </Link>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-3 pt-2">
+                              <Link
+                                href={`/b-gymnasiou/${ch.slug}`}
+                                locale={locale}
+                                className="text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
+                              >
+                                <span aria-hidden="true">📖</span>
+                                <span>{t.theoryBtn}</span>
+                              </Link>
+                              <Link
+                                href={`/b-gymnasiou/${ch.slug}-ask`}
+                                locale={locale}
+                                className="text-center bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-bold py-2.5 px-3 rounded-xl transition shadow-sm text-xs sm:text-sm flex items-center justify-center gap-1.5 touch-manipulation cursor-pointer"
+                              >
+                                <span aria-hidden="true">🎯</span>
+                                <span>{t.exercisesBtn}</span>
+                              </Link>
+                            </div>
+                          )
                         ) : (
                           <button
                             type="button"
