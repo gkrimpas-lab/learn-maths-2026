@@ -144,6 +144,75 @@ export const B_GYMNASIOU_CHAPTERS = [
       'chapters 1 to 6 test'
     ]
   },
+  {
+    id: '08-kanonikotites',
+    section: 'algebra',
+    slug: '08-kanonikotites',
+    icon: '📈',
+    title: 'Γραμμικές Αριθμητικές Κανονικότητες & Τετράγωνοι Αριθμοί',
+    titleEn: 'Linear Number Patterns & Square Numbers',
+    desc: 'Γραμμικές αριθμητικές κανονικότητες ρητών αριθμών (y = α · ν + β), όρος κανονικότητας, θέση του όρου, σταθερή διαφορά και τετράγωνοι αριθμοί (y = ν²) με 12 διαδραστικές ασκήσεις.',
+    descEn: 'Linear number patterns of rational numbers (y = a · n + b), term value, term position, constant difference, and square numbers (y = n²) with 12 interactive exercises.',
+    badge: 'ΚΕΦΑΛΑΙΟ 7',
+    badgeEn: 'CHAPTER 7',
+    active: true,
+    keywords: [
+      'γραμμικές αριθμητικές κανονικότητες',
+      'κανονικότητες β γυμνασίου',
+      'όρος κανονικότητας',
+      'θέση του όρου',
+      'τετράγωνοι αριθμοί',
+      'άλγεβρα β γυμνασίου κεφάλαιο 7',
+      'linear number patterns grade 8',
+      'square numbers pattern',
+      'grade 8 algebra chapter 7'
+    ]
+  },
+  {
+    id: '09-algebriki-parastasi',
+    section: 'algebra',
+    slug: '09-algebriki-parastasi',
+    icon: '🔤',
+    title: 'Αλγεβρικές Παραστάσεις, Όμοιοι Όροι & Ισοδύναμες Παραστάσεις',
+    titleEn: 'Algebraic Expressions, Like Terms & Equivalent Expressions',
+    desc: 'Έννοια αλγεβρικής παράστασης (ως γινόμενο ή άθροισμα), μεταβλητή, συντελεστής, σταθερός όρος, όμοιοι όροι, αναγωγή, αριθμητική τιμή και ισοδύναμες παραστάσεις με 12 διαδραστικές ασκήσεις.',
+    descEn: 'Algebraic expressions as products or sums, variables, coefficients, constant terms, combining like terms, numerical value, and equivalent expressions with 12 interactive exercises.',
+    badge: 'ΚΕΦΑΛΑΙΟ 8',
+    badgeEn: 'CHAPTER 8',
+    active: true,
+    keywords: [
+      'αλγεβρικές παραστάσεις β γυμνασίου',
+      'όμοιοι όροι αναγωγή',
+      'συντελεστής μεταβλητή σταθερός όρος',
+      'αριθμητική τιμή αλγεβρικής παράστασης',
+      'ισοδύναμες αλγεβρικές παραστάσεις',
+      'άλγεβρα β γυμνασίου κεφάλαιο 8',
+      'algebraic expressions grade 8',
+      'combining like terms equivalent expressions'
+    ]
+  },
+  {
+    id: '10-epimeristiki-idiotita',
+    section: 'algebra',
+    slug: '10-epimeristiki-idiotita',
+    icon: '✖️',
+    title: 'Ιδιότητες Πράξεων, Επιμεριστική & Διπλή Επιμεριστική Ιδιότητα',
+    titleEn: 'Properties of Operations, Distributive & Double Distributive Property',
+    desc: 'Ιδιότητες πράξεων στις αλγεβρικές παραστάσεις, απαλοιφή παρενθέσεων, επιμεριστική ιδιότητα α(β + γ) και διπλή επιμεριστική ιδιότητα (α + β)(γ + δ) με 12 διαδραστικές ασκήσεις.',
+    descEn: 'Properties of algebraic operations, removing parentheses, distributive property a(b + c), and double distributive property (a + b)(c + d) with 12 interactive exercises.',
+    badge: 'ΚΕΦΑΛΑΙΟ 9',
+    badgeEn: 'CHAPTER 9',
+    active: true,
+    keywords: [
+      'επιμεριστική ιδιότητα β γυμνασίου',
+      'διπλή επιμεριστική ιδιότητα',
+      'απαλοιφή παρενθέσεων',
+      'ιδιότητες πράξεων αλγεβρικές παραστάσεις',
+      'άλγεβρα β γυμνασίου κεφάλαιο 9',
+      'distributive property grade 8',
+      'double distributive property foil'
+    ]
+  },
 
   // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {

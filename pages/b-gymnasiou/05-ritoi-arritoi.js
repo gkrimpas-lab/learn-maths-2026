@@ -27,8 +27,8 @@ function toCleanUppercase(str) {
     .join('');
 }
 
-// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και κατακόρυφη μορφή (No-Overflow & υποστήριξη JSX)
-const Frac = ({ num, den, className = "" }) => {
+// Component Frac με απόλυτα ασφαλή ανίχνευση προσήμου και κατακόρυφη μορφή
+const Frac = ({ num, den, className = '' }) => {
   const isStringOrNumber = (val) => typeof val === 'string' || typeof val === 'number';
 
   const isNumNeg = isStringOrNumber(num) && String(num).trim().startsWith('-');
@@ -53,42 +53,66 @@ const Frac = ({ num, den, className = "" }) => {
   );
 };
 
-// Ενιαίο SVG σύμβολο ρίζας: μονοκόμματο σχήμα με οριζόντια γραμμή (vinculum)
-const Sqrt = ({ children, className = "" }) => {
+// Ενιαίο SVG σύμβολο ρίζας με vinculum
+const Sqrt = ({ children, className = '' }) => {
   return (
-    <span className={`inline-flex items-center align-middle mx-0.5 sm:mx-1 relative font-mono font-semibold shrink-0 ${className}`}>
+    <span className={`inline-flex items-stretch align-middle mx-0.5 font-mono font-semibold shrink-0 select-none ${className}`}>
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none text-current overflow-visible"
-        viewBox="0 0 100 100"
+        viewBox="0 0 14 24"
+        className="w-[0.6em] self-stretch shrink-0 text-current overflow-visible"
         preserveAspectRatio="none"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        aria-hidden="true"
       >
-        <path
-          d="M 0 58 L 4 52 L 10 92 L 16 6 L 100 6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M 1 13.5 L 4 13.5 L 7.5 22.8 L 13.6 0.8" />
       </svg>
-      <span className="pl-3.5 sm:pl-4 pr-1 pt-1 pb-0.5 leading-none inline-flex items-center">
+      <span className="border-t-[1.9px] border-current pl-0.5 pr-1 pt-0.5 pb-[1px] leading-none inline-flex items-center text-[0.95em]">
         {children}
       </span>
     </span>
   );
 };
 
-// Component εμφάνισης περιοδικού δεκαδικού με οριζόντια γραμμή πάνω από την περίοδο
-const PeriodicNumber = ({ intPart, nonPeriodic, period, locale = 'el' }) => {
-  const decSep = locale === 'el' ? ',' : '.';
+// Component Δύναμης (Base & Exponent) χωρίς Unicode εκθέτες
+const Pow = ({ base, exp, parens = false, className = '' }) => {
   return (
-    <span className="inline-flex items-baseline font-mono font-bold flex-wrap break-all">
+    <span className={`inline-flex items-baseline font-mono leading-none mx-[1px] ${className}`}>
+      {parens ? (
+        <span className="inline-flex items-center">
+          <span>(</span>
+          {base}
+          <span>)</span>
+        </span>
+      ) : (
+        <span>{base}</span>
+      )}
+      <sup className="text-[0.72em] font-bold leading-none ml-[1px] -top-[0.45em] relative">
+        {exp}
+      </sup>
+    </span>
+  );
+};
+
+// Component εμφάνισης περιοδικού δεκαδικού με καθαρή οριζόντια γραμμή πάνω από την περίοδο
+const PeriodicNumber = ({ intPart, nonPeriodic = '', period = '', locale = 'el', variant = 'dark' }) => {
+  const decSep = locale === 'el' ? ',' : '.';
+  const periodStyle =
+    variant === 'dark'
+      ? 'border-t-2 border-amber-400 text-amber-300'
+      : 'border-t-2 border-indigo-700 text-indigo-800';
+
+  return (
+    <span className="inline-flex items-baseline font-mono font-bold">
       <span>{intPart}</span>
       {(nonPeriodic !== '' || period !== '') && <span>{decSep}</span>}
       {nonPeriodic !== '' && <span>{nonPeriodic}</span>}
       {period !== '' && (
-        <span className="border-t-2 border-amber-400 text-amber-300 pt-0.5 px-0.5 ml-0.5 inline-block leading-none">
+        <span className={`${periodStyle} pt-[1px] px-[1px] ml-[1px] inline-block leading-none`}>
           {period}
         </span>
       )}
@@ -115,10 +139,6 @@ function fractionToDecimalAnalysis(numerator, denominator, locale = 'el') {
   const g = gcd(num, den);
   const simpNum = num / g;
   const simpDen = den / g;
-
-  let tempDen = simpDen;
-  while (tempDen % 2 === 0) tempDen /= 2;
-  while (tempDen % 5 === 0) tempDen /= 5;
 
   const intPart = Math.floor(simpNum / simpDen);
   let remainder = simpNum % simpDen;
@@ -214,19 +234,15 @@ export default function RitoiArritoiTheoria() {
       divisionOutcomes: "Όταν διαιρέσουμε τον αριθμητή με τον παρονομαστή ενός κλάσματος, προκύπτει πάντοτε μία από τις δύο παρακάτω μορφές:",
       terminatingTitle: "1. Πεπερασμένος Δεκαδικός Αριθμός:",
       terminatingDesc: "Η διαίρεση τελειώνει (υπόλοιπο 0). Συμβαίνει όταν ο παρονομαστής του ανάγωγου κλάσματος αναλύεται σε πρώτους παράγοντες που περιέχουν μόνο το 2, μόνο το 5 ή και τα δύο.",
-      terminatingExamples: "π.χ. 3/4 ＝ 0,75 | 7/10 ＝ 0,7 | 1/8 ＝ 0,125",
       periodicTitle: "2. Άπειρος Περιοδικός Δεκαδικός Αριθμός:",
       periodicDesc: "Η διαίρεση δεν τελειώνει ποτέ, αλλά ένα ψηφίο ή μια ομάδα ψηφίων επαναλαμβάνεται επ' άπειρον. Συμβαίνει όταν ο παρονομαστής περιέχει κι άλλους πρώτους παράγοντες (π.χ. 3, 7, 11).",
-      periodicExamples: "π.χ. 1/3 ＝ 0,333... | 1/6 ＝ 0,1666... | 2/11 ＝ 0,1818...",
       periodBoxTitle: "ΤΙ ΕΙΝΑΙ Η ΠΕΡΙΟΔΟΣ ΚΑΙ ΠΩΣ ΣΥΜΒΟΛΙΖΕΤΑΙ;",
       periodDef: "Περίοδος ενός περιοδικού δεκαδικού αριθμού ονομάζεται το ψηφίο ή η ομάδα των ψηφίων που επαναλαμβάνεται επ' άπειρον.",
       notationSubTitle: "ΣΥΜΒΟΛΙΣΜΟΣ ΜΕ ΟΡΙΖΟΝΤΙΑ ΓΡΑΜΜΗ",
       notationDesc: "Αντί να γράφουμε αποσιωπητικά (...), τοποθετούμε μια οριζόντια γραμμή πάνω από την περίοδο:",
       pureVsMixedTitle: "Καθαροί vs Μικτοί Περιοδικοί:",
       pureDefLabel: "Καθαρός (Απλός) Περιοδικός:",
-      pureDefText: "Η περίοδος αρχίζει αμέσως μετά την υποδιαστολή, π.χ. 0,6̄ ή 2,15̄.",
       mixedDefLabel: "Μικτός Περιοδικός:",
-      mixedDefText: "Υπάρχει μη περιοδικό μέρος πριν ξεκινήσει η περίοδος, π.χ. 0,16̄ (το 1 είναι μη περιοδικό, το 6 είναι η περίοδος).",
 
       // Ενότητα 2 (Εργαστήριο 1)
       sec2Num: "2",
@@ -259,7 +275,7 @@ export default function RitoiArritoiTheoria() {
       realsIntro: "Όλοι οι ρητοί αριθμοί μαζί με όλους τους άρρητους αριθμούς αποτελούν το σύνολο των Πραγματικών Αριθμών (ℝ):",
       realsFormula: "ΠΡΑΓΜΑΤΙΚΟΙ (ℝ) ＝ ΡΗΤΟΙ (ℚ) ∪ ΑΡΡΗΤΟΙ",
       realsLineNote: "Κάθε σημείο της ευθείας των αριθμών αντιστοιχεί σε έναν μοναδικό πραγματικό αριθμό (άξονας πραγματικών αριθμών).",
-      realsWarningPrefix: "Σημαντικό: Οι τετραγωνικές ρίζες όλων των φυσικών αριθμών που δεν είναι τέλεια τετράγωνα",
+      realsWarningPrefix: "Οι τετραγωνικές ρίζες όλων των φυσικών αριθμών που δεν είναι τέλεια τετράγωνα",
       realsWarningSuffix: "είναι άρρητοι αριθμοί!",
 
       // Ενότητα 4 (Εργαστήριο 2)
@@ -275,27 +291,20 @@ export default function RitoiArritoiTheoria() {
       sec5Num: "5",
       sec5Title: "Αναλυτικά Λυμένα Παραδείγματα",
       ex1Tag: "ΠΑΡΑΔΕΙΓΜΑ 1: ΜΕΤΑΤΡΟΠΗ ΚΛΑΣΜΑΤΟΣ ΣΕ ΠΕΡΙΟΔΙΚΟ ΔΕΚΑΔΙΚΟ",
-      ex1Heading: "Να μετατραπεί το κλάσμα σε δεκαδικό και να βρεθεί η περίοδος.",
+      ex1Heading: "Να μετατραπεί το κλάσμα σε δεκαδικό και να βρεθεί η περίοδος:",
       ex1Step1: "1. Εκτελούμε τη διαίρεση 5 : 6",
       ex1Step2: "2. Το ψηφίο 8 δεν επαναλαμβάνεται (μη περιοδικό μέρος).",
       ex1Step3: "3. Το ψηφίο 3 επαναλαμβάνεται επ' άπειρον (περίοδος).",
       ex1Result: "➔ Μικτός Περιοδικός Δεκαδικός:",
       ex2Tag: "ΠΑΡΑΔΕΙΓΜΑ 2: ΕΛΕΓΧΟΣ ΑΡΡΗΤΟΥ ΑΠΟ ΡΙΖΙΚΟ",
       ex2Heading: "Ποιοι από τους παρακάτω αριθμούς είναι άρρητοι;",
-      ex2Step1: "1. Το 16 είναι τέλειο τετράγωνο (4² ＝ 16) ➔ ΡΗΤΟΣ",
-      ex2Step2: "2. Το 18 ΔΕΝ είναι τέλειο τετράγωνο (4,24264...) ➔ ΑΡΡΗΤΟΣ",
-      ex2Step3: "3. Το 49 είναι τέλειο τετράγωνο (7² ＝ 49) ➔ ΡΗΤΟΣ",
       ex2Result: "Μοναδικός άρρητος είναι το",
       ex3Tag: "ΠΑΡΑΔΕΙΓΜΑ 3: ΠΡΟΒΛΕΨΗ ΕΙΔΟΥΣ ΔΕΚΑΔΙΚΟΥ ΧΩΡΙΣ ΔΙΑΙΡΕΣΗ",
-      ex3Heading: "Χωρίς διαίρεση, να βρεθεί αν είναι πεπερασμένος ή περιοδικός.",
+      ex3Heading: "Χωρίς διαίρεση, να βρεθεί αν είναι πεπερασμένος ή περιοδικός:",
       ex3Step1: "1. Το κλάσμα είναι ανάγωγο (Μ.Κ.Δ.(7, 40) ＝ 1).",
-      ex3Step2: "2. Αναλύουμε τον παρονομαστή 40 σε πρώτους παράγοντες: 40 ＝ 2³ · 5",
       ex3Step3: "3. Επειδή περιέχει ΜΟΝΟ πρώτους παράγοντες 2 και 5:",
-      ex3Result: "➔ Είναι ΠΕΠΕΡΑΣΜΕΝΟΣ δεκαδικός (7/40 ＝ 0,175).",
       ex4Tag: "ΠΑΡΑΔΕΙΓΜΑ 4: ΔΙΑΚΡΙΣΗ ΚΑΘΑΡΟΥ ΚΑΙ ΜΙΚΤΟΥ ΠΕΡΙΟΔΙΚΟΥ",
-      ex4Heading: "Να χαρακτηριστούν οι αριθμοί: α ＝ 2,444... και β ＝ 0,12555...",
-      ex4Step1: "• α ＝ 2,4̄: Η περίοδος (4) ξεκινά αμέσως μετά την υποδιαστολή ➔ Καθαρός Περιοδικός.",
-      ex4Step2: "• β ＝ 0,125̄: Υπάρχει το μη περιοδικό μέρος (12) πριν την περίοδο (5) ➔ Μικτός Περιοδικός."
+      ex4Heading: "Να χαρακτηριστούν οι αριθμοί: α ＝ 2,444... και β ＝ 0,12555..."
     },
     en: {
       pageTitle: "Rational, Irrational & Periodic Decimals | Grade 8",
@@ -314,19 +323,15 @@ export default function RitoiArritoiTheoria() {
       divisionOutcomes: "Dividing the numerator by the denominator of any fraction always yields one of the following two decimal forms:",
       terminatingTitle: "1. Terminating Decimal Number:",
       terminatingDesc: "Division terminates (remainder 0). Occurs when the simplified denominator factors into prime factors containing only 2, only 5, or both.",
-      terminatingExamples: "e.g. 3/4 ＝ 0.75 | 7/10 ＝ 0.7 | 1/8 ＝ 0.125",
       periodicTitle: "2. Infinite Periodic (Repeating) Decimal Number:",
       periodicDesc: "Division never terminates, but a single digit or block of digits repeats indefinitely. Occurs when the denominator contains other prime factors (e.g. 3, 7, 11).",
-      periodicExamples: "e.g. 1/3 ＝ 0.333... | 1/6 ＝ 0.1666... | 2/11 ＝ 0.1818...",
       periodBoxTitle: "WHAT IS THE PERIOD AND HOW IS IT NOTATED?",
       periodDef: "The period of a repeating decimal is the digit or group of digits that repeats endlessly.",
       notationSubTitle: "OVERLINE NOTATION (VINCULUM)",
       notationDesc: "Instead of writing ellipsis (...), we place an overline directly above the repeating period:",
       pureVsMixedTitle: "Pure vs Mixed Periodic Decimals:",
       pureDefLabel: "Pure Periodic Decimal:",
-      pureDefText: "The period begins immediately after the decimal point, e.g. 0.6̄ or 2.15̄.",
       mixedDefLabel: "Mixed Periodic Decimal:",
-      mixedDefText: "There is a non-repeating part before the period begins, e.g. 0.16̄ (1 is non-repeating, 6 is the period).",
 
       // Section 2
       sec2Num: "2",
@@ -359,11 +364,11 @@ export default function RitoiArritoiTheoria() {
       realsIntro: "All rational numbers combined with all irrational numbers constitute the set of Real Numbers (ℝ):",
       realsFormula: "REALS (ℝ) ＝ RATIONALS (ℚ) ∪ IRRATIONALS",
       realsLineNote: "Every point on the number line corresponds to a unique real number (real coordinate axis).",
-      realsWarningPrefix: "Important: Square roots of natural numbers that are NOT perfect squares",
-      realsWarningSuffix: "are irrational numbers!"
+      realsWarningPrefix: "Square roots of natural numbers that are NOT perfect squares",
+      realsWarningSuffix: "are irrational numbers!",
 
       // Section 4
-      ,sec4Num: "4",
+      sec4Num: "4",
       sec4Title: "🛠️ Lab 2: Number Classifier (Rational or Irrational?)",
       sec4Desc: "Select a number to determine whether it belongs to the Rationals (ℚ) or Irrationals, with complete mathematical reasoning:",
       selectedNumLabel: "SELECTED NUMBER",
@@ -375,27 +380,20 @@ export default function RitoiArritoiTheoria() {
       sec5Num: "5",
       sec5Title: "Detailed Solved Examples",
       ex1Tag: "EXAMPLE 1: CONVERTING FRACTION TO PERIODIC DECIMAL",
-      ex1Heading: "Convert the fraction into a decimal and determine its period.",
+      ex1Heading: "Convert the fraction into a decimal and determine its period:",
       ex1Step1: "1. Perform division 5 : 6",
       ex1Step2: "2. Digit 8 does not repeat (non-periodic part).",
       ex1Step3: "3. Digit 3 repeats endlessly (period).",
       ex1Result: "➔ Mixed Periodic Decimal:",
       ex2Tag: "EXAMPLE 2: TESTING IRRATIONALITY FROM RADICALS",
       ex2Heading: "Which of the following numbers are irrational?",
-      ex2Step1: "1. 16 is a perfect square (4² ＝ 16) ➔ RATIONAL",
-      ex2Step2: "2. 18 is NOT a perfect square (4.24264...) ➔ IRRATIONAL",
-      ex2Step3: "3. 49 is a perfect square (7² ＝ 49) ➔ RATIONAL",
       ex2Result: "The only irrational number is",
       ex3Tag: "EXAMPLE 3: PREDICTING DECIMAL TYPE WITHOUT DIVISION",
-      ex3Heading: "Without division, determine if it is terminating or repeating.",
+      ex3Heading: "Without division, determine if it is terminating or repeating:",
       ex3Step1: "1. The fraction is in lowest terms (GCD(7, 40) ＝ 1).",
-      ex3Step2: "2. Factorize denominator 40: 40 ＝ 2³ · 5",
       ex3Step3: "3. Since it contains ONLY prime factors 2 and 5:",
-      ex3Result: "➔ It is a TERMINATING decimal (7/40 ＝ 0.175).",
       ex4Tag: "EXAMPLE 4: DISTINGUISHING PURE AND MIXED PERIODIC",
-      ex4Heading: "Classify the numbers: a ＝ 2.444... and b ＝ 0.12555...",
-      ex4Step1: "• a ＝ 2.4̄: Period (4) starts immediately after decimal point ➔ Pure Periodic.",
-      ex4Step2: "• b ＝ 0.125̄: Non-periodic part (12) precedes period (5) ➔ Mixed Periodic."
+      ex4Heading: "Classify the numbers: a ＝ 2.444... and b ＝ 0.12555..."
     }
   };
 
@@ -405,19 +403,19 @@ export default function RitoiArritoiTheoria() {
   const [numInput, setNumInput] = useState('1');
   const [denInput, setDenInput] = useState('6');
 
-  // State Εργαστηρίου 2: Επιλεγμένος αριθμός προς ταξινόμηση
+  // State Εργαστηρίου 2
   const [selectedSampleIdx, setSelectedSampleIdx] = useState(0);
 
   const decAnalysis = useMemo(() => {
     return fractionToDecimalAnalysis(numInput, denInput, locale);
   }, [numInput, denInput, locale]);
 
-  // Δείγματα για το Εργαστήριο 2
+  // Δείγματα για το Εργαστήριο 2 (με <Frac />, <Sqrt />, <Pow /> και <PeriodicNumber />)
   const classificationSamples = useMemo(() => [
-    { 
-      label: '3/4', 
-      renderDisplay: <Frac num="3" den="4" />, 
-      isRational: true, 
+    {
+      label: '3/4',
+      renderDisplay: <Frac num="3" den="4" />,
+      isRational: true,
       reason: (
         <span className="flex flex-wrap items-center gap-1">
           <span>{locale === 'el' ? 'Γράφεται ως κλάσμα ακεραίων (' : 'Can be written as a fraction of integers ('}</span>
@@ -426,10 +424,10 @@ export default function RitoiArritoiTheoria() {
         </span>
       )
     },
-    { 
-      label: '√2', 
-      renderDisplay: <Sqrt>2</Sqrt>, 
-      isRational: false, 
+    {
+      label: '√2',
+      renderDisplay: <Sqrt>2</Sqrt>,
+      isRational: false,
       reason: (
         <span className="flex flex-wrap items-center gap-1">
           <span>{locale === 'el' ? 'Η ρίζα' : 'The root'}</span>
@@ -438,56 +436,59 @@ export default function RitoiArritoiTheoria() {
         </span>
       )
     },
-    { 
-      label: '1/3', 
-      renderDisplay: <Frac num="1" den="3" />, 
-      isRational: true, 
+    {
+      label: '1/3',
+      renderDisplay: <Frac num="1" den="3" />,
+      isRational: true,
       reason: (
         <span className="flex flex-wrap items-center gap-1">
           <span>{locale === 'el' ? 'Κλάσμα ακεραίων με άπειρα ψηφία, αλλά με περίοδο το 3 (' : 'Fraction of integers with repeating period 3 ('}</span>
-          <span>{locale === 'el' ? '0,333... ＝ 0,' : '0.333... ＝ 0.'}<span className="border-t-2 border-indigo-400 pt-0.5">3</span>).</span>
+          <span>{locale === 'el' ? '0,333... ＝ ' : '0.333... ＝ '}</span>
+          <PeriodicNumber intPart="0" period="3" locale={locale} variant="dark" />
+          <span>).</span>
         </span>
       )
     },
-    { 
-      label: 'π (pi)', 
-      renderDisplay: <span>π</span>, 
-      isRational: false, 
+    {
+      label: 'π (pi)',
+      renderDisplay: <span>π</span>,
+      isRational: false,
       reason: (
         <span className="flex flex-wrap items-center gap-1">
           <span>{locale === 'el' ? 'Ο αριθμός π ＝ 3,14159265... έχει άπειρα ψηφία χωρίς περίοδο και δεν γράφεται ως κλάσμα ακεραίων.' : 'The number π ＝ 3.14159265... has infinite non-repeating decimal digits and cannot be expressed as a fraction of integers.'}</span>
         </span>
       )
     },
-    { 
-      label: '√25', 
-      renderDisplay: <Sqrt>25</Sqrt>, 
-      isRational: true, 
+    {
+      label: '√25',
+      renderDisplay: <Sqrt>25</Sqrt>,
+      isRational: true,
       reason: (
-        <span className="flex flex-wrap items-center gap-1 font-mono">
-          <span className="font-sans">{locale === 'el' ? 'Επειδή 25 ＝ 5' : 'Since 25 ＝ 5'}<sup>2</sup></span>
+        <span className="flex flex-wrap items-center gap-1">
+          <span>{locale === 'el' ? 'Επειδή 25 ＝' : 'Since 25 ＝'}</span>
+          <Pow base="5" exp="2" />
           <span>, {locale === 'el' ? 'ισχύει' : 'it holds:'}</span>
           <Sqrt>25</Sqrt>
           <span>＝ 5 ＝ <Frac num="5" den="1" /></span>
-          <span className="font-sans">({locale === 'el' ? 'ρητός, φυσικός αριθμός' : 'rational, natural number'}).</span>
+          <span>({locale === 'el' ? 'ρητός, φυσικός αριθμός' : 'rational, natural number'}).</span>
         </span>
       )
     },
-    { 
-      label: '-7', 
-      renderDisplay: <span>－7</span>, 
-      isRational: true, 
+    {
+      label: '-7',
+      renderDisplay: <span>－7</span>,
+      isRational: true,
       reason: (
-        <span className="flex flex-wrap items-center gap-1 font-mono">
-          <span className="font-sans">{locale === 'el' ? 'Κάθε ακέραιος είναι και ρητός, καθώς' : 'Every integer is rational, as'}</span>
+        <span className="flex flex-wrap items-center gap-1">
+          <span>{locale === 'el' ? 'Κάθε ακέραιος είναι και ρητός, καθώς' : 'Every integer is rational, as'}</span>
           <span>－7 ＝ <Frac num="-7" den="1" />.</span>
         </span>
       )
     },
-    { 
-      label: '0,121121112...', 
-      renderDisplay: <span>{locale === 'el' ? '0,121121112...' : '0.121121112...'}</span>, 
-      isRational: false, 
+    {
+      label: '0,121121112...',
+      renderDisplay: <span>{locale === 'el' ? '0,121121112...' : '0.121121112...'}</span>,
+      isRational: false,
       reason: (
         <span className="break-words [overflow-wrap:anywhere]">
           {locale === 'el'
@@ -559,8 +560,8 @@ export default function RitoiArritoiTheoria() {
                     {cur.terminatingDesc}
                   </p>
                   <div className="font-mono text-xs sm:text-sm font-bold text-indigo-800 pt-1 flex items-center flex-wrap gap-1">
-                    <Frac num="3" den="4" /> ＝ {locale === 'el' ? '0,75' : '0.75'} &nbsp;|&nbsp; 
-                    <Frac num="7" den="10" /> ＝ {locale === 'el' ? '0,7' : '0.7'} &nbsp;|&nbsp; 
+                    <Frac num="3" den="4" /> ＝ {locale === 'el' ? '0,75' : '0.75'} &nbsp;|&nbsp;
+                    <Frac num="7" den="10" /> ＝ {locale === 'el' ? '0,7' : '0.7'} &nbsp;|&nbsp;
                     <Frac num="1" den="8" /> ＝ {locale === 'el' ? '0,125' : '0.125'}
                   </div>
                 </div>
@@ -571,15 +572,15 @@ export default function RitoiArritoiTheoria() {
                     {cur.periodicDesc}
                   </p>
                   <div className="font-mono text-xs sm:text-sm font-bold text-amber-800 pt-1 flex items-center flex-wrap gap-1">
-                    <Frac num="1" den="3" /> ＝ {locale === 'el' ? '0,333...' : '0.333...'} &nbsp;|&nbsp; 
-                    <Frac num="1" den="6" /> ＝ {locale === 'el' ? '0,1666...' : '0.1666...'} &nbsp;|&nbsp; 
+                    <Frac num="1" den="3" /> ＝ {locale === 'el' ? '0,333...' : '0.333...'} &nbsp;|&nbsp;
+                    <Frac num="1" den="6" /> ＝ {locale === 'el' ? '0,1666...' : '0.1666...'} &nbsp;|&nbsp;
                     <Frac num="2" den="11" /> ＝ {locale === 'el' ? '0,1818...' : '0.1818...'}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Περίοδος & Συμβολισμός */}
+            {/* Περίοδος & Συμβολισμός (με καθαρό <PeriodicNumber variant="light" />) */}
             <div className="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200 space-y-4 min-w-0">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 break-words">
                 {toCleanUppercase(cur.periodBoxTitle)}
@@ -597,19 +598,55 @@ export default function RitoiArritoiTheoria() {
                     {cur.notationDesc}
                   </p>
                   <div className="font-mono text-sm sm:text-base font-bold text-slate-900 bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex flex-wrap gap-4 items-center">
-                    <span>{locale === 'el' ? '0,333...' : '0.333...'} ＝ {locale === 'el' ? '0,' : '0.'}<span className="border-t-2 border-indigo-600 pt-0.5">3</span></span>
-                    <span>{locale === 'el' ? '1,2727...' : '1.2727...'} ＝ {locale === 'el' ? '1,' : '1.'}<span className="border-t-2 border-indigo-600 pt-0.5">27</span></span>
+                    <span className="inline-flex items-baseline gap-1">
+                      <span>{locale === 'el' ? '0,333...' : '0.333...'} ＝</span>
+                      <PeriodicNumber intPart="0" period="3" locale={locale} variant="light" />
+                    </span>
+                    <span className="inline-flex items-baseline gap-1">
+                      <span>{locale === 'el' ? '1,2727...' : '1.2727...'} ＝</span>
+                      <PeriodicNumber intPart="1" period="27" locale={locale} variant="light" />
+                    </span>
                   </div>
                 </div>
 
-                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-1 min-w-0">
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 space-y-2 min-w-0">
                   <strong className="text-slate-900 block break-words">{cur.pureVsMixedTitle}</strong>
-                  <ul className="list-disc pl-4 space-y-1 text-slate-600">
+                  <ul className="list-disc pl-4 space-y-2 text-slate-600">
                     <li className="break-words [overflow-wrap:anywhere]">
-                      <strong>{cur.pureDefLabel}</strong> {cur.pureDefText}
+                      <strong>{cur.pureDefLabel}</strong>{' '}
+                      {locale === 'el' ? (
+                        <span className="inline-flex flex-wrap items-baseline gap-1">
+                          <span>Η περίοδος αρχίζει αμέσως μετά την υποδιαστολή, π.χ.</span>
+                          <PeriodicNumber intPart="0" period="6" locale="el" variant="light" />
+                          <span>ή</span>
+                          <PeriodicNumber intPart="2" period="15" locale="el" variant="light" />
+                          <span>.</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex flex-wrap items-baseline gap-1">
+                          <span>The period begins immediately after the decimal point, e.g.</span>
+                          <PeriodicNumber intPart="0" period="6" locale="en" variant="light" />
+                          <span>or</span>
+                          <PeriodicNumber intPart="2" period="15" locale="en" variant="light" />
+                          <span>.</span>
+                        </span>
+                      )}
                     </li>
                     <li className="break-words [overflow-wrap:anywhere]">
-                      <strong>{cur.mixedDefLabel}</strong> {cur.mixedDefText}
+                      <strong>{cur.mixedDefLabel}</strong>{' '}
+                      {locale === 'el' ? (
+                        <span className="inline-flex flex-wrap items-baseline gap-1">
+                          <span>Υπάρχει μη περιοδικό μέρος πριν ξεκινήσει η περίοδος, π.χ.</span>
+                          <PeriodicNumber intPart="0" nonPeriodic="1" period="6" locale="el" variant="light" />
+                          <span>(το 1 είναι μη περιοδικό, το 6 είναι η περίοδος).</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex flex-wrap items-baseline gap-1">
+                          <span>There is a non-repeating part before the period begins, e.g.</span>
+                          <PeriodicNumber intPart="0" nonPeriodic="1" period="6" locale="en" variant="light" />
+                          <span>(1 is non-repeating, 6 is the period).</span>
+                        </span>
+                      )}
                     </li>
                   </ul>
                 </div>
@@ -633,26 +670,27 @@ export default function RitoiArritoiTheoria() {
             {cur.sec2Desc}
           </p>
 
-          {/* Προκαθορισμένα Κουμπιά */}
+          {/* Προκαθορισμένα Κουμπιά με κανονικά κλάσματα <Frac /> */}
           <div className="flex flex-wrap items-center gap-2 min-w-0">
             <span className="text-xs font-bold text-slate-500 uppercase self-center mr-1 break-words">
               {toCleanUppercase(cur.examplesLabel)}
             </span>
             {[
-              { labelEl: '1/3 (Καθαρός)', labelEn: '1/3 (Pure)', n: '1', d: '3' },
-              { labelEl: '1/6 (Μικτός)', labelEn: '1/6 (Mixed)', n: '1', d: '6' },
-              { labelEl: '1/7 (6ψήφια περίοδος)', labelEn: '1/7 (6-digit period)', n: '1', d: '7' },
-              { labelEl: '3/8 (Πεπερασμένος)', labelEn: '3/8 (Terminating)', n: '3', d: '8' },
-              { labelEl: '4/11 (Καθαρός)', labelEn: '4/11 (Pure)', n: '4', d: '11' },
-              { labelEl: '7/12 (Μικτός)', labelEn: '7/12 (Mixed)', n: '7', d: '12' }
+              { labelEl: '(Καθαρός)', labelEn: '(Pure)', n: '1', d: '3' },
+              { labelEl: '(Μικτός)', labelEn: '(Mixed)', n: '1', d: '6' },
+              { labelEl: '(6ψήφια περίοδος)', labelEn: '(6-digit period)', n: '1', d: '7' },
+              { labelEl: '(Πεπερασμένος)', labelEn: '(Terminating)', n: '3', d: '8' },
+              { labelEl: '(Καθαρός)', labelEn: '(Pure)', n: '4', d: '11' },
+              { labelEl: '(Μικτός)', labelEn: '(Mixed)', n: '7', d: '12' }
             ].map((item, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => { setNumInput(item.n); setDenInput(item.d); }}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-300 transition-all touch-manipulation font-mono break-words"
+                className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-300 transition-all touch-manipulation inline-flex items-center gap-1"
               >
-                {locale === 'el' ? item.labelEl : item.labelEn}
+                <Frac num={item.n} den={item.d} />
+                <span>{locale === 'el' ? item.labelEl : item.labelEn}</span>
               </button>
             ))}
           </div>
@@ -703,6 +741,7 @@ export default function RitoiArritoiTheoria() {
                         nonPeriodic={decAnalysis.nonPeriodic}
                         period={decAnalysis.period}
                         locale={locale}
+                        variant="dark"
                       />
                     </div>
                   </div>
@@ -925,7 +964,7 @@ export default function RitoiArritoiTheoria() {
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700 break-words">
                 {toCleanUppercase(cur.ex1Tag)}
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap gap-1 break-words">
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg flex items-center flex-wrap gap-1 break-words">
                 <span>{cur.ex1Heading}</span>
                 <Frac num="5" den="6" />
               </h3>
@@ -937,17 +976,18 @@ export default function RitoiArritoiTheoria() {
                 <div className="pl-3 font-bold text-indigo-700 flex items-center flex-wrap gap-1">
                   <span>{cur.ex1Result}</span>
                   <Frac num="5" den="6" />
-                  <span>＝ {locale === 'el' ? '0,8' : '0.8'}<span className="border-t-2 border-indigo-700 pt-0.5">3</span></span>
+                  <span>＝</span>
+                  <PeriodicNumber intPart="0" nonPeriodic="8" period="3" locale={locale} variant="light" />
                 </div>
               </div>
             </div>
 
-            {/* Παράδειγμα 2 */}
+            {/* Παράδειγμα 2 (με <Pow /> χωρίς Unicode εκθέτες) */}
             <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 min-w-0">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700 break-words">
                 {toCleanUppercase(cur.ex2Tag)}
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap gap-1 break-words">
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg flex items-center flex-wrap gap-1 break-words">
                 <span>{cur.ex2Heading}</span>
                 <Sqrt>16</Sqrt><span>,</span>
                 <Sqrt>18</Sqrt><span>,</span>
@@ -955,16 +995,28 @@ export default function RitoiArritoiTheoria() {
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200 min-w-0">
                 <div className="flex items-center flex-wrap gap-1">
-                  <Sqrt>16</Sqrt><span>＝ 4 ＝ </span><Frac num="4" den="1" />
-                  <span className="ml-1 text-slate-600 font-sans">{cur.ex2Step1}</span>
+                  <Sqrt>16</Sqrt><span>＝ 4 ＝</span><Frac num="4" den="1" />
+                  <span className="ml-1 text-slate-600 font-sans inline-flex items-baseline gap-1">
+                    <span>{locale === 'el' ? '1. Το 16 είναι τέλειο τετράγωνο (' : '1. 16 is a perfect square ('}</span>
+                    <Pow base="4" exp="2" />
+                    <span>＝ 16) ➔ {locale === 'el' ? 'ΡΗΤΟΣ' : 'RATIONAL'}</span>
+                  </span>
                 </div>
                 <div className="flex items-center flex-wrap gap-1">
                   <Sqrt>18</Sqrt><span>＝ {locale === 'el' ? '4,24264...' : '4.24264...'}</span>
-                  <span className="ml-1 text-slate-600 font-sans">{cur.ex2Step2}</span>
+                  <span className="ml-1 text-slate-600 font-sans">
+                    {locale === 'el'
+                      ? '2. Το 18 ΔΕΝ είναι τέλειο τετράγωνο ➔ ΑΡΡΗΤΟΣ'
+                      : '2. 18 is NOT a perfect square ➔ IRRATIONAL'}
+                  </span>
                 </div>
                 <div className="flex items-center flex-wrap gap-1">
-                  <Sqrt>49</Sqrt><span>＝ 7 ＝ </span><Frac num="7" den="1" />
-                  <span className="ml-1 text-slate-600 font-sans">{cur.ex2Step3}</span>
+                  <Sqrt>49</Sqrt><span>＝ 7 ＝</span><Frac num="7" den="1" />
+                  <span className="ml-1 text-slate-600 font-sans inline-flex items-baseline gap-1">
+                    <span>{locale === 'el' ? '3. Το 49 είναι τέλειο τετράγωνο (' : '3. 49 is a perfect square ('}</span>
+                    <Pow base="7" exp="2" />
+                    <span>＝ 49) ➔ {locale === 'el' ? 'ΡΗΤΟΣ' : 'RATIONAL'}</span>
+                  </span>
                 </div>
                 <div className="pl-3 font-bold text-indigo-700 flex items-center flex-wrap gap-1 pt-1">
                   <span>{cur.ex2Result}</span>
@@ -973,26 +1025,38 @@ export default function RitoiArritoiTheoria() {
               </div>
             </div>
 
-            {/* Παράδειγμα 3 */}
+            {/* Παράδειγμα 3 (με <Pow /> και <Frac /> χωρίς '/' ή '³') */}
             <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 min-w-0">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700 break-words">
                 {toCleanUppercase(cur.ex3Tag)}
               </span>
-              <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono flex items-center flex-wrap gap-1 break-words">
+              <h3 className="font-bold text-slate-900 text-base sm:text-lg flex items-center flex-wrap gap-1 break-words">
                 <span>{cur.ex3Heading}</span>
                 <Frac num="7" den="40" />
               </h3>
               <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200 min-w-0">
                 <div className="break-words">{cur.ex3Step1}</div>
-                <div className="break-words">{cur.ex3Step2}</div>
+                <div className="break-words flex flex-wrap items-baseline gap-1">
+                  <span>
+                    {locale === 'el'
+                      ? '2. Αναλύουμε τον παρονομαστή 40 σε πρώτους παράγοντες: 40 ＝'
+                      : '2. Factorize denominator 40: 40 ＝'}
+                  </span>
+                  <Pow base="2" exp="3" />
+                  <span>· 5</span>
+                </div>
                 <div className="break-words">{cur.ex3Step3}</div>
                 <div className="pl-3 font-bold text-indigo-700 flex items-center flex-wrap gap-1">
-                  <span>{cur.ex3Result}</span>
+                  <span>
+                    {locale === 'el' ? '➔ Είναι ΠΕΠΕΡΑΣΜΕΝΟΣ δεκαδικός (' : '➔ It is a TERMINATING decimal ('}
+                  </span>
+                  <Frac num="7" den="40" />
+                  <span>＝ {locale === 'el' ? '0,175' : '0.175'}).</span>
                 </div>
               </div>
             </div>
 
-            {/* Παράδειγμα 4 */}
+            {/* Παράδειγμα 4 (με καθαρό <PeriodicNumber variant="light" /> χωρίς Unicode macron) */}
             <div className="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3 min-w-0">
               <span className="text-xs uppercase font-bold tracking-wider text-purple-700 break-words">
                 {toCleanUppercase(cur.ex4Tag)}
@@ -1000,9 +1064,25 @@ export default function RitoiArritoiTheoria() {
               <h3 className="font-bold text-slate-900 text-base sm:text-lg font-mono break-words [overflow-wrap:anywhere]">
                 {cur.ex4Heading}
               </h3>
-              <div className="space-y-2 text-xs sm:text-sm font-mono text-slate-700 bg-white p-4 rounded-xl border border-slate-200 min-w-0">
-                <div className="break-words">{cur.ex4Step1}</div>
-                <div className="break-words">{cur.ex4Step2}</div>
+              <div className="space-y-2.5 text-xs sm:text-sm text-slate-700 bg-white p-4 rounded-xl border border-slate-200 min-w-0">
+                <div className="break-words flex flex-wrap items-baseline gap-1">
+                  <span>• α ＝</span>
+                  <PeriodicNumber intPart="2" period="4" locale={locale} variant="light" />
+                  <span>
+                    {locale === 'el'
+                      ? ': Η περίοδος (4) ξεκινά αμέσως μετά την υποδιαστολή ➔ Καθαρός Περιοδικός.'
+                      : ': Period (4) starts immediately after decimal point ➔ Pure Periodic.'}
+                  </span>
+                </div>
+                <div className="break-words flex flex-wrap items-baseline gap-1">
+                  <span>• β ＝</span>
+                  <PeriodicNumber intPart="0" nonPeriodic="12" period="5" locale={locale} variant="light" />
+                  <span>
+                    {locale === 'el'
+                      ? ': Υπάρχει το μη περιοδικό μέρος (12) πριν την περίοδο (5) ➔ Μικτός Περιοδικός.'
+                      : ': Non-periodic part (12) precedes period (5) ➔ Mixed Periodic.'}
+                  </span>
+                </div>
               </div>
             </div>
 
