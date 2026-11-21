@@ -6,90 +6,159 @@ import Layout from '../../components/Layout';
 // --- Βοηθητική Συνάρτηση για Άτονα Κεφαλαία (διατηρεί το Β') ---
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
-    .replace(/Β'/g, '___BETA_PRIME___')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase()
-    .replace(/___BETA_PRIME___/g, "Β'");
+  const parts = str.split(/(Β')/g);
+  return parts
+    .map((part) => {
+      if (part === "Β'") return "Β'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 // --- Custom Μαθηματικά Components ---
-const Angle = ({ children }) => (
-  <span className="inline-flex flex-col items-center leading-none align-baseline mx-0.5 select-none">
-    <svg
-      viewBox="0 0 18 7"
-      className="w-3.5 h-1.5 -mb-0.5 text-current overflow-visible"
-      aria-hidden="true"
-    >
-      <path
-        d="M 1.5 6 L 9 1.2 L 16.5 6"
+function Angle({ children, className = '' }) {
+  return (
+    <span className={`relative inline-block leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 12 6"
+        className="w-[0.75em] h-[0.36em] absolute -top-[0.38em] left-1/2 -translate-x-1/2 text-current overflow-visible pointer-events-none"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-    </svg>
-    <span className="leading-none">{children}</span>
-  </span>
-);
+        aria-hidden="true"
+      >
+        <path d="M1 5 L6 1 L11 5" />
+      </svg>
+      <span>{children}</span>
+    </span>
+  );
+}
 
-const Arc = ({ children }) => (
-  <span className="inline-flex flex-col items-center leading-none align-baseline mx-0.5 select-none">
-    <svg
-      viewBox="0 0 24 8"
-      className="w-5 h-2 -mb-0.5 text-current overflow-visible"
-      aria-hidden="true"
-    >
-      <path
-        d="M 1.5 6.5 Q 12 0.5 22.5 6.5"
+function Arc({ children, className = '' }) {
+  return (
+    <span className={`relative inline-block leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 16 6"
+        className="w-[0.95em] h-[0.36em] absolute -top-[0.4em] left-1/2 -translate-x-1/2 text-current overflow-visible pointer-events-none"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-      />
-    </svg>
-    <span className="leading-none">{children}</span>
-  </span>
-);
-
-const Frac = ({ num, den, className = '' }) => (
-  <span
-    className={`inline-flex flex-col items-center justify-center align-middle mx-1 text-center leading-tight ${className}`}
-  >
-    <span className="px-1 pb-0.5 border-b border-current font-semibold">
-      {num}
+        aria-hidden="true"
+      >
+        <path d="M1 5 Q8 0.5 15 5" />
+      </svg>
+      <span>{children}</span>
     </span>
-    <span className="px-1 pt-0.5 font-semibold">{den}</span>
-  </span>
-);
+  );
+}
 
-const Radical = ({ children, index = null }) => (
-  <span className="inline-flex items-stretch align-middle mx-0.5 select-none">
-    {index && (
-      <sup className="text-[0.65em] font-bold -mr-1.5 mt-0.5">{index}</sup>
-    )}
-    <svg
-      viewBox="0 0 14 24"
-      className="w-3 h-5 text-current shrink-0 overflow-visible"
-      preserveAspectRatio="none"
-      aria-hidden="true"
+function Frac({ num, den, className = '' }) {
+  return (
+    <span
+      className={`inline-flex flex-col text-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.88em] leading-none shrink-0 max-w-full ${className}`}
     >
-      <path
-        d="M 1 14 L 4.5 14 L 7.5 22.5 L 13 1.5"
+      <span className="border-b border-current px-1 pb-0.5 whitespace-nowrap font-semibold">
+        {num}
+      </span>
+      <span className="px-1 pt-0.5 whitespace-nowrap font-semibold">
+        {den}
+      </span>
+    </span>
+  );
+}
+
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Auto-stretches για αριθμούς, δυνάμεις & κλάσματα)
+function Radical({ children, className = '' }) {
+  return (
+    <span
+      className={`inline-flex items-stretch align-middle font-mono shrink-0 select-none mx-0.5 ${className}`}
+    >
+      <svg
+        viewBox="0 0 14 24"
+        className="w-[0.6em] self-stretch shrink-0 text-current overflow-visible"
+        preserveAspectRatio="none"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        aria-hidden="true"
+      >
+        <path d="M 1 13.5 L 4 13.5 L 7.5 22.8 L 13.6 0.8" />
+      </svg>
+      <span className="border-t-[1.9px] border-current pl-0.5 pr-1 pt-0.5 pb-[1px] leading-none inline-flex items-center text-[0.95em] font-semibold">
+        {children}
+      </span>
+    </span>
+  );
+}
+function Pow({ base, exp, parens = false, className = '' }) {
+  return (
+    <span className={`inline-flex items-baseline font-mono leading-none mx-[1px] ${className}`}>
+      {parens ? (
+        <span className="inline-flex items-center">
+          <span>(</span>
+          {base}
+          <span>)</span>
+        </span>
+      ) : (
+        <span>{base}</span>
+      )}
+      <sup className="text-[0.72em] font-bold leading-none ml-[1px] -top-[0.45em] relative">
+        {exp}
+      </sup>
+    </span>
+  );
+}
+
+function SvgRadical({ x, y, text, color = '#0f172a', fontSize = 12, prefix = '' }) {
+  const charWidth = fontSize * 0.62;
+  const textWidth = Math.max(fontSize * 0.8, String(text).length * charWidth + 4);
+  const hookW = fontSize * 0.65;
+  const topY = y - fontSize * 0.88;
+  const botY = y + fontSize * 0.14;
+  const midY = y - fontSize * 0.35;
+
+  return (
+    <g>
+      {prefix && (
+        <text
+          x={x - 3}
+          y={y}
+          textAnchor="end"
+          fontSize={fontSize}
+          fontWeight="800"
+          fill={color}
+          fontFamily="monospace"
+        >
+          {prefix}
+        </text>
+      )}
+      <path
+        d={`M ${x} ${midY} L ${x + hookW * 0.32} ${midY} L ${x + hookW * 0.62} ${botY} L ${x + hookW} ${topY} L ${x + hookW + textWidth} ${topY}`}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-    <span className="border-t-2 border-current px-1 pt-0.5 leading-none inline-flex items-center">
-      {children}
-    </span>
-  </span>
-);
+      <text
+        x={x + hookW + 2}
+        y={y}
+        fontSize={fontSize}
+        fontWeight="800"
+        fill={color}
+        fontFamily="monospace"
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
 
 // --- Βοηθητικές Συναρτήσεις Παραγωγής Ασκήσεων ---
 const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -203,19 +272,19 @@ function generateQuestions() {
       questions.push({
         id: 1,
         type: 'tf',
-        promptEl: 'Κάθε περιοδικός δεκαδικός αριθμός, όπως ο 0,(3), είναι ρητός αριθμός.',
-        promptEn: 'Every repeating decimal number, such as 0.(3), is a rational number.',
+        promptEl: 'Κάθε περιοδικός δεκαδικός αριθμός, όπως ο 0,3, είναι ρητός αριθμός.',
+        promptEn: 'Every repeating decimal number, such as 0.3, is a rational number.',
         correct: 'true',
         correctTextEl: 'Σωστό',
         correctTextEn: 'True',
         explanationEl: (
           <span>
-            Κάθε περιοδικός δεκαδικός γράφεται ως κλάσμα (π.χ. 0,(3) = <Frac num="1" den="3" />), άρα ανήκει στους ρητούς (ℚ).
+            Κάθε περιοδικός δεκαδικός γράφεται ως κλάσμα (π.χ. 0,3 = <Frac num="1" den="3" />), άρα ανήκει στους ρητούς (ℚ).
           </span>
         ),
         explanationEn: (
           <span>
-            Every repeating decimal can be written as a fraction (e.g. 0.(3) = <Frac num="1" den="3" />), so it belongs to ℚ.
+            Every repeating decimal can be written as a fraction (e.g. 0.3 = <Frac num="1" den="3" />), so it belongs to ℚ.
           </span>
         ),
       });
@@ -263,38 +332,10 @@ function generateQuestions() {
   // Q3 (MCQ): Τοποθέτηση άρρητου στην ευθεία (Πυθαγόρειο Θεώρημα / ακτίνα ρ)
   {
     const configs = [
-      {
-        a: 1,
-        b: 1,
-        res: 2,
-        wrong1: 1,
-        wrong2: 3,
-        wrong3: 4,
-      },
-      {
-        a: 2,
-        b: 1,
-        res: 5,
-        wrong1: 3,
-        wrong2: 4,
-        wrong3: 6,
-      },
-      {
-        a: 2,
-        b: 2,
-        res: 8,
-        wrong1: 4,
-        wrong2: 6,
-        wrong3: 10,
-      },
-      {
-        a: 3,
-        b: 1,
-        res: 10,
-        wrong1: 4,
-        wrong2: 8,
-        wrong3: 9,
-      },
+      { a: 1, b: 1, res: 2, wrong1: 1, wrong2: 3, wrong3: 4 },
+      { a: 2, b: 1, res: 5, wrong1: 3, wrong2: 4, wrong3: 6 },
+      { a: 2, b: 2, res: 8, wrong1: 4, wrong2: 6, wrong3: 10 },
+      { a: 3, b: 1, res: 10, wrong1: 4, wrong2: 8, wrong3: 9 },
     ];
     const c = pickRandom(configs);
     const correctOpt = {
@@ -318,13 +359,29 @@ function generateQuestions() {
       correctTextEl: <Radical>{c.res}</Radical>,
       correctTextEn: <Radical>{c.res}</Radical>,
       explanationEl: (
-        <span>
-          Από το Πυθαγόρειο Θεώρημα: ρ² = {c.a}² + {c.b}² = {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ = <Radical>{c.res}</Radical>.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Από το Πυθαγόρειο Θεώρημα:</span>
+          <Pow base="ρ" exp="2" />
+          <span>=</span>
+          <Pow base={String(c.a)} exp="2" />
+          <span>+</span>
+          <Pow base={String(c.b)} exp="2" />
+          <span>= {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ =</span>
+          <Radical>{c.res}</Radical>
+          <span>.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          By the Pythagorean Theorem: ρ² = {c.a}² + {c.b}² = {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ = <Radical>{c.res}</Radical>.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>By the Pythagorean Theorem:</span>
+          <Pow base="ρ" exp="2" />
+          <span>=</span>
+          <Pow base={String(c.a)} exp="2" />
+          <span>+</span>
+          <Pow base={String(c.b)} exp="2" />
+          <span>= {c.a * c.a} + {c.b * c.b} = {c.res} ⇒ ρ =</span>
+          <Radical>{c.res}</Radical>
+          <span>.</span>
         </span>
       ),
       renderFeedbackDiagram: () => (
@@ -335,17 +392,17 @@ function generateQuestions() {
             <polyline points="148,115 148,103 160,103" fill="none" stroke="#059669" strokeWidth="1.5" />
             <text x="100" y="132" fontSize="12" fontWeight="700" fill="#065f46">{c.a}</text>
             <text x="166" y="78" fontSize="12" fontWeight="700" fill="#065f46">{c.b}</text>
-            <text x="72" y="65" fontSize="13" fontWeight="800" fill="#4f46e5">ρ = √{c.res}</text>
+            <SvgRadical x={100} y={65} text={String(c.res)} prefix="ρ =" color="#4f46e5" fontSize={12} />
             <path d="M 160 30 A 139 139 0 0 1 189 115" fill="none" stroke="#4f46e5" strokeWidth="2" strokeDasharray="4 3" />
             <circle cx="189" cy="115" r="4.5" fill="#dc2626" />
-            <text x="182" y="133" fontSize="12" fontWeight="800" fill="#dc2626">√{c.res}</text>
+            <SvgRadical x={182} y={134} text={String(c.res)} color="#dc2626" fontSize={12} />
           </svg>
         </div>
       ),
     });
   }
 
-  // Q4 (Input): Διαδοχικοί ακέραιοι που περιέχουν το √N (ζητάμε τον μικρότερο ακέραιο)
+  // Q4 (Input): Διαδοχικοί ακέραιοι που περιέχουν το √N
   {
     const n = pickRandom([3, 5, 7, 11, 14, 19, 29, 40]);
     const low = Math.floor(Math.sqrt(n));
@@ -381,7 +438,7 @@ function generateQuestions() {
     });
   }
 
-  // Q5 (Input): Τετράγωνοι αριθμοί - Άθροισμα/Διαφορά ριζών
+  // Q5 (Input): Τετράγωνοι αριθμοί - Άθροισμα ριζών
   {
     const a = pickRandom([4, 9, 16, 25]);
     const b = pickRandom([36, 49, 64, 81]);
@@ -403,19 +460,35 @@ function generateQuestions() {
       correctTextEl: String(ans),
       correctTextEn: String(ans),
       explanationEl: (
-        <span>
-          Επειδή {a} = {Math.sqrt(a)}² και {b} = {Math.sqrt(b)}², έχουμε: <Radical>{a}</Radical> + <Radical>{b}</Radical> = {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Επειδή {a} =</span>
+          <Pow base={String(Math.sqrt(a))} exp="2" />
+          <span>και {b} =</span>
+          <Pow base={String(Math.sqrt(b))} exp="2" />
+          <span>, έχουμε:</span>
+          <Radical>{a}</Radical>
+          <span>+</span>
+          <Radical>{b}</Radical>
+          <span>= {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          Since {a} = {Math.sqrt(a)}² and {b} = {Math.sqrt(b)}², we get: <Radical>{a}</Radical> + <Radical>{b}</Radical> = {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Since {a} =</span>
+          <Pow base={String(Math.sqrt(a))} exp="2" />
+          <span>and {b} =</span>
+          <Pow base={String(Math.sqrt(b))} exp="2" />
+          <span>, we get:</span>
+          <Radical>{a}</Radical>
+          <span>+</span>
+          <Radical>{b}</Radical>
+          <span>= {Math.sqrt(a)} + {Math.sqrt(b)} = {ans}.</span>
         </span>
       ),
     });
   }
 
-  // Q6 (TF): Πρόσημο και μηδενικός εκθέτης
+  // Q6 (TF): Πρόσημο και μηδενικός εκθέτης (με <Pow>)
   {
     const mode = randInt(1, 2);
     if (mode === 1) {
@@ -424,26 +497,36 @@ function generateQuestions() {
         id: 6,
         type: 'tf',
         promptEl: (
-          <span>
-            Ισχύει η ισότητα: (-{base})<sup>0</sup> = -1.
+          <span className="inline-flex items-baseline gap-1">
+            <span>Ισχύει η ισότητα:</span>
+            <Pow base={`-${base}`} exp="0" parens />
+            <span>= -1.</span>
           </span>
         ),
         promptEn: (
-          <span>
-            The equality (-{base})<sup>0</sup> = -1 holds true.
+          <span className="inline-flex items-baseline gap-1">
+            <span>The equality</span>
+            <Pow base={`-${base}`} exp="0" parens />
+            <span>= -1 holds true.</span>
           </span>
         ),
         correct: 'false',
         correctTextEl: 'Λάθος',
         correctTextEn: 'False',
         explanationEl: (
-          <span>
-            Κάθε μη μηδενικός πραγματικός αριθμός (με παρένθεση) υψωμένος στη μηδενική δύναμη ισούται με +1: (-{base})<sup>0</sup> = 1. (Αντίθετα, -{base}<sup>0</sup> = -1).
+          <span className="inline-flex flex-wrap items-baseline gap-x-1">
+            <span>Κάθε μη μηδενικός πραγματικός αριθμός (με παρένθεση) υψωμένος στη μηδενική δύναμη ισούται με +1:</span>
+            <Pow base={`-${base}`} exp="0" parens />
+            <span>= 1. (Αντίθετα,</span>
+            <Pow base={`-${base}`} exp="0" />
+            <span>= -1).</span>
           </span>
         ),
         explanationEn: (
-          <span>
-            Any non-zero real number (in parentheses) raised to the 0th power equals +1: (-{base})<sup>0</sup> = 1.
+          <span className="inline-flex flex-wrap items-baseline gap-x-1">
+            <span>Any non-zero real number (in parentheses) raised to the 0th power equals +1:</span>
+            <Pow base={`-${base}`} exp="0" parens />
+            <span>= 1.</span>
           </span>
         ),
       });
@@ -453,26 +536,40 @@ function generateQuestions() {
         id: 6,
         type: 'tf',
         promptEl: (
-          <span>
-            Η δύναμη (-2)<sup>{exp}</sup> είναι θετικός αριθμός.
+          <span className="inline-flex items-baseline gap-1">
+            <span>Η δύναμη</span>
+            <Pow base="-2" exp={String(exp)} parens />
+            <span>είναι θετικός αριθμός.</span>
           </span>
         ),
         promptEn: (
-          <span>
-            The power (-2)<sup>{exp}</sup> is a positive number.
+          <span className="inline-flex items-baseline gap-1">
+            <span>The power</span>
+            <Pow base="-2" exp={String(exp)} parens />
+            <span>is a positive number.</span>
           </span>
         ),
         correct: 'true',
         correctTextEl: 'Σωστό',
         correctTextEn: 'True',
         explanationEl: (
-          <span>
-            Ο εκθέτης {exp} είναι άρτιος ακέραιος, άρα (-2)<sup>{exp}</sup> = <Frac num="1" den={<span>(-2)<sup>{Math.abs(exp)}</sup></span>} /> = <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} /> &gt; 0.
+          <span className="inline-flex flex-wrap items-center gap-x-1">
+            <span>Ο εκθέτης {exp} είναι άρτιος ακέραιος, άρα</span>
+            <Pow base="-2" exp={String(exp)} parens />
+            <span>=</span>
+            <Frac num="1" den={<Pow base="-2" exp={String(Math.abs(exp))} parens />} />
+            <span>=</span>
+            <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} />
+            <span>&gt; 0.</span>
           </span>
         ),
         explanationEn: (
-          <span>
-            The exponent {exp} is an even integer, so (-2)<sup>{exp}</sup> = <Frac num="1" den={<span>(-2)<sup>{Math.abs(exp)}</sup></span>} /> = <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} /> &gt; 0.
+          <span className="inline-flex flex-wrap items-center gap-x-1">
+            <span>The exponent {exp} is an even integer, so</span>
+            <Pow base="-2" exp={String(exp)} parens />
+            <span>=</span>
+            <Frac num="1" den={String(Math.pow(2, Math.abs(exp)))} />
+            <span>&gt; 0.</span>
           </span>
         ),
       });
@@ -499,13 +596,17 @@ function generateQuestions() {
       id: 7,
       type: 'mcq',
       promptEl: (
-        <span>
-          Ποια είναι η τιμή της δύναμης {base}<sup>-{exp}</sup>;
+        <span className="inline-flex items-baseline gap-1">
+          <span>Ποια είναι η τιμή της δύναμης</span>
+          <Pow base={String(base)} exp={`-${exp}`} />
+          <span>;</span>
         </span>
       ),
       promptEn: (
-        <span>
-          What is the value of the power {base}<sup>-{exp}</sup>?
+        <span className="inline-flex items-baseline gap-1">
+          <span>What is the value of the power</span>
+          <Pow base={String(base)} exp={`-${exp}`} />
+          <span>?</span>
         </span>
       ),
       options: ensureFourUniqueOptions(correctOpt, distractors),
@@ -513,13 +614,25 @@ function generateQuestions() {
       correctTextEl: <Frac num="1" den={String(denVal)} />,
       correctTextEn: <Frac num="1" den={String(denVal)} />,
       explanationEl: (
-        <span>
-          Από τον ορισμό του αρνητικού εκθέτη: {base}<sup>-{exp}</sup> = <Frac num="1" den={<span>{base}<sup>{exp}</sup></span>} /> = <Frac num="1" den={String(denVal)} />.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Από τον ορισμό του αρνητικού εκθέτη:</span>
+          <Pow base={String(base)} exp={`-${exp}`} />
+          <span>=</span>
+          <Frac num="1" den={<Pow base={String(base)} exp={String(exp)} />} />
+          <span>=</span>
+          <Frac num="1" den={String(denVal)} />
+          <span>.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          By the negative exponent definition: {base}<sup>-{exp}</sup> = <Frac num="1" den={<span>{base}<sup>{exp}</sup></span>} /> = <Frac num="1" den={String(denVal)} />.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>By the negative exponent definition:</span>
+          <Pow base={String(base)} exp={`-${exp}`} />
+          <span>=</span>
+          <Frac num="1" den={<Pow base={String(base)} exp={String(exp)} />} />
+          <span>=</span>
+          <Frac num="1" den={String(denVal)} />
+          <span>.</span>
         </span>
       ),
     });
@@ -534,26 +647,40 @@ function generateQuestions() {
       id: 8,
       type: 'input',
       promptEl: (
-        <span className="inline-flex items-center">
-          Υπολογίστε την τιμή της δύναμης (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup>:
+        <span className="inline-flex items-center gap-1">
+          <span>Υπολογίστε την τιμή της δύναμης</span>
+          <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+          <span>:</span>
         </span>
       ),
       promptEn: (
-        <span className="inline-flex items-center">
-          Calculate the value of (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup>:
+        <span className="inline-flex items-center gap-1">
+          <span>Calculate the value of</span>
+          <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+          <span>:</span>
         </span>
       ),
       correct: String(ans),
       correctTextEl: String(ans),
       correctTextEn: String(ans),
       explanationEl: (
-        <span>
-          Αντιστρέφουμε το κλάσμα: (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup> = (<Frac num={String(den)} den="1" />)<sup>{exp}</sup> = {den}<sup>{exp}</sup> = {ans}.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Αντιστρέφουμε το κλάσμα:</span>
+          <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+          <span>=</span>
+          <Pow base={<Frac num={String(den)} den="1" />} exp={String(exp)} parens />
+          <span>=</span>
+          <Pow base={String(den)} exp={String(exp)} />
+          <span>= {ans}.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          Invert the fraction: (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup> = {den}<sup>{exp}</sup> = {ans}.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Invert the fraction:</span>
+          <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+          <span>=</span>
+          <Pow base={String(den)} exp={String(exp)} />
+          <span>= {ans}.</span>
         </span>
       ),
     });
@@ -567,40 +694,64 @@ function generateQuestions() {
     const sum = m + n;
     const correctOpt = {
       key: `${base}^${sum}`,
-      labelEl: <span>{base}<sup>{sum}</sup></span>,
-      labelEn: <span>{base}<sup>{sum}</sup></span>,
+      labelEl: <Pow base={base} exp={String(sum)} />,
+      labelEn: <Pow base={base} exp={String(sum)} />,
     };
     const distractors = [
-      { key: `${base}^${m * n}`, labelEl: <span>{base}<sup>{m * n}</sup></span>, labelEn: <span>{base}<sup>{m * n}</sup></span> },
-      { key: `${base}^${m - n}`, labelEl: <span>{base}<sup>{m - n}</sup></span>, labelEn: <span>{base}<sup>{m - n}</sup></span> },
-      { key: `${base}^${-sum}`, labelEl: <span>{base}<sup>{-sum}</sup></span>, labelEn: <span>{base}<sup>{-sum}</sup></span> },
-      { key: `2${base}^${sum}`, labelEl: <span>2{base}<sup>{sum}</sup></span>, labelEn: <span>2{base}<sup>{sum}</sup></span> },
+      { key: `${base}^${m * n}`, labelEl: <Pow base={base} exp={String(m * n)} />, labelEn: <Pow base={base} exp={String(m * n)} /> },
+      { key: `${base}^${m - n}`, labelEl: <Pow base={base} exp={String(m - n)} />, labelEn: <Pow base={base} exp={String(m - n)} /> },
+      { key: `${base}^${-sum}`, labelEl: <Pow base={base} exp={String(-sum)} />, labelEn: <Pow base={base} exp={String(-sum)} /> },
+      { key: `2${base}^${sum}`, labelEl: <Pow base={`2${base}`} exp={String(sum)} />, labelEn: <Pow base={`2${base}`} exp={String(sum)} /> },
     ];
     questions.push({
       id: 9,
       type: 'mcq',
       promptEl: (
-        <span>
-          Σε μία δύναμη της βάσης {base} (με {base} ≠ 0), το γινόμενο {base}<sup>{m}</sup> · {base}<sup>{n}</sup> ισούται με:
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Σε μία δύναμη της βάσης {base} (με {base} ≠ 0), το γινόμενο</span>
+          <Pow base={base} exp={String(m)} />
+          <span>·</span>
+          <Pow base={base} exp={String(n)} />
+          <span>ισούται με:</span>
         </span>
       ),
       promptEn: (
-        <span>
-          Written as a single power of {base} ({base} ≠ 0), the product {base}<sup>{m}</sup> · {base}<sup>{n}</sup> equals:
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Written as a single power of {base} ({base} ≠ 0), the product</span>
+          <Pow base={base} exp={String(m)} />
+          <span>·</span>
+          <Pow base={base} exp={String(n)} />
+          <span>equals:</span>
         </span>
       ),
       options: ensureFourUniqueOptions(correctOpt, distractors),
       correct: correctOpt.key,
-      correctTextEl: <span>{base}<sup>{sum}</sup></span>,
-      correctTextEn: <span>{base}<sup>{sum}</sup></span>,
+      correctTextEl: <Pow base={base} exp={String(sum)} />,
+      correctTextEn: <Pow base={base} exp={String(sum)} />,
       explanationEl: (
-        <span>
-          Προσθέτουμε τους εκθέτες: {base}<sup>{m}</sup> · {base}<sup>{n}</sup> = {base}<sup>{m} + ({n})</sup> = {base}<sup>{sum}</sup>.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Προσθέτουμε τους εκθέτες:</span>
+          <Pow base={base} exp={String(m)} />
+          <span>·</span>
+          <Pow base={base} exp={String(n)} />
+          <span>=</span>
+          <Pow base={base} exp={`${m} + (${n})`} />
+          <span>=</span>
+          <Pow base={base} exp={String(sum)} />
+          <span>.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          Add the exponents: {base}<sup>{m}</sup> · {base}<sup>{n}</sup> = {base}<sup>{m} + ({n})</sup> = {base}<sup>{sum}</sup>.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Add the exponents:</span>
+          <Pow base={base} exp={String(m)} />
+          <span>·</span>
+          <Pow base={base} exp={String(n)} />
+          <span>=</span>
+          <Pow base={base} exp={`${m} + (${n})`} />
+          <span>=</span>
+          <Pow base={base} exp={String(sum)} />
+          <span>.</span>
         </span>
       ),
     });
@@ -614,40 +765,58 @@ function generateQuestions() {
     const diff = m - n;
     const correctOpt = {
       key: `${base}^${diff}`,
-      labelEl: <span>{base}<sup>{diff}</sup></span>,
-      labelEn: <span>{base}<sup>{diff}</sup></span>,
+      labelEl: <Pow base={base} exp={String(diff)} />,
+      labelEn: <Pow base={base} exp={String(diff)} />,
     };
     const distractors = [
-      { key: `${base}^${m + n}`, labelEl: <span>{base}<sup>{m + n}</sup></span>, labelEn: <span>{base}<sup>{m + n}</sup></span> },
-      { key: `${base}^${n - m}`, labelEl: <span>{base}<sup>{n - m}</sup></span>, labelEn: <span>{base}<sup>{n - m}</sup></span> },
-      { key: `${base}^${m * n}`, labelEl: <span>{base}<sup>{m * n}</sup></span>, labelEn: <span>{base}<sup>{m * n}</sup></span> },
-      { key: `1`, labelEl: '1', labelEn: '1' },
+      { key: `${base}^${m + n}`, labelEl: <Pow base={base} exp={String(m + n)} />, labelEn: <Pow base={base} exp={String(m + n)} /> },
+      { key: `${base}^${n - m}`, labelEl: <Pow base={base} exp={String(n - m)} />, labelEn: <Pow base={base} exp={String(n - m)} /> },
+      { key: `${base}^${m * n}`, labelEl: <Pow base={base} exp={String(m * n)} />, labelEn: <Pow base={base} exp={String(m * n)} /> },
+      { key: '1', labelEl: '1', labelEn: '1' },
     ];
     questions.push({
       id: 10,
       type: 'mcq',
       promptEl: (
-        <span className="inline-flex items-center">
-          Το πηλίκο <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> (όπου {base} ≠ 0) ισούται με:
+        <span className="inline-flex items-center gap-1">
+          <span>Το πηλίκο</span>
+          <Frac num={<Pow base={base} exp={String(m)} />} den={<Pow base={base} exp={String(n)} />} />
+          <span>(όπου {base} ≠ 0) ισούται με:</span>
         </span>
       ),
       promptEn: (
-        <span className="inline-flex items-center">
-          The quotient <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> (where {base} ≠ 0) equals:
+        <span className="inline-flex items-center gap-1">
+          <span>The quotient</span>
+          <Frac num={<Pow base={base} exp={String(m)} />} den={<Pow base={base} exp={String(n)} />} />
+          <span>(where {base} ≠ 0) equals:</span>
         </span>
       ),
       options: ensureFourUniqueOptions(correctOpt, distractors),
       correct: correctOpt.key,
-      correctTextEl: <span>{base}<sup>{diff}</sup></span>,
-      correctTextEn: <span>{base}<sup>{diff}</sup></span>,
+      correctTextEl: <Pow base={base} exp={String(diff)} />,
+      correctTextEn: <Pow base={base} exp={String(diff)} />,
       explanationEl: (
-        <span>
-          Αφαιρούμε τους εκθέτες (προσέχοντας το πρόσημο): <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> = {base}<sup>{m} - ({n})</sup> = {base}<sup>{m} + {Math.abs(n)}</sup> = {base}<sup>{diff}</sup>.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Αφαιρούμε τους εκθέτες (προσέχοντας το πρόσημο):</span>
+          <Frac num={<Pow base={base} exp={String(m)} />} den={<Pow base={base} exp={String(n)} />} />
+          <span>=</span>
+          <Pow base={base} exp={`${m} - (${n})`} />
+          <span>=</span>
+          <Pow base={base} exp={`${m} + ${Math.abs(n)}`} />
+          <span>=</span>
+          <Pow base={base} exp={String(diff)} />
+          <span>.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          Subtract the exponents carefully: <Frac num={<span>{base}<sup>{m}</sup></span>} den={<span>{base}<sup>{n}</sup></span>} /> = {base}<sup>{m} - ({n})</sup> = {base}<sup>{diff}</sup>.
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Subtract the exponents carefully:</span>
+          <Frac num={<Pow base={base} exp={String(m)} />} den={<Pow base={base} exp={String(n)} />} />
+          <span>=</span>
+          <Pow base={base} exp={`${m} - (${n})`} />
+          <span>=</span>
+          <Pow base={base} exp={String(diff)} />
+          <span>.</span>
         </span>
       ),
     });
@@ -662,37 +831,53 @@ function generateQuestions() {
       id: 11,
       type: 'input',
       promptEl: (
-        <span>
-          Υπολογίστε την τιμή της δύναμης (<Radical>{k}</Radical>)<sup>{exp}</sup>:
+        <span className="inline-flex items-baseline gap-1">
+          <span>Υπολογίστε την τιμή της δύναμης</span>
+          <Pow base={<Radical>{k}</Radical>} exp={String(exp)} parens />
+          <span>:</span>
         </span>
       ),
       promptEn: (
-        <span>
-          Calculate the value of (<Radical>{k}</Radical>)<sup>{exp}</sup>:
+        <span className="inline-flex items-baseline gap-1">
+          <span>Calculate the value of</span>
+          <Pow base={<Radical>{k}</Radical>} exp={String(exp)} parens />
+          <span>:</span>
         </span>
       ),
       correct: String(ans),
       correctTextEl: String(ans),
       correctTextEn: String(ans),
       explanationEl: (
-        <span>
-          Γράφουμε το {exp} = 2 · {exp / 2}: (<Radical>{k}</Radical>)<sup>{exp}</sup> = ((<Radical>{k}</Radical>)<sup>2</sup>)<sup>{exp / 2}</sup> = {k}<sup>{exp / 2}</sup> = {ans}.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Γράφουμε το {exp} = 2 · {exp / 2}:</span>
+          <Pow base={<Radical>{k}</Radical>} exp={String(exp)} parens />
+          <span>=</span>
+          <Pow base={<Pow base={<Radical>{k}</Radical>} exp="2" parens />} exp={String(exp / 2)} parens />
+          <span>=</span>
+          <Pow base={String(k)} exp={String(exp / 2)} />
+          <span>= {ans}.</span>
         </span>
       ),
       explanationEn: (
-        <span>
-          Write {exp} = 2 · {exp / 2}: (<Radical>{k}</Radical>)<sup>{exp}</sup> = ((<Radical>{k}</Radical>)<sup>2</sup>)<sup>{exp / 2}</sup> = {k}<sup>{exp / 2}</sup> = {ans}.
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Write {exp} = 2 · {exp / 2}:</span>
+          <Pow base={<Radical>{k}</Radical>} exp={String(exp)} parens />
+          <span>=</span>
+          <Pow base={<Pow base={<Radical>{k}</Radical>} exp="2" parens />} exp={String(exp / 2)} parens />
+          <span>=</span>
+          <Pow base={String(k)} exp={String(exp / 2)} />
+          <span>= {ans}.</span>
         </span>
       ),
     });
   }
 
-  // Q12 (Input - Συνδυαστικό πρόβλημα δυνάμεων με tableData)
+  // Q12 (Input - Συνδυαστικό πρόβλημα δυνάμεων με tableData & <Pow>)
   {
     const b = pickRandom([2, 3]);
     const p1 = pickRandom([-2, -3]);
     const p2 = pickRandom([2, 3]);
-    const p3 = p1 + p2 * 2 - 1; // ώστε το πηλίκο να δίνει b^1 = b
+    const p3 = p1 + p2 * 2 - 1;
     const fracExp = pickRandom([-2, -3]);
     const term2 = Math.pow(2, Math.abs(fracExp));
     const totalAns = b + term2;
@@ -703,16 +888,40 @@ function generateQuestions() {
       promptEl: (
         <span className="inline-flex flex-wrap items-center gap-x-1">
           <span>Υπολογίστε την τιμή της παράστασης:</span>
-          <span className="inline-flex items-center font-bold">
-            Π = <Frac num={<span>{b}<sup>{p1}</sup> · ({b}<sup>{p2}</sup>)<sup>2</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> + (<Frac num="1" den="2" />)<sup>{fracExp}</sup>
+          <span className="inline-flex items-center gap-1 font-bold">
+            <span>Π =</span>
+            <Frac
+              num={
+                <span className="inline-flex items-baseline gap-1">
+                  <Pow base={String(b)} exp={String(p1)} />
+                  <span>·</span>
+                  <Pow base={<Pow base={String(b)} exp={String(p2)} />} exp="2" parens />
+                </span>
+              }
+              den={<Pow base={String(b)} exp={String(p3)} />}
+            />
+            <span>+</span>
+            <Pow base={<Frac num="1" den="2" />} exp={String(fracExp)} parens />
           </span>
         </span>
       ),
       promptEn: (
         <span className="inline-flex flex-wrap items-center gap-x-1">
           <span>Calculate the value of the expression:</span>
-          <span className="inline-flex items-center font-bold">
-            Π = <Frac num={<span>{b}<sup>{p1}</sup> · ({b}<sup>{p2}</sup>)<sup>2</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> + (<Frac num="1" den="2" />)<sup>{fracExp}</sup>
+          <span className="inline-flex items-center gap-1 font-bold">
+            <span>Π =</span>
+            <Frac
+              num={
+                <span className="inline-flex items-baseline gap-1">
+                  <Pow base={String(b)} exp={String(p1)} />
+                  <span>·</span>
+                  <Pow base={<Pow base={String(b)} exp={String(p2)} />} exp="2" parens />
+                </span>
+              }
+              den={<Pow base={String(b)} exp={String(p3)} />}
+            />
+            <span>+</span>
+            <Pow base={<Frac num="1" den="2" />} exp={String(fracExp)} parens />
           </span>
         </span>
       ),
@@ -734,8 +943,10 @@ function generateQuestions() {
           stepEl: '1. Δύναμη δύναμης',
           stepEn: '1. Power of a power',
           calc: (
-            <span>
-              ({b}<sup>{p2}</sup>)<sup>2</sup> = {b}<sup>{p2 * 2}</sup>
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Pow base={String(b)} exp={String(p2)} />} exp="2" parens />
+              <span>=</span>
+              <Pow base={String(b)} exp={String(p2 * 2)} />
             </span>
           ),
         },
@@ -743,8 +954,22 @@ function generateQuestions() {
           stepEl: '2. Απλοποίηση κλάσματος',
           stepEn: '2. Simplify fraction',
           calc: (
-            <span>
-              <Frac num={<span>{b}<sup>{p1}</sup> · {b}<sup>{p2 * 2}</sup></span>} den={<span>{b}<sup>{p3}</sup></span>} /> = {b}<sup>{p1 + p2 * 2} - ({p3})</sup> = {b}<sup>1</sup> = {b}
+            <span className="inline-flex flex-wrap items-center gap-1">
+              <Frac
+                num={
+                  <span className="inline-flex items-baseline gap-1">
+                    <Pow base={String(b)} exp={String(p1)} />
+                    <span>·</span>
+                    <Pow base={String(b)} exp={String(p2 * 2)} />
+                  </span>
+                }
+                den={<Pow base={String(b)} exp={String(p3)} />}
+              />
+              <span>=</span>
+              <Pow base={String(b)} exp={`${p1 + p2 * 2} - (${p3})`} />
+              <span>=</span>
+              <Pow base={String(b)} exp="1" />
+              <span>= {b}</span>
             </span>
           ),
         },
@@ -752,8 +977,11 @@ function generateQuestions() {
           stepEl: '3. Αρνητικός εκθέτης & άθροισμα',
           stepEn: '3. Negative exponent & sum',
           calc: (
-            <span>
-              (<Frac num="1" den="2" />)<sup>{fracExp}</sup> = 2<sup>{Math.abs(fracExp)}</sup> = {term2} ⇒ Π = {b} + {term2} = {totalAns}
+            <span className="inline-flex flex-wrap items-center gap-1">
+              <Pow base={<Frac num="1" den="2" />} exp={String(fracExp)} parens />
+              <span>=</span>
+              <Pow base="2" exp={String(Math.abs(fracExp))} />
+              <span>= {term2} ⇒ Π = {b} + {term2} = {totalAns}</span>
             </span>
           ),
         },
@@ -822,15 +1050,20 @@ export default function PragmatikoiExercisesPage() {
   const actionButton = (
     <Link
       href="/b-gymnasiou/06-pragmatikoi"
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition-colors"
+      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-colors"
     >
-      <span aria-hidden="true">←</span>
-      <span>{toCleanUppercase(isEn ? 'BACK TO THEORY' : 'ΕΠΙΣΤΡΟΦΗ ΣΤΗ ΘΕΩΡΙΑ')}</span>
+      <span aria-hidden="true">📖</span>
+      <span>{toCleanUppercase(isEn ? 'THEORY' : 'ΘΕΩΡΙΑ')}</span>
     </Link>
   );
 
   return (
-    <Layout title={pageTitle} actionButton={actionButton}>
+    <Layout
+      title={pageTitle}
+      actionButton={actionButton}
+      backUrl="/b-gymnasiou"
+      backText={isEn ? 'Grade 8' : "Β' Γυμνασίου"}
+    >
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 8k:px-32 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
         {/* Header */}
         <header className="rounded-3xl bg-gradient-to-r from-indigo-900 to-blue-800 text-white p-6 sm:p-8 shadow-lg mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -865,7 +1098,6 @@ export default function PragmatikoiExercisesPage() {
           {questions.map((q, idx) => {
             const userVal = answers[q.id] ?? '';
             const correct = submitted && isQuestionCorrect(q);
-            const wrong = submitted && !correct;
 
             return (
               <article
@@ -1013,7 +1245,6 @@ export default function PragmatikoiExercisesPage() {
                       <span>{isEn ? q.explanationEn : q.explanationEl}</span>
                     </div>
 
-                    {/* Πίνακας Βημάτων (όπου υπάρχει) */}
                     {q.tableData && (
                       <div className="overflow-hidden rounded-2xl border border-slate-200 mt-3">
                         <table className="w-full table-fixed text-xs sm:text-sm text-left bg-white">
@@ -1045,7 +1276,6 @@ export default function PragmatikoiExercisesPage() {
                       </div>
                     )}
 
-                    {/* Εποπτικό SVG Διάγραμμα ΜΟΝΟ στο feedback */}
                     {q.renderFeedbackDiagram && q.renderFeedbackDiagram()}
                   </div>
                 )}

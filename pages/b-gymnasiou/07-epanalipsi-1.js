@@ -56,40 +56,112 @@ function Arc({ children, className = '' }) {
   );
 }
 
-// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Inline SVG + Vinculum)
+// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction)
+function Frac({ num, den, className = '' }) {
+  return (
+    <span
+      className={`inline-flex flex-col text-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.88em] leading-none shrink-0 max-w-full ${className}`}
+    >
+      <span className="border-b border-current px-1 pb-0.5 whitespace-nowrap font-semibold">
+        {num}
+      </span>
+      <span className="px-1 pt-0.5 whitespace-nowrap font-semibold">
+        {den}
+      </span>
+    </span>
+  );
+}
+
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Auto-stretches για αριθμούς, δυνάμεις & κλάσματα)
 function Radical({ children, className = '' }) {
   return (
-    <span className={`inline-flex items-center align-middle font-mono shrink-0 select-none mx-0.5 ${className}`}>
+    <span
+      className={`inline-flex items-stretch align-middle font-mono shrink-0 select-none mx-0.5 ${className}`}
+    >
       <svg
-        viewBox="0 0 12 24"
-        className="w-[0.52em] h-[1.12em] shrink-0 text-current overflow-visible"
+        viewBox="0 0 14 24"
+        className="w-[0.6em] self-stretch shrink-0 text-current overflow-visible"
+        preserveAspectRatio="none"
         fill="none"
         stroke="currentColor"
-        strokeWidth="1.8"
+        strokeWidth="1.9"
         strokeLinecap="round"
         strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
         aria-hidden="true"
       >
-        <path d="M1 13 L3.5 13 L6.5 21 L12 2" />
+        <path d="M 1 13.5 L 4 13.5 L 7.5 22.8 L 13.6 0.8" />
       </svg>
-      <span className="border-t-[1.8px] border-current pl-0.5 pr-1 py-0 leading-none text-[0.95em]">
+      <span className="border-t-[1.9px] border-current pl-0.5 pr-1 pt-0.5 pb-[1px] leading-none inline-flex items-center text-[0.95em] font-semibold">
         {children}
       </span>
     </span>
   );
 }
 
-// Επαναχρησιμοποιήσιμο Component Κλάσματος (Fraction)
-function Frac({ num, den, className = '' }) {
+// Επαναχρησιμοποιήσιμο Component Δύναμης (Base & Exponent)
+function Pow({ base, exp, parens = false, className = '' }) {
   return (
-    <span
-      className={`inline-flex flex-col text-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.85em] sm:text-[0.9em] leading-none shrink-0 max-w-full ${className}`}
-    >
-      <span className="border-b border-current px-0.5 sm:px-1 pb-0.5 whitespace-nowrap">
-        {num}
-      </span>
-      <span className="pt-0.5 whitespace-nowrap">{den}</span>
+    <span className={`inline-flex items-baseline font-mono leading-none mx-[1px] ${className}`}>
+      {parens ? (
+        <span className="inline-flex items-center">
+          <span>(</span>
+          {base}
+          <span>)</span>
+        </span>
+      ) : (
+        <span>{base}</span>
+      )}
+      <sup className="text-[0.72em] font-bold leading-none ml-[1px] -top-[0.45em] relative">
+        {exp}
+      </sup>
     </span>
+  );
+}
+
+// Helper για SVG Ρίζα με Vinculum μέσα στα διαγράμματα
+function SvgRadical({ x, y, text, color = '#fbbf24', fontSize = 10, prefix = '' }) {
+  const charWidth = fontSize * 0.62;
+  const textWidth = Math.max(fontSize * 0.8, String(text).length * charWidth + 4);
+  const hookW = fontSize * 0.65;
+  const topY = y - fontSize * 0.88;
+  const botY = y + fontSize * 0.14;
+  const midY = y - fontSize * 0.35;
+
+  return (
+    <g>
+      {prefix && (
+        <text
+          x={x - 3}
+          y={y}
+          textAnchor="end"
+          fontSize={fontSize}
+          fontWeight="800"
+          fill={color}
+          fontFamily="monospace"
+        >
+          {prefix}
+        </text>
+      )}
+      <path
+        d={`M ${x} ${midY} L ${x + hookW * 0.32} ${midY} L ${x + hookW * 0.62} ${botY} L ${x + hookW} ${topY} L ${x + hookW + textWidth} ${topY}`}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <text
+        x={x + hookW + 2}
+        y={y}
+        fontSize={fontSize}
+        fontWeight="800"
+        fill={color}
+        fontFamily="monospace"
+      >
+        {text}
+      </text>
+    </g>
   );
 }
 
@@ -110,7 +182,7 @@ function shuffle(array) {
   return arr;
 }
 
-// Εγγυημένα 4 αυστηρά μοναδικές επιλογές (τόσο σε key όσο και σε οπτικό κείμενο)
+// Εγγυημένα 4 αυστηρά μοναδικές επιλογές
 function ensureFourUniqueOptions(correctOpt, distractorPool) {
   const seenKeys = new Set([String(correctOpt.key).trim()]);
   const seenLabels = new Set([String(correctOpt.label).trim()]);
@@ -146,7 +218,7 @@ function ensureFourUniqueOptions(correctOpt, distractorPool) {
 function renderFeedbackDiagram(diagram, isEl) {
   if (!diagram) return null;
 
-  // 1. Διάγραμμα Δυνάμεων & Αρνητικού Εκθέτη
+  // 1. Διάγραμμα Δυνάμεων
   if (diagram.type === 'powerFlow') {
     return (
       <div className="bg-slate-950 rounded-xl p-3 flex flex-col items-center justify-center border border-slate-800">
@@ -176,14 +248,14 @@ function renderFeedbackDiagram(diagram, isEl) {
     );
   }
 
-  // 2. Διάγραμμα Τυποποιημένης Μορφής (Scientific Notation)
+  // 2. Διάγραμμα Τυποποιημένης Μορφής
   if (diagram.type === 'sciNotation') {
     return (
       <div className="bg-slate-950 rounded-xl p-3 flex flex-col items-center justify-center border border-slate-800">
         <svg viewBox="0 0 265 160" className="w-full max-w-[265px] h-36 select-none">
           <rect x="16" y="18" width="233" height="44" rx="10" fill="#0f172a" stroke="#475569" strokeWidth="1.4" />
           <text x="132" y="36" textAnchor="middle" className="text-[8.5px] font-mono fill-slate-400">
-            {isEl ? 'Τυποποιημένη Μορφή: α · 10^ν (1 ≤ |α| < 10)' : 'Scientific Notation: a · 10^n (1 ≤ |a| < 10)'}
+            {isEl ? 'Τυποποιημένη Μορφή (1 ≤ |α| < 10)' : 'Scientific Notation (1 ≤ |a| < 10)'}
           </text>
           <text x="132" y="53" textAnchor="middle" className="text-[10.5px] font-mono font-bold fill-indigo-300">
             {diagram.rawText}
@@ -205,7 +277,7 @@ function renderFeedbackDiagram(diagram, isEl) {
     );
   }
 
-  // 3. Διάγραμμα Ευθείας Πραγματικών Αριθμών (Φράγματα ριζών & κατασκευή ρ)
+  // 3. Διάγραμμα Ευθείας Πραγματικών Αριθμών (με SvgRadical)
   if (diagram.type === 'realLine') {
     const hasTriangle = diagram.hasTriangle;
     return (
@@ -230,9 +302,7 @@ function renderFeedbackDiagram(diagram, isEl) {
               <text x="145" y="80" textAnchor="start" className="text-[8.5px] font-mono font-bold fill-indigo-300">
                 {diagram.legB}
               </text>
-              <text x="82" y="72" textAnchor="middle" className="text-[8.5px] font-mono font-bold fill-emerald-300">
-                {diagram.hypLabel}
-              </text>
+              <SvgRadical x={86} y={70} text={diagram.radVal} prefix="ρ＝" color="#34d399" fontSize={9.5} />
               <path
                 d="M 138 44 A 114 114 0 0 1 160 112"
                 fill="none"
@@ -243,26 +313,38 @@ function renderFeedbackDiagram(diagram, isEl) {
               <circle cx="46" cy="112" r="3" fill="#cbd5e1" />
               <text x="46" y="126" textAnchor="middle" className="text-[8px] font-mono fill-slate-300">0</text>
               <circle cx="160" cy="112" r="4" fill="#fbbf24" />
-              <text x="166" y="127" textAnchor="start" className="text-[8.5px] font-mono font-bold fill-amber-300">
-                {diagram.pointLabel}
-              </text>
+              <SvgRadical x={165} y={127} text={diagram.radVal} color="#fbbf24" fontSize={9.5} />
             </>
           ) : (
             <>
-              <circle cx="58" cy="112" r="3.5" fill="#818cf8" />
-              <text x="58" y="96" textAnchor="middle" className="text-[8.5px] font-mono font-bold fill-indigo-300">
-                {diagram.leftLabel}
-              </text>
+              <circle cx="52" cy="112" r="3.5" fill="#818cf8" />
+              {diagram.leftOnlyRad ? (
+                <SvgRadical x={42} y={96} text={diagram.leftOnlyRad} color="#a5b4fc" fontSize={9.5} />
+              ) : (
+                <>
+                  <SvgRadical x={54} y={96} text={diagram.leftRad} prefix={`${diagram.leftInt} (`} color="#a5b4fc" fontSize={8.5} />
+                  <text x={74} y={96} className="text-[8.5px] font-mono font-bold fill-indigo-300">)</text>
+                </>
+              )}
 
-              <circle cx="206" cy="112" r="3.5" fill="#818cf8" />
-              <text x="206" y="96" textAnchor="middle" className="text-[8.5px] font-mono font-bold fill-indigo-300">
-                {diagram.rightLabel}
-              </text>
+              <circle cx="212" cy="112" r="3.5" fill="#818cf8" />
+              {diagram.rightOnlyRad ? (
+                <SvgRadical x={202} y={96} text={diagram.rightOnlyRad} color="#a5b4fc" fontSize={9.5} />
+              ) : (
+                <>
+                  <SvgRadical x={210} y={96} text={diagram.rightRad} prefix={`${diagram.rightInt} (`} color="#a5b4fc" fontSize={8.5} />
+                  <text x={230} y={96} className="text-[8.5px] font-mono font-bold fill-indigo-300">)</text>
+                </>
+              )}
 
               <circle cx="132" cy="112" r="4.5" fill="#34d399" />
-              <text x="132" y="88" textAnchor="middle" className="text-[9.5px] font-mono font-bold fill-emerald-300">
-                {diagram.midLabel}
-              </text>
+              {diagram.midRad ? (
+                <SvgRadical x={125} y={88} text={diagram.midRad} prefix={diagram.midPrefix || ''} color="#34d399" fontSize={10} />
+              ) : (
+                <text x="132" y="88" textAnchor="middle" className="text-[9.5px] font-mono font-bold fill-emerald-300">
+                  {diagram.midLabel}
+                </text>
+              )}
             </>
           )}
 
@@ -274,7 +356,7 @@ function renderFeedbackDiagram(diagram, isEl) {
     );
   }
 
-  // 4. Διάγραμμα Ορθογωνίου / Τετραγώνου με Ρίζες
+  // 4. Διάγραμμα Ορθογωνίου με Ρίζες
   if (diagram.type === 'rectRoot') {
     return (
       <div className="bg-slate-950 rounded-xl p-3 flex flex-col items-center justify-center border border-slate-800">
@@ -292,12 +374,8 @@ function renderFeedbackDiagram(diagram, isEl) {
           <text x="132" y="70" textAnchor="middle" className="text-[9.5px] font-mono font-bold fill-emerald-200">
             {diagram.centerLabel}
           </text>
-          <text x="132" y="122" textAnchor="middle" className="text-[8.5px] font-mono font-bold fill-indigo-300">
-            {diagram.bottomLabel}
-          </text>
-          <text x="212" y="70" textAnchor="start" className="text-[8.5px] font-mono font-bold fill-indigo-300">
-            {diagram.sideLabel}
-          </text>
+          <SvgRadical x={126} y={123} text={diagram.radVal} prefix="3" color="#a5b4fc" fontSize={9.5} />
+          <SvgRadical x={224} y={70} text={diagram.radVal} prefix="2" color="#a5b4fc" fontSize={9.5} />
           <text x="132" y="148" textAnchor="middle" className="text-[8.5px] font-mono font-bold fill-amber-300">
             {diagram.caption}
           </text>
@@ -320,7 +398,6 @@ export default function Epanalipsi1() {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Συγκεντρωτικό Λεξικό i18n
   const t = {
     pageTitle: isEl
       ? "Επανάληψη 1 (Κεφ. 1–6): Δυνάμεις, Τυποποιημένη Μορφή, Ρίζες & Πραγματικοί | Β' Γυμνασίου"
@@ -329,8 +406,6 @@ export default function Epanalipsi1() {
       ? "Επαναληπτικό διαγώνισμα Β' Γυμνασίου στα Κεφάλαια 1 έως 6: δυνάμεις με ακέραιο εκθέτη, τυποποιημένη μορφή, αριθμητικές παραστάσεις, τετραγωνικές ρίζες και πραγματικοί αριθμοί."
       : 'Grade 8 review test on Chapters 1 to 6: integer exponents, scientific notation, numerical expressions, square roots, and real numbers.',
     backNav: isEl ? "Β' Γυμνασίου" : 'Grade 8',
-    theory6Btn: isEl ? 'ΘΕΩΡΙΑ ΚΕΦ. 6' : 'THEORY CH. 6',
-    ask6Btn: isEl ? 'ΑΣΚΗΣΕΙΣ ΚΕΦ. 6' : 'EXERCISES CH. 6',
     heroBadge: isEl ? "ΕΠΑΝΑΛΗΨΗ 1 • ΚΕΦΑΛΑΙΑ 1 ΕΩΣ 6 • Β' ΓΥΜΝΑΣΙΟΥ" : 'REVIEW 1 • CHAPTERS 1 TO 6 • GRADE 8',
     heroTitle: isEl
       ? 'Επαναληπτικό Τεστ Άλγεβρας: Ενότητες 1 έως 6'
@@ -359,11 +434,7 @@ export default function Epanalipsi1() {
     tableAnalysis: isEl ? 'Ανάλυση Δεδομένων' : 'Data Analysis',
   };
 
-  // =========================================================================
-  // ΔΕΞΑΜΕΝΕΣ 10 ΠΑΡΑΛΛΑΓΩΝ ΑΝΑ ΘΕΣΗ (18 ΘΕΣΕΙΣ = 180 ΜΟΝΑΔΙΚΕΣ ΠΑΡΑΛΛΑΓΕΣ)
-  // =========================================================================
-
-  // ΚΕΦ. 1 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 1 - ΑΣΚΗΣΗ 1
   const buildCh1Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -374,7 +445,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_0_${b}_${e}`,
           title: isEl ? 'Ορισμός Αρνητικού Εκθέτη' : 'Negative Exponent Definition',
-          prompt: <span>{isEl ? 'Ποια είναι η τιμή της δύναμης' : 'What is the value of'} {b}<sup>-{e}</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ποια είναι η τιμή της δύναμης' : 'What is the value of'}</span>
+              <Pow base={String(b)} exp={`-${e}`} />
+              <span>;</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -384,8 +461,14 @@ export default function Epanalipsi1() {
             { key: `1/${b * e}`, label: `1/${b * e}`, node: <Frac num="1" den={String(b * e)} /> },
           ]),
           explanation: (
-            <span>
-              {isEl ? 'Από τον ορισμό' : 'By definition'}: {b}<sup>-{e}</sup> ＝ <Frac num="1" den={<span>{b}<sup>{e}</sup></span>} /> ＝ <Frac num="1" den={String(den)} />.
+            <span className="inline-flex flex-wrap items-center gap-x-1">
+              <span>{isEl ? 'Από τον ορισμό' : 'By definition'}:</span>
+              <Pow base={String(b)} exp={`-${e}`} />
+              <span>＝</span>
+              <Frac num="1" den={<Pow base={String(b)} exp={String(e)} />} />
+              <span>＝</span>
+              <Frac num="1" den={String(den)} />
+              <span>.</span>
             </span>
           ),
         };
@@ -398,15 +481,22 @@ export default function Epanalipsi1() {
           sig: `c1e1_1_${den}_${exp}`,
           title: isEl ? 'Αρνητικός Εκθέτης Κλάσματος' : 'Negative Exponent of a Fraction',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε την τιμή της δύναμης' : 'Calculate the value of'} (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup>:
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε την τιμή της δύναμης' : 'Calculate the value of'}</span>
+              <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+              <span>:</span>
             </span>
           ),
           type: 'input',
           correct: ans,
           explanation: (
-            <span>
-              (<Frac num="1" den={String(den)} />)<sup>-{exp}</sup> ＝ (<Frac num={String(den)} den="1" />)<sup>{exp}</sup> ＝ {den}<sup>{exp}</sup> ＝ {ans}.
+            <span className="inline-flex flex-wrap items-center gap-x-1">
+              <Pow base={<Frac num="1" den={String(den)} />} exp={`-${exp}`} parens />
+              <span>＝</span>
+              <Pow base={<Frac num={String(den)} den="1" />} exp={String(exp)} parens />
+              <span>＝</span>
+              <Pow base={String(den)} exp={String(exp)} />
+              <span>＝ {ans}.</span>
             </span>
           ),
         };
@@ -416,15 +506,21 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_2_${b}`,
           title: isEl ? 'Μηδενικός Εκθέτης & Παρενθέσεις' : 'Zero Exponent & Parentheses',
-          prompt: <span>{isEl ? 'Ισχύει η ισότητα:' : 'Does the equality hold:'} (-{b})<sup>0</sup> ＝ -1;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει η ισότητα:' : 'Does the equality hold:'}</span>
+              <Pow base={`-${b}`} exp="0" parens />
+              <span>＝ -1;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
           explanation: (
-            <span>
-              {isEl
-                ? `Κάθε μη μηδενικός αριθμός σε παρένθεση υψωμένος στη 0 ισούται με +1: (-${b})⁰ ＝ 1.`
-                : `Any non-zero number in parentheses raised to 0 equals +1: (-${b})⁰ ＝ 1.`}
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Κάθε μη μηδενικός αριθμός σε παρένθεση στη 0 ισούται με +1:' : 'Any non-zero number in parentheses to 0 equals +1:'}</span>
+              <Pow base={`-${b}`} exp="0" parens />
+              <span>＝ 1.</span>
             </span>
           ),
         };
@@ -433,20 +529,39 @@ export default function Epanalipsi1() {
         const m = pickRandom([5, 6, 7]);
         const n = pickRandom([-2, -3, -4]);
         const sum = m + n;
-        const correctOpt = { key: `x^${sum}`, label: `x^${sum}`, node: <span>x<sup>{sum}</sup></span> };
+        const correctOpt = { key: `x^${sum}`, label: `x^${sum}`, node: <Pow base="x" exp={String(sum)} /> };
         return {
           sig: `c1e1_3_${m}_${n}`,
           title: isEl ? 'Γινόμενο Δυνάμεων Ίδιας Βάσης' : 'Product of Same-Base Powers',
-          prompt: <span>{isEl ? 'Για x ≠ 0, το γινόμενο' : 'For x ≠ 0, the product'} x<sup>{m}</sup> · x<sup>{n}</sup> {isEl ? 'ισούται με:' : 'equals:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Για x ≠ 0, το γινόμενο' : 'For x ≠ 0, the product'}</span>
+              <Pow base="x" exp={String(m)} />
+              <span>·</span>
+              <Pow base="x" exp={String(n)} />
+              <span>{isEl ? 'ισούται με:' : 'equals:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `x^${m * n}`, label: `x^${m * n}`, node: <span>x<sup>{m * n}</sup></span> },
-            { key: `x^${m - n}`, label: `x^${m - n}`, node: <span>x<sup>{m - n}</sup></span> },
-            { key: `x^${-sum}`, label: `x^${-sum}`, node: <span>x<sup>{-sum}</sup></span> },
-            { key: `2x^${sum}`, label: `2x^${sum}`, node: <span>2x<sup>{sum}</sup></span> },
+            { key: `x^${m * n}`, label: `x^${m * n}`, node: <Pow base="x" exp={String(m * n)} /> },
+            { key: `x^${m - n}`, label: `x^${m - n}`, node: <Pow base="x" exp={String(m - n)} /> },
+            { key: `x^${-sum}`, label: `x^${-sum}`, node: <Pow base="x" exp={String(-sum)} /> },
+            { key: `2x^${sum}`, label: `2x^${sum}`, node: <Pow base="2x" exp={String(sum)} /> },
           ]),
-          explanation: <span>x<sup>{m}</sup> · x<sup>{n}</sup> ＝ x<sup>{m} + ({n})</sup> ＝ x<sup>{sum}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="x" exp={String(m)} />
+              <span>·</span>
+              <Pow base="x" exp={String(n)} />
+              <span>＝</span>
+              <Pow base="x" exp={`${m} + (${n})`} />
+              <span>＝</span>
+              <Pow base="x" exp={String(sum)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -461,8 +576,10 @@ export default function Epanalipsi1() {
           sig: `c1e1_4_${num}_${den}`,
           title: isEl ? 'Αντιστροφή Κλάσματος με Αρνητικό Εκθέτη' : 'Inverting a Fraction with Negative Exponent',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η δύναμη' : 'The power'} (<Frac num={String(num)} den={String(den)} />)<sup>-2</sup> {isEl ? 'ισούται με:' : 'equals:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η δύναμη' : 'The power'}</span>
+              <Pow base={<Frac num={String(num)} den={String(den)} />} exp="-2" parens />
+              <span>{isEl ? 'ισούται με:' : 'equals:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -474,8 +591,13 @@ export default function Epanalipsi1() {
             { key: `${den}/${num}`, label: `${den}/${num}`, node: <Frac num={String(den)} den={String(num)} /> },
           ]),
           explanation: (
-            <span>
-              (<Frac num={String(num)} den={String(den)} />)<sup>-2</sup> ＝ (<Frac num={String(den)} den={String(num)} />)<sup>2</sup> ＝ <Frac num={String(den * den)} den={String(num * num)} />.
+            <span className="inline-flex flex-wrap items-center gap-x-1">
+              <Pow base={<Frac num={String(num)} den={String(den)} />} exp="-2" parens />
+              <span>＝</span>
+              <Pow base={<Frac num={String(den)} den={String(num)} />} exp="2" parens />
+              <span>＝</span>
+              <Frac num={String(den * den)} den={String(num * num)} />
+              <span>.</span>
             </span>
           ),
         };
@@ -487,7 +609,15 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_5_${m}_${n}`,
           title: isEl ? 'Δύναμη Δύναμης' : 'Power of a Power',
-          prompt: <span>{isEl ? 'Για α ≠ 0 ισχύει:' : 'For α ≠ 0:'} (α<sup>{m}</sup>)<sup>{n}</sup> ＝ α<sup>{prod}</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Για α ≠ 0 ισχύει:' : 'For α ≠ 0:'}</span>
+              <Pow base={<Pow base="α" exp={String(m)} />} exp={String(n)} parens />
+              <span>＝</span>
+              <Pow base="α" exp={String(prod)} />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -499,36 +629,50 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_6_${a}`,
           title: isEl ? 'Άθροισμα Δυνάμεων' : 'Sum of Powers',
-          prompt: <span>{isEl ? 'Υπολογίστε την τιμή:' : 'Calculate:'} {a}<sup>1</sup> ＋ {a}<sup>0</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε την τιμή:' : 'Calculate:'}</span>
+              <Pow base={String(a)} exp="1" />
+              <span>＋</span>
+              <Pow base={String(a)} exp="0" />
+            </span>
+          ),
           type: 'input',
           correct: a + 1,
-          explanation: <span>{a}<sup>1</sup> ＋ {a}<sup>0</sup> ＝ {a} ＋ 1 ＝ {a + 1}.</span>,
+          explanation: <span>{a} ＋ 1 ＝ {a + 1}.</span>,
         };
       }
       case 7: {
         const m = pickRandom([3, 4]);
         const n = pickRandom([-2, -3]);
         const diff = m - n;
-        const correctOpt = { key: `y^${diff}`, label: `y^${diff}`, node: <span>y<sup>{diff}</sup></span> };
+        const correctOpt = { key: `y^${diff}`, label: `y^${diff}`, node: <Pow base="y" exp={String(diff)} /> };
         return {
           sig: `c1e1_7_${m}_${n}`,
           title: isEl ? 'Πηλίκο Δυνάμεων Ίδιας Βάσης' : 'Quotient of Same-Base Powers',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Για y ≠ 0, το πηλίκο' : 'For y ≠ 0, the quotient'} <Frac num={<span>y<sup>{m}</sup></span>} den={<span>y<sup>{n}</sup></span>} /> {isEl ? 'ισούται με:' : 'equals:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Για y ≠ 0, το πηλίκο' : 'For y ≠ 0, the quotient'}</span>
+              <Frac num={<Pow base="y" exp={String(m)} />} den={<Pow base="y" exp={String(n)} />} />
+              <span>{isEl ? 'ισούται με:' : 'equals:'}</span>
             </span>
           ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `y^${m + n}`, label: `y^${m + n}`, node: <span>y<sup>{m + n}</sup></span> },
-            { key: `y^${n - m}`, label: `y^${n - m}`, node: <span>y<sup>{n - m}</sup></span> },
-            { key: `y^${m * n}`, label: `y^${m * n}`, node: <span>y<sup>{m * n}</sup></span> },
+            { key: `y^${m + n}`, label: `y^${m + n}`, node: <Pow base="y" exp={String(m + n)} /> },
+            { key: `y^${n - m}`, label: `y^${n - m}`, node: <Pow base="y" exp={String(n - m)} /> },
+            { key: `y^${m * n}`, label: `y^${m * n}`, node: <Pow base="y" exp={String(m * n)} /> },
             { key: '1', label: '1', node: '1' },
           ]),
           explanation: (
-            <span>
-              <Frac num={<span>y<sup>{m}</sup></span>} den={<span>y<sup>{n}</sup></span>} /> ＝ y<sup>{m} - ({n})</sup> ＝ y<sup>{diff}</sup>.
+            <span className="inline-flex items-center gap-1">
+              <Frac num={<Pow base="y" exp={String(m)} />} den={<Pow base="y" exp={String(n)} />} />
+              <span>＝</span>
+              <Pow base="y" exp={`${m} - (${n})`} />
+              <span>＝</span>
+              <Pow base="y" exp={String(diff)} />
+              <span>.</span>
             </span>
           ),
         };
@@ -538,10 +682,24 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_8_${b}`,
           title: isEl ? 'Γινόμενο με Αρνητικό Εκθέτη' : 'Product with Negative Exponent',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {b}<sup>-3</sup> · {b}<sup>4</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={String(b)} exp="-3" />
+              <span>·</span>
+              <Pow base={String(b)} exp="4" />
+            </span>
+          ),
           type: 'input',
           correct: b,
-          explanation: <span>{b}<sup>-3 + 4</sup> ＝ {b}<sup>1</sup> ＝ {b}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={String(b)} exp="-3 + 4" />
+              <span>＝</span>
+              <Pow base={String(b)} exp="1" />
+              <span>＝ {b}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -549,17 +707,23 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e1_9_${exp}`,
           title: isEl ? 'Πρόσημο Δύναμης' : 'Sign of a Power',
-          prompt: <span>{isEl ? 'Η δύναμη' : 'The power'} (-2)<sup>{exp}</sup> {isEl ? 'είναι αρνητικός αριθμός;' : 'is a negative number?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η δύναμη' : 'The power'}</span>
+              <Pow base="-2" exp={String(exp)} parens />
+              <span>{isEl ? 'είναι αρνητικός αριθμός;' : 'is a negative number?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>{isEl ? 'Αρνητική βάση (-2) σε περιττό εκθέτη (' + exp + ') δίνει αρνητικό αποτέλεσμα.' : 'Negative base (-2) to an odd exponent (' + exp + ') is negative.'}</span>,
+          explanation: <span>{isEl ? `Αρνητική βάση (-2) σε περιττό εκθέτη (${exp}) δίνει αρνητικό αποτέλεσμα.` : `Negative base (-2) to an odd exponent (${exp}) is negative.`}</span>,
         };
       }
     }
   };
 
-  // ΚΕΦ. 1 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 1 - ΑΣΚΗΣΗ 2
   const buildCh1Ex2 = (mode) => {
     switch (mode) {
       case 0: {
@@ -570,31 +734,54 @@ export default function Epanalipsi1() {
           sig: `c1e2_0_${b}_${k}`,
           title: isEl ? 'Απλοποίηση Κλάσματος Δυνάμεων' : 'Simplifying Quotient of Powers',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} <Frac num={<span>{b}<sup>{k}</sup></span>} den={<span>{b}<sup>{k - 2}</sup></span>} />
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Frac num={<Pow base={String(b)} exp={String(k)} />} den={<Pow base={String(b)} exp={String(k - 2)} />} />
             </span>
           ),
           type: 'input',
           correct: ans,
-          explanation: <span>{b}<sup>{k} - ({k - 2})</sup> ＝ {b}<sup>2</sup> ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={String(b)} exp={`${k} - (${k - 2})`} />
+              <span>＝</span>
+              <Pow base={String(b)} exp="2" />
+              <span>＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 1: {
         const n = pickRandom([3, 4, 5]);
-        const correctOpt = { key: `x^${n}y^${n}`, label: `x^${n} · y^${n}`, node: <span>x<sup>{n}</sup> · y<sup>{n}</sup></span> };
+        const correctOpt = { key: `x^${n}y^${n}`, label: `x^${n} · y^${n}`, node: <span className="inline-flex items-baseline gap-1"><Pow base="x" exp={String(n)} /><span>·</span><Pow base="y" exp={String(n)} /></span> };
         return {
           sig: `c1e2_1_${n}`,
           title: isEl ? 'Δύναμη Γινομένου' : 'Power of a Product',
-          prompt: <span>{isEl ? 'Η παράσταση' : 'The expression'} (x · y)<sup>{n}</sup> {isEl ? 'ισούται με:' : 'equals:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η παράσταση' : 'The expression'}</span>
+              <Pow base="x · y" exp={String(n)} parens />
+              <span>{isEl ? 'ισούται με:' : 'equals:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `xy^${n}`, label: `x · y^${n}`, node: <span>x · y<sup>{n}</sup></span> },
-            { key: `x^${n}y`, label: `x^${n} · y`, node: <span>x<sup>{n}</sup> · y</span> },
-            { key: `x^${2 * n}y^${2 * n}`, label: `x^${2 * n} · y^${2 * n}`, node: <span>x<sup>{2 * n}</sup> · y<sup>{2 * n}</sup></span> },
+            { key: `xy^${n}`, label: `x · y^${n}`, node: <span className="inline-flex items-baseline gap-1"><span>x ·</span><Pow base="y" exp={String(n)} /></span> },
+            { key: `x^${n}y`, label: `x^${n} · y`, node: <span className="inline-flex items-baseline gap-1"><Pow base="x" exp={String(n)} /><span>· y</span></span> },
+            { key: `x^${2 * n}y^${2 * n}`, label: `x^${2 * n} · y^${2 * n}`, node: <span className="inline-flex items-baseline gap-1"><Pow base="x" exp={String(2 * n)} /><span>·</span><Pow base="y" exp={String(2 * n)} /></span> },
             { key: `${n}xy`, label: `${n}xy`, node: `${n}xy` },
           ]),
-          explanation: <span>(x · y)<sup>{n}</sup> ＝ x<sup>{n}</sup> · y<sup>{n}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="x · y" exp={String(n)} parens />
+              <span>＝</span>
+              <Pow base="x" exp={String(n)} />
+              <span>·</span>
+              <Pow base="y" exp={String(n)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 2: {
@@ -605,13 +792,23 @@ export default function Epanalipsi1() {
           sig: `c1e2_2_${a}_${b}_${exp}`,
           title: isEl ? 'Γινόμενο Αντίστροφων Δυνάμεων' : 'Product of Reciprocal Powers',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Frac num={String(a)} den={String(b)} />)<sup>{exp}</sup> · (<Frac num={String(b)} den={String(a)} />)<sup>{exp}</sup>
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Frac num={String(a)} den={String(b)} />} exp={String(exp)} parens />
+              <span>·</span>
+              <Pow base={<Frac num={String(b)} den={String(a)} />} exp={String(exp)} parens />
             </span>
           ),
           type: 'input',
           correct: 1,
-          explanation: <span>(<Frac num={String(a)} den={String(b)} /> · <Frac num={String(b)} den={String(a)} />)<sup>{exp}</sup> ＝ 1<sup>{exp}</sup> ＝ 1.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<span className="inline-flex items-center"><Frac num={String(a)} den={String(b)} /><span>·</span><Frac num={String(b)} den={String(a)} /></span>} exp={String(exp)} parens />
+              <span>＝</span>
+              <Pow base="1" exp={String(exp)} />
+              <span>＝ 1.</span>
+            </span>
+          ),
         };
       }
       case 3: {
@@ -619,11 +816,32 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e2_3_${k}`,
           title: isEl ? 'Δυνάμεις με Ίδιο Εκθέτη' : 'Powers with Same Exponent',
-          prompt: <span>{isEl ? 'Ισχύει η ισότητα:' : 'Does the equality hold:'} 2<sup>{k}</sup> · 5<sup>{k}</sup> ＝ 10<sup>{k}</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει η ισότητα:' : 'Does the equality hold:'}</span>
+              <Pow base="2" exp={String(k)} />
+              <span>·</span>
+              <Pow base="5" exp={String(k)} />
+              <span>＝</span>
+              <Pow base="10" exp={String(k)} />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>2<sup>{k}</sup> · 5<sup>{k}</sup> ＝ (2 · 5)<sup>{k}</sup> ＝ 10<sup>{k}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="2" exp={String(k)} />
+              <span>·</span>
+              <Pow base="5" exp={String(k)} />
+              <span>＝</span>
+              <Pow base="2 · 5" exp={String(k)} parens />
+              <span>＝</span>
+              <Pow base="10" exp={String(k)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -634,8 +852,10 @@ export default function Epanalipsi1() {
           sig: `c1e2_4_${b}`,
           title: isEl ? 'Πηλίκο με Αρνητικούς Εκθέτες' : 'Quotient with Negative Exponents',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η τιμή της παράστασης' : 'The value of'} <Frac num={<span>{b}<sup>-5</sup></span>} den={<span>{b}<sup>-2</sup></span>} /> {isEl ? 'είναι:' : 'is:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'}</span>
+              <Frac num={<Pow base={String(b)} exp="-5" />} den={<Pow base={String(b)} exp="-2" />} />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -646,7 +866,16 @@ export default function Epanalipsi1() {
             { key: `-${den}`, label: `-${den}`, node: `-${den}` },
             { key: `1/${b}`, label: `1/${b}`, node: <Frac num="1" den={String(b)} /> },
           ]),
-          explanation: <span>{b}<sup>-5 - (-2)</sup> ＝ {b}<sup>-3</sup> ＝ <Frac num="1" den={String(den)} />.</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-center gap-x-1">
+              <Pow base={String(b)} exp="-5 - (-2)" />
+              <span>＝</span>
+              <Pow base={String(b)} exp="-3" />
+              <span>＝</span>
+              <Frac num="1" den={String(den)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -654,11 +883,30 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e2_5_${k}`,
           title: isEl ? 'Πρόσθεση vs Πολλαπλασιασμός Δυνάμεων' : 'Adding vs Multiplying Powers',
-          prompt: <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'} 3<sup>{k}</sup> ＋ 3<sup>{k}</sup> ＝ 3<sup>{2 * k}</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'}</span>
+              <Pow base="3" exp={String(k)} />
+              <span>＋</span>
+              <Pow base="3" exp={String(k)} />
+              <span>＝</span>
+              <Pow base="3" exp={String(2 * k)} />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>3<sup>{k}</sup> ＋ 3<sup>{k}</sup> ＝ 2 · 3<sup>{k}</sup> (οι εκθέτες προστίθενται μόνο στον πολλαπλασιασμό).</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <Pow base="3" exp={String(k)} />
+              <span>＋</span>
+              <Pow base="3" exp={String(k)} />
+              <span>＝ 2 ·</span>
+              <Pow base="3" exp={String(k)} />
+              <span>({isEl ? 'οι εκθέτες προστίθενται μόνο στον πολλαπλασιασμό' : 'exponents add only in multiplication'}).</span>
+            </span>
+          ),
         };
       }
       case 6: {
@@ -668,45 +916,76 @@ export default function Epanalipsi1() {
           sig: `c1e2_6_${exp}`,
           title: isEl ? 'Δύναμη Πηλίκου' : 'Power of a Quotient',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} <Frac num={<span>20<sup>{exp}</sup></span>} den={<span>5<sup>{exp}</sup></span>} />
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Frac num={<Pow base="20" exp={String(exp)} />} den={<Pow base="5" exp={String(exp)} />} />
             </span>
           ),
           type: 'input',
           correct: ans,
-          explanation: <span>(<Frac num="20" den="5" />)<sup>{exp}</sup> ＝ 4<sup>{exp}</sup> ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<Frac num="20" den="5" />} exp={String(exp)} parens />
+              <span>＝</span>
+              <Pow base="4" exp={String(exp)} />
+              <span>＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 7: {
         const k = pickRandom([3, 4, 5]);
-        const correctOpt = { key: `x^${k}`, label: `x^${k}`, node: <span>x<sup>{k}</sup></span> };
+        const correctOpt = { key: `x^${k}`, label: `x^${k}`, node: <Pow base="x" exp={String(k)} /> };
         return {
           sig: `c1e2_7_${k}`,
           title: isEl ? 'Αντίστροφο Αρνητικής Δύναμης' : 'Reciprocal of a Negative Power',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Για x ≠ 0, η παράσταση' : 'For x ≠ 0,'} <Frac num="1" den={<span>x<sup>-{k}</sup></span>} /> {isEl ? 'ισούται με:' : 'equals:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Για x ≠ 0, η παράσταση' : 'For x ≠ 0,'}</span>
+              <Frac num="1" den={<Pow base="x" exp={`-${k}`} />} />
+              <span>{isEl ? 'ισούται με:' : 'equals:'}</span>
             </span>
           ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `-x^${k}`, label: `-x^${k}`, node: <span>-x<sup>{k}</sup></span> },
-            { key: `x^-${k}`, label: `x^-${k}`, node: <span>x<sup>-{k}</sup></span> },
+            { key: `-x^${k}`, label: `-x^${k}`, node: <Pow base="-x" exp={String(k)} /> },
+            { key: `x^-${k}`, label: `x^-${k}`, node: <Pow base="x" exp={`-${k}`} /> },
             { key: `-${k}x`, label: `-${k}x`, node: `-${k}x` },
             { key: `1/${k}x`, label: `1/(${k}x)`, node: <Frac num="1" den={`${k}x`} /> },
           ]),
-          explanation: <span><Frac num="1" den={<span>x<sup>-{k}</sup></span>} /> ＝ x<sup>{k}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Frac num="1" den={<Pow base="x" exp={`-${k}`} />} />
+              <span>＝</span>
+              <Pow base="x" exp={String(k)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 8: {
         return {
           sig: 'c1e2_8',
           title: isEl ? 'Δυνάμεις Αρνητικής Βάσης' : 'Powers with Negative Base',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (-3)<sup>5</sup> · (-3)<sup>-3</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base="-3" exp="5" parens />
+              <span>·</span>
+              <Pow base="-3" exp="-3" parens />
+            </span>
+          ),
           type: 'input',
           correct: 9,
-          explanation: <span>(-3)<sup>5 - 3</sup> ＝ (-3)<sup>2</sup> ＝ 9.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="-3" exp="5 - 3" parens />
+              <span>＝</span>
+              <Pow base="-3" exp="2" parens />
+              <span>＝ 9.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -714,17 +993,32 @@ export default function Epanalipsi1() {
         return {
           sig: `c1e2_9_${b}`,
           title: isEl ? 'Σημασία της Παρένθεσης' : 'Role of Parentheses',
-          prompt: <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'} -{b}<sup>2</sup> ＝ (-{b})<sup>2</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'}</span>
+              <Pow base={`-${b}`} exp="2" />
+              <span>＝</span>
+              <Pow base={`-${b}`} exp="2" parens />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>-{b}<sup>2</sup> ＝ -{b * b}, ενώ (-{b})<sup>2</sup> ＝ +{b * b}.</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <Pow base={`-${b}`} exp="2" />
+              <span>＝ -{b * b}, ενώ</span>
+              <Pow base={`-${b}`} exp="2" parens />
+              <span>＝ +{b * b}.</span>
+            </span>
+          ),
         };
       }
     }
   };
 
-  // ΚΕΦ. 2 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 2 - ΑΣΚΗΣΗ 1
   const buildCh2Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -732,10 +1026,11 @@ export default function Epanalipsi1() {
         const d2 = pickRandom([2, 5, 6]);
         const exp = pickRandom([5, 6, 7]);
         const numStr = `${d1}${d2}${'0'.repeat(exp - 1)}`;
+        const coefLabel = isEl ? `${d1},${d2}` : `${d1}.${d2}`;
         const correctOpt = {
           key: `${d1}.${d2}*10^${exp}`,
-          label: `${d1},${d2} · 10^${exp}`,
-          node: <span>{isEl ? `${d1},${d2}` : `${d1}.${d2}`} · 10<sup>{exp}</sup></span>,
+          label: `${coefLabel} · 10^${exp}`,
+          node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp={String(exp)} /></span>,
         };
         return {
           sig: `c2e1_0_${d1}_${d2}_${exp}`,
@@ -746,20 +1041,22 @@ export default function Epanalipsi1() {
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `${d1}${d2}*10^${exp - 1}`, label: `${d1}${d2} · 10^${exp - 1}`, node: <span>{d1}{d2} · 10<sup>{exp - 1}</sup></span> },
-            { key: `${d1}.${d2}*10^${exp + 1}`, label: `${d1},${d2} · 10^${exp + 1}`, node: <span>{isEl ? `${d1},${d2}` : `${d1}.${d2}`} · 10<sup>{exp + 1}</sup></span> },
-            { key: `0.${d1}${d2}*10^${exp + 1}`, label: `0,${d1}${d2} · 10^${exp + 1}`, node: <span>{isEl ? `0,${d1}${d2}` : `0.${d1}${d2}`} · 10<sup>{exp + 1}</sup></span> },
-            { key: `${d1}.${d2}*10^-${exp}`, label: `${d1},${d2} · 10^-${exp}`, node: <span>{isEl ? `${d1},${d2}` : `${d1}.${d2}`} · 10<sup>-{exp}</sup></span> },
+            { key: `${d1}${d2}*10^${exp - 1}`, label: `${d1}${d2} · 10^${exp - 1}`, node: <span className="inline-flex items-baseline gap-1"><span>{d1}{d2} ·</span><Pow base="10" exp={String(exp - 1)} /></span> },
+            { key: `${d1}.${d2}*10^${exp + 1}`, label: `${coefLabel} · 10^${exp + 1}`, node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp={String(exp + 1)} /></span> },
+            { key: `0.${d1}${d2}*10^${exp + 1}`, label: `0,${d1}${d2} · 10^${exp + 1}`, node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? `0,${d1}${d2}` : `0.${d1}${d2}`} ·</span><Pow base="10" exp={String(exp + 1)} /></span> },
+            { key: `${d1}.${d2}*10^-${exp}`, label: `${coefLabel} · 10^-${exp}`, node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp={`-${exp}`} /></span> },
           ]),
           diagram: {
             type: 'sciNotation',
             rawText: numStr,
-            sciText: `${isEl ? `${d1},${d2}` : `${d1}.${d2}`} · 10^${exp}`,
+            sciText: `${coefLabel} · 10^${exp}`,
             caption: isEl ? `Μετακίνηση ${exp} θέσεις αριστερά` : `Shift ${exp} places left`,
           },
           explanation: (
-            <span>
-              {numStr} ＝ {isEl ? `${d1},${d2}` : `${d1}.${d2}`} · 10<sup>{exp}</sup>.
+            <span className="inline-flex items-baseline gap-1">
+              <span>{numStr} ＝ {coefLabel} ·</span>
+              <Pow base="10" exp={String(exp)} />
+              <span>.</span>
             </span>
           ),
         };
@@ -773,16 +1070,21 @@ export default function Epanalipsi1() {
           sig: `c2e1_1_${d}_${zeros}`,
           title: isEl ? 'Πολύ Μικροί Αριθμοί (Αρνητικός Εκθέτης)' : 'Very Small Numbers (Negative Exponent)',
           prompt: (
-            <span>
-              {isEl
-                ? `Ο αριθμός ${decStr} γράφεται σε τυποποιημένη μορφή ως ${d} · 10`
-                : `The number ${decStr} is written as ${d} · 10`}
-              <sup>ν</sup>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is the exponent ν?'}
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? `Ο αριθμός ${decStr} γράφεται σε τυποποιημένη μορφή ως ${d} ·` : `The number ${decStr} is written as ${d} ·`}</span>
+              <Pow base="10" exp="ν" />
+              <span>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is the exponent ν?'}</span>
             </span>
           ),
           type: 'input',
           correct: exp,
-          explanation: <span>{decStr} ＝ {d} · 10<sup>{exp}</sup>, άρα ν ＝ {exp}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{decStr} ＝ {d} ·</span>
+              <Pow base="10" exp={String(exp)} />
+              <span>, άρα ν ＝ {exp}.</span>
+            </span>
+          ),
         };
       }
       case 2: {
@@ -790,7 +1092,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e1_2_${k}`,
           title: isEl ? 'Έλεγχος Τυποποιημένης Μορφής' : 'Checking Scientific Notation Form',
-          prompt: <span>{isEl ? 'Η παράσταση' : 'Is'} {k} · 10<sup>5</sup> {isEl ? 'είναι γραμμένη σε τυποποιημένη μορφή;' : 'in proper scientific notation?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η παράσταση' : 'Is'} {k} ·</span>
+              <Pow base="10" exp="5" />
+              <span>{isEl ? 'είναι γραμμένη σε τυποποιημένη μορφή;' : 'in proper scientific notation?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -805,7 +1113,12 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e1_3_${a}_${b}_${exp}`,
           title: isEl ? 'Από Τυποποιημένη σε Κανονική Μορφή' : 'From Scientific to Standard Form',
-          prompt: <span>{isEl ? 'Γράψτε ως κανονικό αριθμό:' : 'Write as a standard number:'} {isEl ? `${a},${b}` : `${a}.${b}`} · 10<sup>{exp}</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Γράψτε ως κανονικό αριθμό:' : 'Write as a standard number:'} {isEl ? `${a},${b}` : `${a}.${b}`} ·</span>
+              <Pow base="10" exp={String(exp)} />
+            </span>
+          ),
           type: 'input',
           correct: ans,
           explanation: <span>{isEl ? `${a},${b}` : `${a}.${b}`} · {Math.pow(10, exp).toLocaleString(locCode)} ＝ {ans.toLocaleString(locCode)}.</span>,
@@ -813,7 +1126,7 @@ export default function Epanalipsi1() {
       }
       case 4: {
         const d = pickRandom([3, 5, 8]);
-        const correctOpt = { key: `${d}*10^-4`, label: `${d} · 10^-4`, node: <span>{d} · 10<sup>-4</sup></span> };
+        const correctOpt = { key: `${d}*10^-4`, label: `${d} · 10^-4`, node: <span className="inline-flex items-baseline gap-1"><span>{d} ·</span><Pow base="10" exp="-4" /></span> };
         return {
           sig: `c2e1_4_${d}`,
           title: isEl ? 'Τυποποιημένη Μορφή Δεκαδικού' : 'Scientific Notation of a Decimal',
@@ -823,23 +1136,41 @@ export default function Epanalipsi1() {
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `${d}*10^-3`, label: `${d} · 10^-3`, node: <span>{d} · 10<sup>-3</sup></span> },
-            { key: `${d}*10^-5`, label: `${d} · 10^-5`, node: <span>{d} · 10<sup>-5</sup></span> },
-            { key: `${d}*10^4`, label: `${d} · 10^4`, node: <span>{d} · 10<sup>4</sup></span> },
-            { key: `0.${d}*10^-3`, label: `0,${d} · 10^-3`, node: <span>{isEl ? `0,${d}` : `0.${d}`} · 10<sup>-3</sup></span> },
+            { key: `${d}*10^-3`, label: `${d} · 10^-3`, node: <span className="inline-flex items-baseline gap-1"><span>{d} ·</span><Pow base="10" exp="-3" /></span> },
+            { key: `${d}*10^-5`, label: `${d} · 10^-5`, node: <span className="inline-flex items-baseline gap-1"><span>{d} ·</span><Pow base="10" exp="-5" /></span> },
+            { key: `${d}*10^4`, label: `${d} · 10^4`, node: <span className="inline-flex items-baseline gap-1"><span>{d} ·</span><Pow base="10" exp="4" /></span> },
+            { key: `0.${d}*10^-3`, label: `0,${d} · 10^-3`, node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? `0,${d}` : `0.${d}`} ·</span><Pow base="10" exp="-3" /></span> },
           ]),
-          explanation: <span>{isEl ? `0,000${d}` : `0.000${d}`} ＝ {d} · 10<sup>-4</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? `0,000${d}` : `0.000${d}`} ＝ {d} ·</span>
+              <Pow base="10" exp="-4" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 5: {
         return {
           sig: 'c2e1_5',
           title: isEl ? 'Συντελεστής Μικρότερος του 1' : 'Coefficient Less Than 1',
-          prompt: <span>{isEl ? 'Ο αριθμός' : 'Is'} 0,85 · 10<sup>6</sup> {isEl ? 'είναι σε τυποποιημένη μορφή;' : 'written in scientific notation?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ο αριθμός 0,85 ·' : 'Is 0.85 ·'}</span>
+              <Pow base="10" exp="6" />
+              <span>{isEl ? 'είναι σε τυποποιημένη μορφή;' : 'written in scientific notation?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>{isEl ? 'Ο συντελεστής 0,85 είναι < 1 (σωστή μορφή: 8,5 · 10⁵).' : '0.85 is < 1 (proper form: 8.5 · 10⁵).'}</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Ο συντελεστής 0,85 είναι < 1 (σωστή μορφή: 8,5 ·' : '0.85 is < 1 (proper form: 8.5 ·'}</span>
+              <Pow base="10" exp="5" />
+              <span>).</span>
+            </span>
+          ),
         };
       }
       case 6: {
@@ -849,14 +1180,32 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e1_6_${m}_${n}`,
           title: isEl ? 'Πολλαπλασιασμός σε Τυποποιημένη Μορφή' : 'Multiplying in Scientific Notation',
-          prompt: <span>(2 · 10<sup>{m}</sup>) · (3 · 10<sup>{n}</sup>) ＝ 6 · 10<sup>ν</sup>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is ν?'}</span>,
+          prompt: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>(2 ·</span>
+              <Pow base="10" exp={String(m)} />
+              <span>) · (3 ·</span>
+              <Pow base="10" exp={String(n)} />
+              <span>) ＝ 6 ·</span>
+              <Pow base="10" exp="ν" />
+              <span>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is ν?'}</span>
+            </span>
+          ),
           type: 'input',
           correct: ans,
-          explanation: <span>(2 · 3) · 10<sup>{m} + {n}</sup> ＝ 6 · 10<sup>{ans}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>(2 · 3) ·</span>
+              <Pow base="10" exp={`${m} + ${n}`} />
+              <span>＝ 6 ·</span>
+              <Pow base="10" exp={String(ans)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 7: {
-        const correctOpt = { key: '4.5*10^7', label: '4,5 · 10^7', node: <span>{isEl ? '4,5' : '4.5'} · 10<sup>7</sup></span> };
+        const correctOpt = { key: '4.5*10^7', label: '4,5 · 10^7', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '4,5' : '4.5'} ·</span><Pow base="10" exp="7" /></span> };
         return {
           sig: 'c2e1_7',
           title: isEl ? 'Μεγάλα Μεγέθη' : 'Large Quantities',
@@ -866,23 +1215,43 @@ export default function Epanalipsi1() {
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: '45*10^6', label: '45 · 10^6', node: <span>45 · 10<sup>6</sup></span> },
-            { key: '4.5*10^6', label: '4,5 · 10^6', node: <span>{isEl ? '4,5' : '4.5'} · 10<sup>6</sup></span> },
-            { key: '4.5*10^8', label: '4,5 · 10^8', node: <span>{isEl ? '4,5' : '4.5'} · 10<sup>8</sup></span> },
-            { key: '0.45*10^8', label: '0,45 · 10^8', node: <span>{isEl ? '0,45' : '0.45'} · 10<sup>8</sup></span> },
+            { key: '45*10^6', label: '45 · 10^6', node: <span className="inline-flex items-baseline gap-1"><span>45 ·</span><Pow base="10" exp="6" /></span> },
+            { key: '4.5*10^6', label: '4,5 · 10^6', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '4,5' : '4.5'} ·</span><Pow base="10" exp="6" /></span> },
+            { key: '4.5*10^8', label: '4,5 · 10^8', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '4,5' : '4.5'} ·</span><Pow base="10" exp="8" /></span> },
+            { key: '0.45*10^8', label: '0,45 · 10^8', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '0,45' : '0.45'} ·</span><Pow base="10" exp="8" /></span> },
           ]),
-          explanation: <span>45.000.000 ＝ {isEl ? '4,5' : '4.5'} · 10<sup>7</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>45.000.000 ＝ {isEl ? '4,5' : '4.5'} ·</span>
+              <Pow base="10" exp="7" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 8: {
         return {
           sig: 'c2e1_8',
           title: isEl ? 'Ισοδυναμία Μορφών' : 'Equivalence of Forms',
-          prompt: <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'} 5 · 10<sup>-2</sup> ＝ {isEl ? '0,05' : '0.05'};</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει ότι 5 ·' : 'Does 5 ·'}</span>
+              <Pow base="10" exp="-2" />
+              <span>＝ {isEl ? '0,05' : '0.05'};</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>5 · 10<sup>-2</sup> ＝ <Frac num="5" den="100" /> ＝ {isEl ? '0,05' : '0.05'}.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <span>5 ·</span>
+              <Pow base="10" exp="-2" />
+              <span>＝</span>
+              <Frac num="5" den="100" />
+              <span>＝ {isEl ? '0,05' : '0.05'}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -892,23 +1261,35 @@ export default function Epanalipsi1() {
           sig: `c2e1_9_${k}`,
           title: isEl ? 'Διαίρεση σε Τυποποιημένη Μορφή' : 'Dividing in Scientific Notation',
           prompt: (
-            <span className="inline-flex items-center">
-              <Frac num={<span>{k} · 10<sup>8</sup></span>} den={<span>2 · 10<sup>5</sup></span>} /> ＝ α · 10<sup>3</sup>. {isEl ? 'Ποιος είναι ο συντελεστής α;' : 'What is α?'}
+            <span className="inline-flex flex-wrap items-center gap-1">
+              <Frac num={<span className="inline-flex items-baseline gap-1"><span>{k} ·</span><Pow base="10" exp="8" /></span>} den={<span className="inline-flex items-baseline gap-1"><span>2 ·</span><Pow base="10" exp="5" /></span>} />
+              <span>＝ α ·</span>
+              <Pow base="10" exp="3" />
+              <span>. {isEl ? 'Ποιος είναι ο συντελεστής α;' : 'What is α?'}</span>
             </span>
           ),
           type: 'input',
           correct: ans,
-          explanation: <span><Frac num={String(k)} den="2" /> · 10<sup>8 - 5</sup> ＝ {ans} · 10<sup>3</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Frac num={String(k)} den="2" />
+              <span>·</span>
+              <Pow base="10" exp="8 - 5" />
+              <span>＝ {ans} ·</span>
+              <Pow base="10" exp="3" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
     }
   };
 
-  // ΚΕΦ. 2 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 2 - ΑΣΚΗΣΗ 2
   const buildCh2Ex2 = (mode) => {
     switch (mode) {
       case 0: {
-        const correctOpt = { key: '3.2*10^6', label: '3,2 · 10^6', node: <span>{isEl ? '3,2' : '3.2'} · 10<sup>6</sup></span> };
+        const correctOpt = { key: '3.2*10^6', label: '3,2 · 10^6', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '3,2' : '3.2'} ·</span><Pow base="10" exp="6" /></span> };
         return {
           sig: 'c2e2_0',
           title: isEl ? 'Σύγκριση Αριθμών Τυποποιημένης Μορφής' : 'Comparing Numbers in Scientific Notation',
@@ -918,12 +1299,20 @@ export default function Epanalipsi1() {
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: '9.8*10^5', label: '9,8 · 10^5', node: <span>{isEl ? '9,8' : '9.8'} · 10<sup>5</sup></span> },
-            { key: '2.9*10^6', label: '2,9 · 10^6', node: <span>{isEl ? '2,9' : '2.9'} · 10<sup>6</sup></span> },
-            { key: '8.5*10^4', label: '8,5 · 10^4', node: <span>{isEl ? '8,5' : '8.5'} · 10<sup>4</sup></span> },
-            { key: '1.1*10^6', label: '1,1 · 10^6', node: <span>{isEl ? '1,1' : '1.1'} · 10<sup>6</sup></span> },
+            { key: '9.8*10^5', label: '9,8 · 10^5', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '9,8' : '9.8'} ·</span><Pow base="10" exp="5" /></span> },
+            { key: '2.9*10^6', label: '2,9 · 10^6', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '2,9' : '2.9'} ·</span><Pow base="10" exp="6" /></span> },
+            { key: '8.5*10^4', label: '8,5 · 10^4', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '8,5' : '8.5'} ·</span><Pow base="10" exp="4" /></span> },
+            { key: '1.1*10^6', label: '1,1 · 10^6', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '1,1' : '1.1'} ·</span><Pow base="10" exp="6" /></span> },
           ]),
-          explanation: <span>{isEl ? 'Συγκρίνουμε πρώτα τους εκθέτες του 10 (10⁶ > 10⁵) και έπειτα 3,2 > 2,9.' : 'Compare powers of 10 first (10⁶ > 10⁵), then 3.2 > 2.9.'}</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Συγκρίνουμε πρώτα τους εκθέτες του 10 (' : 'Compare powers of 10 first ('}</span>
+              <Pow base="10" exp="6" />
+              <span>&gt;</span>
+              <Pow base="10" exp="5" />
+              <span>{isEl ? ') και έπειτα 3,2 > 2,9.' : '), then 3.2 > 2.9.'}</span>
+            </span>
+          ),
         };
       }
       case 1: {
@@ -932,47 +1321,91 @@ export default function Epanalipsi1() {
         const prod = a * b;
         const exp = pickRandom([4, 5]);
         const finalExp = exp + 1;
+        const prodStr = isEl ? String(prod / 10).replace('.', ',') : String(prod / 10);
         return {
           sig: `c2e2_1_${a}_${b}_${exp}`,
           title: isEl ? 'Προσαρμογή Εκθέτη μετά από Πολλαπλασιασμό' : 'Adjusting Exponent After Multiplication',
           prompt: (
-            <span>
-              ({a} · 10<sup>{exp}</sup>) · {b} ＝ {isEl ? String(prod / 10).replace('.', ',') : prod / 10} · 10<sup>ν</sup>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is ν?'}
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>({a} ·</span>
+              <Pow base="10" exp={String(exp)} />
+              <span>) · {b} ＝ {prodStr} ·</span>
+              <Pow base="10" exp="ν" />
+              <span>. {isEl ? 'Ποιος είναι ο εκθέτης ν;' : 'What is ν?'}</span>
             </span>
           ),
           type: 'input',
           correct: finalExp,
-          explanation: <span>{prod} · 10<sup>{exp}</sup> ＝ {isEl ? String(prod / 10).replace('.', ',') : prod / 10} · 10<sup>{finalExp}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{prod} ·</span>
+              <Pow base="10" exp={String(exp)} />
+              <span>＝ {prodStr} ·</span>
+              <Pow base="10" exp={String(finalExp)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 2: {
         return {
           sig: 'c2e2_2',
           title: isEl ? 'Σύγκριση Πολύ Μικρών Αριθμών' : 'Comparing Very Small Numbers',
-          prompt: <span>{isEl ? 'Ισχύει ότι' : 'Does it hold that'} 2 · 10<sup>-4</sup> &lt; 3 · 10<sup>-5</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει ότι 2 ·' : 'Does 2 ·'}</span>
+              <Pow base="10" exp="-4" />
+              <span>&lt; 3 ·</span>
+              <Pow base="10" exp="-5" />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>{isEl ? 'Επειδή -4 > -5, ισχύει 2 · 10⁻⁴ > 3 · 10⁻⁵.' : 'Since -4 > -5, we have 2 · 10⁻⁴ > 3 · 10⁻⁵.'}</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Επειδή -4 > -5, ισχύει 2 ·' : 'Since -4 > -5, we have 2 ·'}</span>
+              <Pow base="10" exp="-4" />
+              <span>&gt; 3 ·</span>
+              <Pow base="10" exp="-5" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 3: {
         const m = pickRandom([5, 6, 7]);
         const ans = 2 * m + 1;
-        const correctOpt = { key: `1.6*10^${ans}`, label: `1,6 · 10^${ans}`, node: <span>{isEl ? '1,6' : '1.6'} · 10<sup>{ans}</sup></span> };
+        const coef = isEl ? '1,6' : '1.6';
+        const correctOpt = { key: `1.6*10^${ans}`, label: `1,6 · 10^${ans}`, node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp={String(ans)} /></span> };
         return {
           sig: `c2e2_3_${m}`,
           title: isEl ? 'Ύψωση Τυποποιημένης Μορφής στο Τετράγωνο' : 'Squaring Scientific Notation',
-          prompt: <span>{isEl ? 'Η δύναμη' : 'The power'} (4 · 10<sup>{m}</sup>)<sup>2</sup> {isEl ? 'σε τυποποιημένη μορφή είναι:' : 'in scientific notation is:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η δύναμη' : 'The power'}</span>
+              <Pow base={<span className="inline-flex items-baseline gap-1"><span>4 ·</span><Pow base="10" exp={String(m)} /></span>} exp="2" parens />
+              <span>{isEl ? 'σε τυποποιημένη μορφή είναι:' : 'in scientific notation is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: `16*10^${2 * m}`, label: `16 · 10^${2 * m}`, node: <span>16 · 10<sup>{2 * m}</sup></span> },
-            { key: `1.6*10^${2 * m}`, label: `1,6 · 10^${2 * m}`, node: <span>{isEl ? '1,6' : '1.6'} · 10<sup>{2 * m}</sup></span> },
-            { key: `8*10^${2 * m}`, label: `8 · 10^${2 * m}`, node: <span>8 · 10<sup>{2 * m}</sup></span> },
-            { key: `1.6*10^${m + 2}`, label: `1,6 · 10^${m + 2}`, node: <span>{isEl ? '1,6' : '1.6'} · 10<sup>{m + 2}</sup></span> },
+            { key: `16*10^${2 * m}`, label: `16 · 10^${2 * m}`, node: <span className="inline-flex items-baseline gap-1"><span>16 ·</span><Pow base="10" exp={String(2 * m)} /></span> },
+            { key: `1.6*10^${2 * m}`, label: `1,6 · 10^${2 * m}`, node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp={String(2 * m)} /></span> },
+            { key: `8*10^${2 * m}`, label: `8 · 10^${2 * m}`, node: <span className="inline-flex items-baseline gap-1"><span>8 ·</span><Pow base="10" exp={String(2 * m)} /></span> },
+            { key: `1.6*10^${m + 2}`, label: `1,6 · 10^${m + 2}`, node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp={String(m + 2)} /></span> },
           ]),
-          explanation: <span>16 · 10<sup>{2 * m}</sup> ＝ {isEl ? '1,6' : '1.6'} · 10<sup>{ans}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>16 ·</span>
+              <Pow base="10" exp={String(2 * m)} />
+              <span>＝ {coef} ·</span>
+              <Pow base="10" exp={String(ans)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -980,10 +1413,24 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e2_4_${k}`,
           title: isEl ? 'Γινόμενο με Αντίθετους Εκθέτες του 10' : 'Product with Opposite Exponents of 10',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} ({isEl ? '2,5' : '2.5'} · 10<sup>{k}</sup>) · (4 · 10<sup>-{k}</sup>)</span>,
+          prompt: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} ({isEl ? '2,5' : '2.5'} ·</span>
+              <Pow base="10" exp={String(k)} />
+              <span>) · (4 ·</span>
+              <Pow base="10" exp={`-${k}`} />
+              <span>)</span>
+            </span>
+          ),
           type: 'input',
           correct: 10,
-          explanation: <span>({isEl ? '2,5' : '2.5'} · 4) · 10<sup>0</sup> ＝ 10 · 1 ＝ 10.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>({isEl ? '2,5' : '2.5'} · 4) ·</span>
+              <Pow base="10" exp="0" />
+              <span>＝ 10 · 1 ＝ 10.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -992,14 +1439,33 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e2_5_${a}_${b}`,
           title: isEl ? 'Άθροισμα Ίδιων Δυνάμεων του 10' : 'Adding Like Powers of 10',
-          prompt: <span>({a} · 10<sup>6</sup>) ＋ ({b} · 10<sup>6</sup>) ＝ α · 10<sup>6</sup>. {isEl ? 'Ποιος είναι ο α;' : 'What is α?'}</span>,
+          prompt: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>({a} ·</span>
+              <Pow base="10" exp="6" />
+              <span>) ＋ ({b} ·</span>
+              <Pow base="10" exp="6" />
+              <span>) ＝ α ·</span>
+              <Pow base="10" exp="6" />
+              <span>. {isEl ? 'Ποιος είναι ο α;' : 'What is α?'}</span>
+            </span>
+          ),
           type: 'input',
           correct: a + b,
-          explanation: <span>({a} ＋ {b}) · 10<sup>6</sup> ＝ {a + b} · 10<sup>6</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>({a} ＋ {b}) ·</span>
+              <Pow base="10" exp="6" />
+              <span>＝ {a + b} ·</span>
+              <Pow base="10" exp="6" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 6: {
-        const correctOpt = { key: '7.5*10^-6', label: '7,5 · 10^-6 m', node: <span>{isEl ? '7,5' : '7.5'} · 10<sup>-6</sup> m</span> };
+        const coef = isEl ? '7,5' : '7.5';
+        const correctOpt = { key: '7.5*10^-6', label: '7,5 · 10^-6 m', node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp="-6" /><span>m</span></span> };
         return {
           sig: 'c2e2_6',
           title: isEl ? 'Μικροσκοπικά Μεγέθη' : 'Microscopic Dimensions',
@@ -1009,19 +1475,31 @@ export default function Epanalipsi1() {
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: '7.5*10^-5', label: '7,5 · 10^-5 m', node: <span>{isEl ? '7,5' : '7.5'} · 10<sup>-5</sup> m</span> },
-            { key: '75*10^-7', label: '75 · 10^-7 m', node: <span>75 · 10<sup>-7</sup> m</span> },
-            { key: '7.5*10^-7', label: '7,5 · 10^-7 m', node: <span>{isEl ? '7,5' : '7.5'} · 10<sup>-7</sup> m</span> },
-            { key: '7.5*10^6', label: '7,5 · 10^6 m', node: <span>{isEl ? '7,5' : '7.5'} · 10<sup>6</sup> m</span> },
+            { key: '7.5*10^-5', label: '7,5 · 10^-5 m', node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp="-5" /><span>m</span></span> },
+            { key: '75*10^-7', label: '75 · 10^-7 m', node: <span className="inline-flex items-baseline gap-1"><span>75 ·</span><Pow base="10" exp="-7" /><span>m</span></span> },
+            { key: '7.5*10^-7', label: '7,5 · 10^-7 m', node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp="-7" /><span>m</span></span> },
+            { key: '7.5*10^6', label: '7,5 · 10^6 m', node: <span className="inline-flex items-baseline gap-1"><span>{coef} ·</span><Pow base="10" exp="6" /><span>m</span></span> },
           ]),
-          explanation: <span>{isEl ? '0,0000075 m ＝ 7,5 · 10⁻⁶ m.' : '0.0000075 m ＝ 7.5 · 10⁻⁶ m.'}</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? '0,0000075 m ＝ 7,5 ·' : '0.0000075 m ＝ 7.5 ·'}</span>
+              <Pow base="10" exp="-6" />
+              <span>m.</span>
+            </span>
+          ),
         };
       }
       case 7: {
         return {
           sig: 'c2e2_7',
           title: isEl ? 'Αρνητικοί Αριθμοί σε Τυποποιημένη Μορφή' : 'Negative Numbers in Scientific Notation',
-          prompt: <span>{isEl ? 'Ο αριθμός' : 'Is'} -{isEl ? '3,4' : '3.4'} · 10<sup>5</sup> {isEl ? 'είναι σε τυποποιημένη μορφή;' : 'in scientific notation?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ο αριθμός -3,4 ·' : 'Is -3.4 ·'}</span>
+              <Pow base="10" exp="5" />
+              <span>{isEl ? 'είναι σε τυποποιημένη μορφή;' : 'in scientific notation?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -1033,35 +1511,71 @@ export default function Epanalipsi1() {
         return {
           sig: `c2e2_8_${m}`,
           title: isEl ? 'Τετραγωνική Ρίζα Τυποποιημένης Μορφής' : 'Square Root of Scientific Notation',
-          prompt: <span><Radical>9 · 10<sup>{m}</sup></Radical> ＝ 3 · 10<sup>ν</sup>. {isEl ? 'Ποιος είναι ο ν;' : 'What is ν?'}</span>,
+          prompt: (
+            <span className="inline-flex items-center gap-1">
+              <Radical>
+                <span className="inline-flex items-baseline gap-1">
+                  <span>9 ·</span>
+                  <Pow base="10" exp={String(m)} />
+                </span>
+              </Radical>
+              <span>＝ 3 ·</span>
+              <Pow base="10" exp="ν" />
+              <span>. {isEl ? 'Ποιος είναι ο ν;' : 'What is ν?'}</span>
+            </span>
+          ),
           type: 'input',
           correct: m / 2,
-          explanation: <span><Radical>9</Radical> · <Radical>10<sup>{m}</sup></Radical> ＝ 3 · 10<sup>{m / 2}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Radical>9</Radical>
+              <span>·</span>
+              <Radical><Pow base="10" exp={String(m)} /></Radical>
+              <span>＝ 3 ·</span>
+              <Pow base="10" exp={String(m / 2)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       default: {
-        const correctOpt = { key: '5*10^4', label: '5 · 10^4', node: <span>5 · 10<sup>4</sup></span> };
+        const correctOpt = { key: '5*10^4', label: '5 · 10^4', node: <span className="inline-flex items-baseline gap-1"><span>5 ·</span><Pow base="10" exp="4" /></span> };
         return {
           sig: 'c2e2_9',
           title: isEl ? 'Το Μισό Δύναμης του 10' : 'Half of a Power of 10',
-          prompt: isEl
-            ? 'Το μισό του αριθμού 10⁵ σε τυποποιημένη μορφή είναι:'
-            : 'Half of 10⁵ in scientific notation is:',
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Το μισό του αριθμού' : 'Half of'}</span>
+              <Pow base="10" exp="5" />
+              <span>{isEl ? 'σε τυποποιημένη μορφή είναι:' : 'in scientific notation is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: '10^2.5', label: '10^2,5', node: <span>10<sup>{isEl ? '2,5' : '2.5'}</sup></span> },
-            { key: '5*10^5', label: '5 · 10^5', node: <span>5 · 10<sup>5</sup></span> },
-            { key: '0.5*10^5', label: '0,5 · 10^5', node: <span>{isEl ? '0,5' : '0.5'} · 10<sup>5</sup></span> },
-            { key: '2*10^4', label: '2 · 10^4', node: <span>2 · 10<sup>4</sup></span> },
+            { key: '10^2.5', label: '10^2,5', node: <Pow base="10" exp={isEl ? '2,5' : '2.5'} /> },
+            { key: '5*10^5', label: '5 · 10^5', node: <span className="inline-flex items-baseline gap-1"><span>5 ·</span><Pow base="10" exp="5" /></span> },
+            { key: '0.5*10^5', label: '0,5 · 10^5', node: <span className="inline-flex items-baseline gap-1"><span>{isEl ? '0,5' : '0.5'} ·</span><Pow base="10" exp="5" /></span> },
+            { key: '2*10^4', label: '2 · 10^4', node: <span className="inline-flex items-baseline gap-1"><span>2 ·</span><Pow base="10" exp="4" /></span> },
           ]),
-          explanation: <span><Frac num="1" den="2" /> · 10<sup>5</sup> ＝ {isEl ? '0,5' : '0.5'} · 10<sup>5</sup> ＝ 5 · 10<sup>4</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Frac num="1" den="2" />
+              <span>·</span>
+              <Pow base="10" exp="5" />
+              <span>＝ {isEl ? '0,5' : '0.5'} ·</span>
+              <Pow base="10" exp="5" />
+              <span>＝ 5 ·</span>
+              <Pow base="10" exp="4" />
+              <span>.</span>
+            </span>
+          ),
         };
       }
     }
   };
 
-  // ΚΕΦ. 3 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 3 - ΑΣΚΗΣΗ 1
   const buildCh3Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1071,10 +1585,20 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_0_${a}_${b}`,
           title: isEl ? 'Προτεραιότητα Πράξεων με Δύναμη' : 'Order of Operations with Power',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ＋ {b} · (-2)<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ＋ {b} ·</span>
+              <Pow base="-2" exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: ans,
-          explanation: <span>(-2)<sup>2</sup> ＝ 4, μετά {b} · 4 ＝ {b * 4}, και τέλος {a} ＋ {b * 4} ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <Pow base="-2" exp="2" parens />
+              <span>＝ 4, μετά {b} · 4 ＝ {b * 4}, και τέλος {a} ＋ {b * 4} ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 1: {
@@ -1082,7 +1606,12 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_1_${a}`,
           title: isEl ? 'Αφαίρεση με Δύναμη' : 'Subtraction with Power',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} － 3<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} －</span>
+              <Pow base="3" exp="2" />
+            </span>
+          ),
           type: 'input',
           correct: a - 9,
           explanation: <span>{a} － 9 ＝ {a - 9}.</span>,
@@ -1096,7 +1625,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_2_${b}_${c}`,
           title: isEl ? 'Αριθμητική Παράσταση με Παρενθέσεις' : 'Expression with Parentheses',
-          prompt: <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'} {b} · (1 － {c + 1}) － 7<sup>0</sup> {isEl ? 'είναι:' : 'is:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'} {b} · (1 － {c + 1}) －</span>
+              <Pow base="7" exp="0" />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -1112,11 +1647,23 @@ export default function Epanalipsi1() {
         return {
           sig: 'c3e1_3',
           title: isEl ? 'Κανόνας Προτεραιότητας' : 'Order of Operations Rule',
-          prompt: <span>{isEl ? 'Στην παράσταση' : 'In'} 2 ＋ 3 · 4<sup>2</sup>, {isEl ? 'εκτελούμε πρώτα την πρόσθεση 2 ＋ 3;' : 'do we perform 2 ＋ 3 first?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Στην παράσταση 2 ＋ 3 ·' : 'In 2 ＋ 3 ·'}</span>
+              <Pow base="4" exp="2" />
+              <span>, {isEl ? 'εκτελούμε πρώτα την πρόσθεση 2 ＋ 3;' : 'do we perform 2 ＋ 3 first?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>{isEl ? 'Πρώτα υπολογίζονται οι δυνάμεις (4² ＝ 16), μετά οι πολλαπλασιασμοί και τελευταίες οι προσθέσεις.' : 'Powers first, then multiplication, addition last.'}</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? 'Πρώτα υπολογίζονται οι δυνάμεις (' : 'Powers first ('}</span>
+              <Pow base="4" exp="2" />
+              <span>＝ 16), μετά οι πολλαπλασιασμοί και τελευταίες οι προσθέσεις.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -1126,13 +1673,21 @@ export default function Epanalipsi1() {
           sig: `c3e1_4_${k}`,
           title: isEl ? 'Παράσταση με Αρνητικό & Θετικό Εκθέτη' : 'Expression with Negative & Positive Exponents',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Frac num="1" den="2" />)<sup>-{k}</sup> － (-2)<sup>2</sup>
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Frac num="1" den="2" />} exp={`-${k}`} parens />
+              <span>－</span>
+              <Pow base="-2" exp="2" parens />
             </span>
           ),
           type: 'input',
           correct: ans,
-          explanation: <span>2<sup>{k}</sup> － 4 ＝ {Math.pow(2, k)} － 4 ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="2" exp={String(k)} />
+              <span>－ 4 ＝ {Math.pow(2, k)} － 4 ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -1143,8 +1698,12 @@ export default function Epanalipsi1() {
           sig: `c3e1_5_${a}`,
           title: isEl ? 'Κλάσμα & Δύναμη του -1' : 'Fraction & Power of -1',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η τιμή της παράστασης' : 'The value of'} <Frac num={String(a)} den={<span>2<sup>1</sup></span>} /> － 5 · (-1)<sup>4</sup> {isEl ? 'είναι:' : 'is:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'}</span>
+              <Frac num={String(a)} den={<Pow base="2" exp="1" />} />
+              <span>－ 5 ·</span>
+              <Pow base="-1" exp="4" parens />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -1163,7 +1722,15 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_6_${n}`,
           title: isEl ? 'Δυνάμεις του -1' : 'Powers of -1',
-          prompt: <span>{isEl ? 'Ισχύει ότι' : 'Does'} (-1)<sup>{n}</sup> ＋ (-1)<sup>{n + 1}</sup> ＝ 0;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ισχύει ότι' : 'Does'}</span>
+              <Pow base="-1" exp={String(n)} parens />
+              <span>＋</span>
+              <Pow base="-1" exp={String(n + 1)} parens />
+              <span>＝ 0;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -1176,12 +1743,22 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_7_${x}`,
           title: isEl ? 'Αριθμητική Τιμή Αλγεβρικής Παράστασης' : 'Evaluating an Algebraic Expression',
-          prompt: isEl
-            ? `Υπολογίστε την τιμή της παράστασης 2x² － 3x ＋ 1 για x ＝ ${x}:`
-            : `Evaluate 2x² － 3x ＋ 1 for x ＝ ${x}:`,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε την τιμή της παράστασης 2' : 'Evaluate 2'}</span>
+              <Pow base="x" exp="2" />
+              <span>－ 3x ＋ 1 {isEl ? `για x ＝ ${x}:` : `for x ＝ ${x}:`}</span>
+            </span>
+          ),
           type: 'input',
           correct: ans,
-          explanation: `2 · ${x}² － 3 · ${x} ＋ 1 ＝ ${2 * x * x} － ${3 * x} ＋ 1 ＝ ${ans}.`,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>2 ·</span>
+              <Pow base={String(x)} exp="2" />
+              <span>－ 3 · {x} ＋ 1 ＝ {2 * x * x} － {3 * x} ＋ 1 ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 8: {
@@ -1190,7 +1767,15 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_8_${mult}`,
           title: isEl ? 'Άθροισμα Αρνητικών Δυνάμεων' : 'Sum of Negative Powers',
-          prompt: <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'} {mult} · (2<sup>-1</sup> ＋ 2<sup>-1</sup>) {isEl ? 'είναι:' : 'is:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'} {mult} · (</span>
+              <Pow base="2" exp="-1" />
+              <span>＋</span>
+              <Pow base="2" exp="-1" />
+              <span>) {isEl ? 'είναι:' : 'is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -1199,7 +1784,15 @@ export default function Epanalipsi1() {
             { key: `${mult}/2`, label: `${mult}/2`, node: <Frac num={String(mult)} den="2" /> },
             { key: '1', label: '1', node: '1' },
           ]),
-          explanation: <span>{mult} · (<Frac num="1" den="2" /> ＋ <Frac num="1" den="2" />) ＝ {mult} · 1 ＝ {mult}.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <span>{mult} · (</span>
+              <Frac num="1" den="2" />
+              <span>＋</span>
+              <Frac num="1" den="2" />
+              <span>) ＝ {mult} · 1 ＝ {mult}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -1207,7 +1800,12 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e1_9_${a}`,
           title: isEl ? 'Πρόσθεση με Κύβο Αρνητικού' : 'Adding Cube of a Negative',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ＋ (-2)<sup>3</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ＋</span>
+              <Pow base="-2" exp="3" parens />
+            </span>
+          ),
           type: 'input',
           correct: a - 8,
           explanation: <span>{a} ＋ (-8) ＝ {a - 8}.</span>,
@@ -1216,7 +1814,7 @@ export default function Epanalipsi1() {
     }
   };
 
-  // ΚΕΦ. 3 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 3 - ΑΣΚΗΣΗ 2
   const buildCh3Ex2 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1226,8 +1824,11 @@ export default function Epanalipsi1() {
           sig: `c3e2_0_${a}`,
           title: isEl ? 'Κλασματική Αριθμητική Παράσταση' : 'Fractional Numerical Expression',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} <Frac num={<span>{a} · 2<sup>3</sup></span>} den="4" /> ＋ (-1)<sup>6</sup>
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Frac num={<span className="inline-flex items-baseline gap-1"><span>{a} ·</span><Pow base="2" exp="3" /></span>} den="4" />
+              <span>＋</span>
+              <Pow base="-1" exp="6" parens />
             </span>
           ),
           type: 'input',
@@ -1242,8 +1843,12 @@ export default function Epanalipsi1() {
           sig: `c3e2_1_${k}`,
           title: isEl ? 'Συνδυασμός Ιδιοτήτων Δυνάμεων' : 'Combining Exponent Properties',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η τιμή της παράστασης' : 'The value of'} (<Frac num="2" den="3" />)<sup>0</sup> － <Frac num={<span>3<sup>{k + 2}</sup></span>} den={<span>3<sup>{k}</sup></span>} /> {isEl ? 'είναι:' : 'is:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'}</span>
+              <Pow base={<Frac num="2" den="3" />} exp="0" parens />
+              <span>－</span>
+              <Frac num={<Pow base="3" exp={String(k + 2)} />} den={<Pow base="3" exp={String(k)} />} />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -1254,7 +1859,13 @@ export default function Epanalipsi1() {
             { key: '-5', label: '-5', node: '-5' },
             { key: '10', label: '10', node: '10' },
           ]),
-          explanation: <span>1 － 3<sup>2</sup> ＝ 1 － 9 ＝ -8.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>1 －</span>
+              <Pow base="3" exp="2" />
+              <span>＝ 1 － 9 ＝ -8.</span>
+            </span>
+          ),
         };
       }
       case 2: {
@@ -1263,12 +1874,21 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e2_2_${x}`,
           title: isEl ? 'Αντικατάσταση Αρνητικού Αριθμού' : 'Substituting a Negative Number',
-          prompt: isEl
-            ? `Υπολογίστε την τιμή της παράστασης x² ＋ 2x για x ＝ ${x}:`
-            : `Evaluate x² ＋ 2x for x ＝ ${x}:`,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε την τιμή της παράστασης' : 'Evaluate'}</span>
+              <Pow base="x" exp="2" />
+              <span>＋ 2x {isEl ? `για x ＝ ${x}:` : `for x ＝ ${x}:`}</span>
+            </span>
+          ),
           type: 'input',
           correct: ans,
-          explanation: `(${x})² ＋ 2 · (${x}) ＝ ${x * x} ＋ (${2 * x}) ＝ ${ans}.`,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={String(x)} exp="2" parens />
+              <span>＋ 2 · ({x}) ＝ {x * x} ＋ ({2 * x}) ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 3: {
@@ -1276,8 +1896,10 @@ export default function Epanalipsi1() {
           sig: 'c3e2_3',
           title: isEl ? 'Απλοποίηση Κλάσματος' : 'Simplifying a Fraction',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Ισχύει ότι' : 'Does'} <Frac num={<span>2<sup>3</sup> ＋ 2<sup>3</sup></span>} den={<span>2<sup>3</sup></span>} /> ＝ 2;
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Ισχύει ότι' : 'Does'}</span>
+              <Frac num={<span className="inline-flex items-baseline gap-1"><Pow base="2" exp="3" /><span>＋</span><Pow base="2" exp="3" /></span>} den={<Pow base="2" exp="3" />} />
+              <span>＝ 2;</span>
             </span>
           ),
           type: 'tf',
@@ -1293,8 +1915,11 @@ export default function Epanalipsi1() {
           sig: `c3e2_4_${a}`,
           title: isEl ? 'Παράσταση με Αντίστροφο Κλάσματος' : 'Expression with Inverted Fraction',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} · (<Frac num="1" den="2" />)<sup>-2</sup> － 3 · (-1)<sup>8</sup>
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ·</span>
+              <Pow base={<Frac num="1" den="2" />} exp="-2" parens />
+              <span>－ 3 ·</span>
+              <Pow base="-1" exp="8" parens />
             </span>
           ),
           type: 'input',
@@ -1310,8 +1935,10 @@ export default function Epanalipsi1() {
           sig: `c3e2_5_${b}`,
           title: isEl ? 'Διαίρεση Αρνητικών & Αφαίρεση' : 'Dividing Negatives & Subtraction',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η τιμή της παράστασης' : 'The value of'} <Frac num={<span>(-2)<sup>3</sup></span>} den="-4" /> － {b} {isEl ? 'είναι:' : 'is:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'}</span>
+              <Frac num={<Pow base="-2" exp="3" parens />} den="-4" />
+              <span>－ {b} {isEl ? 'είναι:' : 'is:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -1330,7 +1957,14 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e2_6_${c}`,
           title: isEl ? 'Αντίθετες Δυνάμεις' : 'Opposite Powers',
-          prompt: <span>-{c}<sup>2</sup> ＋ {c}<sup>2</sup> ＝ 0;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={`-${c}`} exp="2" />
+              <span>＋</span>
+              <Pow base={String(c)} exp="2" />
+              <span>＝ 0;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -1342,8 +1976,9 @@ export default function Epanalipsi1() {
           sig: 'c3e2_7',
           title: isEl ? 'Αριθμητική Παράσταση' : 'Numerical Expression',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} <Frac num={<span>3<sup>2</sup> ＋ 2<sup>0</sup></span>} den="2" />
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Frac num={<span className="inline-flex items-baseline gap-1"><Pow base="3" exp="2" /><span>＋</span><Pow base="2" exp="0" /></span>} den="2" />
             </span>
           ),
           type: 'input',
@@ -1359,8 +1994,12 @@ export default function Epanalipsi1() {
           sig: `c3e2_8_${k}`,
           title: isEl ? 'Άθροισμα Αρνητικών Εκθετών Κλασμάτων' : 'Sum of Negative Fraction Exponents',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Η τιμή της παράστασης' : 'The value of'} (<Frac num="1" den="2" />)<sup>-{k}</sup> ＋ (<Frac num="1" den="3" />)<sup>-2</sup> {isEl ? 'είναι:' : 'is:'}
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της παράστασης' : 'The value of'}</span>
+              <Pow base={<Frac num="1" den="2" />} exp={`-${k}`} parens />
+              <span>＋</span>
+              <Pow base={<Frac num="1" den="3" />} exp="-2" parens />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
             </span>
           ),
           type: 'mcq',
@@ -1371,7 +2010,14 @@ export default function Epanalipsi1() {
             { key: String(2 * k + 6), label: String(2 * k + 6), node: String(2 * k + 6) },
             { key: '1', label: '1', node: '1' },
           ]),
-          explanation: <span>2<sup>{k}</sup> ＋ 3<sup>2</sup> ＝ {Math.pow(2, k)} ＋ 9 ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="2" exp={String(k)} />
+              <span>＋</span>
+              <Pow base="3" exp="2" />
+              <span>＝ {Math.pow(2, k)} ＋ 9 ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -1379,7 +2025,14 @@ export default function Epanalipsi1() {
         return {
           sig: `c3e2_9_${a}`,
           title: isEl ? 'Υπολογισμός Παράστασης' : 'Evaluating Expression',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} · (-3)<sup>2</sup> － 2<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a} ·</span>
+              <Pow base="-3" exp="2" parens />
+              <span>－</span>
+              <Pow base="2" exp="2" />
+            </span>
+          ),
           type: 'input',
           correct: a * 9 - 4,
           explanation: <span>{a} · 9 － 4 ＝ {a * 9 - 4}.</span>,
@@ -1387,8 +2040,7 @@ export default function Epanalipsi1() {
       }
     }
   };
-
-  // ΚΕΦ. 4 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 4 - ΑΣΚΗΣΗ 1
   const buildCh4Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1400,7 +2052,14 @@ export default function Epanalipsi1() {
           prompt: <span>{isEl ? 'Υπολογίστε την τετραγωνική ρίζα:' : 'Calculate the square root:'} <Radical>{sq}</Radical></span>,
           type: 'input',
           correct: r,
-          explanation: <span><Radical>{sq}</Radical> ＝ {r}, {isEl ? `επειδή ${r} > 0 και ${r}² ＝ ${sq}.` : `since ${r} > 0 and ${r}² ＝ ${sq}.`}</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <Radical>{sq}</Radical>
+              <span>＝ {r}, {isEl ? `επειδή ${r} > 0 και` : `since ${r} > 0 and`}</span>
+              <Pow base={String(r)} exp="2" />
+              <span>＝ {sq}.</span>
+            </span>
+          ),
         };
       }
       case 1: {
@@ -1424,8 +2083,13 @@ export default function Epanalipsi1() {
             { key: `-${num}/${den}`, label: `-${num}/${den}`, node: <span>-<Frac num={String(num)} den={String(den)} /></span> },
           ]),
           explanation: (
-            <span>
-              <Radical><Frac num={String(num * num)} den={String(den * den)} /></Radical> ＝ <Frac num={<Radical>{num * num}</Radical>} den={<Radical>{den * den}</Radical>} /> ＝ <Frac num={String(num)} den={String(den)} />.
+            <span className="inline-flex items-center gap-1">
+              <Radical><Frac num={String(num * num)} den={String(den * den)} /></Radical>
+              <span>＝</span>
+              <Frac num={<Radical>{num * num}</Radical>} den={<Radical>{den * den}</Radical>} />
+              <span>＝</span>
+              <Frac num={String(num)} den={String(den)} />
+              <span>.</span>
             </span>
           ),
         };
@@ -1435,7 +2099,7 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e1_2_${k}`,
           title: isEl ? 'Ύπαρξη Τετραγωνικής Ρίζας' : 'Existence of Square Root',
-          prompt: <span>{isEl ? 'Η ρίζα' : 'Is'} <Radical>-{k * k}</Radical> {isEl ? 'ορίζεται στους πραγματικούς αριθμούς και ισούται με -' + k + ';' : 'defined in ℝ and equal to -' + k + '?'}</span>,
+          prompt: <span>{isEl ? 'Η ρίζα' : 'Is'} <Radical>-{k * k}</Radical> {isEl ? `ορίζεται στους πραγματικούς αριθμούς και ισούται με -${k};` : `defined in ℝ and equal to -${k}?`}</span>,
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -1447,10 +2111,20 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e1_3_${k}`,
           title: isEl ? 'Τετράγωνο Τετραγωνικής Ρίζας' : 'Square of a Square Root',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Radical>{k}</Radical>)<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Radical>{k}</Radical>} exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: k,
-          explanation: <span>(<Radical>{k}</Radical>)<sup>2</sup> ＝ {k}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="2" parens />
+              <span>＝ {k}.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -1514,7 +2188,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e1_8_${k}`,
           title: isEl ? 'Ρίζα Δύναμης' : 'Square Root of a Power',
-          prompt: <span>{isEl ? 'Η τιμή της ρίζας' : 'The value of'} <Radical>3<sup>{k}</sup></Radical> {isEl ? 'είναι:' : 'is:'}</span>,
+          prompt: (
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Η τιμή της ρίζας' : 'The value of'}</span>
+              <Radical><Pow base="3" exp={String(k)} /></Radical>
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -1523,7 +2203,14 @@ export default function Epanalipsi1() {
             { key: String(ans * 3), label: String(ans * 3), node: String(ans * 3) },
             { key: '3', label: '3', node: '3' },
           ]),
-          explanation: <span><Radical>3<sup>{k}</sup></Radical> ＝ 3<sup>{k / 2}</sup> ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Radical><Pow base="3" exp={String(k)} /></Radical>
+              <span>＝</span>
+              <Pow base="3" exp={String(k / 2)} />
+              <span>＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -1531,7 +2218,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e1_9_${r}`,
           title: isEl ? 'Επίλυση x² ＝ α' : 'Solving x² ＝ α',
-          prompt: <span>{isEl ? 'Αν x > 0 και x² ＝' : 'If x > 0 and x² ＝'} {r * r}, {isEl ? 'ποιος είναι ο x;' : 'what is x?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Αν x > 0 και' : 'If x > 0 and'}</span>
+              <Pow base="x" exp="2" />
+              <span>＝ {r * r}, {isEl ? 'ποιος είναι ο x;' : 'what is x?'}</span>
+            </span>
+          ),
           type: 'input',
           correct: r,
           explanation: <span>x ＝ <Radical>{r * r}</Radical> ＝ {r}.</span>,
@@ -1540,7 +2233,7 @@ export default function Epanalipsi1() {
     }
   };
 
-  // ΚΕΦ. 4 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 4 - ΑΣΚΗΣΗ 2
   const buildCh4Ex2 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1608,10 +2301,22 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e2_3_${a}_${b}`,
           title: isEl ? 'Τετράγωνο Γινόμενου με Ρίζα' : 'Squaring a Radical Product',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} ({a}<Radical>{b}</Radical>)<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<span>{a}<Radical>{b}</Radical></span>} exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: ans,
-          explanation: <span>{a}<sup>2</sup> · (<Radical>{b}</Radical>)<sup>2</sup> ＝ {a * a} · {b} ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={String(a)} exp="2" />
+              <span>·</span>
+              <Pow base={<Radical>{b}</Radical>} exp="2" parens />
+              <span>＝ {a * a} · {b} ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -1624,7 +2329,19 @@ export default function Epanalipsi1() {
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span><Radical>{a}² · {b}</Radical> ＝ <Radical>{a * a * b}</Radical>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Radical>
+                <span className="inline-flex items-baseline gap-1">
+                  <Pow base={String(a)} exp="2" />
+                  <span>· {b}</span>
+                </span>
+              </Radical>
+              <span>＝</span>
+              <Radical>{a * a * b}</Radical>
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -1635,7 +2352,7 @@ export default function Epanalipsi1() {
           prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} <Radical>{k}</Radical> · <Radical>{9 * k}</Radical></span>,
           type: 'input',
           correct: k * 3,
-          explanation: <span><Radical>9 · {k}²</Radical> ＝ 3 · {k} ＝ {k * 3}.</span>,
+          explanation: <span>3 · {k} ＝ {k * 3}.</span>,
         };
       }
       case 6: {
@@ -1673,10 +2390,22 @@ export default function Epanalipsi1() {
         return {
           sig: `c4e2_8_${k}`,
           title: isEl ? '4η Δύναμη Ρίζας' : '4th Power of a Radical',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Radical>{k}</Radical>)<sup>4</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Radical>{k}</Radical>} exp="4" parens />
+            </span>
+          ),
           type: 'input',
           correct: k * k,
-          explanation: <span>((<Radical>{k}</Radical>)<sup>2</sup>)<sup>2</sup> ＝ {k}<sup>2</sup> ＝ {k * k}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Pow base={<Radical>{k}</Radical>} exp="2" parens />} exp="2" parens />
+              <span>＝</span>
+              <Pow base={String(k)} exp="2" />
+              <span>＝ {k * k}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -1695,13 +2424,20 @@ export default function Epanalipsi1() {
             { key: String(a), label: String(a), node: String(a) },
             { key: '0', label: '0', node: '0' },
           ]),
-          explanation: <span>(<Radical>{a + 2}</Radical>)<sup>2</sup> － 1<sup>2</sup> ＝ {a + 2} － 1 ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{a + 2}</Radical>} exp="2" parens />
+              <span>－</span>
+              <Pow base="1" exp="2" />
+              <span>＝ {a + 2} － 1 ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
     }
   };
 
-  // ΚΕΦ. 5 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 5 - ΑΣΚΗΣΗ 1
   const buildCh5Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1824,7 +2560,7 @@ export default function Epanalipsi1() {
         };
       }
       case 8: {
-        const correctOpt = { key: 'sqrt2_sq', label: '(√2)²', node: <span>(<Radical>2</Radical>)<sup>2</sup></span> };
+        const correctOpt = { key: 'sqrt2_sq', label: '(√2)²', node: <Pow base={<Radical>2</Radical>} exp="2" parens /> };
         return {
           sig: 'c5e1_8',
           title: isEl ? 'Ρητό Αποτέλεσμα' : 'Rational Result',
@@ -1837,7 +2573,12 @@ export default function Epanalipsi1() {
             { key: 'sqrt2_div_2', label: '√2 / 2', node: <Frac num={<Radical>2</Radical>} den="2" /> },
             { key: 'pi_plus_2', label: 'π ＋ 2', node: 'π ＋ 2' },
           ]),
-          explanation: <span>(<Radical>2</Radical>)<sup>2</sup> ＝ 2 ∈ ℚ.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>2</Radical>} exp="2" parens />
+              <span>＝ 2 ∈ ℚ.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -1856,7 +2597,7 @@ export default function Epanalipsi1() {
     }
   };
 
-  // ΚΕΦ. 5 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 5 - ΑΣΚΗΣΗ 2
   const buildCh5Ex2 = (mode) => {
     switch (mode) {
       case 0: {
@@ -1872,9 +2613,11 @@ export default function Epanalipsi1() {
           diagram: {
             type: 'realLine',
             hasTriangle: false,
-            leftLabel: `${low} (√${low * low})`,
-            midLabel: `√${n}`,
-            rightLabel: `${high} (√${high * high})`,
+            leftInt: String(low),
+            leftRad: String(low * low),
+            midRad: String(n),
+            rightInt: String(high),
+            rightRad: String(high * high),
             caption: `${low} < √${n} < ${high} ⇒ κ ＝ ${low}`,
           },
           explanation: <span>{low * low} &lt; {n} &lt; {high * high} ⇒ {low} &lt; <Radical>{n}</Radical> &lt; {high}.</span>,
@@ -2001,7 +2744,7 @@ export default function Epanalipsi1() {
     }
   };
 
-  // ΚΕΦ. 6 - ΑΣΚΗΣΗ 1 (10 παραλλαγές)
+  // ΚΕΦ. 6 - ΑΣΚΗΣΗ 1
   const buildCh6Ex1 = (mode) => {
     switch (mode) {
       case 0: {
@@ -2032,11 +2775,21 @@ export default function Epanalipsi1() {
             hasTriangle: true,
             legA: String(c.a),
             legB: String(c.b),
-            hypLabel: `ρ＝√${c.res}`,
-            pointLabel: `√${c.res}`,
-            caption: `ρ² ＝ ${c.a}² ＋ ${c.b}² ＝ ${c.res} ⇒ ρ ＝ √${c.res}`,
+            radVal: String(c.res),
+            caption: `ρ² ＝ ${c.a}² ＋ ${c.b}² ＝ ${c.res}`,
           },
-          explanation: <span>ρ<sup>2</sup> ＝ {c.a}<sup>2</sup> ＋ {c.b}<sup>2</sup> ＝ {c.res} ⇒ ρ ＝ <Radical>{c.res}</Radical>.</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <Pow base="ρ" exp="2" />
+              <span>＝</span>
+              <Pow base={String(c.a)} exp="2" />
+              <span>＋</span>
+              <Pow base={String(c.b)} exp="2" />
+              <span>＝ {c.res} ⇒ ρ ＝</span>
+              <Radical>{c.res}</Radical>
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 1: {
@@ -2044,10 +2797,22 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e1_1_${k}`,
           title: isEl ? 'Δύναμη Άρρητης Βάσης' : 'Power with Irrational Base',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Radical>{k}</Radical>)<sup>6</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Radical>{k}</Radical>} exp="6" parens />
+            </span>
+          ),
           type: 'input',
           correct: k * k * k,
-          explanation: <span>((<Radical>{k}</Radical>)<sup>2</sup>)<sup>3</sup> ＝ {k}<sup>3</sup> ＝ {k * k * k}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Pow base={<Radical>{k}</Radical>} exp="2" parens />} exp="3" parens />
+              <span>＝</span>
+              <Pow base={String(k)} exp="3" />
+              <span>＝ {k * k * k}.</span>
+            </span>
+          ),
         };
       }
       case 2: {
@@ -2069,7 +2834,13 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e1_3_${k}`,
           title: isEl ? 'Αρνητικός Εκθέτης με Άρρητη Βάση' : 'Negative Exponent with Irrational Base',
-          prompt: <span>{isEl ? 'Η τιμή της δύναμης' : 'The value of'} (<Radical>{k}</Radical>)<sup>-2</sup> {isEl ? 'είναι:' : 'is:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η τιμή της δύναμης' : 'The value of'}</span>
+              <Pow base={<Radical>{k}</Radical>} exp="-2" parens />
+              <span>{isEl ? 'είναι:' : 'is:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -2078,7 +2849,16 @@ export default function Epanalipsi1() {
             { key: `-1/${k}`, label: `-1/${k}`, node: <span>-<Frac num="1" den={String(k)} /></span> },
             { key: `1/${k * k}`, label: `1/${k * k}`, node: <Frac num="1" den={String(k * k)} /> },
           ]),
-          explanation: <span>(<Radical>{k}</Radical>)<sup>-2</sup> ＝ <Frac num="1" den={<span>(<Radical>{k}</Radical>)<sup>2</sup></span>} /> ＝ <Frac num="1" den={String(k)} />.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="-2" parens />
+              <span>＝</span>
+              <Frac num="1" den={<Pow base={<Radical>{k}</Radical>} exp="2" parens />} />
+              <span>＝</span>
+              <Frac num="1" den={String(k)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -2086,12 +2866,21 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e1_4_${n}`,
           title: isEl ? 'Ακολουθία Τετράγωνων Αριθμών' : 'Sequence of Square Numbers',
-          prompt: isEl
-            ? `Ποιος είναι ο ${n}-ος θετικός τετράγωνος αριθμός (${n}²);`
-            : `What is the ${n}th positive square number (${n}²)?`,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? `Ποιος είναι ο ${n}-ος θετικός τετράγωνος αριθμός (` : `What is the ${n}th positive square number (`}</span>
+              <Pow base={String(n)} exp="2" />
+              <span>);</span>
+            </span>
+          ),
           type: 'input',
           correct: n * n,
-          explanation: `${n}² ＝ ${n * n}.`,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={String(n)} exp="2" />
+              <span>＝ {n * n}.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -2102,7 +2891,16 @@ export default function Epanalipsi1() {
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>(<Radical>2</Radical>)<sup>2</sup> ＋ 1<sup>2</sup> ＝ 2 ＋ 1 ＝ 3 ⇒ ρ ＝ <Radical>3</Radical>.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>2</Radical>} exp="2" parens />
+              <span>＋</span>
+              <Pow base="1" exp="2" />
+              <span>＝ 2 ＋ 1 ＝ 3 ⇒ ρ ＝</span>
+              <Radical>3</Radical>
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 6: {
@@ -2110,10 +2908,24 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e1_6_${k}`,
           title: isEl ? 'Ιδιότητα Δυνάμεων Πραγματικής Βάσης' : 'Power Property with Real Base',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Radical>{k}</Radical>)<sup>5</sup> · (<Radical>{k}</Radical>)<sup>-1</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Radical>{k}</Radical>} exp="5" parens />
+              <span>·</span>
+              <Pow base={<Radical>{k}</Radical>} exp="-1" parens />
+            </span>
+          ),
           type: 'input',
           correct: k * k,
-          explanation: <span>(<Radical>{k}</Radical>)<sup>4</sup> ＝ {k}<sup>2</sup> ＝ {k * k}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="4" parens />
+              <span>＝</span>
+              <Pow base={String(k)} exp="2" />
+              <span>＝ {k * k}.</span>
+            </span>
+          ),
         };
       }
       case 7: {
@@ -2121,7 +2933,12 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e1_7_${k}`,
           title: isEl ? 'Μηδενικός Εκθέτης Άρρητου' : 'Zero Exponent of Irrational',
-          prompt: <span>(<Radical>{k}</Radical>)<sup>0</sup> ＝ 1;</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="0" parens />
+              <span>＝ 1;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
@@ -2136,8 +2953,9 @@ export default function Epanalipsi1() {
           sig: `c6e1_8_${k}`,
           title: isEl ? 'Πηλίκο Δυνάμεων Πραγματικής Βάσης' : 'Quotient of Real-Base Powers',
           prompt: (
-            <span className="inline-flex items-center">
-              <Frac num={<span>(<Radical>{k}</Radical>)<sup>4</sup></span>} den={<span>(<Radical>{k}</Radical>)<sup>-2</sup></span>} /> ＝
+            <span className="inline-flex items-center gap-1">
+              <Frac num={<Pow base={<Radical>{k}</Radical>} exp="4" parens />} den={<Pow base={<Radical>{k}</Radical>} exp="-2" parens />} />
+              <span>＝</span>
             </span>
           ),
           type: 'mcq',
@@ -2148,7 +2966,14 @@ export default function Epanalipsi1() {
             { key: `1/${k}`, label: `1/${k}`, node: <Frac num="1" den={String(k)} /> },
             { key: '1', label: '1', node: '1' },
           ]),
-          explanation: <span>(<Radical>{k}</Radical>)<sup>4 - (-2)</sup> ＝ (<Radical>{k}</Radical>)<sup>6</sup> ＝ {k}<sup>3</sup> ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="6" parens />
+              <span>＝</span>
+              <Pow base={String(k)} exp="3" />
+              <span>＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       default: {
@@ -2166,7 +2991,7 @@ export default function Epanalipsi1() {
     }
   };
 
-  // ΚΕΦ. 6 - ΑΣΚΗΣΗ 2 (10 παραλλαγές)
+  // ΚΕΦ. 6 - ΑΣΚΗΣΗ 2
   const buildCh6Ex2 = (mode) => {
     switch (mode) {
       case 0: {
@@ -2175,13 +3000,30 @@ export default function Epanalipsi1() {
           sig: `c6e2_0_${b}`,
           title: isEl ? 'Ιδιότητες Δυνάμεων' : 'Exponent Properties',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} <Frac num={<span>{b}<sup>-3</sup> · ({b}<sup>4</sup>)<sup>2</sup></span>} den={<span>{b}<sup>3</sup></span>} />
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Frac
+                num={
+                  <span className="inline-flex items-baseline gap-1">
+                    <Pow base={String(b)} exp="-3" />
+                    <span>·</span>
+                    <Pow base={<Pow base={String(b)} exp="4" />} exp="2" parens />
+                  </span>
+                }
+                den={<Pow base={String(b)} exp="3" />}
+              />
             </span>
           ),
           type: 'input',
           correct: b * b,
-          explanation: <span><Frac num={<span>{b}<sup>5</sup></span>} den={<span>{b}<sup>3</sup></span>} /> ＝ {b}<sup>2</sup> ＝ {b * b}.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Frac num={<Pow base={String(b)} exp="5" />} den={<Pow base={String(b)} exp="3" />} />
+              <span>＝</span>
+              <Pow base={String(b)} exp="2" />
+              <span>＝ {b * b}.</span>
+            </span>
+          ),
         };
       }
       case 1: {
@@ -2192,8 +3034,11 @@ export default function Epanalipsi1() {
           sig: `c6e2_1_${k}`,
           title: isEl ? 'Δυνάμεις Πραγματικών Αριθμών' : 'Powers of Real Numbers',
           prompt: (
-            <span className="inline-flex items-center">
-              (<Frac num="1" den={<Radical>{k}</Radical>} />)<sup>-4</sup> ＋ π<sup>0</sup> ＝
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<Frac num="1" den={<Radical>{k}</Radical>} />} exp="-4" parens />
+              <span>＋</span>
+              <Pow base="π" exp="0" />
+              <span>＝</span>
             </span>
           ),
           type: 'mcq',
@@ -2204,7 +3049,12 @@ export default function Epanalipsi1() {
             { key: String(ans + 2), label: String(ans + 2), node: String(ans + 2) },
             { key: '1', label: '1', node: '1' },
           ]),
-          explanation: <span>(<Radical>{k}</Radical>)<sup>4</sup> ＋ 1 ＝ {k * k} ＋ 1 ＝ {ans}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="4" parens />
+              <span>＋ 1 ＝ {k * k} ＋ 1 ＝ {ans}.</span>
+            </span>
+          ),
         };
       }
       case 2: {
@@ -2212,11 +3062,26 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e2_2_${m}`,
           title: isEl ? 'Αντίστροφο Πραγματικού' : 'Reciprocal of a Real',
-          prompt: <span>{isEl ? 'Για α ≠ 0 ισχύει' : 'For α ≠ 0:'} (<Frac num="1" den="α" />)<sup>-{m}</sup> ＝ α<sup>{m}</sup>;</span>,
+          prompt: (
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Για α ≠ 0 ισχύει' : 'For α ≠ 0:'}</span>
+              <Pow base={<Frac num="1" den="α" />} exp={`-${m}`} parens />
+              <span>＝</span>
+              <Pow base="α" exp={String(m)} />
+              <span>;</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Σωστό' : 'True',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>(<Frac num="1" den="α" />)<sup>-{m}</sup> ＝ α<sup>{m}</sup>.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<Frac num="1" den="α" />} exp={`-${m}`} parens />
+              <span>＝</span>
+              <Pow base="α" exp={String(m)} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       case 3: {
@@ -2224,10 +3089,22 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e2_3_${k}`,
           title: isEl ? 'Δύναμη Γινομένου Ριζών' : 'Power of Product of Roots',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Radical>{k}</Radical> · <Radical>3</Radical>)<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<span><Radical>{k}</Radical> · <Radical>3</Radical></span>} exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: k * 3,
-          explanation: <span>(<Radical>{k}</Radical>)<sup>2</sup> · (<Radical>3</Radical>)<sup>2</sup> ＝ {k} · 3 ＝ {k * 3}.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>{k}</Radical>} exp="2" parens />
+              <span>·</span>
+              <Pow base={<Radical>3</Radical>} exp="2" parens />
+              <span>＝ {k} · 3 ＝ {k * 3}.</span>
+            </span>
+          ),
         };
       }
       case 4: {
@@ -2236,7 +3113,16 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e2_4_${e}`,
           title: isEl ? 'Συνδυασμός Ιδιοτήτων Δυνάμεων' : 'Combining Exponent Laws',
-          prompt: <span>(<Radical>2</Radical>)<sup>{e}</sup> · (<Radical>5</Radical>)<sup>{e}</sup> · (<Radical>10</Radical>)<sup>-{e}</sup> ＝</span>,
+          prompt: (
+            <span className="inline-flex flex-wrap items-baseline gap-1">
+              <Pow base={<Radical>2</Radical>} exp={String(e)} parens />
+              <span>·</span>
+              <Pow base={<Radical>5</Radical>} exp={String(e)} parens />
+              <span>·</span>
+              <Pow base={<Radical>10</Radical>} exp={`-${e}`} parens />
+              <span>＝</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
@@ -2245,7 +3131,16 @@ export default function Epanalipsi1() {
             { key: '0', label: '0', node: '0' },
             { key: '1/10', label: '1/10', node: <Frac num="1" den="10" /> },
           ]),
-          explanation: <span>(<Radical>10</Radical>)<sup>{e}</sup> · (<Radical>10</Radical>)<sup>-{e}</sup> ＝ (<Radical>10</Radical>)<sup>0</sup> ＝ 1.</span>,
+          explanation: (
+            <span className="inline-flex flex-wrap items-baseline gap-1">
+              <Pow base={<Radical>10</Radical>} exp={String(e)} parens />
+              <span>·</span>
+              <Pow base={<Radical>10</Radical>} exp={`-${e}`} parens />
+              <span>＝</span>
+              <Pow base={<Radical>10</Radical>} exp="0" parens />
+              <span>＝ 1.</span>
+            </span>
+          ),
         };
       }
       case 5: {
@@ -2254,7 +3149,14 @@ export default function Epanalipsi1() {
         return {
           sig: `c6e2_5_${a}`,
           title: isEl ? 'Άθροισμα Διαδοχικών Τετραγώνων' : 'Sum of Consecutive Squares',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} {a}<sup>2</sup> ＋ ({a + 1})<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={String(a)} exp="2" />
+              <span>＋</span>
+              <Pow base={String(a + 1)} exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: ans,
           explanation: <span>{a * a} ＋ {(a + 1) * (a + 1)} ＝ {ans}.</span>,
@@ -2264,11 +3166,22 @@ export default function Epanalipsi1() {
         return {
           sig: 'c6e2_6',
           title: isEl ? 'Περιττή Δύναμη Άρρητου' : 'Odd Power of Irrational',
-          prompt: <span>{isEl ? 'Ο αριθμός' : 'Is'} (<Radical>3</Radical>)<sup>3</sup> {isEl ? 'είναι ρητός;' : 'rational?'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Ο αριθμός' : 'Is'}</span>
+              <Pow base={<Radical>3</Radical>} exp="3" parens />
+              <span>{isEl ? 'είναι ρητός;' : 'rational?'}</span>
+            </span>
+          ),
           type: 'tf',
           correct: isEl ? 'Λάθος' : 'False',
           options: isEl ? ['Σωστό', 'Λάθος'] : ['True', 'False'],
-          explanation: <span>(<Radical>3</Radical>)<sup>3</sup> ＝ 3<Radical>3</Radical> ∈ 𝕀 ({isEl ? 'άρρητος' : 'irrational'}).</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>3</Radical>} exp="3" parens />
+              <span>＝ 3<Radical>3</Radical> ∈ 𝕀 ({isEl ? 'άρρητος' : 'irrational'}).</span>
+            </span>
+          ),
         };
       }
       case 7: {
@@ -2276,37 +3189,63 @@ export default function Epanalipsi1() {
           sig: 'c6e2_7',
           title: isEl ? 'Δύναμη Πηλίκου Ριζών' : 'Power of Quotient of Roots',
           prompt: (
-            <span className="inline-flex items-center">
-              {isEl ? 'Υπολογίστε:' : 'Calculate:'} (<Frac num={<Radical>8</Radical>} den={<Radical>2</Radical>} />)<sup>2</sup>
+            <span className="inline-flex items-center gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base={<Frac num={<Radical>8</Radical>} den={<Radical>2</Radical>} />} exp="2" parens />
             </span>
           ),
           type: 'input',
           correct: 4,
-          explanation: <span>(<Radical>4</Radical>)<sup>2</sup> ＝ 4.</span>,
+          explanation: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Radical>4</Radical>} exp="2" parens />
+              <span>＝ 4.</span>
+            </span>
+          ),
         };
       }
       case 8: {
-        const correctOpt = { key: '1/pi^2', label: '1/π²', node: <Frac num="1" den={<span>π<sup>2</sup></span>} /> };
+        const correctOpt = { key: '1/pi^2', label: '1/π²', node: <Frac num="1" den={<Pow base="π" exp="2" />} /> };
         return {
           sig: 'c6e2_8',
           title: isEl ? 'Αρνητικός Εκθέτης με Βάση το π' : 'Negative Exponent with Base π',
-          prompt: <span>{isEl ? 'Η δύναμη' : 'The power'} π<sup>-2</sup> {isEl ? 'γράφεται ως:' : 'equals:'}</span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Η δύναμη' : 'The power'}</span>
+              <Pow base="π" exp="-2" />
+              <span>{isEl ? 'γράφεται ως:' : 'equals:'}</span>
+            </span>
+          ),
           type: 'mcq',
           correct: correctOpt.key,
           options: ensureFourUniqueOptions(correctOpt, [
-            { key: '-pi^2', label: '-π²', node: <span>-π<sup>2</sup></span> },
+            { key: '-pi^2', label: '-π²', node: <Pow base="-π" exp="2" /> },
             { key: '-2pi', label: '-2π', node: '-2π' },
             { key: '1/2pi', label: '1/(2π)', node: <Frac num="1" den="2π" /> },
             { key: 'pi/2', label: 'π/2', node: <Frac num="π" den="2" /> },
           ]),
-          explanation: <span>π<sup>-2</sup> ＝ <Frac num="1" den={<span>π<sup>2</sup></span>} />.</span>,
+          explanation: (
+            <span className="inline-flex items-center gap-1">
+              <Pow base="π" exp="-2" />
+              <span>＝</span>
+              <Frac num="1" den={<Pow base="π" exp="2" />} />
+              <span>.</span>
+            </span>
+          ),
         };
       }
       default: {
         return {
           sig: 'c6e2_9',
           title: isEl ? 'Υπολογισμός Παράστασης' : 'Evaluating Expression',
-          prompt: <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'} 2<sup>-1</sup> · (<Radical>20</Radical>)<sup>2</sup></span>,
+          prompt: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>{isEl ? 'Υπολογίστε:' : 'Calculate:'}</span>
+              <Pow base="2" exp="-1" />
+              <span>·</span>
+              <Pow base={<Radical>20</Radical>} exp="2" parens />
+            </span>
+          ),
           type: 'input',
           correct: 10,
           explanation: <span><Frac num="1" den="2" /> · 20 ＝ 10.</span>,
@@ -2330,8 +3269,20 @@ export default function Epanalipsi1() {
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-x-1">
           <span>{isEl ? 'Υπολογίστε την τιμή της παράστασης:' : 'Calculate the value of:'}</span>
-          <span className="inline-flex items-center font-bold">
-            Α ＝ <Frac num={<span>{b}<sup>-{k}</sup> · ({b}<sup>{k}</sup>)<sup>2</sup></span>} den={<span>{b}<sup>{k - 2}</sup></span>} /> ＋ (<Frac num="1" den={String(b)} />)<sup>0</sup>
+          <span className="inline-flex items-center gap-1 font-bold">
+            <span>Α ＝</span>
+            <Frac
+              num={
+                <span className="inline-flex items-baseline gap-1">
+                  <Pow base={String(b)} exp={`-${k}`} />
+                  <span>·</span>
+                  <Pow base={<Pow base={String(b)} exp={String(k)} />} exp="2" parens />
+                </span>
+              }
+              den={<Pow base={String(b)} exp={String(k - 2)} />}
+            />
+            <span>＋</span>
+            <Pow base={<Frac num="1" den={String(b)} />} exp="0" parens />
           </span>
         </span>
       ),
@@ -2340,22 +3291,39 @@ export default function Epanalipsi1() {
       diagram: {
         type: 'powerFlow',
         step1: `(${b}^${k})² ＝ ${b}^${2 * k}`,
-        step2: `${b}^-${k} · ${b}^${2 * k} / ${b}^${k - 2} ＝ ${b}²`,
-        caption: `Α ＝ ${b * b} ＋ 1 ＝ ${ans}`,
+        step2: `${b}^-${k} · ${b}^${2 * k} ＝ ${b}^${k}`,
+        caption: `Α ＝ ${b}² ＋ 1 ＝ ${ans}`,
       },
       tableData: [
         {
           label: isEl ? '1. Δύναμη δύναμης' : '1. Power of a power',
-          details: <span>({b}<sup>{k}</sup>)<sup>2</sup> ＝ {b}<sup>{2 * k}</sup></span>,
+          details: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base={<Pow base={String(b)} exp={String(k)} />} exp="2" parens />
+              <span>＝</span>
+              <Pow base={String(b)} exp={String(2 * k)} />
+            </span>
+          ),
         },
         {
           label: isEl ? '2. Απλοποίηση κλάσματος' : '2. Simplify fraction',
           details: (
             <div className="flex flex-wrap items-center gap-x-1">
-              <Frac num={<span>{b}<sup>-{k}</sup> · {b}<sup>{2 * k}</sup></span>} den={<span>{b}<sup>{k - 2}</sup></span>} />
+              <Frac
+                num={
+                  <span className="inline-flex items-baseline gap-1">
+                    <Pow base={String(b)} exp={`-${k}`} />
+                    <span>·</span>
+                    <Pow base={String(b)} exp={String(2 * k)} />
+                  </span>
+                }
+                den={<Pow base={String(b)} exp={String(k - 2)} />}
+              />
               <span>＝</span>
-              <Frac num={<span>{b}<sup>{k}</sup></span>} den={<span>{b}<sup>{k - 2}</sup></span>} />
-              <span>＝ {b}<sup>2</sup> ＝ {b * b}</span>
+              <Frac num={<Pow base={String(b)} exp={String(k)} />} den={<Pow base={String(b)} exp={String(k - 2)} />} />
+              <span>＝</span>
+              <Pow base={String(b)} exp="2" />
+              <span>＝ {b * b}</span>
             </div>
           ),
         },
@@ -2364,7 +3332,13 @@ export default function Epanalipsi1() {
           details: <span>Α ＝ {b * b} ＋ 1 ＝ {ans}</span>,
         },
       ],
-      explanation: <span>{isEl ? `Απλοποιώντας το κλάσμα παίρνουμε ${b}² ＝ ${b * b} και προσθέτοντας 1 βρίσκουμε Α ＝ ${ans}.` : `Simplifying gives ${b}² ＋ 1 ＝ ${ans}.`}</span>,
+      explanation: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>{isEl ? 'Απλοποιώντας το κλάσμα παίρνουμε' : 'Simplifying gives'}</span>
+          <Pow base={String(b)} exp="2" />
+          <span>＝ {b * b} {isEl ? 'και προσθέτοντας 1 βρίσκουμε' : 'and adding 1 gives'} Α ＝ {ans}.</span>
+        </span>
+      ),
     };
   };
 
@@ -2378,43 +3352,65 @@ export default function Epanalipsi1() {
     const correctOpt = {
       key: `${sciCoef}*10^10`,
       label: `${coefLabel} · 10^10 m`,
-      node: <span>{coefLabel} · 10<sup>10</sup> m</span>,
+      node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp="10" /><span>m</span></span>,
     };
     return {
       sig: `p2_${mode}_${mins}`,
       title: isEl ? 'Εφαρμογή Τυποποιημένης Μορφής (Ταχύτητα Φωτός)' : 'Scientific Notation Application (Speed of Light)',
       prompt: (
-        <span>
-          {isEl
-            ? `Το φως ταξιδεύει με ταχύτητα 3 · 10⁸ m/s. Πόσα μέτρα διανύει σε ${mins} λεπτά (σε τυποποιημένη μορφή);`
-            : `Light travels at 3 · 10⁸ m/s. How many meters does it travel in ${mins} minutes (in scientific notation)?`}
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>{isEl ? 'Το φως ταξιδεύει με ταχύτητα 3 ·' : 'Light travels at 3 ·'}</span>
+          <Pow base="10" exp="8" />
+          <span>m/s. {isEl ? `Πόσα μέτρα διανύει σε ${mins} λεπτά (σε τυποποιημένη μορφή);` : `How many meters does it travel in ${mins} minutes (in scientific notation)?`}</span>
         </span>
       ),
       type: 'mcq',
       correct: correctOpt.key,
       options: ensureFourUniqueOptions(correctOpt, [
-        { key: `${distMeters}*10^8`, label: `${distMeters} · 10^8 m`, node: <span>{distMeters} · 10<sup>8</sup> m</span> },
-        { key: `${sciCoef}*10^9`, label: `${coefLabel} · 10^9 m`, node: <span>{coefLabel} · 10<sup>9</sup> m</span> },
-        { key: `${sciCoef}*10^11`, label: `${coefLabel} · 10^11 m`, node: <span>{coefLabel} · 10<sup>11</sup> m</span> },
-        { key: `${3 * mins}*10^8`, label: `${3 * mins} · 10^8 m`, node: <span>{3 * mins} · 10<sup>8</sup> m</span> },
+        { key: `${distMeters}*10^8`, label: `${distMeters} · 10^8 m`, node: <span className="inline-flex items-baseline gap-1"><span>{distMeters} ·</span><Pow base="10" exp="8" /><span>m</span></span> },
+        { key: `${sciCoef}*10^9`, label: `${coefLabel} · 10^9 m`, node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp="9" /><span>m</span></span> },
+        { key: `${sciCoef}*10^11`, label: `${coefLabel} · 10^11 m`, node: <span className="inline-flex items-baseline gap-1"><span>{coefLabel} ·</span><Pow base="10" exp="11" /><span>m</span></span> },
+        { key: `${3 * mins}*10^8`, label: `${3 * mins} · 10^8 m`, node: <span className="inline-flex items-baseline gap-1"><span>{3 * mins} ·</span><Pow base="10" exp="8" /><span>m</span></span> },
       ]),
       diagram: {
         type: 'sciNotation',
-        rawText: `(3 · 10^8) · (${secs} s)`,
-        sciText: `${coefLabel} · 10^10 m`,
-        caption: isEl ? `${mins} min ＝ ${secs} s` : `${mins} min ＝ ${secs} s`,
+        rawText: `(3 · 10⁸) · (${secs} s)`,
+        sciText: `${coefLabel} · 10¹⁰ m`,
+        caption: `${mins} min ＝ ${secs} s`,
       },
       tableData: [
         {
           label: isEl ? '1. Μετατροπή χρόνου' : '1. Convert time',
-          details: <span>t ＝ {mins} · 60 s ＝ {secs} s ＝ {isEl ? String(secs / 100).replace('.', ',') : secs / 100} · 10<sup>2</sup> s</span>,
+          details: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>t ＝ {mins} · 60 s ＝ {secs} s ＝ {isEl ? String(secs / 100).replace('.', ',') : secs / 100} ·</span>
+              <Pow base="10" exp="2" />
+              <span>s</span>
+            </span>
+          ),
         },
         {
           label: isEl ? '2. Απόσταση s ＝ υ · t' : '2. Distance s ＝ v · t',
-          details: <span>s ＝ (3 · 10<sup>8</sup>) · ({isEl ? String(secs / 100).replace('.', ',') : secs / 100} · 10<sup>2</sup>) ＝ {coefLabel} · 10<sup>10</sup> m</span>,
+          details: (
+            <span className="inline-flex flex-wrap items-baseline gap-1">
+              <span>s ＝ (3 ·</span>
+              <Pow base="10" exp="8" />
+              <span>) · ({isEl ? String(secs / 100).replace('.', ',') : secs / 100} ·</span>
+              <Pow base="10" exp="2" />
+              <span>) ＝ {coefLabel} ·</span>
+              <Pow base="10" exp="10" />
+              <span>m</span>
+            </span>
+          ),
         },
       ],
-      explanation: <span>{isEl ? `Σε ${mins} λεπτά (${secs} s) το φως διανύει ${coefLabel} · 10¹⁰ m.` : `In ${mins} minutes (${secs} s) light travels ${coefLabel} · 10¹⁰ m.`}</span>,
+      explanation: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>{isEl ? `Σε ${mins} λεπτά (${secs} s) το φως διανύει ${coefLabel} ·` : `In ${mins} minutes (${secs} s) light travels ${coefLabel} ·`}</span>
+          <Pow base="10" exp="10" />
+          <span>m.</span>
+        </span>
+      ),
     };
   };
 
@@ -2428,8 +3424,13 @@ export default function Epanalipsi1() {
       prompt: (
         <span className="inline-flex flex-wrap items-center gap-x-1">
           <span>{isEl ? 'Υπολογίστε την τιμή της παράστασης:' : 'Calculate the value of:'}</span>
-          <span className="inline-flex items-center font-bold">
-            Β ＝ [(-2)<sup>3</sup> ＋ 3 · (<Frac num="1" den="2" />)<sup>-2</sup>] · {c} － (-1)<sup>7</sup>
+          <span className="inline-flex items-center gap-1 font-bold">
+            <span>Β ＝ [</span>
+            <Pow base="-2" exp="3" parens />
+            <span>＋ 3 ·</span>
+            <Pow base={<Frac num="1" den="2" />} exp="-2" parens />
+            <span>] · {c} －</span>
+            <Pow base="-1" exp="7" parens />
           </span>
         </span>
       ),
@@ -2444,7 +3445,14 @@ export default function Epanalipsi1() {
       tableData: [
         {
           label: isEl ? '1. Πράξεις στην αγκύλη' : '1. Brackets evaluation',
-          details: <span>(-2)<sup>3</sup> ＋ 3 · 2<sup>2</sup> ＝ -8 ＋ 12 ＝ 4</span>,
+          details: (
+            <span className="inline-flex items-baseline gap-1">
+              <Pow base="-2" exp="3" parens />
+              <span>＋ 3 ·</span>
+              <Pow base="2" exp="2" />
+              <span>＝ -8 ＋ 12 ＝ 4</span>
+            </span>
+          ),
         },
         {
           label: isEl ? '2. Πολλαπλασιασμός & αφαίρεση' : '2. Multiply & subtract',
@@ -2463,10 +3471,12 @@ export default function Epanalipsi1() {
       sig: `p4_${mode}_${k}`,
       title: isEl ? 'Εμβαδόν Ορθογωνίου με Τετραγωνικές Ρίζες' : 'Rectangle Area with Square Roots',
       prompt: (
-        <span>
-          {isEl
-            ? `Ένα ορθογώνιο έχει μήκος 3√${k} cm και πλάτος 2√${k} cm. Πόσα cm² είναι το εμβαδόν του;`
-            : `A rectangle has length 3√${k} cm and width 2√${k} cm. What is its area in cm²?`}
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>{isEl ? 'Ένα ορθογώνιο έχει μήκος 3' : 'A rectangle has length 3'}</span>
+          <Radical>{k}</Radical>
+          <span>{isEl ? 'cm και πλάτος 2' : 'cm and width 2'}</span>
+          <Radical>{k}</Radical>
+          <span>{isEl ? 'cm. Πόσα cm² είναι το εμβαδόν του;' : 'cm. What is its area in cm²?'}</span>
         </span>
       ),
       type: 'input',
@@ -2475,9 +3485,8 @@ export default function Epanalipsi1() {
       diagram: {
         type: 'rectRoot',
         centerLabel: `Ε ＝ ${area} cm²`,
-        bottomLabel: `3√${k} cm`,
-        sideLabel: `2√${k}`,
-        caption: `(3√${k}) · (2√${k}) ＝ 6 · ${k} ＝ ${area} cm²`,
+        radVal: String(k),
+        caption: `3 · 2 · ${k} ＝ ${area} cm²`,
       },
       tableData: [
         {
@@ -2486,10 +3495,22 @@ export default function Epanalipsi1() {
         },
         {
           label: isEl ? '2. Ιδιότητα ριζών' : '2. Radical property',
-          details: <span>Ε ＝ 6 · (<Radical>{k}</Radical>)<sup>2</sup> ＝ 6 · {k} ＝ {area} cm²</span>,
+          details: (
+            <span className="inline-flex items-baseline gap-1">
+              <span>Ε ＝ 6 ·</span>
+              <Pow base={<Radical>{k}</Radical>} exp="2" parens />
+              <span>＝ 6 · {k} ＝ {area} cm²</span>
+            </span>
+          ),
         },
       ],
-      explanation: <span>Ε ＝ 3 · 2 · (<Radical>{k}</Radical>)<sup>2</sup> ＝ 6 · {k} ＝ {area} cm².</span>,
+      explanation: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <span>Ε ＝ 3 · 2 ·</span>
+          <Pow base={<Radical>{k}</Radical>} exp="2" parens />
+          <span>＝ 6 · {k} ＝ {area} cm².</span>
+        </span>
+      ),
     };
   };
 
@@ -2521,22 +3542,28 @@ export default function Epanalipsi1() {
       diagram: {
         type: 'realLine',
         hasTriangle: false,
-        leftLabel: `√${c.a}`,
+        leftOnlyRad: String(c.a),
         midLabel: `{ ${c.ints} }`,
-        rightLabel: `√${c.b}`,
+        rightOnlyRad: String(c.b),
         caption: isEl ? `Πλήθος ακεραίων: ${c.count}` : `Integer count: ${c.count}`,
       },
       tableData: [
         {
           label: isEl ? '1. Σύγκριση τετραγώνων' : '1. Comparing squares',
-          details: <span>{isEl ? `Ζητάμε ακέραιους x > 0 με ${c.a} < x² < ${c.b}.` : `Find integers x > 0 with ${c.a} < x² < ${c.b}.`}</span>,
+          details: (
+            <span className="inline-flex flex-wrap items-baseline gap-x-1">
+              <span>{isEl ? `Ζητάμε ακέραιους x > 0 με ${c.a} <` : `Find integers x > 0 with ${c.a} <`}</span>
+              <Pow base="x" exp="2" />
+              <span>&lt; {c.b}.</span>
+            </span>
+          ),
         },
         {
           label: isEl ? '2. Ακέραιες λύσεις' : '2. Integer solutions',
           details: <span>x ∈ {'{'}{c.ints}{'}'} ({isEl ? 'σύνολο' : 'total'}: {c.count})</span>,
         },
       ],
-      explanation: <span>{isEl ? `Οι ακέραιοι ανάμεσα στους √${c.a} και √${c.b} είναι οι ${c.ints} (πλήθος ${c.count}).` : `Integers between √${c.a} and √${c.b} are ${c.ints} (count ${c.count}).`}</span>,
+      explanation: <span>{isEl ? 'Οι ακέραιοι ανάμεσα στους' : 'Integers between'} <Radical>{c.a}</Radical> {isEl ? 'και' : 'and'} <Radical>{c.b}</Radical> {isEl ? `είναι οι ${c.ints} (πλήθος ${c.count}).` : `are ${c.ints} (count ${c.count}).`}</span>,
     };
   };
 
@@ -2577,15 +3604,28 @@ export default function Epanalipsi1() {
       diagram: {
         type: 'realLine',
         hasTriangle: false,
-        leftLabel: `${c.low} (√${c.low * c.low})`,
-        midLabel: `√${c.area}＝${c.coef}√${c.rad}`,
-        rightLabel: `${c.high} (√${c.high * c.high})`,
-        caption: `${c.low} < ${c.coef}√${c.rad} < ${c.high}`,
+        leftInt: String(c.low),
+        leftRad: String(c.low * c.low),
+        midPrefix: `${c.coef}`,
+        midRad: String(c.rad),
+        rightInt: String(c.high),
+        rightRad: String(c.high * c.high),
+        caption: `${c.low} < α < ${c.high}`,
       },
       tableData: [
         {
           label: isEl ? '1. Μήκος πλευράς α' : '1. Side length α',
-          details: <span>Ε ＝ α<sup>2</sup> ＝ {c.area} ⇒ α ＝ <Radical>{c.area}</Radical> ＝ <Radical>{c.coef * c.coef} · {c.rad}</Radical> ＝ {c.coef}<Radical>{c.rad}</Radical> m</span>,
+          details: (
+            <span className="inline-flex flex-wrap items-baseline gap-1">
+              <span>Ε ＝</span>
+              <Pow base="α" exp="2" />
+              <span>＝ {c.area} ⇒ α ＝</span>
+              <Radical>{c.area}</Radical>
+              <span>＝</span>
+              <Radical>{c.coef * c.coef} · {c.rad}</Radical>
+              <span>＝ {c.coef}<Radical>{c.rad}</Radical> m</span>
+            </span>
+          ),
         },
         {
           label: isEl ? '2. Θέση στην ευθεία ℝ' : '2. Position on ℝ',
@@ -2619,7 +3659,6 @@ export default function Epanalipsi1() {
     };
 
     const slots = [
-      // 2 ασκήσεις ανά κεφάλαιο (Κεφ. 1 έως 6)
       { ch: 1, num: 1, hard: false, fn: buildCh1Ex1 },
       { ch: 1, num: 2, hard: false, fn: buildCh1Ex2 },
       { ch: 2, num: 1, hard: false, fn: buildCh2Ex1 },
@@ -2632,7 +3671,6 @@ export default function Epanalipsi1() {
       { ch: 5, num: 2, hard: false, fn: buildCh5Ex2 },
       { ch: 6, num: 1, hard: false, fn: buildCh6Ex1 },
       { ch: 6, num: 2, hard: false, fn: buildCh6Ex2 },
-      // 6 δύσκολα συνδυαστικά προβλήματα (1 από κάθε κεφάλαιο)
       { ch: 1, num: 1, hard: true, fn: buildProb1 },
       { ch: 2, num: 2, hard: true, fn: buildProb2 },
       { ch: 3, num: 3, hard: true, fn: buildProb3 },
@@ -2733,7 +3771,6 @@ export default function Epanalipsi1() {
       backUrl="/b-gymnasiou"
       backText={t.backNav}
       showAds={true}
-     
     >
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 8k:px-32 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
         {/* Header Banner */}

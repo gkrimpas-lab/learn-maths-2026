@@ -6,90 +6,160 @@ import Layout from '../../components/Layout';
 // --- Βοηθητική Συνάρτηση για Άτονα Κεφαλαία (διατηρεί το Β') ---
 function toCleanUppercase(str) {
   if (!str) return '';
-  return str
-    .replace(/Β'/g, '___BETA_PRIME___')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toUpperCase()
-    .replace(/___BETA_PRIME___/g, "Β'");
+  const parts = str.split(/(Β')/g);
+  return parts
+    .map((part) => {
+      if (part === "Β'") return "Β'";
+      return part.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    })
+    .join('');
 }
 
 // --- Custom Μαθηματικά Components ---
-const Angle = ({ children }) => (
-  <span className="inline-flex flex-col items-center leading-none align-baseline mx-0.5 select-none">
-    <svg
-      viewBox="0 0 18 7"
-      className="w-3.5 h-1.5 -mb-0.5 text-current overflow-visible"
-      aria-hidden="true"
-    >
-      <path
-        d="M 1.5 6 L 9 1.2 L 16.5 6"
+function Angle({ children, className = '' }) {
+  return (
+    <span className={`relative inline-block leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 12 6"
+        className="w-[0.75em] h-[0.36em] absolute -top-[0.38em] left-1/2 -translate-x-1/2 text-current overflow-visible pointer-events-none"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-    </svg>
-    <span className="leading-none">{children}</span>
-  </span>
-);
+        aria-hidden="true"
+      >
+        <path d="M1 5 L6 1 L11 5" />
+      </svg>
+      <span>{children}</span>
+    </span>
+  );
+}
 
-const Arc = ({ children }) => (
-  <span className="inline-flex flex-col items-center leading-none align-baseline mx-0.5 select-none">
-    <svg
-      viewBox="0 0 24 8"
-      className="w-5 h-2 -mb-0.5 text-current overflow-visible"
-      aria-hidden="true"
-    >
-      <path
-        d="M 1.5 6.5 Q 12 0.5 22.5 6.5"
+function Arc({ children, className = '' }) {
+  return (
+    <span className={`relative inline-block leading-none mx-[1px] ${className}`}>
+      <svg
+        viewBox="0 0 16 6"
+        className="w-[0.95em] h-[0.36em] absolute -top-[0.4em] left-1/2 -translate-x-1/2 text-current overflow-visible pointer-events-none"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinecap="round"
-      />
-    </svg>
-    <span className="leading-none">{children}</span>
-  </span>
-);
-
-const Frac = ({ num, den, className = '' }) => (
-  <span
-    className={`inline-flex flex-col items-center justify-center align-middle mx-1 text-center leading-tight ${className}`}
-  >
-    <span className="px-1 pb-0.5 border-b border-current font-semibold">
-      {num}
+        aria-hidden="true"
+      >
+        <path d="M1 5 Q8 0.5 15 5" />
+      </svg>
+      <span>{children}</span>
     </span>
-    <span className="px-1 pt-0.5 font-semibold">{den}</span>
-  </span>
-);
+  );
+}
 
-const Radical = ({ children, index = null }) => (
-  <span className="inline-flex items-stretch align-middle mx-0.5 select-none">
-    {index && (
-      <sup className="text-[0.65em] font-bold -mr-1.5 mt-0.5">{index}</sup>
-    )}
-    <svg
-      viewBox="0 0 14 24"
-      className="w-3 h-5 text-current shrink-0 overflow-visible"
-      preserveAspectRatio="none"
-      aria-hidden="true"
+function Frac({ num, den, className = '' }) {
+  return (
+    <span
+      className={`inline-flex flex-col text-center align-middle mx-0.5 sm:mx-1 font-mono text-[0.88em] leading-none shrink-0 max-w-full ${className}`}
     >
-      <path
-        d="M 1 14 L 4.5 14 L 7.5 22.5 L 13 1.5"
+      <span className="border-b border-current px-1 pb-0.5 whitespace-nowrap font-semibold">
+        {num}
+      </span>
+      <span className="px-1 pt-0.5 whitespace-nowrap font-semibold">
+        {den}
+      </span>
+    </span>
+  );
+}
+
+// Επαναχρησιμοποιήσιμο Component Τετραγωνικής Ρίζας (Auto-stretches για αριθμούς, δυνάμεις & κλάσματα)
+function Radical({ children, className = '' }) {
+  return (
+    <span
+      className={`inline-flex items-stretch align-middle font-mono shrink-0 select-none mx-0.5 ${className}`}
+    >
+      <svg
+        viewBox="0 0 14 24"
+        className="w-[0.6em] self-stretch shrink-0 text-current overflow-visible"
+        preserveAspectRatio="none"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        vectorEffect="non-scaling-stroke"
+        aria-hidden="true"
+      >
+        <path d="M 1 13.5 L 4 13.5 L 7.5 22.8 L 13.6 0.8" />
+      </svg>
+      <span className="border-t-[1.9px] border-current pl-0.5 pr-1 pt-0.5 pb-[1px] leading-none inline-flex items-center text-[0.95em] font-semibold">
+        {children}
+      </span>
+    </span>
+  );
+}
+
+function Pow({ base, exp, parens = false, className = '' }) {
+  return (
+    <span className={`inline-flex items-baseline font-mono leading-none mx-[1px] ${className}`}>
+      {parens ? (
+        <span className="inline-flex items-center">
+          <span>(</span>
+          {base}
+          <span>)</span>
+        </span>
+      ) : (
+        <span>{base}</span>
+      )}
+      <sup className="text-[0.72em] font-bold leading-none ml-[1px] -top-[0.45em] relative">
+        {exp}
+      </sup>
+    </span>
+  );
+}
+
+function SvgRadical({ x, y, text, color = '#0f172a', fontSize = 13, prefix = '' }) {
+  const charWidth = fontSize * 0.62;
+  const textWidth = Math.max(fontSize * 0.8, String(text).length * charWidth + 4);
+  const hookW = fontSize * 0.65;
+  const topY = y - fontSize * 0.88;
+  const botY = y + fontSize * 0.14;
+  const midY = y - fontSize * 0.35;
+
+  return (
+    <g>
+      {prefix && (
+        <text
+          x={x - 3}
+          y={y}
+          textAnchor="end"
+          fontSize={fontSize}
+          fontWeight="800"
+          fill={color}
+          fontFamily="monospace"
+        >
+          {prefix}
+        </text>
+      )}
+      <path
+        d={`M ${x} ${midY} L ${x + hookW * 0.32} ${midY} L ${x + hookW * 0.62} ${botY} L ${x + hookW} ${topY} L ${x + hookW + textWidth} ${topY}`}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-    <span className="border-t-2 border-current px-1 pt-0.5 leading-none inline-flex items-center">
-      {children}
-    </span>
-  </span>
-);
+      <text
+        x={x + hookW + 2}
+        y={y}
+        fontSize={fontSize}
+        fontWeight="800"
+        fill={color}
+        fontFamily="monospace"
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
 
 // --- Custom Slider με πλήρη υποστήριξη Mouse & Touch ---
 const CustomSlider = ({
@@ -215,10 +285,17 @@ export default function PragmatikoiTheoryPage() {
       hyp: Math.SQRT2,
       approx: '1,414...',
       approxEn: '1.414...',
-      formulaEl: '1² + 1² = 2 ⇒ ρ = √2',
-      formulaEn: '1² + 1² = 2 ⇒ ρ = √2',
-      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 1 και 1.',
-      descEn: 'Right triangle with perpendicular legs 1 and 1.',
+      formulaNode: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <Pow base="1" exp="2" />
+          <span>+</span>
+          <Pow base="1" exp="2" />
+          <span>= 2 ⇒ ρ =</span>
+          <Radical>2</Radical>
+        </span>
+      ),
+      descEl: <span>Ορθογώνιο τρίγωνο με κάθετες πλευρές 1 και 1.</span>,
+      descEn: <span>Right triangle with perpendicular legs 1 and 1.</span>,
     },
     sqrt3: {
       label: '3',
@@ -227,10 +304,29 @@ export default function PragmatikoiTheoryPage() {
       hyp: Math.sqrt(3),
       approx: '1,732...',
       approxEn: '1.732...',
-      formulaEl: '(√2)² + 1² = 3 ⇒ ρ = √3',
-      formulaEn: '(√2)² + 1² = 3 ⇒ ρ = √3',
-      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές √2 και 1.',
-      descEn: 'Right triangle with perpendicular legs √2 and 1.',
+      formulaNode: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <Pow base={<Radical>2</Radical>} exp="2" parens />
+          <span>+</span>
+          <Pow base="1" exp="2" />
+          <span>= 3 ⇒ ρ =</span>
+          <Radical>3</Radical>
+        </span>
+      ),
+      descEl: (
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Ορθογώνιο τρίγωνο με κάθετες πλευρές</span>
+          <Radical>2</Radical>
+          <span>και 1.</span>
+        </span>
+      ),
+      descEn: (
+        <span className="inline-flex flex-wrap items-center gap-x-1">
+          <span>Right triangle with perpendicular legs</span>
+          <Radical>2</Radical>
+          <span>and 1.</span>
+        </span>
+      ),
     },
     sqrt5: {
       label: '5',
@@ -239,10 +335,17 @@ export default function PragmatikoiTheoryPage() {
       hyp: Math.sqrt(5),
       approx: '2,236...',
       approxEn: '2.236...',
-      formulaEl: '2² + 1² = 5 ⇒ ρ = √5',
-      formulaEn: '2² + 1² = 5 ⇒ ρ = √5',
-      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 1.',
-      descEn: 'Right triangle with perpendicular legs 2 and 1.',
+      formulaNode: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <Pow base="2" exp="2" />
+          <span>+</span>
+          <Pow base="1" exp="2" />
+          <span>= 5 ⇒ ρ =</span>
+          <Radical>5</Radical>
+        </span>
+      ),
+      descEl: <span>Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 1.</span>,
+      descEn: <span>Right triangle with perpendicular legs 2 and 1.</span>,
     },
     sqrt8: {
       label: '8',
@@ -251,17 +354,26 @@ export default function PragmatikoiTheoryPage() {
       hyp: Math.sqrt(8),
       approx: '2,828...',
       approxEn: '2.828...',
-      formulaEl: '2² + 2² = 8 ⇒ ρ = √8 = 2√2',
-      formulaEn: '2² + 2² = 8 ⇒ ρ = √8 = 2√2',
-      descEl: 'Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 2.',
-      descEn: 'Right triangle with perpendicular legs 2 and 2.',
+      formulaNode: (
+        <span className="inline-flex flex-wrap items-baseline gap-x-1">
+          <Pow base="2" exp="2" />
+          <span>+</span>
+          <Pow base="2" exp="2" />
+          <span>= 8 ⇒ ρ =</span>
+          <Radical>8</Radical>
+          <span>= 2</span>
+          <Radical>2</Radical>
+        </span>
+      ),
+      descEl: <span>Ορθογώνιο τρίγωνο με κάθετες πλευρές 2 και 2.</span>,
+      descEn: <span>Right triangle with perpendicular legs 2 and 2.</span>,
     },
   };
 
   const currentRoot = rootConfigs[selectedRoot];
-  const originX = 80;
-  const originY = 230;
-  const unitPx = 135;
+  const originX = 75;
+  const originY = 295;
+  const unitPx = 120;
   const pointAX = originX + currentRoot.legA * unitPx;
   const pointAY = originY;
   const pointBX = pointAX;
@@ -276,13 +388,19 @@ export default function PragmatikoiTheoryPage() {
 
   // Δεδομένα για Tab 2 (Δυνάμεις)
   const baseConfigs = {
-    '2': { label: '2', numVal: 2, isFrac: false, isRoot: false },
-    '3': { label: '3', numVal: 3, isFrac: false, isRoot: false },
-    half: { label: '1/2', numVal: 0.5, isFrac: true, num: 1, den: 2, isRoot: false },
-    neg2: { label: '-2', numVal: -2, isFrac: false, isRoot: false },
-    sqrt2: { label: '√2', numVal: Math.SQRT2, isFrac: false, isRoot: true },
+    '2': { label: '2' },
+    '3': { label: '3' },
+    half: { label: '1/2' },
+    neg2: { label: '-2' },
+    sqrt2: { label: '√2' },
   };
   const currentBase = baseConfigs[baseChoice];
+
+  const renderBaseNode = () => {
+    if (baseChoice === 'half') return <Frac num="1" den="2" />;
+    if (baseChoice === 'sqrt2') return <Radical>2</Radical>;
+    return <span>{currentBase.label}</span>;
+  };
 
   const renderPowerResult = () => {
     const n = exponentVal;
@@ -290,9 +408,7 @@ export default function PragmatikoiTheoryPage() {
 
     if (n === 0) {
       return {
-        step: isEn
-          ? 'Any non-zero real number to the 0th power equals 1'
-          : 'Κάθε μη μηδενικός πραγματικός στη μηδενική ισούται με 1',
+        intermediateNode: null,
         valueNode: <span>1</span>,
         signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
       };
@@ -302,9 +418,7 @@ export default function PragmatikoiTheoryPage() {
       const b = Number(baseChoice);
       const powVal = Math.pow(b, absN);
       return {
-        step: n > 0 ? `${b} · `.repeat(n).slice(0, -3) : null,
-        isNegExp: n < 0,
-        negDen: `${b}^${absN}`,
+        intermediateNode: n < 0 ? <Frac num="1" den={<Pow base={String(b)} exp={String(absN)} />} /> : null,
         valueNode: n > 0 ? <span>{powVal}</span> : <Frac num="1" den={String(powVal)} />,
         signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
       };
@@ -313,8 +427,16 @@ export default function PragmatikoiTheoryPage() {
     if (baseChoice === 'half') {
       const powVal = Math.pow(2, absN);
       return {
-        isNegExp: n < 0,
-        negDen: `(1/2)^${absN}`,
+        intermediateNode:
+          n < 0 ? (
+            <span className="inline-flex items-center gap-1">
+              <Pow base={<Frac num="2" den="1" />} exp={String(absN)} parens />
+              <span>=</span>
+              <Pow base="2" exp={String(absN)} />
+            </span>
+          ) : (
+            <Frac num={<Pow base="1" exp={String(absN)} />} den={<Pow base="2" exp={String(absN)} />} />
+          ),
         valueNode: n > 0 ? <Frac num="1" den={String(powVal)} /> : <span>{powVal}</span>,
         signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
       };
@@ -325,15 +447,15 @@ export default function PragmatikoiTheoryPage() {
       const isEven = absN % 2 === 0;
       const signedVal = isEven ? powVal : -powVal;
       return {
-        isNegExp: n < 0,
-        negDen: `(-2)^${absN}`,
+        intermediateNode:
+          n < 0 ? <Frac num="1" den={<Pow base="-2" exp={String(absN)} parens />} /> : null,
         valueNode:
           n > 0 ? (
             <span>{signedVal}</span>
           ) : isEven ? (
             <Frac num="1" den={String(powVal)} />
           ) : (
-            <span>
+            <span className="inline-flex items-center">
               -<Frac num="1" den={String(powVal)} />
             </span>
           ),
@@ -357,15 +479,15 @@ export default function PragmatikoiTheoryPage() {
       ) : intPart === 1 ? (
         <Radical>2</Radical>
       ) : (
-        <span>
+        <span className="inline-flex items-center">
           {intPart}
           <Radical>2</Radical>
         </span>
       );
 
     return {
-      isNegExp: n < 0,
-      negDen: `(√2)^${absN}`,
+      intermediateNode:
+        n < 0 ? <Frac num="1" den={<Pow base={<Radical>2</Radical>} exp={String(absN)} parens />} /> : null,
       valueNode: n > 0 ? posDisplay : <Frac num="1" den={posDisplay} />,
       signLabel: isEn ? 'Positive (+)' : 'Θετικό (+)',
     };
@@ -377,24 +499,14 @@ export default function PragmatikoiTheoryPage() {
     ? 'Chapter 6: Real Numbers & Integer Powers | 8th Grade'
     : "Κεφάλαιο 6: Πραγματικοί Αριθμοί & Δυνάμεις | Β' Γυμνασίου";
 
-  // Κουμπιά πλοήγησης πάνω δεξιά (Ασκήσεις + Επιστροφή στη Β' Γυμνασίου όπως στην εικόνα)
   const actionButton = (
-    <div className="flex items-center gap-2">
-      <Link
-        href="/b-gymnasiou/06-pragmatikoi-ask"
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-sm transition-colors"
-      >
-        <span aria-hidden="true">🎯</span>
-        <span>{toCleanUppercase(isEn ? 'EXERCISES' : 'ΑΣΚΗΣΕΙΣ')}</span>
-      </Link>
-      <Link
-        href="/b-gymnasiou"
-        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm transition-colors"
-      >
-        <span aria-hidden="true">🔙</span>
-        <span>{isEn ? '8th Grade' : "Β' Γυμνασίου"}</span>
-      </Link>
-    </div>
+    <Link
+      href="/b-gymnasiou/06-pragmatikoi-ask"
+      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs sm:text-sm shadow-sm transition-colors"
+    >
+      <span aria-hidden="true">🎯</span>
+      <span>{toCleanUppercase(isEn ? 'EXERCISES' : 'ΑΣΚΗΣΕΙΣ')}</span>
+    </Link>
   );
 
   return (
@@ -402,7 +514,7 @@ export default function PragmatikoiTheoryPage() {
       title={pageTitle}
       actionButton={actionButton}
       backUrl="/b-gymnasiou"
-      backLabel={isEn ? '8th Grade' : "Β' Γυμνασίου"}
+      backText={isEn ? 'Grade 8' : "Β' Γυμνασίου"}
     >
       <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] 8k:max-w-[5120px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 8k:px-32 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border">
         {/* 1. HERO BANNER */}
@@ -506,7 +618,6 @@ export default function PragmatikoiTheoryPage() {
               </div>
             </div>
 
-            {/* Εποπτικό SVG Διάγραμμα Συνόλων N ⊂ Z ⊂ Q ⊂ R */}
             <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3">
               <svg
                 viewBox="0 0 460 190"
@@ -538,13 +649,13 @@ export default function PragmatikoiTheoryPage() {
                 <text x="322" y="70" fontSize="13" fontWeight="800" fill="#92400e">
                   {isEn ? 'Irrational (𝕀)' : 'Άρρητοι (𝕀)'}
                 </text>
-                <text x="325" y="98" fontSize="14" fontWeight="700" fill="#78350f">
-                  √2 ≈ 1,414...
-                </text>
-                <text x="325" y="122" fontSize="14" fontWeight="700" fill="#78350f">
-                  √3 ≈ 1,732...
-                </text>
-                <text x="325" y="146" fontSize="14" fontWeight="700" fill="#78350f">
+                <SvgRadical x={324} y={98} text="2" color="#78350f" fontSize={13} />
+                <text x="350" y="98" fontSize="13" fontWeight="700" fill="#78350f">≈ 1,414...</text>
+
+                <SvgRadical x={324} y={122} text="3" color="#78350f" fontSize={13} />
+                <text x="350" y="122" fontSize="13" fontWeight="700" fill="#78350f">≈ 1,732...</text>
+
+                <text x="325" y="146" fontSize="13" fontWeight="700" fill="#78350f">
                   π ≈ 3,141...
                 </text>
               </svg>
@@ -587,32 +698,45 @@ export default function PragmatikoiTheoryPage() {
 
               <p className="text-slate-700 text-xs sm:text-sm leading-relaxed mb-4">
                 {isEn ? (
-                  <>
-                    To locate <Radical>2</Radical> on the real axis, we construct a right triangle with
-                    legs <span className="font-semibold">1</span> and <span className="font-semibold">1</span>.
-                    By the Pythagorean Theorem, the hypotenuse is{' '}
-                    <span className="font-semibold">
-                      ρ = <Radical>1² + 1²</Radical> = <Radical>2</Radical>
-                    </span>
-                    . With a compass centered at O and radius <span className="font-semibold">ρ</span>, we
-                    mark <Radical>2</Radical> on the line.
-                  </>
+                  <span className="inline-flex flex-wrap items-baseline gap-x-1">
+                    <span>To locate</span>
+                    <Radical>2</Radical>
+                    <span>on the real axis, we construct a right triangle with legs 1 and 1. By the Pythagorean Theorem,</span>
+                    <span>ρ =</span>
+                    <Radical>
+                      <span className="inline-flex items-baseline">
+                        <Pow base="1" exp="2" />
+                        <span>+</span>
+                        <Pow base="1" exp="2" />
+                      </span>
+                    </Radical>
+                    <span>=</span>
+                    <Radical>2</Radical>
+                    <span>. With a compass of radius ρ, we mark</span>
+                    <Radical>2</Radical>
+                    <span>on ℝ.</span>
+                  </span>
                 ) : (
-                  <>
-                    Για να τοποθετήσουμε τον <Radical>2</Radical> στον άξονα ℝ, κατασκευάζουμε ορθογώνιο
-                    τρίγωνο με κάθετες <span className="font-semibold">1</span> και{' '}
-                    <span className="font-semibold">1</span>. Από το Πυθαγόρειο Θεώρημα η υποτείνουσα είναι{' '}
-                    <span className="font-semibold">
-                      ρ = <Radical>1² + 1²</Radical> = <Radical>2</Radical>
-                    </span>
-                    . Με διαβήτη κέντρου Ο και ακτίνας <span className="font-semibold">ρ</span>, μεταφέρουμε
-                    το μήκος πάνω στον άξονα.
-                  </>
+                  <span className="inline-flex flex-wrap items-baseline gap-x-1">
+                    <span>Για να τοποθετήσουμε τον</span>
+                    <Radical>2</Radical>
+                    <span>στον άξονα ℝ, κατασκευάζουμε ορθογώνιο τρίγωνο με κάθετες 1 και 1. Από το Πυθαγόρειο Θεώρημα:</span>
+                    <span>ρ =</span>
+                    <Radical>
+                      <span className="inline-flex items-baseline">
+                        <Pow base="1" exp="2" />
+                        <span>+</span>
+                        <Pow base="1" exp="2" />
+                      </span>
+                    </Radical>
+                    <span>=</span>
+                    <Radical>2</Radical>
+                    <span>. Με διαβήτη κέντρου Ο και ακτίνας ρ, μεταφέρουμε το μήκος στον άξονα.</span>
+                  </span>
                 )}
               </p>
             </div>
 
-            {/* Εποπτικό SVG Κατασκευής √2 με ακτίνα ρ */}
             <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3">
               <svg
                 viewBox="0 0 460 190"
@@ -638,7 +762,8 @@ export default function PragmatikoiTheoryPage() {
 
                 <text x="135" y="143" fontSize="13" fontWeight="700" fill="#065f46">1</text>
                 <text x="208" y="95" fontSize="13" fontWeight="700" fill="#065f46">1</text>
-                <text x="108" y="82" fontSize="14" fontWeight="800" fill="#4f46e5">ρ = √2</text>
+
+                <SvgRadical x={132} y={82} text="2" prefix="ρ =" color="#4f46e5" fontSize={14} />
 
                 <path
                   d="M 200 30 A 169.7 169.7 0 0 1 249.7 150"
@@ -648,7 +773,7 @@ export default function PragmatikoiTheoryPage() {
                   strokeDasharray="6 4"
                 />
                 <circle cx="249.7" cy="150" r="5" fill="#dc2626" />
-                <text x="242" y="174" fontSize="14" fontWeight="800" fill="#dc2626">√2</text>
+                <SvgRadical x={240} y={175} text="2" color="#dc2626" fontSize={14} />
               </svg>
             </div>
           </article>
@@ -678,8 +803,9 @@ export default function PragmatikoiTheoryPage() {
                   <span className="font-bold text-slate-800 text-sm sm:text-base">
                     {isEn ? '1. Positive exponent (ν > 0):' : '1. Θετικός εκθέτης (ν > 0):'}
                   </span>
-                  <span className="font-mono font-bold text-indigo-700 text-sm sm:text-base">
-                    α<sup>ν</sup> = α · α · ... · α ({isEn ? 'ν factors' : 'ν παράγοντες'})
+                  <span className="font-bold text-indigo-700 text-sm sm:text-base inline-flex items-baseline gap-1">
+                    <Pow base="α" exp="ν" />
+                    <span>= α · α · ... · α ({isEn ? 'ν factors' : 'ν παράγοντες'})</span>
                   </span>
                 </div>
 
@@ -687,8 +813,9 @@ export default function PragmatikoiTheoryPage() {
                   <span className="font-bold text-slate-800 text-sm sm:text-base">
                     {isEn ? '2. Zero exponent (α ≠ 0):' : '2. Μηδενικός εκθέτης (α ≠ 0):'}
                   </span>
-                  <span className="font-mono font-bold text-emerald-700 text-base sm:text-lg">
-                    α<sup>0</sup> = 1
+                  <span className="font-bold text-emerald-700 text-base sm:text-lg inline-flex items-baseline gap-1">
+                    <Pow base="α" exp="0" />
+                    <span>= 1</span>
                   </span>
                 </div>
 
@@ -696,8 +823,10 @@ export default function PragmatikoiTheoryPage() {
                   <span className="font-bold text-amber-950 text-sm sm:text-base">
                     {isEn ? '3. Negative exponent (α ≠ 0):' : '3. Αρνητικός εκθέτης (α ≠ 0):'}
                   </span>
-                  <span className="font-bold text-amber-900 text-base sm:text-lg inline-flex items-center">
-                    α<sup>-ν</sup> = <Frac num="1" den={<span>α<sup>ν</sup></span>} />
+                  <span className="font-bold text-amber-900 text-base sm:text-lg inline-flex items-center gap-1">
+                    <Pow base="α" exp="-ν" />
+                    <span>=</span>
+                    <Frac num="1" den={<Pow base="α" exp="ν" />} />
                   </span>
                 </div>
               </div>
@@ -707,8 +836,10 @@ export default function PragmatikoiTheoryPage() {
               <span className="font-bold text-slate-800">
                 {isEn ? 'Special Case (Fraction):' : 'Ειδική περίπτωση κλάσματος:'}
               </span>
-              <span className="inline-flex items-center font-semibold text-slate-900">
-                (<Frac num="α" den="β" />)<sup>-ν</sup> = (<Frac num="β" den="α" />)<sup>ν</sup>
+              <span className="inline-flex items-center gap-1 font-semibold text-slate-900">
+                <Pow base={<Frac num="α" den="β" />} exp="-ν" parens />
+                <span>=</span>
+                <Pow base={<Frac num="β" den="α" />} exp="ν" parens />
               </span>
               <span>(α, β ≠ 0)</span>
             </div>
@@ -739,8 +870,12 @@ export default function PragmatikoiTheoryPage() {
                   <div className="text-xs font-bold text-purple-800 mb-1">
                     {isEn ? 'Product of same base' : 'Γινόμενο ίδιων βάσεων'}
                   </div>
-                  <div className="font-bold text-slate-900">
-                    α<sup>μ</sup> · α<sup>ν</sup> = α<sup>μ + ν</sup>
+                  <div className="font-bold text-slate-900 inline-flex items-baseline gap-1">
+                    <Pow base="α" exp="μ" />
+                    <span>·</span>
+                    <Pow base="α" exp="ν" />
+                    <span>=</span>
+                    <Pow base="α" exp="μ + ν" />
                   </div>
                 </div>
 
@@ -748,8 +883,10 @@ export default function PragmatikoiTheoryPage() {
                   <div className="text-xs font-bold text-purple-800 mb-1">
                     {isEn ? 'Quotient of same base' : 'Πηλίκο ίδιων βάσεων'}
                   </div>
-                  <div className="font-bold text-slate-900 inline-flex items-center">
-                    <Frac num={<span>α<sup>μ</sup></span>} den={<span>α<sup>ν</sup></span>} /> = α<sup>μ - ν</sup>
+                  <div className="font-bold text-slate-900 inline-flex items-center gap-1">
+                    <Frac num={<Pow base="α" exp="μ" />} den={<Pow base="α" exp="ν" />} />
+                    <span>=</span>
+                    <Pow base="α" exp="μ - ν" />
                   </div>
                 </div>
 
@@ -757,8 +894,10 @@ export default function PragmatikoiTheoryPage() {
                   <div className="text-xs font-bold text-purple-800 mb-1">
                     {isEn ? 'Power of a power' : 'Δύναμη δύναμης'}
                   </div>
-                  <div className="font-bold text-slate-900">
-                    (α<sup>μ</sup>)<sup>ν</sup> = α<sup>μ · ν</sup>
+                  <div className="font-bold text-slate-900 inline-flex items-baseline gap-1">
+                    <Pow base={<Pow base="α" exp="μ" />} exp="ν" parens />
+                    <span>=</span>
+                    <Pow base="α" exp="μ · ν" />
                   </div>
                 </div>
 
@@ -766,11 +905,19 @@ export default function PragmatikoiTheoryPage() {
                   <div className="text-xs font-bold text-purple-800 mb-1">
                     {isEn ? 'Power of product / quotient' : 'Δύναμη γινομένου / πηλίκου'}
                   </div>
-                  <div className="font-bold text-slate-900 flex flex-wrap items-center gap-x-2">
-                    <span>(α · β)<sup>ν</sup> = α<sup>ν</sup> · β<sup>ν</sup></span>
+                  <div className="font-bold text-slate-900 flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="inline-flex items-baseline gap-1">
+                      <Pow base="α · β" exp="ν" parens />
+                      <span>=</span>
+                      <Pow base="α" exp="ν" />
+                      <span>·</span>
+                      <Pow base="β" exp="ν" />
+                    </span>
                     <span>|</span>
-                    <span className="inline-flex items-center">
-                      (<Frac num="α" den="β" />)<sup>ν</sup> = <Frac num={<span>α<sup>ν</sup></span>} den={<span>β<sup>ν</sup></span>} />
+                    <span className="inline-flex items-center gap-1">
+                      <Pow base={<Frac num="α" den="β" />} exp="ν" parens />
+                      <span>=</span>
+                      <Frac num={<Pow base="α" exp="ν" />} den={<Pow base="β" exp="ν" />} />
                     </span>
                   </div>
                 </div>
@@ -779,15 +926,17 @@ export default function PragmatikoiTheoryPage() {
 
             <div className="mt-4 pt-3 border-t border-slate-100 text-xs sm:text-sm text-slate-600">
               {isEn ? (
-                <>
-                  <strong>Sign Rule:</strong> If α &gt; 0, then α<sup>ν</sup> &gt; 0 always. If α &lt; 0,
-                  then α<sup>ν</sup> &gt; 0 when ν is even and α<sup>ν</sup> &lt; 0 when ν is odd.
-                </>
+                <span className="inline-flex flex-wrap items-baseline gap-x-1">
+                  <strong>Sign Rule:</strong> If α &gt; 0, then <Pow base="α" exp="ν" /> &gt; 0 always.
+                  If α &lt; 0, then <Pow base="α" exp="ν" /> &gt; 0 when ν is even and{' '}
+                  <Pow base="α" exp="ν" /> &lt; 0 when ν is odd.
+                </span>
               ) : (
-                <>
-                  <strong>Πρόσημο δύναμης:</strong> Αν α &gt; 0, τότε α<sup>ν</sup> &gt; 0 για κάθε ν ∈ ℤ.
-                  Αν α &lt; 0, τότε α<sup>ν</sup> &gt; 0 για ν άρτιο και α<sup>ν</sup> &lt; 0 για ν περιττό.
-                </>
+                <span className="inline-flex flex-wrap items-baseline gap-x-1">
+                  <strong>Πρόσημο δύναμης:</strong> Αν α &gt; 0, τότε <Pow base="α" exp="ν" /> &gt; 0 για
+                  κάθε ν ∈ ℤ. Αν α &lt; 0, τότε <Pow base="α" exp="ν" /> &gt; 0 για ν άρτιο και{' '}
+                  <Pow base="α" exp="ν" /> &lt; 0 για ν περιττό.
+                </span>
               )}
             </div>
           </article>
@@ -833,7 +982,18 @@ export default function PragmatikoiTheoryPage() {
                     : 'text-slate-700 hover:bg-white/70'
                 }`}
               >
-                {isEn ? '2. Powers α^ν Explorer' : '2. Εξερευνητής Δυνάμεων α^ν'}
+                {isEn ? (
+                  <span className="inline-flex items-baseline gap-1">
+                    <span>2. Powers</span>
+                    <Pow base="α" exp="ν" />
+                    <span>Explorer</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-baseline gap-1">
+                    <span>2. Εξερευνητής Δυνάμεων</span>
+                    <Pow base="α" exp="ν" />
+                  </span>
+                )}
               </button>
             </div>
           </div>
@@ -856,7 +1016,7 @@ export default function PragmatikoiTheoryPage() {
                           setSelectedRoot(key);
                           setCompassProgress(75);
                         }}
-                        className={`py-2.5 px-2 rounded-xl font-black text-sm sm:text-base border-2 transition-all ${
+                        className={`py-2.5 px-2 rounded-xl font-black text-sm sm:text-base border-2 transition-all flex items-center justify-center ${
                           selectedRoot === key
                             ? 'border-indigo-600 bg-indigo-50 text-indigo-800 shadow-sm'
                             : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300'
@@ -892,30 +1052,30 @@ export default function PragmatikoiTheoryPage() {
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 space-y-1.5">
+                <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 space-y-2">
                   <div className="text-xs font-extrabold uppercase tracking-wider text-indigo-700">
                     {isEn ? 'Pythagorean Construction' : 'Πυθαγόρεια Κατασκευή'}
                   </div>
-                  <p className="text-sm text-slate-800 font-medium">
+                  <div className="text-sm text-slate-800 font-medium">
                     {isEn ? currentRoot.descEn : currentRoot.descEl}
-                  </p>
-                  <p className="text-base font-black text-indigo-950">
-                    {isEn ? currentRoot.formulaEn : currentRoot.formulaEl}
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-700">
-                    {isEn ? 'Decimal approximation:' : 'Δεκαδική προσέγγιση:'}{' '}
-                    <span className="font-bold text-emerald-700">
+                  </div>
+                  <div className="text-base font-black text-indigo-950">
+                    {currentRoot.formulaNode}
+                  </div>
+                  <div className="text-xs sm:text-sm text-slate-700 flex flex-wrap items-center gap-x-1">
+                    <span>{isEn ? 'Decimal approximation:' : 'Δεκαδική προσέγγιση:'}</span>
+                    <span className="font-bold text-emerald-700 inline-flex items-center">
                       <Radical>{currentRoot.label}</Radical> ≈{' '}
                       {isEn ? currentRoot.approxEn : currentRoot.approx}
                     </span>
-                  </p>
+                  </div>
                 </div>
               </div>
 
               <div className="lg:col-span-7 min-w-0">
                 <div className="w-full overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-3 sm:p-4">
                   <svg
-                    viewBox="0 0 560 310"
+                    viewBox="0 0 560 370"
                     className="w-full h-auto max-w-full block"
                     role="img"
                     aria-label="Interactive compass construction on real number line"
@@ -928,7 +1088,7 @@ export default function PragmatikoiTheoryPage() {
                             x1={gx}
                             y1="25"
                             x2={gx}
-                            y2="255"
+                            y2="320"
                             stroke="#e2e8f0"
                             strokeWidth="1.5"
                             strokeDasharray="4 4"
@@ -950,17 +1110,17 @@ export default function PragmatikoiTheoryPage() {
                     <line
                       x1="35"
                       y1={originY}
-                      x2="525"
+                      x2="515"
                       y2={originY}
                       stroke="#1e293b"
                       strokeWidth="3"
                     />
                     <polygon
-                      points={`525,${originY} 513,${originY - 6} 513,${originY + 6}`}
+                      points={`515,${originY} 503,${originY - 6} 503,${originY + 6}`}
                       fill="#1e293b"
                     />
                     <text
-                      x="532"
+                      x="522"
                       y={originY + 5}
                       fontSize="16"
                       fontWeight="900"
@@ -984,15 +1144,26 @@ export default function PragmatikoiTheoryPage() {
                       strokeWidth="2"
                     />
 
-                    <text
-                      x={(originX + pointAX) / 2 - 12}
-                      y={originY + 42}
-                      fontSize="13"
-                      fontWeight="800"
-                      fill="#3730a3"
-                    >
-                      {selectedRoot === 'sqrt3' ? '√2' : currentRoot.legA}
-                    </text>
+                    {selectedRoot === 'sqrt3' ? (
+                      <SvgRadical
+                        x={(originX + pointAX) / 2 - 12}
+                        y={originY + 44}
+                        text="2"
+                        color="#3730a3"
+                        fontSize={13}
+                      />
+                    ) : (
+                      <text
+                        x={(originX + pointAX) / 2 - 5}
+                        y={originY + 42}
+                        fontSize="13"
+                        fontWeight="800"
+                        fill="#3730a3"
+                      >
+                        {currentRoot.legA}
+                      </text>
+                    )}
+
                     <text
                       x={pointAX + 10}
                       y={(pointAY + pointBY) / 2 + 4}
@@ -1024,15 +1195,14 @@ export default function PragmatikoiTheoryPage() {
                     <circle cx={originX} cy={originY} r="5" fill="#059669" />
                     <circle cx={tipX} cy={tipY} r="6" fill="#dc2626" />
 
-                    <text
-                      x={(originX + tipX) / 2 - 22}
+                    <SvgRadical
+                      x={(originX + tipX) / 2 + 8}
                       y={(originY + tipY) / 2 - 12}
-                      fontSize="14"
-                      fontWeight="900"
-                      fill="#047857"
-                    >
-                      ρ = √{currentRoot.label}
-                    </text>
+                      text={currentRoot.label}
+                      prefix="ρ ="
+                      color="#047857"
+                      fontSize={14}
+                    />
 
                     {compassProgress >= 95 && (
                       <g>
@@ -1041,21 +1211,19 @@ export default function PragmatikoiTheoryPage() {
                           x={landedX - 24}
                           y={originY + 32}
                           width="48"
-                          height="24"
+                          height="26"
                           rx="6"
                           fill="#fee2e2"
                           stroke="#dc2626"
                           strokeWidth="1.5"
                         />
-                        <text
-                          x={landedX - 14}
-                          y={originY + 49}
-                          fontSize="14"
-                          fontWeight="900"
-                          fill="#b91c1c"
-                        >
-                          √{currentRoot.label}
-                        </text>
+                        <SvgRadical
+                          x={landedX - 11}
+                          y={originY + 50}
+                          text={currentRoot.label}
+                          color="#b91c1c"
+                          fontSize={14}
+                        />
                       </g>
                     )}
                   </svg>
@@ -1063,6 +1231,7 @@ export default function PragmatikoiTheoryPage() {
               </div>
             </div>
           ) : (
+            /* TAB 2: ΕΞΕΡΕΥΝΗΤΗΣ ΔΥΝΑΜΕΩΝ */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6 items-center">
               <div className="lg:col-span-5 space-y-5 min-w-0">
                 <div>
@@ -1133,34 +1302,15 @@ export default function PragmatikoiTheoryPage() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 text-xl sm:text-3xl font-black">
-                    <span className="inline-flex items-center">
-                      ({baseChoice === 'half' ? (
-                        <Frac num="1" den="2" />
-                      ) : baseChoice === 'sqrt2' ? (
-                        <Radical>2</Radical>
-                      ) : (
-                        currentBase.label
-                      )})<sup>{exponentVal}</sup>
-                    </span>
+                    <Pow base={renderBaseNode()} exp={String(exponentVal)} parens />
 
                     <span className="text-indigo-300">=</span>
 
-                    {powerInfo.isNegExp && (
+                    {powerInfo.intermediateNode && (
                       <>
-                        <Frac
-                          num="1"
-                          den={
-                            <span>
-                              ({baseChoice === 'half' ? (
-                                <Frac num="1" den="2" />
-                              ) : baseChoice === 'sqrt2' ? (
-                                <Radical>2</Radical>
-                              ) : (
-                                currentBase.label
-                              )})<sup>{Math.abs(exponentVal)}</sup>
-                            </span>
-                          }
-                        />
+                        <span className="inline-flex items-center text-indigo-100">
+                          {powerInfo.intermediateNode}
+                        </span>
                         <span className="text-indigo-300">=</span>
                       </>
                     )}
@@ -1170,19 +1320,71 @@ export default function PragmatikoiTheoryPage() {
                     </span>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-indigo-200 leading-relaxed">
-                    {exponentVal < 0
-                      ? isEn
-                        ? 'Negative exponent rule: we invert the base (1 / α^|ν|) and turn the exponent positive.'
-                        : 'Κανόνας αρνητικού εκθέτη: αντιστρέφουμε τη βάση (1 / α^|ν|) και ο εκθέτης γίνεται θετικός.'
-                      : exponentVal === 0
-                      ? isEn
-                        ? 'Zero exponent rule: any non-zero real number raised to 0 equals 1.'
-                        : 'Κανόνας μηδενικού εκθέτη: κάθε μη μηδενικός πραγματικός υψωμένος στη 0 ισούται με 1.'
-                      : isEn
-                      ? 'Positive exponent rule: multiply the base by itself ν times.'
-                      : 'Κανόνας θετικού εκθέτη: πολλαπλασιάζουμε τη βάση με τον εαυτό της ν φορές.'}
-                  </p>
+                  <div className="text-xs sm:text-sm text-indigo-200 leading-relaxed flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    {exponentVal < 0 ? (
+                      baseChoice === 'half' ? (
+                        isEn ? (
+                          <>
+                            <span>Negative fraction exponent rule: we invert the fraction</span>
+                            <span className="inline-flex items-center gap-1 font-bold text-white">
+                              <Pow base={<Frac num="α" den="β" />} exp="-ν" parens />
+                              <span>=</span>
+                              <Pow base={<Frac num="β" den="α" />} exp="ν" parens />
+                            </span>
+                            <span>and make the exponent positive.</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Κανόνας αρνητικού εκθέτη κλάσματος: αντιστρέφουμε το κλάσμα</span>
+                            <span className="inline-flex items-center gap-1 font-bold text-white">
+                              <Pow base={<Frac num="α" den="β" />} exp="-ν" parens />
+                              <span>=</span>
+                              <Pow base={<Frac num="β" den="α" />} exp="ν" parens />
+                            </span>
+                            <span>και ο εκθέτης γίνεται θετικός.</span>
+                          </>
+                        )
+                      ) : isEn ? (
+                        <>
+                          <span>Negative exponent rule: we invert the base</span>
+                          <span className="inline-flex items-center gap-1 font-bold text-white">
+                            <Pow base="α" exp="-ν" />
+                            <span>=</span>
+                            <Frac num="1" den={<Pow base="α" exp="ν" />} />
+                          </span>
+                          <span>and turn the exponent positive.</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Κανόνας αρνητικού εκθέτη: αντιστρέφουμε τη βάση</span>
+                          <span className="inline-flex items-center gap-1 font-bold text-white">
+                            <Pow base="α" exp="-ν" />
+                            <span>=</span>
+                            <Frac num="1" den={<Pow base="α" exp="ν" />} />
+                          </span>
+                          <span>και ο εκθέτης γίνεται θετικός.</span>
+                        </>
+                      )
+                    ) : exponentVal === 0 ? (
+                      isEn ? (
+                        <span className="inline-flex items-baseline gap-1">
+                          <span>Zero exponent rule: any non-zero real number raised to 0 equals 1 (</span>
+                          <Pow base="α" exp="0" />
+                          <span>= 1).</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-baseline gap-1">
+                          <span>Κανόνας μηδενικού εκθέτη: κάθε μη μηδενικός πραγματικός υψωμένος στη 0 ισούται με 1 (</span>
+                          <Pow base="α" exp="0" />
+                          <span>= 1).</span>
+                        </span>
+                      )
+                    ) : isEn ? (
+                      <span>Positive exponent rule: multiply the base by itself ν times.</span>
+                    ) : (
+                      <span>Κανόνας θετικού εκθέτη: πολλαπλασιάζουμε τη βάση με τον εαυτό της ν φορές.</span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1243,26 +1445,23 @@ export default function PragmatikoiTheoryPage() {
                     <text x="58" y="88" fontSize="14" fontWeight="800" fill="#065f46">
                       Ε = 18 m²
                     </text>
-                    <text x="65" y="158" fontSize="13" fontWeight="800" fill="#0f172a">
-                      α = √18
-                    </text>
+                    <SvgRadical x={86} y={162} text="18" prefix="α =" color="#0f172a" fontSize={13} />
 
                     <line x1="175" y1="115" x2="345" y2="115" stroke="#334155" strokeWidth="2.5" />
                     <polygon points="345,115 336,110 336,120" fill="#334155" />
 
                     <circle cx="205" cy="115" r="4.5" fill="#0f172a" />
-                    <text x="188" y="138" fontSize="12" fontWeight="700" fill="#0f172a">
-                      4 (√16)
-                    </text>
+                    <SvgRadical x={200} y={138} text="16" prefix="4 (" color="#0f172a" fontSize={11} />
+                    <text x="225" y="138" fontSize="11" fontWeight="800" fill="#0f172a">)</text>
 
                     <circle cx="315" cy="115" r="4.5" fill="#0f172a" />
-                    <text x="298" y="138" fontSize="12" fontWeight="700" fill="#0f172a">
-                      5 (√25)
-                    </text>
+                    <SvgRadical x={306} y={138} text="25" prefix="5 (" color="#0f172a" fontSize={11} />
+                    <text x="331" y="138" fontSize="11" fontWeight="800" fill="#0f172a">)</text>
 
                     <circle cx="230" cy="115" r="6" fill="#dc2626" />
-                    <text x="215" y="96" fontSize="13" fontWeight="900" fill="#dc2626">
-                      √18 ≈ 4,24
+                    <SvgRadical x={202} y={96} text="18" color="#dc2626" fontSize={12} />
+                    <text x="228" y="96" fontSize="12" fontWeight="900" fill="#dc2626">
+                      ≈ 4,24
                     </text>
                   </svg>
                 </div>
@@ -1283,8 +1482,10 @@ export default function PragmatikoiTheoryPage() {
                           {isEn ? '1. Side length' : '1. Μήκος πλευράς'}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                            <span>Ε = α² = 18 ⇒ α =</span>
+                          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+                            <span>Ε =</span>
+                            <Pow base="α" exp="2" />
+                            <span>= 18 ⇒ α =</span>
                             <Radical>18</Radical>
                             <span>=</span>
                             <Radical>9 · 2</Radical>
@@ -1339,8 +1540,10 @@ export default function PragmatikoiTheoryPage() {
                     <div className="font-extrabold text-indigo-800 mb-1">
                       {isEn ? '1. Side length' : '1. Μήκος πλευράς'}
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                      <span>Ε = α² = 18 ⇒ α =</span>
+                    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+                      <span>Ε =</span>
+                      <Pow base="α" exp="2" />
+                      <span>= 18 ⇒ α =</span>
                       <Radical>18</Radical>
                       <span>= 3</span>
                       <Radical>2</Radical>
@@ -1373,8 +1576,9 @@ export default function PragmatikoiTheoryPage() {
 
                 <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 font-bold text-sm sm:text-base flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span>{isEn ? 'Final Answer:' : 'Τελική Απάντηση:'}</span>
-                  <span>α = 3</span>
-                  <Radical>2</Radical>
+                  <span className="inline-flex items-center">
+                    α = 3<Radical>2</Radical>
+                  </span>
                   <span>
                     m ({isEn ? 'irrational, between 4 and 5' : 'άρρητος, ανάμεσα στο 4 και το 5'})
                   </span>
@@ -1394,41 +1598,69 @@ export default function PragmatikoiTheoryPage() {
                   ? 'Simplify and calculate the value of the expression:'
                   : 'Να απλοποιήσετε και να υπολογίσετε την τιμή της παράστασης:'}
               </span>
-              <span className="inline-flex items-center font-black text-indigo-700">
-                Α = <Frac num={<span>3<sup>-2</sup> · (3<sup>4</sup>)<sup>2</sup></span>} den={<span>3<sup>5</sup></span>} /> + (<Frac num="1" den="2" />)<sup>-3</sup>
+              <span className="inline-flex items-center gap-1 font-black text-indigo-700">
+                <span>Α =</span>
+                <Frac
+                  num={
+                    <span className="inline-flex items-baseline gap-1">
+                      <Pow base="3" exp="-2" />
+                      <span>·</span>
+                      <Pow base={<Pow base="3" exp="4" />} exp="2" parens />
+                    </span>
+                  }
+                  den={<Pow base="3" exp="5" />}
+                />
+                <span>+</span>
+                <Pow base={<Frac num="1" den="2" />} exp="-3" parens />
               </span>
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
               <div className="md:col-span-5 min-w-0">
-                <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
-                  <svg
-                    viewBox="0 0 360 210"
-                    className="w-full h-auto max-w-full block"
-                    role="img"
-                    aria-label="Exponent laws flowchart for Problem 2"
-                  >
-                    <rect x="15" y="15" width="330" height="50" rx="12" fill="#eef2ff" stroke="#4f46e5" strokeWidth="2" />
-                    <text x="30" y="45" fontSize="13" fontWeight="800" fill="#312e81">
-                      1) (3⁴)² = 3⁴·² = 3⁸
-                    </text>
+                <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 flex flex-col items-center space-y-2">
+                  <div className="w-full rounded-xl bg-indigo-50 border-2 border-indigo-500 px-4 py-3 text-indigo-950 font-extrabold text-sm sm:text-base flex flex-wrap items-baseline gap-x-1.5">
+                    <span>1)</span>
+                    <Pow base={<Pow base="3" exp="4" />} exp="2" parens />
+                    <span>=</span>
+                    <Pow base="3" exp="4 · 2" />
+                    <span>=</span>
+                    <Pow base="3" exp="8" />
+                  </div>
 
-                    <line x1="180" y1="65" x2="180" y2="85" stroke="#64748b" strokeWidth="2" />
-                    <polygon points="180,85 175,77 185,77" fill="#64748b" />
+                  <div className="text-slate-400 font-black leading-none select-none" aria-hidden="true">
+                    ↓
+                  </div>
 
-                    <rect x="15" y="85" width="330" height="50" rx="12" fill="#fef3c7" stroke="#d97706" strokeWidth="2" />
-                    <text x="30" y="115" fontSize="13" fontWeight="800" fill="#92400e">
-                      2) 3⁻² · 3⁸ / 3⁵ = 3⁻²⁺⁸⁻⁵ = 3¹ = 3
-                    </text>
+                  <div className="w-full rounded-xl bg-amber-50 border-2 border-amber-500 px-4 py-3 text-amber-950 font-extrabold text-sm sm:text-base flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    <span>2)</span>
+                    <Frac
+                      num={
+                        <span className="inline-flex items-baseline gap-1">
+                          <Pow base="3" exp="-2" />
+                          <span>·</span>
+                          <Pow base="3" exp="8" />
+                        </span>
+                      }
+                      den={<Pow base="3" exp="5" />}
+                    />
+                    <span>=</span>
+                    <Pow base="3" exp="-2 + 8 - 5" />
+                    <span>=</span>
+                    <Pow base="3" exp="1" />
+                    <span>= 3</span>
+                  </div>
 
-                    <line x1="180" y1="135" x2="180" y2="152" stroke="#64748b" strokeWidth="2" />
-                    <polygon points="180,152 175,144 185,144" fill="#64748b" />
+                  <div className="text-slate-400 font-black leading-none select-none" aria-hidden="true">
+                    ↓
+                  </div>
 
-                    <rect x="15" y="152" width="330" height="45" rx="12" fill="#d1fae5" stroke="#059669" strokeWidth="2" />
-                    <text x="30" y="180" fontSize="13" fontWeight="800" fill="#065f46">
-                      3) (1/2)⁻³ = 2³ = 8 ⇒ Α = 3 + 8 = 11
-                    </text>
-                  </svg>
+                  <div className="w-full rounded-xl bg-emerald-50 border-2 border-emerald-600 px-4 py-3 text-emerald-950 font-extrabold text-sm sm:text-base flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                    <span>3)</span>
+                    <Pow base={<Frac num="1" den="2" />} exp="-3" parens />
+                    <span>=</span>
+                    <Pow base="2" exp="3" />
+                    <span>= 8 ⇒ Α = 3 + 8 = 11</span>
+                  </div>
                 </div>
               </div>
 
@@ -1447,8 +1679,12 @@ export default function PragmatikoiTheoryPage() {
                           {isEn ? '1. Power of a power' : '1. Δύναμη δύναμης'}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                            <span>(3<sup>4</sup>)<sup>2</sup> = 3<sup>4 · 2</sup> = 3<sup>8</sup></span>
+                          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+                            <Pow base={<Pow base="3" exp="4" />} exp="2" parens />
+                            <span>=</span>
+                            <Pow base="3" exp="4 · 2" />
+                            <span>=</span>
+                            <Pow base="3" exp="8" />
                           </div>
                         </td>
                       </tr>
@@ -1458,12 +1694,25 @@ export default function PragmatikoiTheoryPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                            <Frac num={<span>3<sup>-2</sup> · 3<sup>8</sup></span>} den={<span>3<sup>5</sup></span>} />
+                            <Frac
+                              num={
+                                <span className="inline-flex items-baseline gap-1">
+                                  <Pow base="3" exp="-2" />
+                                  <span>·</span>
+                                  <Pow base="3" exp="8" />
+                                </span>
+                              }
+                              den={<Pow base="3" exp="5" />}
+                            />
                             <span>=</span>
-                            <Frac num={<span>3<sup>-2 + 8</sup></span>} den={<span>3<sup>5</sup></span>} />
+                            <Frac num={<Pow base="3" exp="-2 + 8" />} den={<Pow base="3" exp="5" />} />
                             <span>=</span>
-                            <Frac num={<span>3<sup>6</sup></span>} den={<span>3<sup>5</sup></span>} />
-                            <span>= 3<sup>6 - 5</sup> = 3<sup>1</sup> = 3</span>
+                            <Frac num={<Pow base="3" exp="6" />} den={<Pow base="3" exp="5" />} />
+                            <span>=</span>
+                            <Pow base="3" exp="6 - 5" />
+                            <span>=</span>
+                            <Pow base="3" exp="1" />
+                            <span>= 3</span>
                           </div>
                         </td>
                       </tr>
@@ -1473,7 +1722,12 @@ export default function PragmatikoiTheoryPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                            <span>(<Frac num="1" den="2" />)<sup>-3</sup> = (<Frac num="2" den="1" />)<sup>3</sup> = 2<sup>3</sup> = 8</span>
+                            <Pow base={<Frac num="1" den="2" />} exp="-3" parens />
+                            <span>=</span>
+                            <Pow base={<Frac num="2" den="1" />} exp="3" parens />
+                            <span>=</span>
+                            <Pow base="2" exp="3" />
+                            <span>= 8</span>
                           </div>
                         </td>
                       </tr>
@@ -1486,15 +1740,30 @@ export default function PragmatikoiTheoryPage() {
                     <div className="font-extrabold text-amber-800 mb-1">
                       {isEn ? '1. Power of a power' : '1. Δύναμη δύναμης'}
                     </div>
-                    <div>(3<sup>4</sup>)<sup>2</sup> = 3<sup>8</sup></div>
+                    <div className="inline-flex items-baseline gap-1">
+                      <Pow base={<Pow base="3" exp="4" />} exp="2" parens />
+                      <span>=</span>
+                      <Pow base="3" exp="8" />
+                    </div>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
                     <div className="font-extrabold text-amber-800 mb-1">
                       {isEn ? '2. Same-base fraction' : '2. Κλάσμα ίδιων βάσεων'}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                      <Frac num={<span>3<sup>-2</sup> · 3<sup>8</sup></span>} den={<span>3<sup>5</sup></span>} />
-                      <span>= 3<sup>6 - 5</sup> = 3</span>
+                      <Frac
+                        num={
+                          <span className="inline-flex items-baseline gap-1">
+                            <Pow base="3" exp="-2" />
+                            <span>·</span>
+                            <Pow base="3" exp="8" />
+                          </span>
+                        }
+                        den={<Pow base="3" exp="5" />}
+                      />
+                      <span>=</span>
+                      <Pow base="3" exp="6 - 5" />
+                      <span>= 3</span>
                     </div>
                   </div>
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-sm">
@@ -1502,7 +1771,10 @@ export default function PragmatikoiTheoryPage() {
                       {isEn ? '3. Negative exponent' : '3. Αρνητικός εκθέτης'}
                     </div>
                     <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                      <span>(<Frac num="1" den="2" />)<sup>-3</sup> = 2<sup>3</sup> = 8</span>
+                      <Pow base={<Frac num="1" den="2" />} exp="-3" parens />
+                      <span>=</span>
+                      <Pow base="2" exp="3" />
+                      <span>= 8</span>
                     </div>
                   </div>
                 </div>
@@ -1537,25 +1809,40 @@ export default function PragmatikoiTheoryPage() {
                     ? 'Thinking that a negative exponent makes the number negative:'
                     : 'Να νομίζουμε ότι ο αρνητικός εκθέτης κάνει τον αριθμό αρνητικό:'}
                 </span>
-                <span className="font-bold text-red-700 line-through">2<sup>-3</sup> = -8</span>
+                <span className="font-bold text-red-700 line-through inline-flex items-baseline gap-1">
+                  <Pow base="2" exp="-3" />
+                  <span>= -8</span>
+                </span>
                 <span>→</span>
-                <span className="font-bold text-emerald-800 inline-flex items-center">
-                  {isEn ? 'Correct:' : 'Σωστό:'} 2<sup>-3</sup> = <Frac num="1" den={<span>2<sup>3</sup></span>} /> = <Frac num="1" den="8" />
+                <span className="font-bold text-emerald-800 inline-flex items-center gap-1">
+                  <span>{isEn ? 'Correct:' : 'Σωστό:'}</span>
+                  <Pow base="2" exp="-3" />
+                  <span>=</span>
+                  <Frac num="1" den={<Pow base="2" exp="3" />} />
+                  <span>=</span>
+                  <Frac num="1" den="8" />
                 </span>
               </div>
             </li>
 
             <li className="flex items-start gap-2.5">
               <span className="font-black text-amber-600 mt-0.5">✕</span>
-              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
                 <span>
                   {isEn
                     ? 'Forgetting parentheses with negative bases:'
                     : 'Να ξεχνάμε τις παρενθέσεις στις αρνητικές βάσεις:'}
                 </span>
-                <span className="font-bold text-slate-900">-3<sup>2</sup> = -9</span>
+                <span className="font-bold text-slate-900 inline-flex items-baseline gap-1">
+                  <Pow base="-3" exp="2" />
+                  <span>= -9</span>
+                </span>
                 <span>{isEn ? 'while' : 'ενώ'}</span>
-                <span className="font-bold text-emerald-800">(-3)<sup>2</sup> = +9</span>.
+                <span className="font-bold text-emerald-800 inline-flex items-baseline gap-1">
+                  <Pow base="-3" exp="2" parens />
+                  <span>= +9</span>
+                </span>
+                .
               </div>
             </li>
 
@@ -1579,16 +1866,29 @@ export default function PragmatikoiTheoryPage() {
 
             <li className="flex items-start gap-2.5">
               <span className="font-black text-amber-600 mt-0.5">✕</span>
-              <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+              <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
                 <span>
                   {isEn
                     ? 'Multiplying exponents instead of adding them when multiplying same-base powers:'
                     : 'Να πολλαπλασιάζουμε τους εκθέτες αντί να τους προσθέτουμε:'}
                 </span>
-                <span className="font-bold text-red-700 line-through">α<sup>2</sup> · α<sup>3</sup> = α<sup>6</sup></span>
+                <span className="font-bold text-red-700 line-through inline-flex items-baseline gap-1">
+                  <Pow base="α" exp="2" />
+                  <span>·</span>
+                  <Pow base="α" exp="3" />
+                  <span>=</span>
+                  <Pow base="α" exp="6" />
+                </span>
                 <span>→</span>
-                <span className="font-bold text-emerald-800">
-                  {isEn ? 'Correct:' : 'Σωστό:'} α<sup>2</sup> · α<sup>3</sup> = α<sup>2 + 3</sup> = α<sup>5</sup>
+                <span className="font-bold text-emerald-800 inline-flex items-baseline gap-1">
+                  <span>{isEn ? 'Correct:' : 'Σωστό:'}</span>
+                  <Pow base="α" exp="2" />
+                  <span>·</span>
+                  <Pow base="α" exp="3" />
+                  <span>=</span>
+                  <Pow base="α" exp="2 + 3" />
+                  <span>=</span>
+                  <Pow base="α" exp="5" />
                 </span>
               </div>
             </li>
