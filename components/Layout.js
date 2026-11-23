@@ -9,12 +9,12 @@ const SITE_URL = 'https://learnmaths.gr';
 
 export default function Layout({
   children,
-  title = "LearnMaths.gr - Τα Μαθηματικά Αλλιώς",
-  description = "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2027-2028) και τα Πρότυπα Σχολεία.",
+  title,
+  description,
   image = "/og-image.png",
   schemaData = null,
   backUrl = null,
-  backText = "Πίσω",
+  backText,
   actionButton = null,
   hideNav = false,
   customNavContent = null,
@@ -23,7 +23,19 @@ export default function Layout({
   fullWidth = false,
 }) {
   const router = useRouter();
-  const { locale, asPath } = router;
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const asPath = router?.asPath || '/';
+
+  // Προεπιλεγμένοι δίγλωσσοι τίτλοι αν δεν δοθούν από τη σελίδα
+  const finalTitle = title || (locale === 'en'
+    ? "LearnMaths.gr - Interactive Mathematics"
+    : "LearnMaths.gr - Τα Μαθηματικά Αλλιώς");
+
+  const finalDescription = description || (locale === 'en'
+    ? "The modern interactive mathematics learning platform for Elementary, Middle School, and Model School entrance exams."
+    : "Η σύγχρονη πλατφόρμα εκμάθησης Μαθηματικών για το Δημοτικό, το Γυμνάσιο (Νέα Ύλη 2027-2028) και τα Πρότυπα Σχολεία.");
+
+  const finalBackText = backText || (locale === 'en' ? "Back" : "Πίσω");
 
   // Καθαρισμός path από ?query, #hash, trailing slash και percent-encoding
   const rawPath = asPath.split('?')[0].split('#')[0];
@@ -39,6 +51,10 @@ export default function Layout({
   const [showLanguageBanner, setShowLanguageBanner] = useState(false);
 
   useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = locale;
+    }
+
     if (typeof window !== 'undefined' && locale === 'el') {
       const isDismissed = sessionStorage.getItem('dismissed_lang_banner');
       const browserLang = navigator.language || navigator.userLanguage || '';
@@ -75,7 +91,7 @@ export default function Layout({
         "@id": `${SITE_URL}/#website`,
         "url": `${SITE_URL}/`,
         "name": "LearnMaths.gr",
-        "inLanguage": locale === 'en' ? 'en' : 'el'
+        "inLanguage": locale
       },
       {
         "@type": "EducationalOrganization",
@@ -83,7 +99,7 @@ export default function Layout({
         "name": "LearnMaths.gr",
         "url": `${SITE_URL}/`,
         "logo": `${SITE_URL}/favicon.svg`,
-        "inLanguage": locale === 'en' ? 'en' : 'el',
+        "inLanguage": locale,
         "founder": {
           "@type": "Person",
           "name": locale === 'en' ? "Dimitrios Gkrimpas" : "Δημήτρης Γκρίμπας",
@@ -102,8 +118,8 @@ export default function Layout({
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between scroll-smooth antialiased">
       <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
+        <title>{finalTitle}</title>
+        <meta name="description" content={finalDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 
         {/* Dynamic Canonical & Hreflang SEO Tags */}
@@ -116,8 +132,8 @@ export default function Layout({
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={finalTitle} />
+        <meta property="og:description" content={finalDescription} />
         <meta property="og:site_name" content="LearnMaths.gr" />
         <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'el_GR'} />
         <meta property="og:image" content={ogImageUrl} />
@@ -127,8 +143,8 @@ export default function Layout({
 
         {/* Twitter Cards */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
+        <meta name="twitter:title" content={finalTitle} />
+        <meta name="twitter:description" content={finalDescription} />
         <meta name="twitter:image" content={ogImageUrl} />
 
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -196,7 +212,7 @@ export default function Layout({
                         className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shrink-0"
                       >
                         <span aria-hidden="true">🔙</span>
-                        <span>{backText}</span>
+                        <span>{finalBackText}</span>
                       </Link>
                     )}
                   </div>
