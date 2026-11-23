@@ -4,3742 +4,1154 @@ import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { LAYOUT } from '../../shared/layout-config';
 
-const Fraction = ({ num, den }) => (
-  <span className="inline-flex flex-col items-center justify-center align-middle mx-1 text-center leading-none text-[0.9em]">
-    <span className="border-b border-current px-1 pb-[1px] block w-full text-center">
-      {num}
+// Βοηθητική συνάρτηση για άτονα κεφαλαία (διατηρεί μόνο το Α')
+function toCleanUppercase(str) {
+  if (!str) return '';
+  return String(str)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+}
+
+// 1. Απλό κλάσμα (ευθυγραμμίζεται απόλυτα στο κέντρο των γραμμάτων της πρότασης & των τελεστών)
+function Frac({ num, den, inline = true, small = false }) {
+  return (
+    <span
+      className={`${inline ? 'inline-grid' : 'grid'} grid-rows-[1fr_auto_1fr] items-center justify-items-center whitespace-nowrap align-middle ${
+        small ? 'mx-0.5 text-[0.8em]' : 'mx-1 text-[0.86em]'
+      } font-mono font-bold leading-none select-none`}
+    >
+      <span className="self-end px-1 pb-[1.5px] text-center">{num}</span>
+      <span className={`w-full ${small ? 'border-t border-current' : 'border-t-[1.8px] border-current'}`} />
+      <span className="self-start px-1 pt-[1.5px] text-center">{den}</span>
     </span>
-    <span className="pt-[1px] block w-full text-center">
-      {den}
+  );
+}
+
+// 2. Σύνθετο κλάσμα (4 περιπτώσεις: κλάσμα/κλάσμα, αριθμός/κλάσμα, κλάσμα/αριθμός, κ.λπ.)
+function ComplexFrac({ num, den }) {
+  return (
+    <span className="inline-grid grid-rows-[1fr_auto_1fr] items-center justify-items-center align-middle mx-1.5 my-0.5 font-mono font-bold text-[0.9em] leading-none select-none whitespace-nowrap">
+      <span className="self-end px-2 pb-[3px] flex items-center justify-center">
+        {num}
+      </span>
+      <span className="w-full border-t-[2.4px] border-current" />
+      <span className="self-start px-2 pt-[3px] flex items-center justify-center">
+        {den}
+      </span>
     </span>
-  </span>
-);
-
-const QUESTIONS = [
-  {
-    id: 1,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ποια είναι η τιμή της παρακάτω αριθμητικής παράστασης;\n(13 : 2 − 2³ : 2) : 0,25 − 1⁵',
-    options: ['9', '4', '1,5', '10'],
-    correct: '9',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Εφαρμόζουμε την <strong>προτεραιότητα των πράξεων</strong> (δυνάμεις ➔ πράξεις εντός παρενθέσεων ➔ πολλαπλασιασμοί/διαιρέσεις ➔ προσθέσεις/αφαιρέσεις):
-        </p>
-
-        {/* 1ος ΤΡΟΠΟΣ: ΜΕ ΔΕΚΑΔΙΚΟΥΣ ΑΡΙΘΜΟΥΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
-          <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
-            🔷 1ος Τρόπος (Βήμα προς βήμα με δεκαδικούς αριθμούς)
-          </div>
-
-          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-            <div>
-              • <strong>Υπολογισμός δυνάμεων:</strong>
-              <div className="pl-3 pt-0.5 text-slate-700">
-                2³ ＝ 2 · 2 · 2 ＝ <strong>8</strong> &nbsp;και&nbsp; 1⁵ ＝ <strong>1</strong>
-              </div>
-            </div>
-
-            <div className="pt-1 border-t border-slate-200">
-              • <strong>Πράξεις μέσα στην παρένθεση:</strong>
-              <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
-                <div>13 : 2 ＝ <strong>6,5</strong></div>
-                <div>2³ : 2 ＝ 8 : 2 ＝ <strong>4</strong></div>
-                <div>(13 : 2 － 2³ : 2) ＝ 6,5 － 4 ＝ <strong>2,5</strong></div>
-              </div>
-            </div>
-
-            <div className="pt-1 border-t border-slate-200">
-              • <strong>Διαίρεση με το 0,25 και τελική αφαίρεση:</strong>
-              <div className="pl-3 pt-0.5 space-y-1">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span>2,5 : 0,25 ＝ 2,5 · 4 ＝ <strong>10</strong></span>
-                  <span className="text-slate-500 font-sans text-xs">(αφού η διαίρεση με το 0,25 ισοδυναμεί με τετραπλασιασμό)</span>
-                </div>
-                <div className="pt-0.5 text-emerald-700 font-bold text-base">
-                  10 － 1⁵ ＝ 10 － 1 ＝ 9
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 2ος ΤΡΟΠΟΣ: ΜΕ ΚΛΑΣΜΑΤΑ */}
-        <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
-          <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
-            💡 2ος Τρόπος (Υπολογισμός με κλάσματα)
-          </div>
-
-          <p className="text-slate-800">
-            Γράφουμε όλους τους όρους σε μορφή κλασμάτων:
-          </p>
-
-          <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-2">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span>• Παρένθεση:</span>
-              <Fraction num="13" den="2" />
-              <span>－</span>
-              <Fraction num="8" den="2" />
-              <span>＝</span>
-              <Fraction num="13 － 8" den="2" />
-              <span>＝</span>
-              <strong className="text-blue-700"><Fraction num="5" den="2" /></strong>
-            </div>
-
-            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
-              <span>• Παρατηρούμε ότι: 0,25 ＝</span>
-              <Fraction num="1" den="4" />
-            </div>
-
-            <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
-              <span>• Διαίρεση:</span>
-              <Fraction num="5" den="2" />
-              <span>:</span>
-              <Fraction num="1" den="4" />
-              <span>＝</span>
-              <Fraction num="5" den="2" />
-              <span>· 4 ＝</span>
-              <Fraction num="20" den="2" />
-              <span>＝ <strong>10</strong></span>
-            </div>
-
-            <div className="pt-1 border-t border-slate-100 flex items-center gap-2 flex-wrap">
-              <span>• Τελικό αποτέλεσμα: 10 － 1 ＝</span>
-              <strong className="text-emerald-700 text-base">9</strong>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>9</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 2,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ποιος είναι ο μικρότερος τετραψήφιος φυσικός αριθμός ο οποίος διαιρείται ταυτόχρονα με το 3, το 4 και το 5;',
-    options: ['1.000', '1.020', '1.050', '1.080'],
-    correct: '1.020',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Για να διαιρείται ένας αριθμός ταυτόχρονα με το <strong>3</strong>, το <strong>4</strong> και το <strong>5</strong>, πρέπει να είναι κοινό πολλαπλάσιο των τριών αυτών αριθμών, δηλαδή πολλαπλάσιο του <strong>Ε.Κ.Π.(3, 4, 5)</strong>.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ ΠΟΛΛΑΠΛΑΣΙΩΝ ΤΟΥ 60 ΓΥΡΩ ΑΠΟ ΤΟ 1.000 */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="470" height="150" viewBox="0 0 470 150" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="axis-arr-2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
-              </marker>
-            </defs>
-
-            {/* Άξονας αριθμογραμμής */}
-            <line x1="25" y1="75" x2="445" y2="75" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arr-2)" />
-
-            {/* Όριο 3ψήφιων / 4ψήφιων (1.000) */}
-            <line x1="190" y1="35" x2="190" y2="105" stroke="#dc2626" strokeWidth="2" strokeDasharray="4 3" />
-            <circle cx="190" cy="75" r="4.5" fill="#dc2626" />
-            <text x="190" y="25" fontSize="10.5" fontWeight="900" textAnchor="middle" fill="#dc2626">
-              1.000 (Όριο 4ψήφιων)
-            </text>
-
-            {/* Περιοχή 3ψήφιων & 4ψήφιων */}
-            <text x="100" y="132" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">
-              ◀ 3ψήφιοι αριθμοί
-            </text>
-            <text x="310" y="132" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">
-              4ψήφιοι αριθμοί ▶
-            </text>
-
-            {/* 16ο πολλαπλάσιο: 960 */}
-            <line x1="85" y1="65" x2="85" y2="85" stroke="#64748b" strokeWidth="2" />
-            <circle cx="85" cy="75" r="4.5" fill="#64748b" />
-            <text x="85" y="55" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">
-              960
-            </text>
-            <text x="85" y="100" fontSize="9.5" textAnchor="middle" fill="#64748b" fontFamily="monospace">
-              60 · 16
-            </text>
-
-            {/* Βήμα +60 (Τόξο από 960 σε 1.020) */}
-            <path d="M 85 62 Q 185 30 285 62" fill="none" stroke="#0284c7" strokeWidth="1.8" strokeDasharray="3 2" />
-            <text x="185" y="44" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0369a1">
-              + 60
-            </text>
-
-            {/* 17ο πολλαπλάσιο: 1.020 (Ζητούμενο) */}
-            <line x1="285" y1="60" x2="285" y2="90" stroke="#16a34a" strokeWidth="2.5" />
-            <circle cx="285" cy="75" r="6" fill="#16a34a" stroke="#14532d" strokeWidth="1.5" />
-            <text x="285" y="52" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">
-              1.020 ⭐
-            </text>
-            <text x="285" y="102" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534" fontFamily="monospace">
-              60 · 17
-            </text>
-            <text x="285" y="117" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">
-              (1ος 4ψήφιος)
-            </text>
-
-            {/* 18ο πολλαπλάσιο: 1.080 */}
-            <line x1="390" y1="65" x2="390" y2="85" stroke="#94a3b8" strokeWidth="1.8" />
-            <circle cx="390" cy="75" r="4.5" fill="#94a3b8" />
-            <text x="390" y="55" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#64748b">
-              1.080
-            </text>
-            <text x="390" y="100" fontSize="9.5" textAnchor="middle" fill="#94a3b8" fontFamily="monospace">
-              60 · 18
-            </text>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Ε.Κ.Π. */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900">
-              1. Υπολογισμός του Ελάχιστου Κοινού Πολλαπλασίου (Ε.Κ.Π.):
-            </div>
-            <p className="text-slate-700">
-              Οι αριθμοί 3, 4 και 5 είναι πρώτοι μεταξύ τους ανά δύο, επομένως:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 font-bold">
-              Ε.Κ.Π.(3, 4, 5) ＝ 3 · 4 · 5 ＝ 60
-            </div>
-            <p className="text-slate-600 font-sans text-xs pt-0.5">
-              Άρα, κάθε αριθμός που διαιρείται ταυτόχρονα με το 3, 4 και 5 είναι πολλαπλάσιο του 60.
-            </p>
-          </div>
-
-          {/* Βήμα 2: Εύρεση του 1ου 4ψήφιου πολλαπλασίου */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900">
-              2. Εύρεση του μικρότερου 4ψήφιου αριθμού (≥ 1.000):
-            </div>
-            <p className="text-slate-700">
-              Ο μικρότερος τετραψήφιος φυσικός αριθμός είναι το <strong>1.000</strong>. Εκτελούμε την ευκλείδεια διαίρεση:
-            </p>
-
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>1.000 : 60 ＝ <strong>16</strong> με <strong>υπόλοιπο 40</strong></span>
-              </div>
-              <div className="text-slate-600 font-sans text-xs">
-                Δηλαδή: 1.000 ＝ 60 · 16 ＋ 40 ➔ 60 · 16 ＝ <strong>960</strong> (ο μεγαλύτερος 3ψήφιος).
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-slate-800">
-                Το αμέσως επόμενο πολλαπλάσιο του 60 είναι το 17ο:
-              </div>
-              <div className="font-bold text-base text-emerald-700">
-                60 · 17 ＝ 1.020
-              </div>
-              <div className="text-slate-500 font-sans text-xs">
-                (ή ισοδύναμα: 1.000 ＋ (60 － 40) ＝ 1.000 ＋ 20 ＝ 1.020)
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο μικρότερος τετραψήφιος αριθμός που διαιρείται ταυτόχρονα με το 3, το 4 και το 5 είναι το <strong>1.020</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 3,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ένα δοχείο είναι γεμάτο με λάδι κατά τα 7/10 του συνολικού του όγκου. Αδειάζουμε 3 ίδια φλιτζάνια λάδι από το δοχείο και πλέον είναι γεμάτο κατά το 1/10. Με πόσα τέτοια φλιτζάνια λάδι γεμίζει ολόκληρο το δοχείο αν είναι τελείως άδειο;',
-    options: ['5', '6', '8', '10'],
-    correct: '5',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Αναλύουμε τη μεταβολή της ποσότητας του λαδιού στο δοχείο, χρησιμοποιώντας ως μονάδα μέτρησης τα <strong>δέκατα (<Fraction num="1" den="10" />)</strong> του συνολικού όγκου:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ ΔΟΧΕΙΟΥ ΣΕ 3 ΣΤΑΔΙΑ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="560" height="225" viewBox="0 0 560 225" className="select-none font-sans mx-auto block">
-            {/* Ορισμός τμημάτων */}
-            <defs>
-              <g id="tank-slice-empty-3">
-                <rect x="0" y="0" width="75" height="28" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="14" x2="75" y2="14" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
-              </g>
-              <g id="tank-slice-full-3">
-                <rect x="0" y="0" width="75" height="28" fill="#fbbf24" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="14" x2="75" y2="14" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="2 2" />
-                <text x="37.5" y="10.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
-                <text x="37.5" y="24.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
-              </g>
-            </defs>
-
-            {/* 1. ΣΤΑΔΙΟ A: ΑΡΧΙΚΟ (7/10) */}
-            <g transform="translate(15, 10)">
-              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Αρχικό (7/10)
-              </text>
-              <g transform="translate(0, 25)">
-                <use href="#tank-slice-empty-3" x="0" y="0" />
-                <rect x="0" y="28" width="75" height="14" fill="#fbbf24" fillOpacity="0.45" stroke="#cbd5e1" strokeWidth="1" />
-                <text x="37.5" y="38.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
-                <rect x="0" y="42" width="75" height="14" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                <use href="#tank-slice-full-3" x="0" y="56" />
-                <use href="#tank-slice-full-3" x="0" y="84" />
-                <use href="#tank-slice-full-3" x="0" y="112" />
-                {/* Εξωτερικό περίγραμμα */}
-                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
-              </g>
-            </g>
-
-            {/* ΒΕΛΟΣ ΑΦΑΙΡΕΣΗΣ 3 ΦΛΙΤΖΑΝΙΩΝ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ: 70px) */}
-            <g transform="translate(95, 95)">
-              <line x1="6" y1="0" x2="60" y2="0" stroke="#dc2626" strokeWidth="2.2" />
-              <polygon points="60,-4 68,0 60,4" fill="#dc2626" />
-              <text x="34" y="-9" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
-                －3 Φλιτζάνια
-              </text>
-            </g>
-
-            {/* 2. ΣΤΑΔΙΟ Β: ΤΕΛΙΚΟ (1/10) */}
-            <g transform="translate(175, 10)">
-              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Τελικό (1/10)
-              </text>
-              <g transform="translate(0, 25)">
-                <use href="#tank-slice-empty-3" x="0" y="0" />
-                <use href="#tank-slice-empty-3" x="0" y="28" />
-                <use href="#tank-slice-empty-3" x="0" y="56" />
-                <use href="#tank-slice-empty-3" x="0" y="84" />
-                {/* Κάτω τμήμα (1/10 γεμάτο) */}
-                <rect x="0" y="112" width="75" height="28" rx="1" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-                <line x1="0" y1="126" x2="75" y2="126" stroke="#e2e8f0" strokeWidth="0.8" strokeDasharray="2 2" />
-                <rect x="0" y="126" width="75" height="14" fill="#fbbf24" fillOpacity="0.85" rx="1" stroke="#cbd5e1" strokeWidth="1" />
-                <text x="37.5" y="136.5" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#92400e" fontFamily="monospace">1/10</text>
-
-                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
-              </g>
-            </g>
-
-            {/* ΒΕΛΟΣ ΕΡΩΤΗΣΗΣ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ: 75px) */}
-            <g transform="translate(255, 95)">
-              <line x1="8" y1="0" x2="62" y2="0" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 2" />
-              <polygon points="62,-3.5 70,0 62,3.5" fill="#0284c7" />
-              <text x="36" y="-9" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0284c7">
-                Πόσα Φλιτζάνια;
-              </text>
-            </g>
-
-            {/* 3. ΣΤΑΔΙΟ Γ: ΟΛΟΚΛΗΡΟ (10/10) */}
-            <g transform="translate(335, 10)">
-              <text x="37.5" y="14" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Ολόκληρο (10/10)
-              </text>
-              <g transform="translate(0, 25)">
-                <use href="#tank-slice-full-3" x="0" y="0" />
-                <use href="#tank-slice-full-3" x="0" y="28" />
-                <use href="#tank-slice-full-3" x="0" y="56" />
-                <use href="#tank-slice-full-3" x="0" y="84" />
-                <use href="#tank-slice-full-3" x="0" y="112" />
-                <rect x="0" y="0" width="75" height="140" rx="4" fill="none" stroke="#334155" strokeWidth="2.2" />
-              </g>
-
-              {/* Ετικέτες Φλιτζανιών ανά 2/10 */}
-              <g transform="translate(83, 25)">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <text key={i} x="0" y={i * 28 + 18.5} fontSize="11" fontWeight="bold" fill="#15803d">
-                    ＝ 1 Φλιτζάνι
-                  </text>
-                ))}
-              </g>
-
-              {/* Πράσινο badge συνόλου (πλήρως ορατό) */}
-              <g transform="translate(80, 172)">
-                <rect x="0" y="0" width="125" height="26" rx="13" fill="#16a34a" />
-                <text x="62.5" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Σύνολο: 5 Φλιτζάνια
-                </text>
-              </g>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΣ ΣΥΛΛΟΓΙΣΜΟΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1 */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Υπολογισμός της διαφοράς στον όγκο του λαδιού:
-            </div>
-            <p className="text-slate-700">
-              Αρχικά το δοχείο ήταν γεμάτο κατά <span className="font-mono font-bold"><Fraction num="7" den="10" /></span> και τελικά κατά <span className="font-mono font-bold"><Fraction num="1" den="10" /></span>. Η διαφορά που αδειάσαμε αντιστοιχεί στα 3 φλιτζάνια:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>3 Φλιτζάνια ＝ Αρχικό Λάδι － Τελικό Λάδι ＝</span>
-                <Fraction num="7" den="10" />
-                <span>－</span>
-                <Fraction num="1" den="10" />
-                <span>＝</span>
-                <strong className="text-blue-700"><Fraction num="6" den="10" /></strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2 */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Εύρεση της χωρητικότητας ενός φλιτζανιού:
-            </div>
-            <p className="text-slate-700">
-              Αφού τα 3 φλιτζάνια αντιστοιχούν στα <Fraction num="6" den="10" /> του δοχείου, το 1 φλιτζάνι αντιστοιχεί στο:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>1 Φλιτζάνι ＝ 3 Φλιτζάνια : 3 ＝</span>
-                <Fraction num="6" den="10" />
-                <span>: 3 ＝</span>
-                <strong className="text-emerald-700 text-base"><Fraction num="2" den="10" /></strong>
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base"><Fraction num="1" den="5" /></strong>
-                <span>του δοχείου.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 3 */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              3. Συμπέρασμα για το συνολικό πλήθος φλιτζανιών:
-            </div>
-            <p className="text-slate-700">
-              Για να γεμίσει ολόκληρο το δοχείο (δηλαδή <Fraction num="5" den="5" /> ή <Fraction num="10" den="10" />), χρειαζόμαστε τόσα φλιτζάνια όσα είναι και τα πέμπτα:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>Συνολικά Φλιτζάνια ＝ Ολόκληρο Δοχείο : 1 Φλιτζάνι ＝</span>
-                <Fraction num="5" den="5" />
-                <span>:</span>
-                <Fraction num="1" den="5" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base">5</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, για να γεμίσει ολόκληρο το δοχείο χρειάζονται <strong>5 φλιτζάνια</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 4,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ένα ζευγάρι παπούτσια κόστιζε αρχικά 80€. Στις εκπτώσεις αγοράστηκε στην τιμή των 56€. Ποιο ήταν το ποσοστό (%) της έκπτωσης που έγινε στην αρχική τιμή;',
-    options: ['24%', '30%', '40%', '70%'],
-    correct: '30%',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Υπολογίζουμε πρώτα το <strong>ποσό της έκπτωσης σε ευρώ</strong> και στη συνέχεια βρίσκουμε τι μέρος (ποσοστό) της <strong>αρχικής τιμής</strong> αποτελεί:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΗΣ ΑΡΧΙΚΗΣ ΤΙΜΗΣ ΣΕ 10 ΙΣΑ ΜΕΡΗ (ΤΩΝ 8€) */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="175" viewBox="0 0 490 175" className="select-none font-sans mx-auto block">
-            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΗΣ ΑΡΧΙΚΗΣ ΤΙΜΗΣ */}
-            <g transform="translate(20, 10)">
-              <rect x="0" y="0" width="450" height="24" rx="12" fill="#0f172a" />
-              <text x="225" y="16" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Αρχική Τιμή: 80€ (10 ίσα τμήματα των 8€ το καθένα)
-              </text>
-            </g>
-
-            {/* ΜΠΑΡΑ ΔΙΑΙΡΕΣΗΣ ΣΕ 10 ΙΣΑ ΤΜΗΜΑΤΑ (45px το καθένα) */}
-            <g transform="translate(20, 46)">
-              {/* 7 τμήματα πληρωμής (56€) */}
-              {Array.from({ length: 7 }).map((_, idx) => (
-                <g key={`paid-${idx}`} transform={`translate(${idx * 45}, 0)`}>
-                  <rect x="0" y="0" width="43" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                  <text x="21.5" y="25" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8" fontFamily="monospace">8€</text>
-                </g>
-              ))}
-
-              {/* 3 τμήματα έκπτωσης (24€) */}
-              {Array.from({ length: 3 }).map((_, idx) => (
-                <g key={`disc-${idx}`} transform={`translate(${(idx + 7) * 45}, 0)`}>
-                  <rect x="0" y="0" width="43" height="42" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" strokeDasharray="3 2" />
-                  <text x="21.5" y="25" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#dc2626" fontFamily="monospace">8€</text>
-                </g>
-              ))}
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΕΣ ΕΤΙΚΕΤΕΣ */}
-            <g transform="translate(20, 100)">
-              {/* Τελική τιμή (56€) */}
-              <g transform="translate(0, 0)">
-                <path d="M 0 5 L 0 0 L 313 0 L 313 5" fill="none" stroke="#2563eb" strokeWidth="1.8" />
-                <rect x="46" y="10" width="220" height="26" rx="8" fill="#dbeafe" stroke="#bfdbfe" strokeWidth="1" />
-                <text x="156" y="27" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1e40af">
-                  Τιμή με έκπτωση: 56€ (70%)
-                </text>
-              </g>
-
-              {/* Έκπτωση (24€) */}
-              <g transform="translate(315, 0)">
-                <path d="M 0 5 L 0 0 L 135 0 L 135 5" fill="none" stroke="#dc2626" strokeWidth="1.8" />
-                <rect x="2" y="10" width="131" height="26" rx="8" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
-                <text x="67.5" y="27" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b91c1c">
-                  Έκπτωση: 24€ (30%)
-                </text>
-              </g>
-            </g>
-
-            {/* ΣΥΜΠΕΡΑΣΜΑ ΠΟΣΟΣΤΟΥ */}
-            <g transform="translate(20, 146)">
-              <text x="225" y="14" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                3 από τα 10 μέρη είναι έκπτωση ➔ 3/10 ＝ 30%
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Ποσό έκπτωσης σε ευρώ */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900">
-              1. Υπολογισμός του ποσού της έκπτωσης:
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>Ποσό Έκπτωσης ＝ Αρχική Τιμή － Τιμή Πώλησης</div>
-              <div className="pt-0.5">
-                Ποσό Έκπτωσης ＝ 80 － 56 ＝ <strong className="text-rose-700 font-bold">24€</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Ποσοστό επί της αρχικής τιμής */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900">
-              2. Υπολογισμός του ποσοστού έκπτωσης:
-            </div>
-            <p className="text-slate-700">
-              Συγκρίνουμε το ποσό της έκπτωσης (24€) με την <strong>αρχική τιμή</strong> (80€):
-            </p>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>• Κλάσμα έκπτωσης ＝</span>
-                <Fraction num="Ποσό Έκπτωσης" den="Αρχική Τιμή" />
-                <span>＝</span>
-                <Fraction num="24" den="80" />
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Απλοποιούμε διαιρώντας με το 8:</span>
-                <Fraction num="24 : 8" den="80 : 8" />
-                <span>＝</span>
-                <strong className="text-blue-700 font-bold"><Fraction num="3" den="10" /></strong>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Μετατροπή σε ποσοστό στα 100:</span>
-                <Fraction num="3" den="10" />
-                <span>＝</span>
-                <Fraction num="30" den="100" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base font-black">30%</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το ποσοστό της έκπτωσης στην αρχική τιμή ήταν <strong>30%</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 5,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Το τριπλάσιο ενός άγνωστου αριθμού x, αυξημένο κατά το 1/3 του ίδιου αριθμού, ισούται με 20. Ποια από τις παρακάτω εξισώσεις περιγράφει σωστά το πρόβλημα;',
-    options: ['3 · x − x : 3 = 20', '3 · x + x : 3 = 20', '3 · (x + x : 3) = 20', 'x : 3 + 3 = 20'],
-    correct: '3 · x + x : 3 = 20',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Μεταφράζουμε βήμα-βήμα τη λεκτική διατύπωση του προβλήματος σε μαθηματική εξίσωση με άγνωστο το <strong>x</strong>:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΥΣΗ ΤΩΝ ΟΡΩΝ ΤΗΣ ΕΞΙΣΩΣΗΣ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="460" height="150" viewBox="0 0 460 150" className="select-none font-sans mx-auto block">
-            {/* 1ος Όρος: 3 · x */}
-            <g transform="translate(15, 15)">
-              <rect x="0" y="0" width="125" height="70" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="62.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Τριπλάσιο του x</text>
-              <text x="62.5" y="50" fontSize="18" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">3 · x</text>
-            </g>
-
-            {/* Σύμβολο πρόσθεσης (+) */}
-            <g transform="translate(152, 50)">
-              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#0f172a">＋</text>
-              <text x="0" y="22" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">«αυξημένο κατά»</text>
-            </g>
-
-            {/* 2ος Όρος: 1/3 του x (x : 3) */}
-            <g transform="translate(165, 15)">
-              <rect x="0" y="0" width="135" height="70" rx="10" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.8" />
-              <text x="67.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#15803d">Το 1/3 του αριθμού</text>
-              <text x="67.5" y="50" fontSize="18" fontWeight="black" textAnchor="middle" fill="#14532d" fontFamily="monospace">x : 3</text>
-            </g>
-
-            {/* Σύμβολο ισότητας (=) */}
-            <g transform="translate(315, 50)">
-              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#0f172a">＝</text>
-              <text x="0" y="22" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#64748b">«ισούται με»</text>
-            </g>
-
-            {/* Αποτέλεσμα: 20 */}
-            <g transform="translate(330, 15)">
-              <rect x="0" y="0" width="115" height="70" rx="10" fill="#fff7ed" stroke="#ea580c" strokeWidth="1.8" />
-              <text x="57.5" y="22" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#c2410c">Τελική τιμή</text>
-              <text x="57.5" y="50" fontSize="20" fontWeight="black" textAnchor="middle" fill="#9a3412" fontFamily="monospace">20</text>
-            </g>
-
-            {/* Κάτω ενιαία εξίσωση */}
-            <g transform="translate(15, 102)">
-              <rect x="0" y="0" width="430" height="34" rx="8" fill="#0f172a" />
-              <text x="215" y="22" fontSize="14" fontWeight="black" textAnchor="middle" fill="#ffffff" fontFamily="monospace">
-                3 · x ＋ x : 3 ＝ 20
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΗ ΑΠΟΚΩΔΙΚΟΠΟΙΗΣΗ ΤΩΝ ΟΡΩΝ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              Αντιστοίχιση των εκφράσεων της εκφώνησης:
-            </div>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-sans text-slate-600 w-44 sm:w-52">• «Το τριπλάσιο του x»:</span>
-                <strong className="text-blue-700">3 · x</strong>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span className="font-sans text-slate-600 w-44 sm:w-52">• «αυξημένο κατά»:</span>
-                <strong className="text-slate-900 text-base">＋</strong>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span className="font-sans text-slate-600 w-44 sm:w-52">• «το 1/3 του ίδιου αριθμού»:</span>
-                <span className="flex items-center gap-1">
-                  <Fraction num="1" den="3" />
-                  <span>· x ＝</span>
-                  <Fraction num="x" den="3" />
-                  <span>＝</span>
-                  <strong className="text-emerald-700">x : 3</strong>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span className="font-sans text-slate-600 w-44 sm:w-52">• «ισούται με 20»:</span>
-                <strong className="text-orange-700">＝ 20</strong>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-1">
-            <div className="font-sans font-bold text-emerald-950 text-xs">
-              💡 Σύνθεση της τελικής εξίσωσης:
-            </div>
-            <div className="text-base font-black text-emerald-800 pt-0.5">
-              3 · x ＋ x : 3 ＝ 20
-            </div>
-            <p className="text-slate-600 font-sans text-xs pt-1">
-              (Η παρένθεση της επιλογής 3 · (x + x : 3) = 20 θα σήμαινε τριπλασιασμό ολόκληρου του αθροίσματος, κάτι που δεν αναφέρεται στην εκφώνηση).
-            </p>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, η εξίσωση που περιγράφει σωστά το πρόβλημα είναι η <strong>3 · x + x : 3 = 20</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 6,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ποιο από τα παρακάτω κλάσματα βρίσκεται πιο κοντά στον δεκαδικό αριθμό 0,8 στην αριθμογραμμή;',
-    options: [
-      <Fraction num="3" den="4" />,
-      <Fraction num="7" den="10" />,
-      <Fraction num="43" den="50" />,
-      <Fraction num="21" den="25" />
-    ],
-    correct: '21/25',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Μετατρέπουμε όλα τα κλάσματα σε δεκαδικούς αριθμούς (με παρονομαστή το 100) για να συγκρίνουμε εύκολα τις αποστάσεις τους από τον στόχο <strong>0,80</strong>:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ ΜΕ ΟΛΑ ΤΑ ΝΟΥΜΕΡΑ ΚΑΙ ΑΠΟΣΤΑΣΕΙΣ ΑΠΟ ΤΟ 0,80 */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="200" viewBox="0 0 520 200" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="numline-arr-6" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
-              </marker>
-            </defs>
-
-            {/* Κεντρικός άξονας αριθμογραμμής (από 0,68 έως 0,90) */}
-            <line x1="20" y1="100" x2="495" y2="100" stroke="#334155" strokeWidth="2" markerEnd="url(#numline-arr-6)" />
-
-            {/* Υποδιαίρεση κλίμακας: x = 50 + (val - 0.70) * 2000 */}
-            {/* 0,70 -> 50 | 0,75 -> 150 | 0,80 -> 250 | 0,84 -> 330 | 0,86 -> 370 */}
-
-            {/* 1. ΣΗΜΕΙΟ 7/10 = 0,70 */}
-            <g transform="translate(50, 100)">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
-              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">7/10</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,70)</text>
-              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d = 0,10</text>
-            </g>
-
-            {/* 2. ΣΗΜΕΙΟ 3/4 = 0,75 */}
-            <g transform="translate(150, 100)">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
-              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">3/4</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,75)</text>
-              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d = 0,05</text>
-            </g>
-
-            {/* 3. ΣΤΟΧΟΣ 0,80 (ΕΠΙΚΕΝΤΡΟ) */}
-            <g transform="translate(250, 100)">
-              <line x1="0" y1="-32" x2="0" y2="35" stroke="#2563eb" strokeWidth="2.5" strokeDasharray="3 2" />
-              <circle cx="0" cy="0" r="6.5" fill="#2563eb" stroke="#1e40af" strokeWidth="1.5" />
-              <rect x="-35" y="-62" width="70" height="24" rx="6" fill="#1e293b" />
-              <text x="0" y="-46" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                0,80 ⭐
-              </text>
-              <text x="0" y="50" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
-                (Στόχος)
-              </text>
-            </g>
-
-            {/* 4. ΣΗΜΕΙΟ 21/25 = 0,84 (ΤΟ ΠΛΗΣΙΕΣΤΕΡΟ) */}
-            <g transform="translate(330, 100)">
-              <line x1="0" y1="-10" x2="0" y2="10" stroke="#16a34a" strokeWidth="2.5" />
-              <circle cx="0" cy="0" r="6" fill="#16a34a" stroke="#14532d" strokeWidth="1.5" />
-              <text x="0" y="-28" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">21/25</text>
-              <text x="0" y="-14" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#16a34a">(0,84)</text>
-              <rect x="-26" y="14" width="52" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
-              <text x="0" y="27" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">d = 0,04</text>
-              <text x="0" y="46" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Πιο κοντά!</text>
-            </g>
-
-            {/* 5. ΣΗΜΕΙΟ 43/50 = 0,86 */}
-            <g transform="translate(370, 100)">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="#64748b" strokeWidth="2" />
-              <circle cx="0" cy="0" r="4.5" fill="#64748b" />
-              <text x="0" y="-28" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">43/50</text>
-              <text x="0" y="-14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#64748b">(0,86)</text>
-              <text x="0" y="24" fontSize="9.5" textAnchor="middle" fill="#dc2626" fontFamily="monospace">d = 0,06</text>
-            </g>
-
-            {/* ΤΟΞΑ ΑΠΟΣΤΑΣΗΣ ΓΙΑ ΣΥΓΚΡΙΣΗ (21/25 vs 43/50) */}
-            <path d="M 250 82 Q 290 65 330 82" fill="none" stroke="#16a34a" strokeWidth="2" />
-            <text x="290" y="68" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">0,04</text>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΚΑΙ ΣΥΓΚΡΙΣΗ ΑΠΟΣΤΑΣΕΩΝ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Μετατροπή των κλασμάτων σε ομώνυμα με παρονομαστή το 100 (δεκαδικοί):
-            </div>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>•</span>
-                <Fraction num="7" den="10" />
-                <span>＝</span>
-                <Fraction num="70" den="100" />
-                <span>＝ <strong>0,70</strong></span>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span>•</span>
-                <Fraction num="3" den="4" />
-                <span>＝</span>
-                <Fraction num="75" den="100" />
-                <span>＝ <strong>0,75</strong></span>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200 bg-emerald-50/60 p-1.5 rounded-lg">
-                <span>•</span>
-                <strong className="text-emerald-800"><Fraction num="21" den="25" /></strong>
-                <span>＝</span>
-                <Fraction num="84" den="100" />
-                <span>＝ <strong className="text-emerald-700">0,84</strong></span>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span>•</span>
-                <Fraction num="43" den="50" />
-                <span>＝</span>
-                <Fraction num="86" den="100" />
-                <span>＝ <strong>0,86</strong></span>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Υπολογισμός της απόστασης κάθε αριθμού από το 0,80:
-            </div>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Για το 0,70: |0,80 － 0,70| ＝ <strong>0,10</strong></div>
-              <div>• Για το 0,75: |0,80 － 0,75| ＝ <strong>0,05</strong></div>
-              <div className="text-emerald-700 font-bold bg-emerald-50 p-1 rounded-md">
-                • Για το 0,84 (<Fraction num="21" den="25" />): |0,80 － 0,84| ＝ 0,04 ⭐ (ελάχιστη απόσταση)
-              </div>
-              <div>• Για το 0,86: |0,80 － 0,86| ＝ <strong>0,06</strong></div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το κλάσμα που βρίσκεται πιο κοντά στον αριθμό 0,8 είναι το <strong><Fraction num="21" den="25" /></strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 7,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ο μέσος όρος 6 συνεχόμενων άρτιων (ζυγών) φυσικών αριθμών είναι 15. Ποιος είναι ο μεγαλύτερος από αυτούς τους έξι αριθμούς;',
-    options: ['16', '18', '20', '22'],
-    correct: '20',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Επειδή οι 6 άρτιοι αριθμοί είναι <strong>συνεχόμενοι</strong>, διαφέρουν μεταξύ τους κατά <strong>2</strong> και είναι συμμετρικά κατανεμημένοι γύρω από τον μέσο όρο τους (<strong>15</strong>).
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΣΥΜΜΕΤΡΙΑ ΤΩΝ 6 ΑΡΤΙΩΝ ΓΥΡΩ ΑΠΟ ΤΟΝ ΜΕΣΟ ΟΡΟ 15 */}
-        <div className="bg-white/90 p-3.5 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="155" viewBox="0 0 490 155" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="numline-arr-7" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
-              </marker>
-            </defs>
-
-            {/* Κεντρικός άξονας αριθμογραμμής */}
-            <line x1="20" y1="75" x2="470" y2="75" stroke="#334155" strokeWidth="2" markerEnd="url(#numline-arr-7)" />
-
-            {/* ΚΕΝΤΡΙΚΟΣ ΜΕΣΟΣ ΟΡΟΣ = 15 */}
-            <g transform="translate(245, 75)">
-              <line x1="0" y1="-28" x2="0" y2="28" stroke="#dc2626" strokeWidth="2" strokeDasharray="3 2" />
-              <circle cx="0" cy="0" r="4.5" fill="#dc2626" />
-              <rect x="-38" y="-56" width="76" height="24" rx="6" fill="#fef2f2" stroke="#fca5a5" strokeWidth="1.2" />
-              <text x="0" y="-40" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b91c1c">Μ.Ο. ＝ 15</text>
-              <text x="0" y="44" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#dc2626">Κέντρο Συμμετρίας</text>
-            </g>
-
-            {/* ΟΙ 6 ΑΡΤΙΟΙ ΑΡΙΘΜΟΙ (10, 12, 14, 16, 18, 20) */}
-            {[
-              { val: 10, x: 55, label: '1ος (μικρότερος)' },
-              { val: 12, x: 120, label: '2ος' },
-              { val: 14, x: 185, label: '3ος' },
-              { val: 16, x: 305, label: '4ος' },
-              { val: 18, x: 370, label: '5ος' },
-              { val: 20, x: 435, label: '6ος (μεγαλύτερος)', isMax: true }
-            ].map((item) => (
-              <g key={item.val} transform={`translate(${item.x}, 75)`}>
-                <line x1="0" y1="-8" x2="0" y2="8" stroke={item.isMax ? '#16a34a' : '#475569'} strokeWidth={item.isMax ? '2.5' : '1.8'} />
-                <circle cx="0" cy="0" r={item.isMax ? '6' : '4.5'} fill={item.isMax ? '#16a34a' : '#3b82f6'} stroke={item.isMax ? '#14532d' : '#1d4ed8'} strokeWidth="1.2" />
-                <text x="0" y="-14" fontSize={item.isMax ? '13' : '12'} fontWeight={item.isMax ? '900' : 'bold'} textAnchor="middle" fill={item.isMax ? '#15803d' : '#0f172a'}>
-                  {item.val}
-                </text>
-                <text x="0" y="24" fontSize="8.5" fontWeight={item.isMax ? 'bold' : 'normal'} textAnchor="middle" fill={item.isMax ? '#166534' : '#64748b'}>
-                  {item.label}
-                </text>
-              </g>
-            ))}
-
-            {/* ΕΠΙΣΗΜΑΝΣΗ ΣΤΟΝ ΜΕΓΑΛΥΤΕΡΟ (20) */}
-            <g transform="translate(435, 22)">
-              <rect x="-24" y="0" width="48" height="18" rx="4" fill="#dcfce7" stroke="#86efac" strokeWidth="1" />
-              <text x="0" y="13" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#166534">Στόχος ⭐</text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Αλγεβρικά με εξίσωση αθροίσματος)
-            </div>
-            <p className="text-slate-700">
-              Αφού ο μέσος όρος των 6 αριθμών είναι 15, το συνολικό τους άθροισμα ισούται με:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>Μέσος Όρος ＝</span>
-                <Fraction num="Άθροισμα 6 αριθμών" den="6" />
-                <span>＝ 15 ➔ <strong>Άθροισμα ＝ 6 · 15 ＝ 90</strong></span>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Αν συμβολίσουμε τον πρώτο (μικρότερο) άρτιο με <strong>α</strong>, οι 6 διαδοχικοί άρτιοι είναι:
-              </div>
-              <div className="font-bold text-slate-800">
-                α, &nbsp;α ＋ 2, &nbsp;α ＋ 4, &nbsp;α ＋ 6, &nbsp;α ＋ 8, &nbsp;α ＋ 10
-              </div>
-              <div className="pt-1 border-t border-slate-200 space-y-1">
-                <div>(α) ＋ (α ＋ 2) ＋ (α ＋ 4) ＋ (α ＋ 6) ＋ (α ＋ 8) ＋ (α ＋ 10) ＝ 90</div>
-                <div>6α ＋ 30 ＝ 90</div>
-                <div>6α ＝ 90 － 30 ＝ 60 ➔ <strong>α ＝ 10</strong></div>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                Ο μεγαλύτερος είναι: α ＋ 10 ＝ 10 ＋ 10 ＝ <span className="text-base text-emerald-700 font-black">20</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Συμμετρία γύρω από τον μέσο όρο)
-            </div>
-            <p className="text-slate-700">
-              Σε μια σειρά διαδοχικών αριθμών με σταθερό βήμα, ο <strong>μέσος όρος</strong> βρίσκεται ακριβώς στη μέση.
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• Το 15 βρίσκεται ακριβώς ανάμεσα στον 3ο και τον 4ο άρτιο αριθμό.</div>
-              <div>• Οι δύο μεσαίοι άρτιοι είναι το <strong>14</strong> (15 － 1) και το <strong>16</strong> (15 ＋ 1).</div>
-              <div className="pt-1 border-t border-slate-200">
-                Προχωρώντας κατά 2 προς τα εμπρός: <strong>16 ➔ 18 ➔ 20</strong> (ο 6ος και μεγαλύτερος).
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο μεγαλύτερος από τους έξι αριθμούς είναι το <strong>20</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 8,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Ένα τετράγωνο έχει εμβαδόν 64 τ.εκ. Αν διπλασιάσουμε το μήκος της πλευράς του, πόσο θα γίνει η περίμετρος του νέου τετραγώνου;',
-    options: ['32 εκ.', '48 εκ.', '64 εκ.', '128 εκ.'],
-    correct: '64 εκ.',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Υπολογίζουμε πρώτα την πλευρά του αρχικού τετραγώνου από το δοσμένο εμβαδόν του και στη συνέχεια τη νέα πλευρά και την περίμετρο μετά τον διπλασιασμό:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΑΡΧΙΚΟΥ & ΝΕΟΥ ΤΕΤΡΑΓΩΝΟΥ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="200" viewBox="0 0 490 200" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="arr-scale-8" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#2563eb" />
-              </marker>
-            </defs>
-
-            {/* 1. ΑΡΧΙΚΟ ΤΕΤΡΑΓΩΝΟ (8 x 8 -> 65px στο σχεδιασμό) */}
-            <g transform="translate(35, 30)">
-              <text x="32.5" y="-12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Αρχικό Τετράγωνο
-              </text>
-              <rect x="0" y="0" width="65" height="65" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
-              <text x="32.5" y="32" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Ε ＝ 64 τ.εκ.</text>
-              <text x="32.5" y="46" fontSize="9.5" textAnchor="middle" fill="#2563eb">(8 · 8)</text>
-
-              {/* Διαστάσεις πλευράς */}
-              <text x="32.5" y="80" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">α ＝ 8 εκ.</text>
-              <text x="-12" y="36" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">8 εκ.</text>
-              
-              {/* Περίμετρος */}
-              <rect x="-10" y="92" width="85" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
-              <text x="32.5" y="106" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#475569">Π ＝ 32 εκ.</text>
-            </g>
-
-            {/* ΜΕΤΑΒΑΣΗ ΜΕ ΔΙΠΛΑΣΙΑΣΜΟ ΠΛΕΥΡΑΣ (· 2) */}
-            <g transform="translate(135, 70)">
-              <path d="M 10 0 L 60 0" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#arr-scale-8)" />
-              <text x="35" y="-10" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1d4ed8">
-                Διπλασιασμός
-              </text>
-              <text x="35" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#2563eb">
-                πλευράς (· 2)
-              </text>
-            </g>
-
-            {/* 2. ΝΕΟ ΤΕΤΡΑΓΩΝΟ (16 x 16 -> 130px στο σχεδιασμό) */}
-            <g transform="translate(235, 20)">
-              <text x="65" y="-6" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d">
-                Νέο Τετράγωνο (Διπλάσια Πλευρά)
-              </text>
-              {/* Εξωτερικό νέο τετράγωνο */}
-              <rect x="0" y="6" width="130" height="130" rx="8" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2.5" />
-
-              {/* 4 εσωτερικά υπο-τετράγωνα για οπτική αντίληψη */}
-              <rect x="0" y="6" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
-              <rect x="65" y="6" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
-              <rect x="0" y="71" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
-              <rect x="65" y="71" width="65" height="65" fill="#dcfce7" fillOpacity="0.5" stroke="#86efac" strokeWidth="1" strokeDasharray="3 3" />
-
-              {/* Διαστάσεις πλευράς νέου */}
-              <text x="65" y="152" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#166534">α_νέο ＝ 16 εκ. (2 · 8)</text>
-              <text x="-14" y="75" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">16 εκ.</text>
-
-              {/* Σήμανση νέας περιμέτρου */}
-              <rect x="15" y="58" width="100" height="30" rx="6" fill="#16a34a" />
-              <text x="65" y="77" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Π ＝ 64 εκ. ⭐
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Αρχική πλευρά */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Εύρεση της πλευράς του αρχικού τετραγώνου:
-            </div>
-            <p className="text-slate-700">
-              Το εμβαδόν τετραγώνου δίνεται από τον τύπο <span className="font-mono font-bold">Ε ＝ α · α ＝ α²</span>:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>α · α ＝ 64 τ.εκ. ➔ <strong className="text-blue-700">α ＝ 8 εκ.</strong> (αφού 8 · 8 ＝ 64)</div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Νέα πλευρά & περίμετρος */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Υπολογισμός της νέας πλευράς και της νέας περιμέτρου:
-            </div>
-            <p className="text-slate-700">
-              Διπλασιάζουμε το μήκος της πλευράς του:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Νέα πλευρά: 2 · 8 ＝ <strong>16 εκ.</strong></div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Η περίμετρος τετραγώνου ισούται με το άθροισμα των 4 ίσων πλευρών του (<span className="font-mono font-bold">Π ＝ 4 · α</span>):
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>• Νέα Περίμετρος ＝ 4 · 16 εκ. ＝</span>
-                <strong className="text-emerald-700 text-base">64 εκ.</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, η περίμετρος του νέου τετραγώνου θα γίνει <strong>64 εκ.</strong>
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 9,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Η Ελένη και η Δήμητρα έχουν μαζί 45 βιβλία. Αν η Ελένη δώσει 5 βιβλία στη Δήμητρα, τότε η Δήμητρα θα έχει ακριβώς τα διπλάσια βιβλία από την Ελένη. Πόσα βιβλία είχε αρχικά η Ελένη;',
-    options: ['15', '20', '25', '30'],
-    correct: '20',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Η μεταφορά βιβλίων μεταξύ των δύο κοριτσιών δεν αλλάζει το συνολικό τους πλήθος, το οποίο παραμένει σταθερά <strong>45 βιβλία</strong>.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΟΠΤΙΚΟΠΟΙΗΣΗ ΤΩΝ ΙΣΩΝ ΜΕΡΩΝ ΣΤΟ ΤΕΛΟΣ ΚΑΙ ΕΠΙΣΤΡΟΦΗ ΣΤΗΝ ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="210" viewBox="0 0 490 210" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="arrow-books-back" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#dc2626" />
-              </marker>
-            </defs>
-
-            {/* 1. ΤΕΛΙΚΗ ΚΑΤΑΣΤΑΣΗ: 3 ΙΣΑ ΜΕΡΗ (45 : 3 = 15 ΒΙΒΛΙΑ ΑΝΑ ΜΕΡΟΣ) */}
-            <g transform="translate(15, 12)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="black" fill="#0f172a">
-                1. Τελική Κατάσταση (Σύνολο: 45 βιβλία ＝ 3 ίσα μέρη)
-              </text>
-
-              {/* Ελένη: 1 μέρος (15 βιβλία) */}
-              <g transform="translate(0, 26)">
-                <rect x="0" y="0" width="70" height="24" rx="4" fill="#f8fafc" />
-                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#0369a1">Ελένη:</text>
-                <rect x="75" y="0" width="105" height="24" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                <text x="127.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1 μέρος (15)</text>
-              </g>
-
-              {/* Δήμητρα: 2 μέρη (2 · 15 = 30 βιβλία) */}
-              <g transform="translate(0, 56)">
-                <rect x="0" y="0" width="70" height="24" rx="4" fill="#f8fafc" />
-                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#475569">Δήμητρα:</text>
-                <rect x="75" y="0" width="105" height="24" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.6" />
-                <text x="127.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">1 μέρος (15)</text>
-                <rect x="185" y="0" width="105" height="24" rx="6" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="1.6" />
-                <text x="237.5" y="16" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">1 μέρος (15)</text>
-
-                {/* Συνολική ετικέτα 45 βιβλίων */}
-                <path d="M 75 -2 L 290 -2" stroke="#64748b" strokeWidth="1" strokeDasharray="2 2" />
-                <rect x="305" y="-12" width="145" height="40" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
-                <text x="377.5" y="6" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">45 : 3 μέρη ＝</text>
-                <text x="377.5" y="21" fontSize="12" fontWeight="black" textAnchor="middle" fill="#15803d">15 βιβλία / μέρος</text>
-              </g>
-            </g>
-
-            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="20" y1="108" x2="470" y2="108" stroke="#e2e8f0" strokeWidth="1.2" />
-
-            {/* 2. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ: ΕΠΙΣΤΡΟΦΗ ΤΩΝ 5 ΒΙΒΛΙΩΝ ΣΤΗΝ ΕΛΕΝΗ */}
-            <g transform="translate(15, 122)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="black" fill="#0f172a">
-                2. Αρχική Κατάσταση (Επιστρέφουμε τα 5 βιβλία πίσω στην Ελένη)
-              </text>
-
-              <g transform="translate(0, 26)">
-                <text x="0" y="18" fontSize="11" fontWeight="bold" fill="#0369a1">Ελένη:</text>
-                
-                {/* 15 βιβλία του τέλους */}
-                <rect x="75" y="0" width="105" height="28" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                <text x="127.5" y="18" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">15 (στο τέλος)</text>
-
-                {/* + 5 βιβλία που είχε δώσει */}
-                <rect x="185" y="0" width="65" height="28" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" strokeDasharray="3 2" />
-                <text x="217.5" y="18" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#dc2626">＋ 5</text>
-
-                {/* Τόξο επιστροφής */}
-                <path d="M 270 14 Q 255 32 240 28" fill="none" stroke="#dc2626" strokeWidth="1.5" markerEnd="url(#arrow-books-back)" />
-
-                {/* Τελικό Αποτέλεσμα Αρχικών Βιβλίων Ελένης */}
-                <rect x="260" y="-1" width="190" height="30" rx="8" fill="#16a34a" />
-                <text x="355" y="19" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Αρχικά: 15 ＋ 5 ＝ 20 βιβλία ⭐
-                </text>
-              </g>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Με τη μέθοδο των ίσων μερών)
-            </div>
-            <p className="text-slate-700">
-              Στο τέλος, η Δήμητρα έχει διπλάσια βιβλία από την Ελένη:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Βιβλία Ελένης στο τέλος: <strong>1 μέρος</strong></div>
-              <div>• Βιβλία Δήμητρας στο τέλος: <strong>2 μέρη</strong></div>
-              <div>• Συνολικά μέρη: 1 ＋ 2 ＝ <strong>3 ίσα μέρη</strong></div>
-              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
-                <span>• Κάθε μέρος αντιστοιχεί σε:</span>
-                <Fraction num="45" den="3" />
-                <span>＝ <strong>15 βιβλία</strong></span>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-slate-800">
-                Άρα στο τέλος η Ελένη έχει 15 βιβλία. Επειδή είχε δώσει 5 βιβλία στη Δήμητρα, αρχικά είχε:
-              </div>
-              <div className="text-emerald-700 font-bold text-base">
-                Αρχικά βιβλία Ελένης ＝ 15 ＋ 5 ＝ 20 βιβλία
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση)
-            </div>
-            <p className="text-slate-700">
-              Έστω <strong>x</strong> τα βιβλία που είχε αρχικά η Ελένη. Τότε η Δήμητρα είχε αρχικά <strong>45 － x</strong> βιβλία.
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Μετά τη μεταφορά των 5 βιβλίων:</div>
-              <div className="pl-3 text-slate-700">
-                Ελένη: x － 5 &nbsp;|&nbsp; Δήμητρα: (45 － x) ＋ 5 ＝ 50 － x
-              </div>
-              <div className="pt-1 border-t border-slate-200">
-                Η Δήμητρα έχει τα διπλάσια:
-              </div>
-              <div className="pl-3 space-y-1 text-slate-900">
-                <div>50 － x ＝ 2 · (x － 5)</div>
-                <div>50 － x ＝ 2x － 10</div>
-                <div>50 ＋ 10 ＝ 2x ＋ x</div>
-                <div>3x ＝ 60</div>
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span>x ＝</span>
-                  <Fraction num="60" den="3" />
-                  <span>➔ <strong className="text-emerald-700 text-base">x ＝ 20 βιβλία</strong></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, η Ελένη είχε αρχικά <strong>20 βιβλία</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 10,
-    group: 'ΟΜΑΔΑ Α (4 επιλογες)',
-    prompt: 'Σε ποιον αριθμό αντιστοιχεί ο όρος που λείπει από το παρακάτω αριθμητικό μοτίβο;\n2, 6, 12, 20, 30, __, 56, 72',
-    options: ['36', '40', '42', '45'],
-    correct: '42',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Αναλύουμε το αριθμητικό μοτίβο εξετάζοντας τις <strong>διαφορές μεταξύ των διαδοχικών όρων</strong>, οι οποίες αυξάνονται σταθερά κατά 2:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΟΙ ΟΡΟΙ ΤΗΣ ΑΚΟΛΟΥΘΙΑΣ ΚΑΙ ΤΑ ΤΟΞΑ ΔΙΑΦΟΡΩΝ (+4, +6, +8, +10, +12, +14, +16) */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="530" height="170" viewBox="0 0 530 170" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="motif-arr-10" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
-              </marker>
-              <marker id="motif-arr-target" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
-              </marker>
-            </defs>
-
-            {/* ΟΙ 8 ΟΡΟΙ ΤΟΥ ΜΟΤΙΒΟΥ */}
-            {[
-              { val: '2', x: 30 },
-              { val: '6', x: 95 },
-              { val: '12', x: 160 },
-              { val: '20', x: 225 },
-              { val: '30', x: 290 },
-              { val: '42', x: 355, isTarget: true },
-              { val: '56', x: 420 },
-              { val: '72', x: 485 }
-            ].map((node) => (
-              <g key={node.val} transform={`translate(${node.x}, 115)`}>
-                {/* Πλαίσιο αριθμού */}
-                <rect
-                  x="-22"
-                  y="-18"
-                  width="44"
-                  height="36"
-                  rx="8"
-                  fill={node.isTarget ? '#dcfce7' : '#f8fafc'}
-                  stroke={node.isTarget ? '#16a34a' : '#cbd5e1'}
-                  strokeWidth={node.isTarget ? '2.2' : '1.5'}
-                />
-                <text
-                  x="0"
-                  y="5"
-                  fontSize={node.isTarget ? '15' : '13'}
-                  fontWeight={node.isTarget ? '900' : 'bold'}
-                  textAnchor="middle"
-                  fill={node.isTarget ? '#15803d' : '#0f172a'}
-                  fontFamily="monospace"
-                >
-                  {node.val}
-                </text>
-                {node.isTarget && (
-                  <text x="0" y="32" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">
-                    (Ζητούμενο ⭐)
-                  </text>
-                )}
-              </g>
-            ))}
-
-            {/* ΤΟΞΑ ΜΕΤΑΒΑΣΗΣ / ΔΙΑΦΟΡΩΝ (+4, +6, +8, +10, +12, +14, +16) */}
-            {[
-              { startX: 30, endX: 95, diff: '+4' },
-              { startX: 95, endX: 160, diff: '+6' },
-              { startX: 160, endX: 225, diff: '+8' },
-              { startX: 225, endX: 290, diff: '+10' },
-              { startX: 290, endX: 355, diff: '+12', isTarget: true },
-              { startX: 355, endX: 420, diff: '+14' },
-              { startX: 420, endX: 485, diff: '+16' }
-            ].map((arc, idx) => (
-              <g key={`arc-${idx}`}>
-                <path
-                  d={`M ${arc.startX} 92 C ${arc.startX + 15} 45, ${arc.endX - 15} 45, ${arc.endX} 92`}
-                  fill="none"
-                  stroke={arc.isTarget ? '#16a34a' : '#2563eb'}
-                  strokeWidth={arc.isTarget ? '2.5' : '1.8'}
-                  markerEnd={arc.isTarget ? 'url(#motif-arr-target)' : 'url(#motif-arr-10)'}
-                />
-                <text
-                  x={(arc.startX + arc.endX) / 2}
-                  y="52"
-                  fontSize={arc.isTarget ? '12.5' : '11'}
-                  fontWeight={arc.isTarget ? '900' : 'bold'}
-                  textAnchor="middle"
-                  fill={arc.isTarget ? '#15803d' : '#1e40af'}
-                  fontFamily="monospace"
-                >
-                  {arc.diff}
-                </text>
-              </g>
-            ))}
-
-            {/* ΕΝΔΕΙΞΗ ΣΤΑΘΕΡΗΣ ΑΥΞΗΣΗΣ ΤΩΝ ΔΙΑΦΟΡΩΝ */}
-            <g transform="translate(15, 12)">
-              <rect x="0" y="0" width="500" height="20" rx="6" fill="#f1f5f9" stroke="#e2e8f0" strokeWidth="1" />
-              <text x="250" y="14" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">
-                Διαδοχικές διαφορές: +4, +6, +8, +10, +12, +14, +16 (κάθε βήμα αυξάνεται κατά +2)
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Μέσω διαφορών */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Μέσω των διαφορών διαδοχικών όρων)
-            </div>
-            <p className="text-slate-700">
-              Παρατηρούμε τη διαφορά ανάμεσα σε κάθε όρο και τον επόμενό του:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• 2 ＋ <strong className="text-blue-700">4</strong> ＝ 6</div>
-              <div>• 6 ＋ <strong className="text-blue-700">6</strong> ＝ 12</div>
-              <div>• 12 ＋ <strong className="text-blue-700">8</strong> ＝ 20</div>
-              <div>• 20 ＋ <strong className="text-blue-700">10</strong> ＝ 30</div>
-              <div className="pt-1 border-t border-slate-200 bg-emerald-50/70 p-1 rounded-md">
-                • 30 ＋ <strong className="text-emerald-700">12</strong> ＝ <strong className="text-emerald-700 text-base">42</strong> ⭐ (ο όρος που λείπει)
-              </div>
-              <div className="pt-1 text-slate-600 font-sans text-xs">
-                Επαλήθευση για τους επόμενους όρους:
-              </div>
-              <div>• 42 ＋ <strong className="text-blue-700">14</strong> ＝ 56</div>
-              <div>• 56 ＋ <strong className="text-blue-700">16</strong> ＝ 72 (επαληθεύεται)</div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Γινόμενο διαδοχικών φυσικών */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Γινόμενο διαδοχικών φυσικών αριθμών)
-            </div>
-            <p className="text-slate-700">
-              Κάθε όρος ισούται με το γινόμενο δύο διαδοχικών αριθμών (<span className="font-mono font-bold">ν · (ν ＋ 1)</span>):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• 1ος όρος: 1 · 2 ＝ <strong>2</strong></div>
-              <div>• 2ος όρος: 2 · 3 ＝ <strong>6</strong></div>
-              <div>• 3ος όρος: 3 · 4 ＝ <strong>12</strong></div>
-              <div>• 4ος όρος: 4 · 5 ＝ <strong>20</strong></div>
-              <div>• 5ος όρος: 5 · 6 ＝ <strong>30</strong></div>
-              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • 6ος όρος (ζητούμενος): 6 · 7 ＝ <span className="text-base text-emerald-700 font-black">42</span>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
-                • 7ος: 7 · 8 ＝ 56 &nbsp;|&nbsp; 8ος: 8 · 9 ＝ 72
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο όρος που λείπει είναι ο αριθμός <strong>42</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 11,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Για την αγορά 6 ίδιων τετραδίων και 4 ίδιων στυλό πληρώσαμε συνολικά 24€. Αν αγοράζαμε 6 ίδια τετράδια και 7 ίδια στυλό θα πληρώναμε συνολικά 33€. Πόσα ευρώ κοστίζει το ένα τετράδιο;',
-    options: ['1,5€', '2€', '2,5€', '3€', '4€'],
-    correct: '2€',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Συγκρίνουμε τις δύο αγορές: το πλήθος των τετραδίων είναι <strong>σταθερό (6 τετράδια)</strong>, επομένως η αύξηση στο συνολικό κόστος οφείλεται αποκλειστικά στα επιπλέον στυλό.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΤΩΝ ΔΥΟ ΑΓΟΡΩΝ & ΔΙΑΦΟΡΑ ΣΤΑ ΣΤΥΛΟ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="205" viewBox="0 0 490 205" className="select-none font-sans mx-auto block">
-            {/* 1η ΑΓΟΡΑ */}
-            <g transform="translate(15, 12)">
-              <rect x="0" y="0" width="460" height="68" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
-              <text x="14" y="20" fontSize="11" fontWeight="bold" fill="#0f172a">1η Αγορά:</text>
-              
-              {/* 6 Τετράδια */}
-              <g transform="translate(85, 8)">
-                <rect x="0" y="0" width="130" height="48" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
-                <text x="65" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">6 Τετράδια</text>
-                <text x="65" y="38" fontSize="9.5" textAnchor="middle" fill="#2563eb">(σταθερά)</text>
-              </g>
-
-              <text x="225" y="38" fontSize="14" fontWeight="black" fill="#64748b">＋</text>
-
-              {/* 4 Στυλό */}
-              <g transform="translate(245, 8)">
-                <rect x="0" y="0" width="95" height="48" rx="6" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.5" />
-                <text x="47.5" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#15803d">4 Στυλό</text>
-                <text x="47.5" y="38" fontSize="9.5" textAnchor="middle" fill="#16a34a">(4 · 3€ = 12€)</text>
-              </g>
-
-              <text x="350" y="38" fontSize="14" fontWeight="black" fill="#64748b">＝</text>
-
-              {/* Σύνολο 24€ */}
-              <g transform="translate(370, 14)">
-                <rect x="0" y="0" width="75" height="36" rx="6" fill="#0f172a" />
-                <text x="37.5" y="23" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">24€</text>
-              </g>
-            </g>
-
-            {/* 2η ΑΓΟΡΑ */}
-            <g transform="translate(15, 88)">
-              <rect x="0" y="0" width="460" height="68" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
-              <text x="14" y="20" fontSize="11" fontWeight="bold" fill="#0f172a">2η Αγορά:</text>
-              
-              {/* 6 Τετράδια */}
-              <g transform="translate(85, 8)">
-                <rect x="0" y="0" width="130" height="48" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
-                <text x="65" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">6 Τετράδια</text>
-                <text x="65" y="38" fontSize="9.5" textAnchor="middle" fill="#2563eb">(σταθερά)</text>
-              </g>
-
-              <text x="225" y="38" fontSize="14" fontWeight="black" fill="#64748b">＋</text>
-
-              {/* 7 Στυλό (4 + 3 επιπλέον) */}
-              <g transform="translate(245, 8)">
-                <rect x="0" y="0" width="95" height="48" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
-                <text x="47.5" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#b91c1c">7 Στυλό</text>
-                <text x="47.5" y="38" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">(＋3 στυλό)</text>
-              </g>
-
-              <text x="350" y="38" fontSize="14" fontWeight="black" fill="#64748b">＝</text>
-
-              {/* Σύνολο 33€ */}
-              <g transform="translate(370, 14)">
-                <rect x="0" y="0" width="75" height="36" rx="6" fill="#0f172a" />
-                <text x="37.5" y="23" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">33€</text>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΙΣΗΜΑΝΣΗ ΔΙΑΦΟΡΑΣ */}
-            <g transform="translate(15, 164)">
-              <rect x="0" y="0" width="460" height="30" rx="8" fill="#ecfdf5" stroke="#a7f3d0" strokeWidth="1.2" />
-              <text x="230" y="19" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46">
-                Διαφορά: 3 επιπλέον στυλό ＝ 33€ － 24€ ＝ 9€ ➔ 1 στυλό ＝ 3€
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Εύρεση τιμής στυλό */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Υπολογισμός του κόστους για ένα στυλό:
-            </div>
-            <p className="text-slate-700">
-              Η δεύτερη αγορά έχει ακριβώς τα ίδια τετράδια αλλά περισσότερα στυλό:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• Επιπλέον στυλό: 7 － 4 ＝ <strong>3 στυλό</strong></div>
-              <div>• Επιπλέον κόστος: 33€ － 24€ ＝ <strong>9€</strong></div>
-              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
-                <span>• Κόστος για 1 στυλό ＝</span>
-                <Fraction num="9" den="3" />
-                <span>＝ <strong className="text-blue-700">3€</strong></span>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Εύρεση τιμής τετραδίου */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Υπολογισμός του κόστους για ένα τετράδιο:
-            </div>
-            <p className="text-slate-700">
-              Αντικαθιστούμε την τιμή του στυλό στην 1η αγορά (6 τετράδια ＋ 4 στυλό ＝ 24€):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Κόστος των 4 στυλό: 4 · 3€ ＝ <strong>12€</strong></div>
-              <div>• Κόστος των 6 τετραδίων: 24€ － 12€ ＝ <strong>12€</strong></div>
-              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
-                <span>• Κόστος για 1 τετράδιο ＝</span>
-                <Fraction num="12" den="6" />
-                <span>＝ <strong className="text-emerald-700 text-base">2€</strong></span>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 3: Επαλήθευση */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900">
-              3. Επαλήθευση στη 2η αγορά:
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-0.5">
-              <div>6 τετράδια · 2€ ＋ 7 στυλό · 3€ ＝ 12€ ＋ 21€ ＝ <strong>33€</strong> (επαληθεύεται)</div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το ένα τετράδιο κοστίζει <strong>2€</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 12,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ο πληθυσμός των μελισσών σε μια πρότυπη κυψέλη αυξάνεται κατά 20% κάθε μήνα. Αν σήμερα η κυψέλη έχει 5.000 μέλισσες, πόσες μέλισσες θα έχει μετά από ακριβώς δύο μήνες;',
-    options: ['6.000', '7.000', '7.200', '7.500', '8.000'],
-    correct: '7.200',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Η αύξηση κατά <strong>20%</strong> υπολογίζεται <strong>διαδοχικά</strong> σε κάθε μήνα επί του πληθυσμού που έχει διαμορφωθεί (σύνθετη αύξηση):
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΔΙΑΔΟΧΙΚΗ ΑΥΞΗΣΗ ΠΛΗΘΥΣΜΟΥ ΣΕ 2 ΜΗΝΕΣ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="530" height="180" viewBox="0 0 530 180" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="arr-growth" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
-              </marker>
-            </defs>
-
-            {/* 1. ΑΡΧΙΚΟΣ ΠΛΗΘΥΣΜΟΣ (ΣΗΜΕΡΑ: x: 15 έως 125) */}
-            <g transform="translate(15, 65)">
-              <rect x="0" y="0" width="110" height="75" rx="10" fill="#f8fafc" stroke="#64748b" strokeWidth="1.8" />
-              <text x="55" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#475569">Σήμερα</text>
-              <text x="55" y="50" fontSize="15" fontWeight="900" textAnchor="middle" fill="#0f172a" fontFamily="monospace">5.000</text>
-              <text x="55" y="64" fontSize="9.5" textAnchor="middle" fill="#64748b">μέλισσες</text>
-            </g>
-
-            {/* ΤΟΞΟ 1ου ΜΗΝΑ (+20% -> +1.000) */}
-            <g transform="translate(125, 0)">
-              <path d="M 12 95 C 28 50, 48 50, 64 95" fill="none" stroke="#2563eb" strokeWidth="2" markerEnd="url(#arr-growth)" />
-              <rect x="9" y="26" width="60" height="24" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-              <text x="39" y="38" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">＋20%</text>
-              <text x="39" y="47" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#2563eb">(＋1.000)</text>
-              <text x="39" y="8" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">1ος Μήνας</text>
-            </g>
-
-            {/* 2. ΠΛΗΘΥΣΜΟΣ ΣΤΟ ΤΕΛΟΣ ΤΟΥ 1ου ΜΗΝΑ (x: 205 έως 315) */}
-            <g transform="translate(205, 65)">
-              <rect x="0" y="0" width="110" height="75" rx="10" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="55" y="24" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Μετά 1 μήνα</text>
-              <text x="55" y="50" fontSize="15" fontWeight="900" textAnchor="middle" fill="#1e40af" fontFamily="monospace">6.000</text>
-              <text x="55" y="64" fontSize="9.5" textAnchor="middle" fill="#2563eb">μέλισσες</text>
-            </g>
-
-            {/* ΤΟΞΟ 2ου ΜΗΝΑ (+20% επί των 6.000 -> +1.200) */}
-            <g transform="translate(315, 0)">
-              <path d="M 12 95 C 28 50, 48 50, 64 95" fill="none" stroke="#16a34a" strokeWidth="2" markerEnd="url(#arr-growth)" />
-              <rect x="9" y="26" width="60" height="24" rx="6" fill="#f0fdf4" stroke="#bbf7d0" strokeWidth="1" />
-              <text x="39" y="38" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#15803d">＋20%</text>
-              <text x="39" y="47" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#16a34a">(＋1.200)</text>
-              <text x="39" y="8" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">2ος Μήνας</text>
-            </g>
-
-            {/* 3. ΤΕΛΙΚΟΣ ΠΛΗΘΥΣΜΟΣ (ΜΕΤΑ ΑΠΟ 2 ΜΗΝΕΣ: x: 395 έως 515, άνετα μέσα στο viewBox 530) */}
-            <g transform="translate(395, 60)">
-              <rect x="0" y="0" width="120" height="85" rx="12" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
-              <text x="60" y="24" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Μετά 2 μήνες</text>
-              <text x="60" y="52" fontSize="16" fontWeight="900" textAnchor="middle" fill="#15803d" fontFamily="monospace">7.200 ⭐</text>
-              <text x="60" y="69" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#166534">μέλισσες</text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Βήμα προς βήμα ανά μήνα με κλάσματα)
-            </div>
-            <p className="text-slate-700">
-              Η αύξηση κατά 20% αντιστοιχεί στο ένα πέμπτο: <span className="font-mono font-bold">20% ＝ <Fraction num="20" den="100" /> ＝ <Fraction num="1" den="5" /></span>.
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div>
-                <div className="font-sans font-bold text-slate-900">• 1ος Μήνας:</div>
-                <div className="pl-3 space-y-1">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span>Αύξηση ＝</span>
-                    <Fraction num="1" den="5" />
-                    <span>· 5.000 ＝ <strong>1.000 μέλισσες</strong></span>
-                  </div>
-                  <div>Πληθυσμός στο τέλος του 1ου μήνα ＝ 5.000 ＋ 1.000 ＝ <strong>6.000 μέλισσες</strong></div>
-                </div>
-              </div>
-
-              <div className="pt-1.5 border-t border-slate-200">
-                <div className="font-sans font-bold text-slate-900">• 2ος Μήνας:</div>
-                <div className="pl-3 space-y-1">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span>Αύξηση ＝</span>
-                    <Fraction num="1" den="5" />
-                    <span>· 6.000 ＝ <strong>1.200 μέλισσες</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                    <span>Τελικός πληθυσμός ＝ 6.000 ＋ 1.200 ＝</span>
-                    <strong className="text-emerald-700 text-base">7.200 μέλισσες</strong>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Με συντελεστή μεταβολής)
-            </div>
-            <p className="text-slate-700">
-              Κάθε μήνα ο πληθυσμός γίνεται το 120% του προηγούμενου (<span className="font-mono font-bold">1 ＋ 0,20 ＝ 1,20</span> ή <span className="font-mono font-bold"><Fraction num="6" den="5" /></span>):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>Τελικός Πληθυσμός ＝ 5.000 ·</span>
-                <Fraction num="6" den="5" />
-                <span>·</span>
-                <Fraction num="6" den="5" />
-                <span>＝ 5.000 ·</span>
-                <Fraction num="36" den="25" />
-              </div>
-              <div className="flex items-center gap-2 flex-wrap pt-0.5">
-                <span>＝ 200 · 36 ＝</span>
-                <strong className="text-emerald-700 text-base">7.200 μέλισσες</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, μετά από δύο μήνες η κυψέλη θα έχει <strong>7.200 μέλισσες</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 13,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Έχουμε τρία ίδια ποτήρια. Το 1ο ποτήρι είναι κατά 3/4 γεμάτο με νερό και το 2ο είναι κατά 1/2 γεμάτο με νερό. Αδειάζουμε όλο το νερό που περιείχε αρχικά το 3ο ποτήρι μέσα στο 1ο και στο 2ο ποτήρι, με αποτέλεσμα αυτά τα δύο να γεμίσουν τελείως. Τι μέρος του 3ου ποτηριού ήταν γεμάτο με νερό αρχικά;',
-    options: [
-      <Fraction num="1" den="4" />,
-      <Fraction num="3" den="8" />,
-      <Fraction num="1" den="2" />,
-      <Fraction num="3" den="4" />,
-      <Fraction num="7" den="8" />
-    ],
-    correct: '3/4',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Επειδή τα ποτήρια είναι <strong>πανομοιότυπα</strong>, εκφράζουμε τη χωρητικότητά τους σε <strong>τέταρτα (<Fraction num="1" den="4" />)</strong> για να υπολογίσουμε πόσο νερό έλειπε από το 1ο και το 2ο ποτήρι ώστε να γεμίσουν εντελώς.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΤΑ 3 ΠΟΤΗΡΙΑ ΚΑΙ ΤΟ ΝΕΡΟ ΠΟΥ ΜΕΤΑΦΕΡΘΗΚΕ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="210" viewBox="0 0 510 210" className="select-none font-sans mx-auto block">
-            <defs>
-              {/* Ενδιάμεσο τμήμα τετάρτου (κενό) */}
-              <g id="glass-quarter-empty">
-                <rect x="0" y="0" width="70" height="25" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1" />
-              </g>
-
-              {/* Ενδιάμεσο τμήμα τετάρτου (νερό) */}
-              <g id="glass-quarter-water">
-                <rect x="0" y="0" width="70" height="25" fill="#38bdf8" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
-                <text x="35" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/4</text>
-              </g>
-
-              {/* Κάτω τμήμα νερού που αγκαλιάζει ακριβώς τη στρογγυλεμένη βάση */}
-              <g id="glass-bottom-water">
-                <path d="M 0 0 L 70 0 L 70 20 Q 70 25 65 25 L 5 25 Q 0 25 0 20 Z" fill="#38bdf8" fillOpacity="0.85" stroke="#cbd5e1" strokeWidth="1" />
-                <text x="35" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#0369a1" fontFamily="monospace">1/4</text>
-              </g>
-
-              {/* Τμήμα που λείπει και χρειάζεται συμπλήρωση */}
-              <g id="glass-quarter-needed">
-                <rect x="0" y="0" width="70" height="25" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="3 2" />
-                <text x="35" y="16" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#b45309" fontFamily="monospace">+1/4</text>
-              </g>
-
-              <marker id="transfer-arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#0284c7" />
-              </marker>
-            </defs>
-
-            {/* 1ο ΠΟΤΗΡΙ */}
-            <g transform="translate(25, 15)">
-              <text x="35" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">1ο Ποτήρι</text>
-              <g transform="translate(0, 20)">
-                {/* 1ο τέταρτο (χρειάζεται) */}
-                <use href="#glass-quarter-needed" x="0" y="0" />
-                {/* 3 τέταρτα αρχικό νερό */}
-                <use href="#glass-quarter-water" x="0" y="25" />
-                <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-bottom-water" x="0" y="75" />
-                {/* Περίγραμμα ποτηριού (ύψος ακριβώς 100px) */}
-                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
-              </g>
-              <rect x="-5" y="130" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-              <text x="35" y="145" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπει: 1/4</text>
-            </g>
-
-            {/* ΣΥΜΒΟΛΟ ΠΡΟΣΘΕΣΗΣ */}
-            <g transform="translate(125, 80)">
-              <text x="0" y="0" fontSize="22" fontWeight="black" textAnchor="middle" fill="#64748b">＋</text>
-            </g>
-
-            {/* 2ο ΠΟΤΗΡΙ */}
-            <g transform="translate(155, 15)">
-              <text x="35" y="12" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">2ο Ποτήρι</text>
-              <g transform="translate(0, 20)">
-                {/* 2 τέταρτα χρειάζονται */}
-                <use href="#glass-quarter-needed" x="0" y="0" />
-                <use href="#glass-quarter-needed" x="0" y="25" />
-                {/* 2 τέταρτα (1/2) αρχικό νερό */}
-                <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-bottom-water" x="0" y="75" />
-                {/* Περίγραμμα ποτηριού */}
-                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#334155" strokeWidth="2" />
-              </g>
-              <rect x="-5" y="130" width="80" height="22" rx="6" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1" />
-              <text x="35" y="145" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1d4ed8">Λείπουν: 2/4</text>
-            </g>
-
-            {/* ΒΕΛΟΣ ΜΕΤΑΦΟΡΑΣ */}
-            <g transform="translate(255, 75)">
-              <line x1="45" y1="0" x2="5" y2="0" stroke="#0284c7" strokeWidth="2.2" markerEnd="url(#transfer-arr)" />
-              <text x="25" y="-10" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#0284c7">Έδωσε</text>
-              <text x="25" y="18" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0369a1">1/4 + 2/4</text>
-            </g>
-
-            {/* 3ο ΠΟΤΗΡΙ (ΑΡΧΙΚΟ ΠΕΡΙΕΧΟΜΕΝΟ) */}
-            <g transform="translate(335, 15)">
-              <text x="45" y="12" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">3ο Ποτήρι (Αρχικά)</text>
-              <g transform="translate(10, 20)">
-                {/* 1 κενό τέταρτο πάνω */}
-                <use href="#glass-quarter-empty" x="0" y="0" />
-                {/* 3 γεμάτα τέταρτα */}
-                <use href="#glass-quarter-water" x="0" y="25" />
-                <use href="#glass-quarter-water" x="0" y="50" />
-                <use href="#glass-bottom-water" x="0" y="75" />
-                {/* Περίγραμμα ποτηριού */}
-                <path d="M 0 0 L 0 95 Q 0 100 5 100 L 65 100 Q 70 100 70 95 L 70 0" fill="none" stroke="#16a34a" strokeWidth="2.4" />
-              </g>
-
-              {/* Badge αρχικής ποσότητας 3ου ποτηριού */}
-              <rect x="-10" y="128" width="110" height="26" rx="8" fill="#dcfce7" stroke="#86efac" strokeWidth="1.2" />
-              <text x="45" y="145" fontSize="11" fontWeight="900" textAnchor="middle" fill="#166534">
-                Αρχικά: 3/4 ⭐
-              </text>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΟ ΠΛΑΙΣΙΟ */}
-            <g transform="translate(25, 175)">
-              <rect x="0" y="0" width="455" height="26" rx="8" fill="#0f172a" />
-              <text x="227.5" y="17" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Συνολικό νερό που έδωσε το 3ο ποτήρι: 1/4 (στο 1ο) ＋ 2/4 (στο 2ο) ＝ 3/4
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Πόσο νερό λείπει από το 1ο και το 2ο */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Υπολογισμός του κενού χώρου στο 1ο και στο 2ο ποτήρι:
-            </div>
-            <p className="text-slate-700">
-              Για να γεμίσει πλήρως ένα ποτήρι, το περιεχόμενό του πρέπει να φτάσει τη μονάδα (1 ολόκληρο ποτήρι ή <Fraction num="4" den="4" />):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Στο 1ο ποτήρι έλειπαν: 1 －</span>
-                <Fraction num="3" den="4" />
-                <span>＝</span>
-                <strong className="text-blue-700"><Fraction num="1" den="4" /></strong>
-                <span>του ποτηριού.</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Στο 2ο ποτήρι έλειπαν: 1 －</span>
-                <Fraction num="1" den="2" />
-                <span>＝</span>
-                <Fraction num="1" den="2" />
-                <span>＝</span>
-                <strong className="text-blue-700"><Fraction num="2" den="4" /></strong>
-                <span>του ποτηριού.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Άθροισμα νερού που μεταφέρθηκε */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Συνολική ποσότητα νερού που περιείχε αρχικά το 3ο ποτήρι:
-            </div>
-            <p className="text-slate-700">
-              Εφόσον αδειάσαμε <strong>όλο το νερό</strong> του 3ου ποτηριού για να συμπληρώσουμε τα κενά των άλλων δύο, το αρχικό του περιεχόμενο ισούται ακριβώς με το άθροισμα των δύο ποσοτήτων:
-            </p>
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>Αρχικό νερό 3ου ＝</span>
-                <Fraction num="1" den="4" />
-                <span>＋</span>
-                <Fraction num="2" den="4" />
-                <span>＝</span>
-                <Fraction num="1 ＋ 2" den="4" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base"><Fraction num="3" den="4" /></strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το 3ο ποτήρι ήταν αρχικά γεμάτο κατά τα <strong><Fraction num="3" den="4" /></strong> του όγκου του.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 14,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Τα παιδιά του τμήματος ΣΤ1 ενός σχολείου χωρίστηκαν σε εξάδες για ένα παιχνίδι και περίσσεψαν 4 παιδιά. Την ίδια ημέρα, όταν όλα τα παιδιά των τμημάτων ΣΤ1 και ΣΤ2 μαζί χωρίστηκαν σε εξάδες, δεν περίσσεψε κανένα παιδί. Αν χωρίσουμε μόνο τα παιδιά του τμήματος ΣΤ2 σε εξάδες, πόσα παιδιά θα περισσέψουν;',
-    options: ['1 παιδί', '2 παιδιά', '3 παιδιά', '4 παιδιά', 'Κανένα παιδί'],
-    correct: '2 παιδιά',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Εξετάζουμε τη διαίρεση με το <strong>6</strong> (ευκλείδεια διαίρεση) και το <strong>υπόλοιπο</strong> (περίσσευμα) παιδιών σε κάθε περίπτωση:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΣΥΜΠΛΗΡΩΣΗ ΕΞΑΔΑΣ ΑΠΟ ΤΑ ΥΠΟΛΟΙΠΑ ΤΩΝ ΔΥΟ ΤΜΗΜΑΤΩΝ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="490" height="205" viewBox="0 0 490 205" className="select-none font-sans mx-auto block">
-            {/* 1. ΤΜΗΜΑ ΣΤ1 */}
-            <g transform="translate(15, 12)">
-              <rect x="0" y="0" width="460" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
-              <text x="14" y="30" fontSize="11" fontWeight="bold" fill="#0369a1">Τμήμα ΣΤ1:</text>
-              
-              {/* Πλήρεις Εξάδες */}
-              <g transform="translate(95, 10)">
-                <rect x="0" y="0" width="135" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.4" />
-                <text x="67.5" y="20" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Πλήρεις Εξάδες</text>
-              </g>
-
-              <text x="242" y="30" fontSize="13" fontWeight="bold" fill="#64748b">＋</text>
-
-              {/* Περίσσευμα 4 παιδιά */}
-              <g transform="translate(262, 10)">
-                <rect x="0" y="0" width="180" height="32" rx="6" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.6" />
-                <text x="90" y="20" fontSize="11" fontWeight="black" textAnchor="middle" fill="#dc2626">
-                  Περισσεύουν: 4 παιδιά
-                </text>
-              </g>
-            </g>
-
-            {/* 2. ΤΜΗΜΑ ΣΤ2 */}
-            <g transform="translate(15, 72)">
-              <rect x="0" y="0" width="460" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" />
-              <text x="14" y="30" fontSize="11" fontWeight="bold" fill="#15803d">Τμήμα ΣΤ2:</text>
-              
-              {/* Πλήρεις Εξάδες */}
-              <g transform="translate(95, 10)">
-                <rect x="0" y="0" width="135" height="32" rx="6" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.4" />
-                <text x="67.5" y="20" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#15803d">Πλήρεις Εξάδες</text>
-              </g>
-
-              <text x="242" y="30" fontSize="13" fontWeight="bold" fill="#64748b">＋</text>
-
-              {/* Ζητούμενο περίσσευμα (2 παιδιά) */}
-              <g transform="translate(262, 10)">
-                <rect x="0" y="0" width="180" height="32" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" strokeDasharray="3 2" />
-                <text x="90" y="20" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">
-                  Περισσεύουν: 2 παιδιά ⭐
-                </text>
-              </g>
-            </g>
-
-            {/* 3. ΣΥΝΟΛΟ ΣΤ1 + ΣΤ2 (ΣΥΜΠΛΗΡΩΣΗ ΑΚΕΡΑΙΑΣ ΕΞΑΔΑΣ) */}
-            <g transform="translate(15, 134)">
-              <rect x="0" y="0" width="460" height="58" rx="10" fill="#0f172a" />
-              <g transform="translate(15, 14)">
-                <text x="0" y="16" fontSize="11" fontWeight="bold" fill="#94a3b8">ΣΤ1 ＋ ΣΤ2 μαζί:</text>
-                <rect x="110" y="-3" width="125" height="26" rx="5" fill="#1e293b" />
-                <text x="172.5" y="14" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#cbd5e1">Όλες οι εξάδες</text>
-                
-                <text x="245" y="15" fontSize="12" fontWeight="bold" fill="#ffffff">＋</text>
-
-                {/* Ένωση υπολοίπων (4 + 2 = 6) */}
-                <rect x="260" y="-3" width="170" height="26" rx="6" fill="#16a34a" />
-                <text x="345" y="15" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  (4 ＋ 2 ＝ 6 ➔ 1 νέα εξάδα!)
-                </text>
-                <text x="215" y="34" fontSize="9.5" textAnchor="middle" fill="#86efac">
-                  Υπόλοιπο ＝ 0 (δεν περισσεύει κανένα παιδί)
-                </text>
-              </g>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Με ευκλείδεια διαίρεση */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Συμπλήρωση ακέραιης εξάδας)
-            </div>
-            <p className="text-slate-700">
-              Οι πλήρεις εξάδες δεν αφήνουν περίσσευμα. Το τελικό περίσσευμα προκύπτει αποκλειστικά από τα παιδιά που περισσεύουν σε κάθε τμήμα:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Από το ΣΤ1 περισσεύουν <strong>4 παιδιά</strong>.</div>
-              <div>• Για να σχηματιστεί <strong>1 νέα πλήρης εξάδα</strong> (ώστε να μην περισσέψει κανένα παιδί), λείπουν:</div>
-              <div className="pl-3 font-bold text-slate-800">6 － 4 ＝ 2 παιδιά</div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Αυτά τα 2 παιδιά πρέπει υποχρεωτικά να προέρχονται από το περίσσευμα του τμήματος ΣΤ2.
-              </div>
-              <div className="pt-0.5 text-emerald-800 font-bold">
-                Άρα, αν χωρίσουμε μόνο το ΣΤ2 σε εξάδες, θα περισσέψουν <span className="text-base text-emerald-700 font-black">2 παιδιά</span>.
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Με αριθμητικό παράδειγμα */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Επαλήθευση με αριθμητικό παράδειγμα)
-            </div>
-            <p className="text-slate-700">
-              Επιλέγουμε ένα ενδεικτικό πλήθος παιδιών για το ΣΤ1 που αφήνει υπόλοιπο 4 στη διαίρεση με το 6:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• Έστω ότι το ΣΤ1 έχει <strong>16 παιδιά</strong> (αφού 16 ＝ 2 · 6 ＋ 4).</div>
-              <div>• Το σύνολο ΣΤ1 ＋ ΣΤ2 πρέπει να διαιρείται ακριβώς με το 6, π.χ. να είναι <strong>30 παιδιά</strong>.</div>
-              <div>• Τότε το ΣΤ2 έχει: 30 － 16 ＝ <strong>14 παιδιά</strong>.</div>
-              <div className="pt-1 border-t border-slate-200 flex items-center gap-1.5 flex-wrap">
-                <span>• Χωρίζουμε τα 14 παιδιά σε εξάδες: 14 : 6 ＝ 2 εξάδες και</span>
-                <strong className="text-emerald-700 text-base">υπόλοιπο 2 παιδιά</strong>.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, αν χωρίσουμε μόνο τα παιδιά του τμήματος ΣΤ2 σε εξάδες, θα περισσέψουν <strong>2 παιδιά</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 15,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ο Γιώργος μπορεί να βάψει έναν μεγάλο τοίχο σε 6 ώρες, ενώ ο Δημήτρης μπορεί να βάψει τον ίδιο ακριβώς τοίχο σε 3 ώρες. Αν εργαστούν μαζί και με τον ίδιο ρυθμό, σε πόσες ώρες θα ολοκληρώσουν το βάψιμο του τοίχου;',
-    options: ['1,5 ώρα', '2 ώρες', '3 ώρες', '4 ώρες', '4,5 ώρες'],
-    correct: '2 ώρες',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Αναλύουμε την απόδοση των δύο προσώπων ανά ώρα, χωρίζοντας τον τοίχο σε <strong>6 ίσα μέρη (<Fraction num="1" den="6" />)</strong>:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: Ο ΤΟΙΧΟΣ ΧΩΡΙΣΜΕΝΟΣ ΣΕ 6 ΕΚΤΑ ΚΑΙ Η ΚΟΙΝΗ ΕΡΓΑΣΙΑ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="235" viewBox="0 0 510 235" className="select-none font-sans mx-auto block">
-            {/* 1. ΕΡΓΑΣΙΑ ΣΤΗΝ 1η ΩΡΑ */}
-            <g transform="translate(15, 12)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                1. Τι βάφουν μαζί στην 1η ώρα:
-              </text>
-
-              {/* Τοίχος χωρισμένος σε 6 μέρη (πλάτος 426px) */}
-              <g transform="translate(0, 24)">
-                {/* 1/6 από Γιώργο */}
-                <rect x="0" y="0" width="70" height="42" rx="4" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                <text x="35" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">Γιώργος</text>
-                <text x="35" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">1/6</text>
-
-                {/* 2/6 (1/3) από Δημήτρη */}
-                <rect x="73" y="0" width="140" height="42" rx="4" fill="#f0fdf4" stroke="#16a34a" strokeWidth="1.6" />
-                <text x="143" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#15803d">Δημήτρης (1/3 ＝ 2/6)</text>
-                <text x="143" y="32" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">2/6</text>
-
-                {/* Τα υπόλοιπα 3/6 άβαφα */}
-                <rect x="216" y="0" width="210" height="42" rx="4" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" strokeDasharray="3 2" />
-                <text x="321" y="26" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Υπόλοιπο (3/6 ＝ 1/2)</text>
-              </g>
-
-              {/* Επεξήγηση 1ης ώρας κεντραρισμένη σε ολόκληρο το πλάτος του τοίχου */}
-              <text x="213" y="82" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#0369a1">
-                Μαζί σε 1 ώρα: 1/6 ＋ 2/6 ＝ 3/6 ＝ Μισός τοίχος (1/2)
-              </text>
-            </g>
-
-            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="15" y1="106" x2="495" y2="106" stroke="#e2e8f0" strokeWidth="1.2" />
-
-            {/* 2. ΣΥΝΟΛΙΚΟΣ ΧΡΟΝΟΣ ΓΙΑ ΟΛΟΚΛΗΡΟ ΤΟΝ ΤΟΙΧΟ */}
-            <g transform="translate(15, 118)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                2. Ολοκλήρωση σε 2 ώρες (2 μισά ＝ 1 ολόκληρος τοίχος):
-              </text>
-
-              <g transform="translate(0, 24)">
-                {/* 1η ώρα: Μισός τοίχος */}
-                <rect x="0" y="0" width="210" height="38" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-                <text x="105" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1η Ώρα</text>
-                <text x="105" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af">Βάφεται το 1/2 του τοίχου</text>
-
-                {/* 2η ώρα: Άλλος μισός τοίχος */}
-                <rect x="216" y="0" width="210" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2" />
-                <text x="321" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">2η Ώρα</text>
-                <text x="321" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534">Βάφεται το άλλο 1/2 του τοίχου</text>
-              </g>
-
-              {/* Τελικό Badge με άνετο περιθώριο και πλήρη ορατότητα */}
-              <g transform="translate(123, 72)">
-                <rect x="0" y="0" width="180" height="26" rx="13" fill="#16a34a" />
-                <text x="90" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Συνολικός Χρόνος: 2 ώρες ⭐
-                </text>
-              </g>
-            </g>
-          </svg>
-        </div>
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Ρυθμός εργασίας ανά ώρα */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Υπολογισμός του μέρους του τοίχου που βάφει ο καθένας σε 1 ώρα:
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Ο Γιώργος σε 6 ώρες βάφει όλο τον τοίχο ➔ σε 1 ώρα βάφει το:</span>
-                <strong className="text-blue-700"><Fraction num="1" den="6" /></strong>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Ο Δημήτρης σε 3 ώρες βάφει όλο τον τοίχο ➔ σε 1 ώρα βάφει το:</span>
-                <strong className="text-emerald-700"><Fraction num="1" den="3" /></strong>
-                <span>＝</span>
-                <strong className="text-emerald-700"><Fraction num="2" den="6" /></strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Κοινή εργασία σε 1 ώρα */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Υπολογισμός του μέρους που βάφουν μαζί σε 1 ώρα:
-            </div>
-            <p className="text-slate-700">
-              Προσθέτουμε τις ωριαίες αποδόσεις τους κάνοντας τα κλάσματα ομώνυμα:
-            </p>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>Μαζί σε 1 ώρα ＝</span>
-                <Fraction num="1" den="6" />
-                <span>＋</span>
-                <Fraction num="2" den="6" />
-                <span>＝</span>
-                <Fraction num="3" den="6" />
-                <span>＝</span>
-                <strong className="text-blue-700 text-base"><Fraction num="1" den="2" /></strong>
-                <span>του τοίχου.</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 3: Συνολικός χρόνος */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              3. Εύρεση του συνολικού χρόνου για ολόκληρο τον τοίχο:
-            </div>
-            <p className="text-slate-700">
-              Αφού σε 1 ώρα βάφουν το μισό (<Fraction num="1" den="2" />) τοίχο, για ολόκληρο τον τοίχο (<Fraction num="2" den="2" />) θα χρειαστούν:
-            </p>
-
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>Συνολικός Χρόνος ＝ 1 :</span>
-                <Fraction num="1" den="2" />
-                <span>＝ 1 · 2 ＝</span>
-                <strong className="text-emerald-700 text-base font-black">2 ώρες</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, εργαζόμενοι μαζί θα ολοκληρώσουν το βάψιμο του τοίχου σε <strong>2 ώρες</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 16,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένας σχολικός κήπος έχει σχήμα ορθογωνίου με διαστάσεις 15 μέτρα και 10 μέτρα. Στο εσωτερικό του κήπου και κατά μήκος όλων των πλευρών του κατασκευάζουμε έναν πλακόστρωτο διάδρομο σταθερού πλάτους 1 μέτρου. Ποιο είναι το συνολικό εμβαδόν του διαδρόμου αυτού;',
-    options: ['25 τ.μ.', '44 τ.μ.', '46 τ.μ.', '50 τ.μ.', '104 τ.μ.'],
-    correct: '46 τ.μ.',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Για να βρούμε το εμβαδόν του περιμετρικού διαδρόμου, αφαιρούμε το <strong>εμβαδόν του εσωτερικού ορθογωνίου</strong> από το <strong>συνολικό εμβαδόν του κήπου</strong>:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: Ο ΚΗΠΟΣ ΚΑΙ Ο ΠΕΡΙΜΕΤΡΙΚΟΣ ΔΙΑΔΡΟΜΟΣ ΠΛΑΤΟΥΣ 1μ. */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="230" viewBox="0 0 510 230" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="dim-arrow-16" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569" />
-              </marker>
-            </defs>
-
-            {/* ΚΥΡΙΩΣ ΣΧΗΜΑ ΟΡΘΟΓΩΝΙΟΥ (x: 55, y: 35) */}
-            <g transform="translate(55, 35)">
-              {/* 1. Εξωτερικό ορθογώνιο (Διάδρομος): 300px x 150px (αντιστοιχεί σε 15μ x 10μ) */}
-              <rect x="0" y="0" width="300" height="150" rx="6" fill="#fed7aa" stroke="#ea580c" strokeWidth="2" />
-
-              {/* 2. Εσωτερικό ορθογώνιο (Κήπος): περιθώριο 20px ολόγυρα (αντιστοιχεί σε 13μ x 8μ) */}
-              <rect x="20" y="20" width="260" height="110" rx="4" fill="#dcfce7" stroke="#16a34a" strokeWidth="1.8" />
-
-              {/* Κείμενα εντός των επιφανειών */}
-              <text x="150" y="68" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#15803d">
-                Εσωτερικός Κήπος
-              </text>
-              <text x="150" y="86" fontSize="11" fontWeight="black" textAnchor="middle" fill="#166534" fontFamily="monospace">
-                13 μ. · 8 μ. ＝ 104 τ.μ.
-              </text>
-
-              {/* Ενδείξεις πλάτους διαδρόμου (1 μ.) */}
-              <text x="10" y="80" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
-              <text x="290" y="80" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
-              <text x="150" y="13" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
-              <text x="150" y="144" fontSize="9" fontWeight="black" textAnchor="middle" fill="#c2410c">1μ.</text>
-
-              {/* Εσωτερικές διαστάσεις (13μ. & 8μ.) */}
-              <line x1="20" y1="135" x2="280" y2="135" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
-              <text x="150" y="125" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">13 μ.</text>
-              <line x1="25" y1="20" x2="25" y2="130" stroke="#16a34a" strokeWidth="1" strokeDasharray="2 2" />
-              <text x="36" y="78" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#15803d">8 μ.</text>
-
-              {/* Εξωτερικές διαστάσεις (Πάνω: 15μ. | Αριστερά: 10μ.) */}
-              <line x1="0" y1="-14" x2="300" y2="-14" stroke="#475569" strokeWidth="1.5" markerStart="url(#dim-arrow-16)" markerEnd="url(#dim-arrow-16)" />
-              <text x="150" y="-20" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a">15 μ. (Αρχικό Μήκος)</text>
-
-              <line x1="-16" y1="0" x2="-16" y2="150" stroke="#475569" strokeWidth="1.5" markerStart="url(#dim-arrow-16)" markerEnd="url(#dim-arrow-16)" />
-              <text x="-24" y="80" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#0f172a" transform="rotate(-90 -24 80)">10 μ. (Αρχικό Πλάτος)</text>
-            </g>
-
-            {/* ΥΠΟΜΝΗΜΑ & ΣΥΝΟΨΗ ΔΕΞΙΑ */}
-            <g transform="translate(375, 42)">
-              <rect x="0" y="0" width="125" height="135" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
-              
-              <rect x="10" y="12" width="16" height="16" rx="3" fill="#fed7aa" stroke="#ea580c" strokeWidth="1" />
-              <text x="32" y="24" fontSize="9.5" fontWeight="bold" fill="#0f172a">Διάδρομος</text>
-
-              <rect x="10" y="38" width="16" height="16" rx="3" fill="#dcfce7" stroke="#16a34a" strokeWidth="1" />
-              <text x="32" y="50" fontSize="9.5" fontWeight="bold" fill="#0f172a">Κήπος (Εσωτ.)</text>
-
-              <line x1="10" y1="66" x2="115" y2="66" stroke="#e2e8f0" strokeWidth="1" />
-
-              <text x="62.5" y="82" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">Εμβαδόν Διαδρόμου:</text>
-              <text x="62.5" y="99" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">150 － 104 ＝</text>
-              <rect x="15" y="106" width="95" height="20" rx="5" fill="#ea580c" />
-              <text x="62.5" y="120" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">46 τ.μ. ⭐</text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Συνολικό εμβαδόν */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Συνολικό εμβαδόν οικοπέδου (μαζί με τον διάδρομο):
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>Ε_συνολικό ＝ Μήκος · Πλάτος</div>
-              <div className="pt-0.5">
-                Ε_συνολικό ＝ 15 μ. · 10 μ. ＝ <strong className="text-blue-700 font-bold">150 τ.μ.</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Εσωτερικό εμβαδόν */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Διαστάσεις και εμβαδόν του εσωτερικού κήπου:
-            </div>
-            <p className="text-slate-700">
-              Επειδή ο διάδρομος κατασκευάζεται κατά μήκος <strong>όλων των πλευρών</strong>, αφαιρείται πλάτος 1 μ. από την κάθε άκρη (δηλαδή 2 μ. συνολικά σε κάθε διάσταση):
-            </p>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Νέο Μήκος ＝ 15 － 1 － 1 ＝ 15 － 2 ＝ <strong>13 μ.</strong></div>
-              <div>• Νέο Πλάτος ＝ 10 － 1 － 1 ＝ 10 － 2 ＝ <strong>8 μ.</strong></div>
-              <div className="pt-1 border-t border-slate-200">
-                • Ε_εσωτερικό ＝ 13 μ. · 8 μ. ＝ <strong className="text-emerald-700 font-bold">104 τ.μ.</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 3: Εμβαδόν διαδρόμου */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              3. Υπολογισμός του εμβαδού του διαδρόμου:
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>Ε_διαδρόμου ＝ Ε_συνολικό － Ε_εσωτερικό</div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>Ε_διαδρόμου ＝ 150 － 104 ＝</span>
-                <strong className="text-orange-600 text-base font-black">46 τ.μ.</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το συνολικό εμβαδόν του διαδρόμου είναι <strong>46 τ.μ.</strong>
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 17,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Σε μια έρευνα για τις προτιμήσεις διακοπών των μαθητών, το 70% των ερωτηθέντων απάντησε ότι προτιμά το βουνό. Από αυτούς που δεν προτιμούν το βουνό, οι μισοί απάντησαν ότι προτιμούν τη θάλασσα. Αν όσοι προτιμούν τη θάλασσα είναι 45 μαθητές, πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;',
-    options: ['150', '200', '250', '300', '450'],
-    correct: '300',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Αναλύουμε τα ποσοστά των μαθητών ξεκινώντας από το σύνολο (<strong>100%</strong>) για να βρούμε τι ποσοστό του συνόλου αντιπροσωπεύουν οι 45 μαθητές της θάλασσας:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΔΙΑΣΠΑΣΗ ΤΟΥ 100% ΣΕ ΒΟΥΝΟ, ΘΑΛΑΣΣΑ ΚΑΙ ΑΛΛΟ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
-            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΟΥ ΠΛΗΘΥΣΜΟΥ */}
-            <g transform="translate(15, 12)">
-              <rect x="0" y="0" width="480" height="24" rx="12" fill="#0f172a" />
-              <text x="240" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Σύνολο Ερωτηθέντων Μαθητών: 100%
-              </text>
-            </g>
-
-            {/* 1. ΒΑΣΙΚΗ ΜΠΑΡΑ 100% (ΠΛΑΤΟΣ 480px -> 70% = 336px, 30% = 144px) */}
-            <g transform="translate(15, 46)">
-              {/* Βουνό: 70% (336px) */}
-              <rect x="0" y="0" width="332" height="46" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="166" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">🏔️ Βουνό (70%)</text>
-              <text x="166" y="36" fontSize="9.5" textAnchor="middle" fill="#2563eb">70% του συνόλου</text>
-
-              {/* Υπόλοιπο: 30% (144px) */}
-              <rect x="336" y="0" width="144" height="46" rx="6" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1.8" strokeDasharray="3 2" />
-              <text x="408" y="20" fontSize="11" fontWeight="black" textAnchor="middle" fill="#b45309">Δεν προτιμούν βουνό</text>
-              <text x="408" y="36" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#d97706">30% του συνόλου</text>
-            </g>
-
-            {/* 2. ΑΝΑΛΥΣΗ ΤΟΥ ΥΠΟΛΟΙΠΟΥ 30% ΣΕ ΔΥΟ ΜΙΣΑ (15% + 15%) */}
-            <g transform="translate(351, 104)">
-              {/* Βέλος διάσπασης */}
-              <path d="M 72 0 L 72 14" stroke="#d97706" strokeWidth="1.5" strokeDasharray="2 2" />
-
-              {/* Θάλασσα: Μισό του 30% = 15% (70px) */}
-              <g transform="translate(0, 16)">
-                <rect x="0" y="0" width="69" height="48" rx="6" fill="#ecfdf5" stroke="#10b981" strokeWidth="2" />
-                <text x="34.5" y="16" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#047857">🌊 Θάλασσα</text>
-                <text x="34.5" y="30" fontSize="11" fontWeight="black" textAnchor="middle" fill="#065f46">15%</text>
-                <text x="34.5" y="42" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#059669">45 μαθητές</text>
-              </g>
-
-              {/* Άλλο: Μισό του 30% = 15% (70px) */}
-              <g transform="translate(75, 16)">
-                <rect x="0" y="0" width="69" height="48" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
-                <text x="34.5" y="16" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">Άλλο</text>
-                <text x="34.5" y="30" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#475569">15%</text>
-                <text x="34.5" y="42" fontSize="8.5" textAnchor="middle" fill="#94a3b8">45 μαθητές</text>
-              </g>
-            </g>
-
-            {/* ΑΡΙΣΤΕΡΟ ΠΛΑΙΣΙΟ ΥΠΟΛΟΓΙΣΜΟΥ ΤΟΥ 1% ΚΑΙ ΤΟΥ 100% */}
-            <g transform="translate(15, 112)">
-              <rect x="0" y="0" width="320" height="56" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.2" />
-              <text x="16" y="22" fontSize="10.5" fontWeight="bold" fill="#0f172a">
-                • Το 15% αντιστοιχεί σε 45 μαθητές
-              </text>
-              <text x="16" y="42" fontSize="11" fontWeight="black" fill="#15803d">
-                • Το 1% ＝ 45 : 15 ＝ 3 μαθητές ➔ 100% ＝ 3 · 100 ＝ 300 μαθητές ⭐
-              </text>
-            </g>
-
-            {/* ΚΑΤΩ ΤΕΛΙΚΟ BADGE */}
-            <g transform="translate(15, 178)">
-              <rect x="0" y="0" width="480" height="26" rx="8" fill="#16a34a" />
-              <text x="240" y="17" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Σύνολο Μαθητών Έρευνας (100%): 300 Μαθητές
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Αναγωγή στη μονάδα ποσοστού - 1%)
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div>
-                • <strong>Ποσοστό όσων δεν προτιμούν το βουνό:</strong>
-                <div className="pl-3 pt-0.5 text-slate-800">
-                  100% － 70% ＝ <strong>30%</strong> του συνόλου των μαθητών.
-                </div>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200">
-                • <strong>Ποσοστό όσων προτιμούν τη θάλασσα:</strong>
-                <div className="pl-3 pt-0.5 space-y-1 text-slate-800">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span>Είναι οι μισοί από το 30%:</span>
-                    <Fraction num="30%" den="2" />
-                    <span>＝ <strong className="text-blue-700">15%</strong> του συνολικού πληθυσμού.</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200">
-                • <strong>Εύρεση του συνολικού αριθμού μαθητών (100%):</strong>
-                <div className="pl-3 pt-0.5 space-y-1">
-                  <div>Το 15% ισούται με 45 μαθητές.</div>
-                  <div>Το 1% αντιστοιχεί σε: 45 : 15 ＝ <strong>3 μαθητές</strong>.</div>
-                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5 text-emerald-700 font-bold text-base">
-                    <span>Το 100% (σύνολο) ＝ 3 · 100 ＝</span>
-                    <span className="font-black">300 μαθητές</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Με κλάσματα και εξίσωση)
-            </div>
-            <p className="text-slate-700">
-              Αν συμβολίσουμε με <strong>x</strong> το σύνολο των μαθητών που συμμετείχαν στην έρευνα:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>• Όσοι δεν προτιμούν βουνό:</span>
-                <Fraction num="30" den="100" />
-                <span>· x ＝</span>
-                <Fraction num="3" den="10" />
-                <span>· x</span>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Όσοι προτιμούν θάλασσα:</span>
-                <Fraction num="1" den="2" />
-                <span>·</span>
-                <Fraction num="3" den="10" />
-                <span>· x ＝</span>
-                <Fraction num="3" den="20" />
-                <span>· x</span>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200 space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Fraction num="3" den="20" />
-                  <span>· x ＝ 45</span>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span>x ＝ 45 ·</span>
-                  <Fraction num="20" den="3" />
-                  <span>＝ 15 · 20 ＝</span>
-                  <strong className="text-emerald-700 text-base font-black">300 μαθητές</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, στην έρευνα συμμετείχαν συνολικά <strong>300 μαθητές</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 18,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένα αυτοκίνητο κατανάλωσε το 1/8 της βενζίνης της συνολικής χωρητικότητας του ρεζερβουάρ του για ένα ταξίδι. Πριν ξεκινήσει το ταξίδι, το ρεζερβουάρ περιείχε 30 λίτρα βενζίνης. Μετά το τέλος του ταξιδιού, το ρεζερβουάρ ήταν ακριβώς μισογεμάτο. Πόσα λίτρα βενζίνης χωράει συνολικά το ρεζερβουάρ του αυτοκινήτου;',
-    options: ['40 λίτρα', '45 λίτρα', '48 λίτρα', '50 λίτρα', '60 λίτρα'],
-    correct: '48 λίτρα',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Εκφράζουμε όλη τη χωρητικότητα του ρεζερβουάρ σε <strong>όγδοα (<Fraction num="1" den="8" />)</strong>. Το «μισογεμάτο» ισοδυναμεί με τα <strong><Fraction num="4" den="8" /></strong> της συνολικής του χωρητικότητας.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΤΟ ΡΕΖΕΡΒΟΥΑΡ ΣΕ 8 ΙΣΑ ΜΕΡΗ ΚΑΙ Η ΑΝΤΙΣΤΟΙΧΙΣΗ ΤΩΝ 30 ΛΙΤΡΩΝ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="215" viewBox="0 0 510 215" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="fuel-arr-18" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
-              </marker>
-            </defs>
-
-            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΡΕΖΕΡΒΟΥΑΡ */}
-            <g transform="translate(20, 10)">
-              <rect x="0" y="0" width="470" height="24" rx="12" fill="#0f172a" />
-              <text x="235" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Συνολική Χωρητικότητα Ρεζερβουάρ: 8 ίσα μέρη (8/8)
-              </text>
-            </g>
-
-            {/* Η ΜΠΑΡΑ ΤΟΥ ΡΕΖΕΡΒΟΥΑΡ (8 μέρη x 56px = 448px) */}
-            <g transform="translate(31, 46)">
-              {/* 4/8 που έμειναν στο τέλος (μισογεμάτο) */}
-              {Array.from({ length: 4 }).map((_, idx) => (
-                <g key={`stay-${idx}`} transform={`translate(${idx * 56}, 0)`}>
-                  <rect x="0" y="0" width="54" height="46" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                  <text x="27" y="20" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">1/8</text>
-                  <text x="27" y="34" fontSize="10" fontWeight="black" textAnchor="middle" fill="#1e40af">6 L</text>
-                </g>
-              ))}
-
-              {/* 1/8 που καταναλώθηκε */}
-              <g transform="translate(224, 0)">
-                <rect x="0" y="0" width="54" height="46" rx="6" fill="#fee2e2" stroke="#ef4444" strokeWidth="1.8" />
-                <text x="27" y="20" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">1/8</text>
-                <text x="27" y="34" fontSize="10" fontWeight="black" textAnchor="middle" fill="#b91c1c">6 L</text>
-              </g>
-
-              {/* 3/8 που ήταν άδεια από την αρχή */}
-              {Array.from({ length: 3 }).map((_, idx) => (
-                <g key={`empty-${idx}`} transform={`translate(${(idx + 5) * 56}, 0)`}>
-                  <rect x="0" y="0" width="54" height="46" rx="6" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" strokeDasharray="3 2" />
-                  <text x="27" y="28" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#94a3b8">Άδειο</text>
-                </g>
-              ))}
-            </g>
-
-            {/* ΑΓΚΥΛΕΣ ΚΑΙ ΕΠΕΞΗΓΗΣΕΙΣ */}
-            <g transform="translate(31, 102)">
-              {/* Αρχικό καύσιμο: 5/8 = 30 L */}
-              <path d="M 0 5 L 0 0 L 278 0 L 278 5" fill="none" stroke="#2563eb" strokeWidth="2" />
-              <rect x="44" y="9" width="190" height="26" rx="8" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
-              <text x="139" y="26" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">
-                Αρχικά: 4/8 ＋ 1/8 ＝ 5/8 ＝ 30 L
-              </text>
-
-              {/* Κατανάλωση: 1/8 */}
-              <text x="251" y="-60" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#dc2626">
-                Κατανάλωση
-              </text>
-            </g>
-
-            {/* ΣΥΜΠΕΡΑΣΜΑ ΓΙΑ ΤΟ 1/8 ΚΑΙ ΤΟ ΣΥΝΟΛΟ */}
-            <g transform="translate(31, 148)">
-              <rect x="0" y="0" width="210" height="34" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
-              <text x="105" y="15" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
-                5 μέρη ＝ 30 λίτρα
-              </text>
-              <text x="105" y="28" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">
-                1 μέρος (1/8) ＝ 30 : 5 ＝ 6 λίτρα
-              </text>
-
-              <rect x="225" y="0" width="223" height="34" rx="8" fill="#16a34a" />
-              <text x="336.5" y="22" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Σύνολο (8/8): 8 · 6 ＝ 48 λίτρα ⭐
-              </text>
-            </g>
-
-            <text x="255" y="202" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
-              Όλο το ρεζερβουάρ αποτελείται από 8 όγδοα ➔ 8 · 6 L ＝ 48 L
-            </text>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Με κλάσματα και αναγωγή στη μονάδα */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Με κλάσματα και αναγωγή στο 1/8)
-            </div>
-            <p className="text-slate-700">
-              Στο τέλος του ταξιδιού έμεινε το <strong>μισό</strong> ρεζερβουάρ και καταναλώθηκε το <strong><Fraction num="1" den="8" /></strong>:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Το μισό ρεζερβουάρ είναι:</span>
-                <Fraction num="1" den="2" />
-                <span>＝</span>
-                <strong className="text-blue-700"><Fraction num="4" den="8" /></strong>
-                <span>της συνολικής χωρητικότητας.</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Άρα πριν το ταξίδι υπήρχαν: Τελική Βενζίνη ＋ Κατανάλωση ＝</span>
-                <Fraction num="4" den="8" />
-                <span>＋</span>
-                <Fraction num="1" den="8" />
-                <span>＝</span>
-                <strong className="text-blue-700 text-base"><Fraction num="5" den="8" /></strong>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200 space-y-1.5">
-                <div className="text-slate-700 font-sans text-xs">
-                  Γνωρίζουμε ότι αρχικά το ρεζερβουάρ περιείχε <strong>30 λίτρα</strong>, άρα τα <Fraction num="5" den="8" /> ισούνται με 30 λίτρα:
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span>• Το 1/8 της χωρητικότητας αντιστοιχεί σε:</span>
-                  <Fraction num="30" den="5" />
-                  <span>＝ <strong>6 λίτρα</strong></span>
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span>• Ολόκληρο το ρεζερβουάρ (<Fraction num="8" den="8" />) χωράει: 8 · 6 ＝</span>
-                  <strong className="text-emerald-700 text-base font-black">48 λίτρα</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Αλγεβρικά με εξίσωση */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Αλγεβρικά με εξίσωση)
-            </div>
-            <p className="text-slate-700">
-              Έστω <strong>x</strong> η συνολική χωρητικότητα του ρεζερβουάρ σε λίτρα:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>30 －</span>
-                <Fraction num="x" den="8" />
-                <span>＝</span>
-                <Fraction num="x" den="2" />
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>30 ＝</span>
-                <Fraction num="x" den="2" />
-                <span>＋</span>
-                <Fraction num="x" den="8" />
-                <span>＝</span>
-                <Fraction num="4x" den="8" />
-                <span>＋</span>
-                <Fraction num="x" den="8" />
-                <span>＝</span>
-                <Fraction num="5x" den="8" />
-              </div>
-
-              <div className="space-y-1 pt-1 border-t border-slate-200">
-                <div>5x ＝ 30 · 8</div>
-                <div>5x ＝ 240</div>
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span>x ＝</span>
-                  <Fraction num="240" den="5" />
-                  <span>➔ <strong className="text-emerald-700 text-base font-black">x ＝ 48 λίτρα</strong></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το ρεζερβουάρ του αυτοκινήτου χωράει συνολικά <strong>48 λίτρα</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 19,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ο μέσος όρος των βαθμών ενός μαθητή σε 4 διαγωνίσματα Μαθηματικών είναι 15. Αν στο 5ο διαγώνισμα γράψει βαθμό 20, ποιος θα είναι ο νέος μέσος όρος των βαθμών του στα 5 διαγωνίσματα;',
-    options: ['15', '15,5', '16', '16,5', '17'],
-    correct: '16',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Υπολογίζουμε πρώτα το <strong>συνολικό άθροισμα</strong> των βαθμών στα αρχικά 4 διαγωνίσματα, προσθέτουμε τον βαθμό του 5ου διαγωνίσματος και διαιρούμε με το νέο πλήθος (<strong>5</strong>):
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΣΥΓΚΡΙΣΗ ΑΡΧΙΚΟΥ ΚΑΙ ΝΕΟΥ ΜΕΣΟΥ ΟΡΟΥ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="210" viewBox="0 0 510 210" className="select-none font-sans mx-auto block">
-            {/* 1. ΑΡΧΙΚΗ ΚΑΤΑΣΤΑΣΗ (4 ΔΙΑΓΩΝΙΣΜΑΤΑ) */}
-            <g transform="translate(15, 12)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                1. Αρχικά 4 Διαγωνίσματα (Μέσος Όρος: 15)
-              </text>
-
-              {/* 4 ίσα μπλοκ βαθμών των 15 */}
-              <g transform="translate(0, 24)">
-                {['1ο', '2ο', '3ο', '4ο'].map((label, idx) => (
-                  <g key={`old-${idx}`} transform={`translate(${idx * 72}, 0)`}>
-                    <rect x="0" y="0" width="66" height="38" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.5" />
-                    <text x="33" y="15" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">{label}</text>
-                    <text x="33" y="30" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">15</text>
-                  </g>
-                ))}
-
-                {/* Badge αρχικού αθροίσματος (ευθυγραμμισμένο με το κάτω: x=305, width=170) */}
-                <g transform="translate(305, 0)">
-                  <rect x="0" y="0" width="170" height="38" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
-                  <text x="85" y="24" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#334155">
-                    Άθροισμα: 4 · 15 ＝ <tspan fontWeight="900" fill="#1d4ed8" fontFamily="monospace">60</tspan>
-                  </text>
-                </g>
-              </g>
-            </g>
-
-            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="15" y1="92" x2="495" y2="92" stroke="#e2e8f0" strokeWidth="1.2" />
-
-            {/* 2. ΝΕΑ ΚΑΤΑΣΤΑΣΗ (5 ΔΙΑΓΩΝΙΣΜΑΤΑ ΜΕ ΤΟ 20) */}
-            <g transform="translate(15, 104)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                2. Προσθήκη 5ου Διαγωνίσματος (Βαθμός: 20)
-              </text>
-
-              <g transform="translate(0, 24)">
-                {/* 4 αρχικά διαγωνίσματα */}
-                {['1ο', '2ο', '3ο', '4ο'].map((label, idx) => (
-                  <g key={`new-eq-${idx}`} transform={`translate(${idx * 60}, 0)`}>
-                    <rect x="0" y="0" width="55" height="38" rx="6" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.4" />
-                    <text x="27.5" y="15" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#166534">{label}</text>
-                    <text x="27.5" y="30" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">16</text>
-                  </g>
-                ))}
-
-                {/* 5ο διαγώνισμα */}
-                <g transform="translate(240, 0)">
-                  <rect x="0" y="0" width="55" height="38" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
-                  <text x="27.5" y="15" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#dc2626">5ο (+20)</text>
-                  <text x="27.5" y="30" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">16</text>
-                </g>
-
-                {/* Badge νέου μέσου όρου */}
-                <g transform="translate(305, 0)">
-                  <rect x="0" y="0" width="170" height="38" rx="8" fill="#16a34a" />
-                  <text x="85" y="16" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
-                    Νέο Άθροισμα: 60 + 20 = 80
-                  </text>
-                  <text x="85" y="31" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                    Νέος Μ.Ο. ＝ 16 ⭐
-                  </text>
-                </g>
-              </g>
-
-              {/* Επεξήγηση ισομοιρασιάς */}
-              <text x="240" y="76" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Οι 5 επιπλέον μονάδες του 20 (20 － 15 ＝ 5) μοιράζονται ισότιμα στα 5 τεστ (+1 στον Μ.Ο.)
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Μέσω συνολικού αθροίσματος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Υπολογισμός μέσω συνολικού αθροίσματος)
-            </div>
-            <p className="text-slate-700">
-              Ο μέσος όρος ισούται με το πηλίκο του αθροίσματος των βαθμών δια του πλήθους των διαγωνισμάτων:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Άθροισμα 4 πρώτων διαγωνισμάτων ＝ 4 · 15 ＝</span>
-                <strong className="text-blue-700">60 βαθμοί</strong>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200">
-                <span>• Μετά το 5ο διαγώνισμα (βαθμός 20), το νέο άθροισμα είναι:</span>
-                <div className="pl-3 pt-0.5 font-bold text-slate-800">
-                  Νέο Άθροισμα ＝ 60 ＋ 20 ＝ 80 βαθμοί
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Νέος Μέσος Όρος (στα 5 διαγωνίσματα) ＝</span>
-                <Fraction num="80" den="5" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base font-black">16</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Μέσω της πλεονάζουσας διαφοράς */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Γρήγορος τρόπος μέσω κατανομής διαφοράς)
-            </div>
-            <p className="text-slate-700">
-              Συγκρίνουμε τον βαθμό του νέου διαγωνίσματος με τον παλιό μέσο όρο:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Ο βαθμός 20 υπερβαίνει τον παλιό μέσο όρο (15) κατά: 20 － 15 ＝ <strong>＋5 βαθμούς</strong>.</div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>• Οι 5 αυτοί επιπλέον βαθμοί μοιράζονται ισόποσα και στα 5 πλέον διαγωνίσματα:</span>
-                <Fraction num="5" den="5" />
-                <span>＝ <strong>＋1 βαθμός</strong> στον μέσο όρο.</span>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                • Νέος Μέσος Όρος ＝ 15 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">16</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο νέος μέσος όρος των βαθμών του στα 5 διαγωνίσματα είναι <strong>16</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 20,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Σε μια ατελή διαίρεση φυσικών αριθμών, το πηλίκο είναι 8 και το υπόλοιπο είναι 5. Αν γνωρίζουμε ότι ο διαιρετέος είναι διψήφιος αριθμός, πόσες διαφορετικές δυνατές τιμές μπορεί να πάρει ο διαιρέτης της διαίρεσης αυτής;',
-    options: ['4', '5', '6', '7', '8'],
-    correct: '6',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Αξιοποιούμε την <strong>ταυτότητα της ευκλείδειας διαίρεσης</strong> (<span className="font-mono font-bold">Δ ＝ δ · π ＋ υ</span>) και τον βασικό κανόνα ότι <strong>το υπόλοιπο είναι πάντοτε αυστηρά μικρότερο από τον διαιρέτη</strong> (<span className="font-mono font-bold">υ &lt; δ</span>):
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΡΙΘΜΟΓΡΑΜΜΗ & ΔΟΚΙΜΑΣΤΗΡΙΟ ΤΙΜΩΝ ΤΟΥ ΔΙΑΙΡΕΤΗ δ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="225" viewBox="0 0 520 225" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="axis-arr-20" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 2 L 8 5 L 0 8 z" fill="#334155" />
-              </marker>
-            </defs>
-
-            {/* ΕΠΙΚΕΦΑΛΙΔΑ ΤΑΥΤΟΤΗΤΑΣ */}
-            <g transform="translate(20, 10)">
-              <rect x="0" y="0" width="480" height="24" rx="12" fill="#0f172a" />
-              <text x="240" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Ταυτότητα Διαίρεσης: Δ ＝ 8 · δ ＋ 5 &nbsp;|&nbsp; Περιορισμοί: δ &gt; 5 &nbsp;και&nbsp; Δ ≤ 99
-              </text>
-            </g>
-
-            {/* ΑΞΟΝΑΣ ΤΙΜΩΝ ΤΟΥ δ (από δ=4 έως δ=13) */}
-            <line x1="25" y1="85" x2="495" y2="85" stroke="#334155" strokeWidth="2" markerEnd="url(#axis-arr-20)" />
-
-            {/* 1. ΑΠΑΓΟΡΕΥΜΕΝΗ ΠΕΡΙΟΧΗ: δ <= 5 (υπόλοιπο 5 >= δ, ΑΔΥΝΑΤΟ) */}
-            <g transform="translate(45, 85)">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="#ef4444" strokeWidth="2" />
-              <circle cx="0" cy="0" r="4.5" fill="#ef4444" />
-              <text x="0" y="-14" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">5</text>
-              <rect x="-30" y="14" width="60" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
-              <text x="0" y="27" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#b91c1c">υ ≥ δ (❌)</text>
-            </g>
-
-            {/* ΔΙΑΚΕΚΟΜΜΕΝΟ ΚΑΘΕΤΟ ΟΡΙΟ δ > 5 */}
-            <line x1="80" y1="48" x2="80" y2="120" stroke="#dc2626" strokeWidth="1.8" strokeDasharray="3 3" />
-            <text x="80" y="44" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#dc2626">Όριο: δ &gt; 5</text>
-
-            {/* 2. ΑΠΟΔΕΚΤΕΣ ΤΙΜΕΣ: δ = 6, 7, 8, 9, 10, 11 (6 ΤΙΜΕΣ) */}
-            {[
-              { val: 6, d: 53, x: 110 },
-              { val: 7, d: 61, x: 160 },
-              { val: 8, d: 69, x: 210 },
-              { val: 9, d: 77, x: 260 },
-              { val: 10, d: 85, x: 310 },
-              { val: 11, d: 93, x: 360 }
-            ].map((item) => (
-              <g key={item.val} transform={`translate(${item.x}, 85)`}>
-                <line x1="0" y1="-10" x2="0" y2="10" stroke="#16a34a" strokeWidth="2.4" />
-                <circle cx="0" cy="0" r="5.5" fill="#16a34a" stroke="#14532d" strokeWidth="1.2" />
-                <text x="0" y="-14" fontSize="13" fontWeight="900" textAnchor="middle" fill="#15803d">
-                  {item.val}
-                </text>
-                <text x="0" y="22" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#166534" fontFamily="monospace">
-                  Δ={item.d}
-                </text>
-                <text x="0" y="32" fontSize="8" fontWeight="bold" textAnchor="middle" fill="#15803d">
-                  (διψήφιος)
-                </text>
-              </g>
-            ))}
-
-            {/* ΔΙΑΚΕΚΟΜΜΕΝΟ ΚΑΘΕΤΟ ΟΡΙΟ Δ <= 99 */}
-            <line x1="390" y1="48" x2="390" y2="120" stroke="#dc2626" strokeWidth="1.8" strokeDasharray="3 3" />
-            <text x="390" y="44" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#dc2626">Όριο: Δ ≤ 99</text>
-
-            {/* 3. ΑΠΑΓΟΡΕΥΜΕΝΗ ΠΕΡΙΟΧΗ: δ >= 12 (Δ = 101, 3ψήφιος) */}
-            <g transform="translate(425, 85)">
-              <line x1="0" y1="-8" x2="0" y2="8" stroke="#ef4444" strokeWidth="2" />
-              <circle cx="0" cy="0" r="4.5" fill="#ef4444" />
-              <text x="0" y="-14" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#dc2626">12</text>
-              <rect x="-35" y="14" width="70" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" strokeWidth="1" />
-              <text x="0" y="27" fontSize="8.5" fontWeight="black" textAnchor="middle" fill="#b91c1c">Δ=101 (3ψήφιος ❌)</text>
-            </g>
-
-            {/* ΑΓΚΥΛΗ ΑΠΟΔΕΚΤΟΥ ΕΥΡΟΥΣ (6 ΤΙΜΕΣ) */}
-            <g transform="translate(100, 130)">
-              <path d="M 0 5 L 0 0 L 270 0 L 270 5" fill="none" stroke="#16a34a" strokeWidth="2" />
-              <rect x="25" y="10" width="220" height="30" rx="8" fill="#16a34a" />
-              <text x="135" y="29" fontSize="12" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                Δεκτές Τιμές: 6 διαφορετικές (6 έως 11) ⭐
-              </text>
-            </g>
-
-            <text x="260" y="212" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#047857">
-              Οι αριθμοί δ ∈ &#123;6, 7, 8, 9, 10, 11&#125; δίνουν διψήφιο διαιρετέο (από 53 έως 93)
-            </text>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Κάτω όριο για τον διαιρέτη */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Περιορισμός από το υπόλοιπο της διαίρεσης:
-            </div>
-            <p className="text-slate-700">
-              Σε κάθε ευκλείδεια διαίρεση, το υπόλοιπο είναι πάντοτε <strong>αυστηρά μικρότερο</strong> από τον διαιρέτη (<span className="font-mono font-bold">υ &lt; δ</span>):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>Επειδή υ ＝ 5 ➔ <strong>δ &gt; 5</strong></div>
-              <div className="text-slate-600 font-sans text-xs">
-                Επομένως, ο φυσικός αριθμός δ μπορεί να ξεκινάει από το <strong>6</strong> και πάνω (δ ≥ 6).
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Άνω όριο από τον διψήφιο διαιρετέο */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Περιορισμός από το μέγιστο μέγεθος του διαιρετέου:
-            </div>
-            <p className="text-slate-700">
-              Ο διαιρετέος εκφράζεται ως <span className="font-mono font-bold">Δ ＝ 8 · δ ＋ 5</span> και γνωρίζουμε ότι είναι <strong>διψήφιος αριθμός</strong> (δηλαδή <span className="font-mono font-bold">Δ ≤ 99</span>):
-            </p>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>8 · δ ＋ 5 ≤ 99</div>
-              <div>8 · δ ≤ 99 － 5</div>
-              <div>8 · δ ≤ 94</div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>δ ≤</span>
-                <Fraction num="94" den="8" />
-                <span>＝ <strong>11,75</strong></span>
-              </div>
-              <div className="text-slate-600 font-sans text-xs pt-1">
-                Επειδή ο διαιρέτης δ είναι φυσικός αριθμός, η μέγιστη δυνατή τιμή του είναι το <strong>11</strong>.
-              </div>
-            </div>
-          </div>
-
-          {/* Βήμα 3: Καταγραφή όλων των δεκτών τιμών */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              3. Συλλογή των δυνατών τιμών και επαλήθευση:
-            </div>
-            <p className="text-slate-700">
-              Συνδυάζοντας τους δύο περιορισμούς (<span className="font-mono font-bold">6 ≤ δ ≤ 11</span>):
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="font-bold text-slate-800">
-                δ ∈ &#123;6, 7, 8, 9, 10, 11&#125;
-              </div>
-              <div className="text-slate-600 font-sans text-xs space-y-0.5">
-                <div>• Για δ ＝ 6 ➔ Δ ＝ 8 · 6 ＋ 5 ＝ 53 (διψήφιος ✔️)</div>
-                <div>• Για δ ＝ 7 ➔ Δ ＝ 8 · 7 ＋ 5 ＝ 61 (διψήφιος ✔️)</div>
-                <div>• Για δ ＝ 8 ➔ Δ ＝ 8 · 8 ＋ 5 ＝ 69 (διψήφιος ✔️)</div>
-                <div>• Για δ ＝ 9 ➔ Δ ＝ 8 · 9 ＋ 5 ＝ 77 (διψήφιος ✔️)</div>
-                <div>• Για δ ＝ 10 ➔ Δ ＝ 8 · 10 ＋ 5 ＝ 85 (διψήφιος ✔️)</div>
-                <div>• Για δ ＝ 11 ➔ Δ ＝ 8 · 11 ＋ 5 ＝ 93 (διψήφιος ✔️)</div>
-                <div className="text-rose-600">• Για δ ＝ 12 ➔ Δ ＝ 8 · 12 ＋ 5 ＝ 101 (τριψήφιος ❌)</div>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-emerald-800 font-bold">
-                Πλήθος δυνατών τιμών ＝ 11 － 6 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">6 τιμές</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο διαιρέτης μπορεί να πάρει <strong>6 διαφορετικές δυνατές τιμές</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 21,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένα ορθογώνιο και ένα ισόπλευρο τρίγωνο έχουν την ίδια περίμετρο. Το ορθογώνιο έχει μήκος 11 εκ. και πλάτος 7 εκ. Πόσο είναι το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου;',
-    options: ['9 εκ.', '10 εκ.', '12 εκ.', '14 εκ.', '18 εκ.'],
-    correct: '12 εκ.',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Υπολογίζουμε πρώτα την <strong>περίμετρο του ορθογωνίου</strong> και, επειδή τα δύο σχήματα είναι <strong>ισοπεριμετρικά</strong>, μοιράζουμε την περίμετρο αυτή εξίσου στις <strong>3 ίσες πλευρές</strong> του ισόπλευρου τριγώνου:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΟΡΘΟΓΩΝΙΟ & ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ ΜΕ ΚΟΙΝΗ ΠΕΡΙΜΕΤΡΟ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="510" height="235" viewBox="0 0 510 235" className="select-none font-sans mx-auto block">
-            {/* 1. ΟΡΘΟΓΩΝΙΟ (Μήκος: 11 εκ., Πλάτος: 7 εκ.) */}
-            <g transform="translate(35, 25)">
-              <text x="75" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Ορθογώνιο Παραλληλόγραμμο
-              </text>
-
-              {/* Σχήμα ορθογωνίου (150px x 95px) */}
-              <g transform="translate(0, 15)">
-                <rect x="0" y="0" width="150" height="95" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="2" />
-                
-                {/* Διαστάσεις */}
-                <text x="75" y="-6" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">11 εκ.</text>
-                <text x="75" y="108" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">11 εκ.</text>
-                <text x="-12" y="52" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">7 εκ.</text>
-                <text x="162" y="52" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1d4ed8">7 εκ.</text>
-
-                {/* Εσωτερικός τύπος περιμέτρου */}
-                <text x="75" y="44" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1e40af">
-                  Π ＝ 2 · (11 ＋ 7)
-                </text>
-                <text x="75" y="62" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e3a8a" fontFamily="monospace">
-                  Π ＝ 36 εκ.
-                </text>
-              </g>
-
-              {/* Badge Περιμέτρου */}
-              <rect x="15" y="132" width="120" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
-              <text x="75" y="148" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#1e40af">
-                Περίμετρος: 36 εκ.
-              </text>
-            </g>
-
-            {/* ΣΥΜΒΟΛΟ ΙΣΟΤΗΤΑΣ ΠΕΡΙΜΕΤΡΩΝ */}
-            <g transform="translate(230, 85)">
-              <text x="0" y="0" fontSize="24" fontWeight="black" textAnchor="middle" fill="#64748b">＝</text>
-              <text x="0" y="18" fontSize="9" fontWeight="bold" textAnchor="middle" fill="#64748b">ίδια περίμετρος</text>
-            </g>
-
-            {/* 2. ΙΣΟΠΛΕΥΡΟ ΤΡΙΓΩΝΟ (3 ίσες πλευρές των 12 εκ.) */}
-            <g transform="translate(295, 25)">
-              <text x="85" y="0" fontSize="11.5" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Ισόπλευρο Τρίγωνο
-              </text>
-
-              {/* Σχήμα ισόπλευρου τριγώνου */}
-              <g transform="translate(0, 15)">
-                <polygon points="85,5 10,105 160,105" fill="#f0fdf4" stroke="#16a34a" strokeWidth="2.2" />
-
-                {/* Διαστάσεις πλευρών */}
-                <text x="35" y="48" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">12 εκ.</text>
-                <text x="135" y="48" fontSize="11" fontWeight="black" textAnchor="middle" fill="#15803d">12 εκ.</text>
-                <text x="85" y="122" fontSize="11.5" fontWeight="900" textAnchor="middle" fill="#166534">12 εκ. ⭐</text>
-
-                {/* Εσωτερικός υπολογισμός */}
-                <text x="85" y="68" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#15803d">
-                  3 ίσες πλευρές (α)
-                </text>
-                <text x="85" y="84" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#14532d" fontFamily="monospace">
-                  α ＝ 36 : 3
-                </text>
-              </g>
-
-              {/* Badge Αποτελέσματος */}
-              <g transform="translate(20, 146)">
-                <rect x="0" y="0" width="130" height="26" rx="13" fill="#16a34a" />
-                <text x="65" y="17" fontSize="11.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Πλευρά: 12 εκ. ⭐
-                </text>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ (ΜΕ ΑΝΕΣΗ ΧΩΡΟΥ ΣΤΟ Y=210) */}
-            <g transform="translate(25, 210)">
-              <text x="230" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Η περίμετρος των 36 εκ. μοιράζεται σε 3 ίσα μέρη ➔ 36 : 3 ＝ 12 εκ. ανά πλευρά
-              </text>
-            </g>
-          </svg>
-        </div>
-        {/* ΑΝΑΛΥΤΙΚΑ ΒΗΜΑΤΑ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* Βήμα 1: Περίμετρος ορθογωνίου */}
-          <div className="space-y-1">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              1. Υπολογισμός της περιμέτρου του ορθογωνίου:
-            </div>
-            <p className="text-slate-700">
-              Η περίμετρος ενός ορθογωνίου με μήκος <strong>11 εκ.</strong> και πλάτος <strong>7 εκ.</strong> ισούται με το άθροισμα και των 4 πλευρών του:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>Π_ορθογωνίου ＝ 2 · (Μήκος ＋ Πλάτος)</div>
-              <div>Π_ορθογωνίου ＝ 2 · (11 ＋ 7) ＝ 2 · 18 ＝ <strong className="text-blue-700 font-bold">36 εκ.</strong></div>
-            </div>
-          </div>
-
-          {/* Βήμα 2: Πλευρά ισόπλευρου τριγώνου */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-slate-900 border-b border-slate-200 pb-1">
-              2. Υπολογισμός του μήκους της πλευράς του ισόπλευρου τριγώνου:
-            </div>
-            <p className="text-slate-700">
-              Το ισόπλευρο τρίγωνο έχει <strong>3 ίσες πλευρές</strong> (<span className="font-mono font-bold">Π ＝ 3 · α</span>) και έχει την ίδια ακριβώς περίμετρο (36 εκ.):
-            </p>
-
-            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span>Μήκος Πλευράς (α) ＝</span>
-                <Fraction num="Περίμετρος" den="3" />
-                <span>＝</span>
-                <Fraction num="36" den="3" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base font-black">12 εκ.</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου είναι <strong>12 εκ.</strong>
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 22,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένας ποδηλάτης διανύει απόσταση 18 χιλιομέτρων σε 45 λεπτά με σταθερή ταχύτητα. Πόσα χιλιόμετρα θα διανύσει σε 1 ώρα και 15 λεπτά αν διατηρήσει την ίδια ταχύτητα;',
-    options: ['24 χλμ.', '27 χλμ.', '30 χλμ.', '32 χλμ.', '36 χλμ.'],
-    correct: '30 χλμ.',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Επειδή η ταχύτητα είναι <strong>σταθερή</strong>, τα ποσά <strong>χρόνος</strong> και <strong>απόσταση</strong> είναι ποσά ανάλογα. Μετατρέπουμε τον χρόνο σε λεπτά: 1 ώρα και 15 λεπτά ＝ 60 ＋ 15 ＝ <strong>75 λεπτά</strong>.
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΟΓΙΑ ΜΕΣΩ ΤΟΥ 15ΛΕΠΤΟΥ (ΜΟΝΑΔΑΣ ΧΡΟΝΟΥ) */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
-            <defs>
-              <marker id="arr-ratio-22" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
-              </marker>
-            </defs>
-
-            {/* 1. ΑΡΧΙΚΗ ΔΙΑΔΡΟΜΗ (45 ΛΕΠΤΑ = 3 ΤΜΗΜΑΤΑ ΤΩΝ 15 ΛΕΠΤΩΝ) */}
-            <g transform="translate(20, 12)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                1. Αρχική Διαδρομή: 45 λεπτά ➔ 18 χλμ. (3 ίσα 15λεπτα των 6 χλμ.)
-              </text>
-
-              <g transform="translate(0, 24)">
-                {[0, 1, 2].map((idx) => (
-                  <g key={`leg1-${idx}`} transform={`translate(${idx * 90}, 0)`}>
-                    <rect x="0" y="0" width="84" height="42" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                    <text x="42" y="18" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">15 λεπτά</text>
-                    <text x="42" y="33" fontSize="11" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">6 χλμ.</text>
-                  </g>
-                ))}
-
-                {/* Badge 45 λεπτών */}
-                <g transform="translate(280, 4)">
-                  <rect x="0" y="0" width="195" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
-                  <text x="97.5" y="22" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#334155">
-                    Σύνολο: 3 · 6 ＝ <tspan fontWeight="900" fill="#1d4ed8" fontFamily="monospace">18 χλμ.</tspan>
-                  </text>
-                </g>
-              </g>
-            </g>
-
-            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="20" y1="96" x2="500" y2="96" stroke="#e2e8f0" strokeWidth="1.2" />
-
-            {/* 2. ΖΗΤΟΥΜΕΝΗ ΔΙΑΔΡΟΜΗ (75 ΛΕΠΤΑ = 5 ΤΜΗΜΑΤΑ ΤΩΝ 15 ΛΕΠΤΩΝ) */}
-            <g transform="translate(20, 108)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                2. Νέα Διαδρομή: 1 ώρα &amp; 15 λεπτά (75 λεπτά ＝ 5 ίσα 15λεπτα)
-              </text>
-
-              <g transform="translate(0, 24)">
-                {/* 5 μπλοκ των 15 λεπτών */}
-                {[0, 1, 2, 3, 4].map((idx) => (
-                  <g key={`leg2-${idx}`} transform={`translate(${idx * 58}, 0)`}>
-                    <rect
-                      x="0"
-                      y="0"
-                      width="53"
-                      height="42"
-                      rx="6"
-                      fill={idx < 3 ? '#eff6ff' : '#f0fdf4'}
-                      stroke={idx < 3 ? '#3b82f6' : '#16a34a'}
-                      strokeWidth={idx < 3 ? '1.4' : '1.8'}
-                    />
-                    <text x="26.5" y="17" fontSize="8" fontWeight="bold" textAnchor="middle" fill={idx < 3 ? '#1d4ed8' : '#15803d'}>
-                      15 λεπτ.
-                    </text>
-                    <text x="26.5" y="33" fontSize="10.5" fontWeight="black" textAnchor="middle" fill={idx < 3 ? '#1e40af' : '#166534'} fontFamily="monospace">
-                      6 χλμ.
-                    </text>
-                  </g>
-                ))}
-
-                {/* Badge τελικής απόστασης */}
-                <g transform="translate(305, 0)">
-                  <rect x="0" y="0" width="170" height="42" rx="10" fill="#16a34a" />
-                  <text x="85" y="17" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
-                    5 τμήματα · 6 χλμ.
-                  </text>
-                  <text x="85" y="34" fontSize="13" fontWeight="900" textAnchor="middle" fill="#ffffff">
-                    Απόσταση: 30 χλμ. ⭐
-                  </text>
-                </g>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
-            <g transform="translate(20, 212)">
-              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Κάθε 15 λεπτά διανύει 6 χλμ. (18 : 3) ➔ Σε 75 λεπτά (5 · 15 λεπτά): 5 · 6 ＝ 30 χλμ.
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Αναγωγή στο κοινό διάστημα (15 λεπτά) */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Αναγωγή σε διάστημα 15 λεπτών)
-            </div>
-            <p className="text-slate-700">
-              Παρατηρούμε ότι τόσο τα 45 λεπτά όσο και τα 75 λεπτά είναι πολλαπλάσια του <strong>15</strong>:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Στα 45 λεπτά (3 δεκαπεντάλεπτα) διανύει 18 χλμ. ➔ Σε 15 λεπτά:</span>
-                <Fraction num="18" den="3" />
-                <span>＝ <strong className="text-blue-700">6 χλμ.</strong></span>
-              </div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Ο χρόνος 1 ώρα και 15 λεπτά ισούται με 75 λεπτά, δηλαδή <strong>5 δεκαπεντάλεπτα</strong> (75 : 15 ＝ 5):
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>• Συνολική απόσταση ＝ 5 · 6 χλμ. ＝</span>
-                <strong className="text-emerald-700 text-base font-black">30 χλμ.</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Με ταχύτητα ανά ώρα (km/h) */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Με ταχύτητα σε χλμ./ώρα και κλάσματα)
-            </div>
-            <p className="text-slate-700">
-              Εκφράζουμε τους χρόνους σε ώρες χρησιμοποιώντας κλάσματα:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• 45 λεπτά ＝</span>
-                <Fraction num="45" den="60" />
-                <span>＝</span>
-                <Fraction num="3" den="4" />
-                <span>της ώρας.</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Ταχύτητα ＝ Απόσταση : Χρόνος ＝ 18 :</span>
-                <Fraction num="3" den="4" />
-                <span>＝ 18 ·</span>
-                <Fraction num="4" den="3" />
-                <span>＝ <strong className="text-blue-700">24 χλμ./ώρα</strong></span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• 75 λεπτά ＝ 1 ώρα και</span>
-                <Fraction num="1" den="4" />
-                <span>ώρας ＝</span>
-                <Fraction num="5" den="4" />
-                <span>της ώρας (ή 1,25 ώρες).</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Απόσταση ＝ 24 ·</span>
-                <Fraction num="5" den="4" />
-                <span>＝ 6 · 5 ＝</span>
-                <strong className="text-emerald-700 text-base font-black">30 χλμ.</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο ποδηλάτης θα διανύσει <strong>30 χιλιόμετρα</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 23,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένας μαθητής ξόδεψε το 1/4 του χαρτζιλικιού του για ένα βιβλίο και στη συνέχεια το 40% των χρημάτων που του είχαν απομείνει για ένα παιχνίδι. Αν του έμειναν 18€, πόσο ήταν το αρχικό του χαρτζιλίκι;',
-    options: ['36€', '40€', '45€', '48€', '60€'],
-    correct: '40€',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Εξετάζουμε τα χρήματα που απομένουν μετά από κάθε έξοδο, εκφράζοντας τα ποσά σε <strong>ποσοστά</strong> επί του αρχικού χαρτζιλικιού (ή με <strong>κλάσματα</strong>):
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΚΑΤΑΝΟΜΗ ΤΟΥ ΑΡΧΙΚΟΥ ΧΑΡΤΖΙΛΙΚΙΟΥ ΣΕ ΕΞΟΔΑ ΚΑΙ ΥΠΟΛΟΙΠΟ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
-            {/* 1. ΕΠΙΚΕΦΑΛΙΔΑ ΣΥΝΟΛΙΚΟΥ ΠΟΣΟΥ */}
-            <g transform="translate(20, 10)">
-              <rect x="0" y="0" width="480" height="24" rx="12" fill="#0f172a" />
-              <text x="240" y="16" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#ffffff">
-                Αρχικό Χαρτζιλίκι: 100% (ή 4/4) — Άγνωστο Ποσό
-              </text>
-            </g>
-
-            {/* 2. ΚΥΡΙΑ ΜΠΑΡΑ ΚΑΤΑΝΟΜΗΣ (480px συνολικό μήκος -> 1% = 4.8px) */}
-            <g transform="translate(20, 46)">
-              {/* ΒΙΒΛΙΟ: 25% (1/4 = 120px) */}
-              <rect x="0" y="0" width="120" height="50" rx="6" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.8" />
-              <text x="60" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#1d4ed8">📖 Βιβλίο</text>
-              <text x="60" y="36" fontSize="12" fontWeight="black" textAnchor="middle" fill="#1e40af" fontFamily="monospace">
-                1/4 (25%)
-              </text>
-
-              {/* ΠΑΙΧΝΙΔΙ: 30% (40% επί του 75% = 144px) */}
-              <rect x="124" y="0" width="140" height="50" rx="6" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.8" />
-              <text x="194" y="20" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#dc2626">🎮 Παιχνίδι</text>
-              <text x="194" y="36" fontSize="12" fontWeight="black" textAnchor="middle" fill="#b91c1c" fontFamily="monospace">
-                30% (12€)
-              </text>
-
-              {/* ΤΕΛΙΚΟ ΥΠΟΛΟΙΠΟ: 45% (216px = 18€) */}
-              <rect x="268" y="0" width="212" height="50" rx="6" fill="#dcfce7" stroke="#16a34a" strokeWidth="2.2" />
-              <text x="374" y="20" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d">
-                💰 Τελικό Υπόλοιπο (18€)
-              </text>
-              <text x="374" y="38" fontSize="14" fontWeight="900" textAnchor="middle" fill="#166534" fontFamily="monospace">
-                45% ＝ 18€ ⭐
-              </text>
-            </g>
-
-            {/* 3. ΑΓΚΥΛΗ ΓΙΑ ΤΟ ΥΠΟΛΟΙΠΟ ΜΕΤΑ ΤΟ ΒΙΒΛΙΟ (75%) */}
-            <g transform="translate(144, 102)">
-              <path d="M 0 5 L 0 0 L 356 0 L 356 5" fill="none" stroke="#64748b" strokeWidth="1.5" />
-              <text x="178" y="16" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#475569">
-                Υπόλοιπο μετά το βιβλίο: 75% (ή 3/4)
-              </text>
-              <text x="178" y="30" fontSize="9" textAnchor="middle" fill="#64748b">
-                Από αυτό: 40% πήγε στο παιχνίδι (30%) και το 60% απέμεινε (45%)
-              </text>
-            </g>
-
-            {/* 4. ΥΠΟΛΟΓΙΣΜΟΣ ΚΑΙ ΑΠΟΤΕΛΕΣΜΑ */}
-            <g transform="translate(20, 150)">
-              {/* Αναγωγή στο 1% */}
-              <rect x="25" y="0" width="225" height="36" rx="8" fill="#f0fdf4" stroke="#86efac" strokeWidth="1.2" />
-              <text x="137.5" y="15" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#166534">
-                45% του αρχικού ＝ 18€
-              </text>
-              <text x="137.5" y="29" fontSize="10.5" fontWeight="black" textAnchor="middle" fill="#15803d" fontFamily="monospace">
-                1% ＝ 18 : 45 ＝ 0,4€
-              </text>
-
-              {/* Τελικό 100% */}
-              <g transform="translate(265, 0)">
-                <rect x="0" y="0" width="230" height="36" rx="8" fill="#16a34a" />
-                <text x="115" y="15" fontSize="9.5" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
-                  Αρχικό Ποσό (100%): 100 · 0,4€
-                </text>
-                <text x="115" y="30" fontSize="12.5" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Χαρτζιλίκι ＝ 40€ ⭐
-                </text>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
-            <g transform="translate(20, 215)">
-              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Το 45% ισούται με 18€ ➔ Ολόκληρο το αρχικό ποσό (100%) είναι 40€
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Με ποσοστά */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Μέσω ποσοστών επί του αρχικού ποσού)
-            </div>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Το έξοδο για το βιβλίο είναι:</span>
-                <Fraction num="1" den="4" />
-                <span>＝ <strong>25%</strong> του αρχικού ποσού.</span>
-              </div>
-              <div>• Χρήματα που απομένουν μετά το βιβλίο: 100% － 25% ＝ <strong>75%</strong>.</div>
-
-              <div className="pt-1 border-t border-slate-200">
-                <div>• Το έξοδο για το παιχνίδι είναι το 40% του υπολοίπου (δηλαδή του 75%):</div>
-                <div className="pl-3 font-bold text-slate-800 pt-0.5">
-                  0,40 · 75% ＝ 30% του αρχικού ποσού
-                </div>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200 space-y-1">
-                <div>• Τελικό υπόλοιπο που του έμεινε:</div>
-                <div className="pl-3 font-bold text-slate-800">
-                  75% － 30% ＝ 45% του αρχικού ποσού (ή 60% του 75%)
-                </div>
-                <div className="pt-1 text-slate-700 font-sans text-xs">
-                  Γνωρίζουμε ότι το τελικό αυτό υπόλοιπο (45%) ισούται με <strong>18€</strong>:
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span>Αρχικό Χαρτζιλίκι ＝</span>
-                  <Fraction num="18" den="0,45" />
-                  <span>＝ 18 :</span>
-                  <Fraction num="45" den="100" />
-                  <span>＝ 18 ·</span>
-                  <Fraction num="100" den="45" />
-                  <span>＝</span>
-                  <strong className="text-emerald-700 text-base font-black">40€</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Με κλάσματα (ανάποδα βήματα) */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Βήμα-βήμα προς τα πίσω με κλάσματα)
-            </div>
-            <p className="text-slate-700">
-              Ξεκινάμε από το τέλος προς την αρχή:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div>
-                <div className="font-sans font-bold text-slate-900">• Πριν την αγορά του παιχνιδιού:</div>
-                <div className="pl-3 text-slate-700 font-sans text-xs">
-                  Ξόδεψε το 40% του ενδιάμεσου ποσού, άρα του έμεινε το 60% (<Fraction num="3" den="5" />), το οποίο ισούται με 18€:
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-0.5">
-                  <span>Ποσό μετά το βιβλίο ＝ 18 :</span>
-                  <Fraction num="3" den="5" />
-                  <span>＝ 18 ·</span>
-                  <Fraction num="5" den="3" />
-                  <span>＝ 6 · 5 ＝ <strong className="text-blue-700">30€</strong></span>
-                </div>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200">
-                <div className="font-sans font-bold text-slate-900">• Πριν την αγορά του βιβλίου (Αρχικό ποσό):</div>
-                <div className="pl-3 text-slate-700 font-sans text-xs">
-                  Ξόδεψε το <Fraction num="1" den="4" />, άρα τα 30€ αντιστοιχούν στα <Fraction num="3" den="4" /> του αρχικού χαρτζιλικιού:
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap pl-3 pt-0.5">
-                  <span>Αρχικό Χαρτζιλίκι ＝ 30 :</span>
-                  <Fraction num="3" den="4" />
-                  <span>＝ 30 ·</span>
-                  <Fraction num="4" den="3" />
-                  <span>＝ 10 · 4 ＝</span>
-                  <strong className="text-emerald-700 text-base font-black">40€</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, το αρχικό χαρτζιλίκι του μαθητή ήταν <strong>40€</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 24,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Σε ένα τουρνουά σκακιού συμμετέχουν 6 παίκτες. Κάθε παίκτης παίζει ακριβώς μία παρτίδα με καθέναν από τους υπόλοιπους παίκτες. Πόσες παρτίδες σκακιού θα διεξαχθούν συνολικά σε ολόκληρο το τουρνουά;',
-    options: ['12', '15', '18', '30', '36'],
-    correct: '15',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Κάθε παρτίδα διεξάγεται ανάμεσα σε <strong>ένα ζευγάρι 2 παικτών</strong>. Χρησιμοποιούμε συνδυαστική λογική για να υπολογίσουμε όλα τα δυνατά μοναδικά ζευγάρια ανάμεσα στους 6 παίκτες:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΚΑΝΟΝΙΚΟ ΕΞΑΓΩΝΟ ΜΕ ΟΛΕΣ ΤΙΣ ΠΛΕΥΡΕΣ ΚΑΙ ΔΙΑΓΩΝΙΟΥΣ (ΓΡΑΦΗΜΑ K6) */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
-            {/* ΓΡΑΦΗΜΑ 6 ΠΑΙΚΤΩΝ (Κ6: 6 κορυφές σε κύκλο, ακτίνα R=70, κέντρο cx=150, cy=115) */}
-            <g transform="translate(15, 0)">
-              {/* Όλες οι συνδέσεις (15 παρτίδες) */}
-              {/* Συνδέσεις από Π1 (150, 45) */}
-              <line x1="150" y1="45" x2="210" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
-              <line x1="150" y1="45" x2="210" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="150" y1="45" x2="150" y2="185" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="150" y1="45" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="150" y1="45" x2="90" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
-
-              {/* Συνδέσεις από Π2 (210, 80) */}
-              <line x1="210" y1="80" x2="210" y2="150" stroke="#3b82f6" strokeWidth="1.8" />
-              <line x1="210" y1="80" x2="150" y2="185" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="210" y1="80" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="210" y1="80" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-
-              {/* Συνδέσεις από Π3 (210, 150) */}
-              <line x1="210" y1="150" x2="150" y2="185" stroke="#3b82f6" strokeWidth="1.8" />
-              <line x1="210" y1="150" x2="90" y2="150" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-              <line x1="210" y1="150" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-
-              {/* Συνδέσεις από Π4 (150, 185) */}
-              <line x1="150" y1="185" x2="90" y2="150" stroke="#3b82f6" strokeWidth="1.8" />
-              <line x1="150" y1="185" x2="90" y2="80" stroke="#93c5fd" strokeWidth="1.2" strokeDasharray="3 2" />
-
-              {/* Συνδέσεις από Π5 (90, 150) */}
-              <line x1="90" y1="150" x2="90" y2="80" stroke="#3b82f6" strokeWidth="1.8" />
-
-              {/* Οι 6 Κορυφές (Παίκτες Π1 έως Π6) */}
-              {[
-                { name: 'Π1', x: 150, y: 45 },
-                { name: 'Π2', x: 210, y: 80 },
-                { name: 'Π3', x: 210, y: 150 },
-                { name: 'Π4', x: 150, y: 185 },
-                { name: 'Π5', x: 90, y: 150 },
-                { name: 'Π6', x: 90, y: 80 }
-              ].map((p) => (
-                <g key={p.name} transform={`translate(${p.x}, ${p.y})`}>
-                  <circle cx="0" cy="0" r="16" fill="#eff6ff" stroke="#2563eb" strokeWidth="2" />
-                  <text x="0" y="4.5" fontSize="10.5" fontWeight="900" textAnchor="middle" fill="#1e40af">
-                    {p.name}
-                  </text>
-                </g>
-              ))}
-
-              {/* Ετικέτα κέντρου γραφήματος */}
-              <circle cx="150" cy="115" r="22" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
-              <text x="150" y="112" fontSize="8.5" fontWeight="bold" textAnchor="middle" fill="#64748b">Σύνολο</text>
-              <text x="150" y="124" fontSize="9.5" fontWeight="black" textAnchor="middle" fill="#0f172a">15 γραμμές</text>
-            </g>
-
-            {/* ΠΙΝΑΚΑΣ & ΑΝΑΛΥΣΗ ΖΕΥΓΑΡΙΩΝ ΔΕΞΙΑ */}
-            <g transform="translate(305, 18)">
-              <rect x="0" y="0" width="195" height="175" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.4" />
-              
-              <text x="97.5" y="20" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#0f172a">
-                Παρτίδες ανά Παίκτη
-              </text>
-              <line x1="12" y1="28" x2="183" y2="28" stroke="#e2e8f0" strokeWidth="1" />
-
-              <g transform="translate(16, 42)" fontSize="9.5" fill="#334155" className="font-mono">
-                <text x="0" y="0">• Ο 1ος παίζει με 5 νέους: <tspan fontWeight="bold" fill="#2563eb">5</tspan></text>
-                <text x="0" y="18">• Ο 2ος παίζει με 4 νέους: <tspan fontWeight="bold" fill="#2563eb">4</tspan></text>
-                <text x="0" y="36">• Ο 3ος παίζει με 3 νέους: <tspan fontWeight="bold" fill="#2563eb">3</tspan></text>
-                <text x="0" y="54">• Ο 4ος παίζει με 2 νέους: <tspan fontWeight="bold" fill="#2563eb">2</tspan></text>
-                <text x="0" y="72">• Ο 5ος παίζει με 1 νέο: &nbsp;<tspan fontWeight="bold" fill="#2563eb">1</tspan></text>
-                <text x="0" y="90">• Ο 6ος έχει ήδη παίξει: &nbsp;<tspan fontWeight="bold" fill="#64748b">0</tspan></text>
-              </g>
-
-              {/* Badge τελικού αποτελέσματος */}
-              <g transform="translate(15, 140)">
-                <rect x="0" y="0" width="165" height="26" rx="6" fill="#16a34a" />
-                <text x="82.5" y="17" fontSize="11" fontWeight="black" textAnchor="middle" fill="#ffffff">
-                  Άθροισμα ＝ 15 παρτίδες ⭐
-                </text>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
-            <g transform="translate(20, 212)">
-              <text x="240" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Κάθε γραμμή αντιστοιχεί σε 1 μοναδική παρτίδα μεταξύ 2 παικτών (6 · 5 : 2 ＝ 15)
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Συνδυαστικός τύπος */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Συνδυαστικά με αποφυγή διπλομέτρησης)
-            </div>
-            <p className="text-slate-700">
-              Κάθε ένας από τους <strong>6 παίκτες</strong> παίζει με τους υπόλοιπους <strong>5 παίκτες</strong>:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• Συνολικές συμμετοχές: 6 · 5 ＝ <strong>30 συμμετοχές</strong>.</div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Επειδή κάθε παρτίδα χρειάζεται 2 παίκτες (δηλαδή η παρτίδα του Παίκτη Α με τον Παίκτη Β είναι ακριβώς η ίδια με την παρτίδα του Β με τον Α), κάθε αγώνας έχει μετρηθεί δύο φορές:
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>• Πραγματικός αριθμός παρτίδων ＝</span>
-                <Fraction num="6 · 5" den="2" />
-                <span>＝</span>
-                <Fraction num="30" den="2" />
-                <span>＝</span>
-                <strong className="text-emerald-700 text-base font-black">15 παρτίδες</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Βήμα-βήμα άθροισμα νέων ζευγαριών */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Βήμα-βήμα καταγραφή νέων αναμετρήσεων)
-            </div>
-            <p className="text-slate-700">
-              Καταγράφουμε διαδοχικά τις παρτίδες που κανονίζει κάθε παίκτης χωρίς να επαναλαμβάνουμε όσες έχουν ήδη προγραμματιστεί:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1">
-              <div>• 1ος παίκτης: παίζει με τους 5 υπόλοιπους ➔ <strong>5 παρτίδες</strong></div>
-              <div>• 2ος παίκτης: παίζει με τους υπόλοιπους 4 (εκτός του 1ου) ➔ <strong>4 παρτίδες</strong></div>
-              <div>• 3ος παίκτης: παίζει με τους υπόλοιπους 3 ➔ <strong>3 παρτίδες</strong></div>
-              <div>• 4ος παίκτης: παίζει με τους υπόλοιπους 2 ➔ <strong>2 παρτίδες</strong></div>
-              <div>• 5ος παίκτης: παίζει με τον τελευταίο 1 ➔ <strong>1 παρτίδα</strong></div>
-              <div>• 6ος παίκτης: έχει ήδη αγωνιστεί με όλους ➔ <strong>0 παρτίδες</strong></div>
-              <div className="pt-1.5 border-t border-slate-200 text-emerald-800 font-bold">
-                Σύνολο Παρτίδων ＝ 5 ＋ 4 ＋ 3 ＋ 2 ＋ 1 ＝ <span className="text-base text-emerald-700 font-black">15 παρτίδες</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, σε ολόκληρο το τουρνουά θα διεξαχθούν συνολικά <strong>15 παρτίδες σκακιού</strong>.
-        </p>
-      </div>
-    )
-  },
-  {
-    id: 25,
-    group: 'ΟΜΑΔΑ Β (5 επιλογες)',
-    prompt: 'Ένας ανθοπώλης έχει 48 κόκκινα τριαντάφυλλα και 72 λευκά τριαντάφυλλα. Θέλει να φτιάξει όμοιες ανθοδέσμες, χρησιμοποιώντας όλα τα λουλούδια, έτσι ώστε κάθε ανθοδέσμη να έχει τον ίδιο αριθμό κόκκινων και τον ίδιο αριθμό λευκών τριαντάφυλλων. Ποιος είναι ο μέγιστος αριθμός από τέτοιες ανθοδέσμες που μπορεί να φτιάξει;',
-    options: ['12', '16', '24', '36', '48'],
-    correct: '24',
-    explain: (
-      <div className="space-y-4 text-xs sm:text-sm">
-        <p>
-          Επειδή θέλουμε να μοιράσουμε <strong>όλα</strong> τα λουλούδια σε <strong>όμοιες ανθοδέσμες</strong> χωρίς να περισσέψει κανένα και αναζητούμε τον <strong>μέγιστο αριθμό</strong> ανθοδεσμών, ψάχνουμε τον <strong>Μέγιστο Κοινό Διαιρέτη (Μ.Κ.Δ.)</strong> των αριθμών 48 και 72:
-        </p>
-
-        {/* SVG ΣΧΗΜΑ: ΑΝΑΛΥΣΗ Μ.Κ.Δ.(48, 72) ΚΑΙ ΠΕΡΙΕΧΟΜΕΝΟ ΚΑΘΕ ΑΝΘΟΔΕΣΜΗΣ */}
-        <div className="flex justify-center p-3 bg-white/90 rounded-2xl border border-slate-200/90 my-2 overflow-x-auto">
-          <svg width="520" height="235" viewBox="0 0 520 235" className="select-none font-sans mx-auto block">
-            {/* 1. ΑΡΧΙΚΑ ΛΟΥΛΟΥΔΙΑ & ΚΟΙΝΗ ΔΙΑΙΡΕΣΗ ΣΕ 24 ΑΝΘΟΔΕΣΜΕΣ */}
-            <g transform="translate(15, 12)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                1. Διαίρεση του συνόλου των λουλουδιών με τον Μ.Κ.Δ.(48, 72) ＝ 24:
-              </text>
-
-              <g transform="translate(0, 24)">
-                {/* 48 Κόκκινα */}
-                <g transform="translate(0, 0)">
-                  <rect x="0" y="0" width="235" height="42" rx="8" fill="#fef2f2" stroke="#ef4444" strokeWidth="1.6" />
-                  <text x="14" y="18" fontSize="10.5" fontWeight="black" fill="#dc2626">🌹 48 Κόκκινα</text>
-                  <text x="14" y="32" fontSize="9.5" fontWeight="bold" fill="#b91c1c">48 : 24 ανθοδέσμες ＝ <tspan fontSize="11" fontWeight="900">2 κόκκινα / ανθοδέσμη</tspan></text>
-                </g>
-
-                {/* 72 Λευκά */}
-                <g transform="translate(250, 0)">
-                  <rect x="0" y="0" width="235" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" strokeWidth="1.6" />
-                  <text x="14" y="18" fontSize="10.5" fontWeight="black" fill="#475569">🪷 72 Λευκά</text>
-                  <text x="14" y="32" fontSize="9.5" fontWeight="bold" fill="#334155">72 : 24 ανθοδέσμες ＝ <tspan fontSize="11" fontWeight="900" fill="#0f172a">3 λευκά / ανθοδέσμη</tspan></text>
-                </g>
-              </g>
-            </g>
-
-            {/* ΔΙΑΧΩΡΙΣΤΙΚΗ ΓΡΑΜΜΗ */}
-            <line x1="15" y1="92" x2="500" y2="92" stroke="#e2e8f0" strokeWidth="1.2" />
-
-            {/* 2. ΣΥΣΤΑΣΗ ΜΙΑΣ ΑΝΘΟΔΕΣΜΗΣ & ΣΥΝΟΛΙΚΟΣ ΑΡΙΘΜΟΣ */}
-            <g transform="translate(15, 104)">
-              <text x="0" y="14" fontSize="11.5" fontWeight="bold" fill="#0f172a">
-                2. Σύνθεση κάθε ανθοδέσμης &amp; Τελικό Πλήθος:
-              </text>
-
-              <g transform="translate(0, 24)">
-                {/* Κάρτα σύνθεσης 1 ανθοδέσμης */}
-                <rect x="0" y="0" width="270" height="46" rx="8" fill="#eff6ff" stroke="#3b82f6" strokeWidth="1.6" />
-                <text x="15" y="18" fontSize="10" fontWeight="bold" fill="#1d4ed8">Κάθε μία ανθοδέσμη περιέχει:</text>
-                <text x="15" y="34" fontSize="11.5" fontWeight="black" fill="#0f172a">
-                  <tspan fill="#dc2626">2 Κόκκινα</tspan> ＋ <tspan fill="#475569">3 Λευκά</tspan> ＝ 5 λουλούδια
-                </text>
-
-                {/* Badge μέγιστου αριθμού ανθοδεσμών */}
-                <g transform="translate(285, 0)">
-                  <rect x="0" y="0" width="200" height="46" rx="10" fill="#16a34a" />
-                  <text x="100" y="18" fontSize="10" fontWeight="bold" textAnchor="middle" fill="#dcfce7">
-                    Μέγιστος Αριθμός: Μ.Κ.Δ.
-                  </text>
-                  <text x="100" y="36" fontSize="13.5" fontWeight="900" textAnchor="middle" fill="#ffffff">
-                    24 Ανθοδέσμες ⭐
-                  </text>
-                </g>
-              </g>
-            </g>
-
-            {/* ΚΑΤΩ ΕΠΕΞΗΓΗΜΑΤΙΚΗ ΛΕΖΑΝΤΑ */}
-            <g transform="translate(15, 212)">
-              <text x="245" y="0" fontSize="10.5" fontWeight="bold" textAnchor="middle" fill="#047857">
-                Ο αριθμός 24 είναι ο μεγαλύτερος φυσικός που διαιρεί ταυτόχρονα το 48 και το 72
-              </text>
-            </g>
-          </svg>
-        </div>
-
-        {/* ΑΝΑΛΥΤΙΚΟΙ ΤΡΟΠΟΙ ΕΠΙΛΥΣΗΣ */}
-        <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
-          {/* 1ος Τρόπος: Μέσω Μ.Κ.Δ. */}
-          <div className="space-y-1.5">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 1ος Τρόπος (Υπολογισμός Μέγιστου Κοινού Διαιρέτη - Μ.Κ.Δ.)
-            </div>
-            <p className="text-slate-700">
-              Αναλύουμε τους αριθμούς 48 και 72 σε γινόμενο πρώτων παραγόντων:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
-              <div>• 48 ＝ 2 · 2 · 2 · 2 · 3 ＝ 2⁴ · 3</div>
-              <div>• 72 ＝ 2 · 2 · 2 · 3 · 3 ＝ 2³ · 3²</div>
-              <div className="pt-1 border-t border-slate-200 text-slate-700 font-sans text-xs">
-                Ο Μ.Κ.Δ. ισούται με το γινόμενο των κοινών πρώτων παραγόντων με τον μικρότερο εκθέτη:
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                <span>Μ.Κ.Δ.(48, 72) ＝ 2³ · 3 ＝ 8 · 3 ＝</span>
-                <strong className="text-emerald-700 text-base font-black">24 ανθοδέσμες</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* 2ος Τρόπος: Επαλήθευση περιεχομένου ανά ανθοδέσμη */}
-          <div className="space-y-1.5 pt-1 border-t border-slate-100">
-            <div className="font-sans font-bold text-blue-900 border-b border-slate-200 pb-1">
-              🔷 2ος Τρόπος (Υπολογισμός λουλουδιών ανά ανθοδέσμη)
-            </div>
-            <p className="text-slate-700">
-              Μοιράζουμε τα λουλούδια στις 24 ανθοδέσμες:
-            </p>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span>• Κόκκινα τριαντάφυλλα σε κάθε ανθοδέσμη ＝</span>
-                <Fraction num="48" den="24" />
-                <span>＝ <strong className="text-rose-600">2 κόκκινα</strong></span>
-              </div>
-
-              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200">
-                <span>• Λευκά τριαντάφυλλα σε κάθε ανθοδέσμη ＝</span>
-                <Fraction num="72" den="24" />
-                <span>＝ <strong className="text-slate-700">3 λευκά</strong></span>
-              </div>
-
-              <div className="pt-1 border-t border-slate-200 text-slate-600 font-sans text-xs">
-                Επειδή οι αριθμοί 2 και 3 είναι πρώτοι μεταξύ τους (Μ.Κ.Δ.(2, 3) ＝ 1), δεν υπάρχει δυνατότητα δημιουργίας περισσότερων όμοιων ανθοδεσμών.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-1">
-          Επομένως, ο μέγιστος αριθμός από τέτοιες ανθοδέσμες που μπορεί να φτιάξει είναι <strong>24</strong>.
-        </p>
-      </div>
-    )
-  }
-];
-
-const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
-
-// Helper για ασφαλή μετατροπή JSX επιλογών (π.χ. <Fraction num="21" den="25" />) σε string
-function extractOptionText(opt) {
-  if (typeof opt === 'string' || typeof opt === 'number') return String(opt);
-  if (Array.isArray(opt)) return opt.map(extractOptionText).join('');
-  if (opt && typeof opt === 'object' && opt.props) {
-    if (opt.props.num !== undefined && opt.props.den !== undefined) {
-      return `${opt.props.num}/${opt.props.den}`;
+  );
+}
+
+// 3. Component για δυνάμεις (χωρίς ^ και χωρίς Unicode εκθέτες)
+function Pow({ base, exp }) {
+  return (
+    <span className="inline-flex items-baseline font-mono whitespace-nowrap">
+      <span>{base}</span>
+      <sup className="text-[0.72em] leading-none font-bold ml-[1px] -top-[0.45em] relative">
+        {exp}
+      </sup>
+    </span>
+  );
+}
+
+// Helper για ασφαλή μετατροπή JSX επιλογών/εκφωνήσεων σε απλό κείμενο
+function extractPlainText(node, isEn = false) {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map((n) => extractPlainText(n, isEn)).join('');
+  if (node && typeof node === 'object' && node.props) {
+    if (node.props.num !== undefined && node.props.den !== undefined) {
+      const n = extractPlainText(node.props.num, isEn).trim();
+      const d = extractPlainText(node.props.den, isEn).trim();
+      return `${n}/${d}`;
     }
-    return extractOptionText(opt.props.children);
+    if (node.props.base !== undefined && node.props.exp !== undefined) {
+      const b = extractPlainText(node.props.base, isEn).trim();
+      return `${b}^${node.props.exp}`;
+    }
+    return extractPlainText(node.props.children, isEn);
   }
   return '';
 }
 
+const I18N = {
+  el: {
+    metaTitle: 'Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης | LearnMaths.gr',
+    metaDesc: '1ο Τεστ Προσομοίωσης με ενδεικτικά θέματα Προτύπων 2026 στα Μαθηματικά: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, βαθμολογία 0–50 και λύσεις.',
+    backText: 'Τεστ Προσομοίωσης 2026',
+    heroBadge: 'ΕΝΔΕΙΚΤΙΚΑ ΘΕΜΑΤΑ ΠΡΟΤΥΠΩΝ 2026 • 1Ο ΤΕΣΤ (25 ΘΕΜΑΤΑ)',
+    heroTitle: 'Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης',
+    heroSubtitle: 'Εξασκήσου σε 25 επιλεγμένα ενδεικτικά θέματα Μαθηματικών για τις εξετάσεις των Προτύπων Γυμνασίων 2026 (αριθμητική, κλάσματα, ποσοστά, εξισώσεις, γεωμετρία και συνδυαστική λογική) με αναλυτικές λύσεις βήμα-βήμα.',
+    answeredLabel: 'Απαντημένες:',
+    of25: 'από 25',
+    scoringLabel: 'Βαθμολογία:',
+    scoringValue: '2 μόρια / σωστό (Άριστα: 50)',
+    timerOn: "⏳ Χρονόμετρο: Ενεργό (60')",
+    timerOff: '⏳ Χρονόμετρο: Ανενεργό',
+    resultTitle: 'Ολοκλήρωση 1ου Τεστ Προσομοίωσης!',
+    finalScoreLabel: 'Τελικό Σκορ',
+    correctOutOf: (c) => `(${c} σωστές στις 25 ερωτήσεις)`,
+    resultSubtitle: 'Δες παρακάτω αναλυτικά ποιες ερωτήσεις απάντησες σωστά (✅) ή λάθος (❌) μαζί με την αναλυτική μαθηματική λύση για κάθε θέμα.',
+    questionPrefix: 'Θέμα',
+    groupA: 'ΟΜΑΔΑ Α (4 ΕΠΙΛΟΓΕΣ)',
+    groupB: 'ΟΜΑΔΑ Β (5 ΕΠΙΛΟΓΕΣ)',
+    pointsEarned: '✅ +2 μόρια',
+    pointsZero: '❌ 0 μόρια',
+    explainTitleSubmitted: 'Μαθηματική Επεξήγηση:',
+    explainTitlePreview: 'Προβολή Αναλυτικής Λύσης & Σχήματος',
+    submitMainBtn: (c) => `Οριστική Υποβολή Τεστ (${c} από 25)`,
+    barScore: (s) => `Σκορ: ${s} / 50`,
+    barAnswered: (c) => `Απαντήσεις: ${c} / 25`,
+    barPercent: 'Ποσοστό:',
+    barRemaining: 'Υπολείπονται:',
+    retryBtn: '🔄 Επανάληψη Τεστ',
+    checkBtn: 'Έλεγχος & Βαθμολόγηση ➔',
+    schemaHome: 'Αρχική',
+    schemaHub: 'Ενδεικτικά Θέματα Προτύπων 2026',
+    schemaSimHub: 'Τεστ Προσομοίωσης Προτύπων 2026',
+    schemaCurrent: '1ο Τεστ Προσομοίωσης – Ενδεικτικά Θέματα 2026',
+    schemaQuizName: 'Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης Μαθηματικών',
+    schemaQuizDesc: '1ο Διαγνωστικό Τεστ Προσομοίωσης με ενδεικτικά θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2026: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, βαθμολογία 0–50 και αναλυτικές λύσεις με SVG σχήματα.',
+    schemaEduLevel: "ΣΤ' Δημοτικού",
+    schemaQuestionName: (id) => `Ενδεικτικό Θέμα ${id} - Πρότυπα 2026`
+  },
+  en: {
+    metaTitle: 'Model Schools 2026 Practice – Mock Test 1 | LearnMaths.gr',
+    metaDesc: 'Practice with Mock Test 1 of 2026 Model School Mathematics problems: 25 multiple-choice questions, 60-minute timer, 0–50 grading, and step-by-step solutions.',
+    backText: 'Mock Tests 2026',
+    heroBadge: 'MODEL SCHOOLS 2026 PRACTICE • MOCK TEST 1 (25 QUESTIONS)',
+    heroTitle: 'Model Schools 2026 Practice – Mock Test 1',
+    heroSubtitle: 'Practice with 25 curated Model School Mathematics problems for the 2026 entrance exams (arithmetic, fractions, percentages, equations, geometry, and combinatorics) with step-by-step solutions.',
+    answeredLabel: 'Answered:',
+    of25: 'of 25',
+    scoringLabel: 'Scoring:',
+    scoringValue: '2 pts / correct (Max: 50)',
+    timerOn: "⏳ Timer: Active (60')",
+    timerOff: '⏳ Timer: Disabled',
+    resultTitle: 'Mock Test 1 Completed!',
+    finalScoreLabel: 'Final Score',
+    correctOutOf: (c) => `(${c} correct out of 25 questions)`,
+    resultSubtitle: 'Review below which questions you answered correctly (✅) or incorrectly (❌), along with the full mathematical explanation for each problem.',
+    questionPrefix: 'Question',
+    groupA: 'GROUP A (4 CHOICES)',
+    groupB: 'GROUP B (5 CHOICES)',
+    pointsEarned: '✅ +2 pts',
+    pointsZero: '❌ 0 pts',
+    explainTitleSubmitted: 'Mathematical Explanation:',
+    explainTitlePreview: 'View Step-by-Step Solution & Diagram',
+    submitMainBtn: (c) => `Submit Test (${c} of 25)`,
+    barScore: (s) => `Score: ${s} / 50`,
+    barAnswered: (c) => `Answered: ${c} / 25`,
+    barPercent: 'Percentage:',
+    barRemaining: 'Remaining:',
+    retryBtn: '🔄 Retake Test',
+    checkBtn: 'Check & Grade ➔',
+    schemaHome: 'Home',
+    schemaHub: 'Model School Entrance 2026 Prep',
+    schemaSimHub: 'Model Schools 2026 Mock Tests',
+    schemaCurrent: 'Mock Test 1 – 2026 Practice Set',
+    schemaQuizName: 'Model Schools 2026 Practice – Mathematics Mock Test 1',
+    schemaQuizDesc: '1st Diagnostic Mock Test with 2026 Model School Mathematics practice problems: 25 multiple-choice questions, 60-minute timer, 0–50 score, and step-by-step solutions with SVG diagrams.',
+    schemaEduLevel: 'Grade 6',
+    schemaQuestionName: (id) => `Practice Question ${id} - Model Schools 2026`
+  }
+};
+
+function getQuestions(locale) {
+  const isEn = locale === 'en';
+  const groupA = isEn ? 'GROUP A (4 CHOICES)' : 'ΟΜΑΔΑ Α (4 ΕΠΙΛΟΓΕΣ)';
+  const groupB = isEn ? 'GROUP B (5 CHOICES)' : 'ΟΜΑΔΑ Β (5 ΕΠΙΛΟΓΕΣ)';
+
+  return [
+    {
+      id: 1,
+      group: groupA,
+      prompt: isEn ? (
+        <div className="space-y-1.5">
+          <p>What is the value of the following numerical expression?</p>
+          <div className="font-mono text-sm sm:text-base flex items-center flex-wrap gap-1.5 pt-0.5">
+            <span>(13 : 2 －</span>
+            <Pow base="2" exp="3" />
+            <span>: 2) : 0.25 －</span>
+            <Pow base="1" exp="5" />
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          <p>Ποια είναι η τιμή της παρακάτω αριθμητικής παράστασης;</p>
+          <div className="font-mono text-sm sm:text-base flex items-center flex-wrap gap-1.5 pt-0.5">
+            <span>(13 : 2 －</span>
+            <Pow base="2" exp="3" />
+            <span>: 2) : 0,25 －</span>
+            <Pow base="1" exp="5" />
+          </div>
+        </div>
+      ),
+      options: [
+        '9',
+        '4',
+        isEn ? '1.5' : '1,5',
+        '10'
+      ],
+      correct: '9',
+      explain: isEn ? (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <p>
+            Apply the <strong>order of operations</strong> (exponents ➔ parentheses ➔ multiplication/division ➔ addition/subtraction):
+          </p>
+          <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+            <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+              🔷 Step-by-Step with Decimals
+            </div>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • <strong>Exponents:</strong> <Pow base="2" exp="3" /> ＝ 2 · 2 · 2 ＝ <strong>8</strong> &nbsp;and&nbsp; <Pow base="1" exp="5" /> ＝ <strong>1</strong>
+              </div>
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div>• <strong>Inside parentheses:</strong> 13 : 2 ＝ <strong>6.5</strong>, &nbsp;8 : 2 ＝ <strong>4</strong> ➔ 6.5 － 4 ＝ <strong>2.5</strong></div>
+              </div>
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• <strong>Division &amp; subtraction:</strong></span>
+                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <Frac num="2.5" den="0.25" /> ＝ 2.5 · 4 ＝ <strong>10</strong>
+                  </span>
+                </div>
+                <div className="pt-0.5 text-emerald-700 font-bold text-base">
+                  10 － <Pow base="1" exp="5" /> ＝ 10 － 1 ＝ 9
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, the value of the numerical expression is <strong>9</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <p>
+            Εφαρμόζουμε την <strong>προτεραιότητα των πράξεων</strong> (δυνάμεις ➔ πράξεις εντός παρενθέσεων ➔ πολλαπλασιασμοί/διαιρέσεις ➔ προσθέσεις/αφαιρέσεις):
+          </p>
+          <div className="bg-white/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-2.5">
+            <div className="font-sans font-bold text-blue-900 text-sm border-b border-slate-200 pb-1">
+              🔷 1ος Τρόπος (Βήμα προς βήμα με δεκαδικούς αριθμούς)
+            </div>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+              <div>
+                • <strong>Υπολογισμός δυνάμεων:</strong> <Pow base="2" exp="3" /> ＝ 2 · 2 · 2 ＝ <strong>8</strong> &nbsp;και&nbsp; <Pow base="1" exp="5" /> ＝ <strong>1</strong>
+              </div>
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div>• <strong>Πράξεις μέσα στην παρένθεση:</strong> 13 : 2 ＝ <strong>6,5</strong>, &nbsp;8 : 2 ＝ <strong>4</strong> ➔ 6,5 － 4 ＝ <strong>2,5</strong></div>
+              </div>
+              <div className="pt-1 border-t border-slate-200 space-y-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span>• <strong>Διαίρεση με το 0,25:</strong></span>
+                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                    <Frac num="2,5" den="0,25" /> ＝ 2,5 · 4 ＝ <strong>10</strong>
+                  </span>
+                </div>
+                <div className="pt-0.5 text-emerald-700 font-bold text-base">
+                  10 － <Pow base="1" exp="5" /> ＝ 10 － 1 ＝ 9
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-200/80 space-y-2">
+            <div className="font-sans font-bold text-emerald-950 text-sm border-b border-emerald-200 pb-1">
+              💡 2ος Τρόπος (Υπολογισμός με κλάσματα)
+            </div>
+            <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 font-mono text-slate-900 space-y-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span>• Παρένθεση:</span>
+                <Frac num="13" den="2" />
+                <span>－</span>
+                <Frac num="8" den="2" />
+                <span>＝</span>
+                <strong className="text-blue-700"><Frac num="5" den="2" /></strong>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-100">
+                <span>• Διαίρεση:</span>
+                <ComplexFrac num={<Frac num="5" den="2" small />} den={<Frac num="1" den="4" small />} />
+                <span>＝</span>
+                <Frac num="5" den="2" />
+                <span>· 4 ＝ <strong>10</strong></span>
+              </div>
+              <div className="pt-1 border-t border-slate-100">
+                <span>• Τελικό αποτέλεσμα: 10 － 1 ＝</span>
+                <strong className="text-emerald-700 text-base">9</strong>
+              </div>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, η τιμή της αριθμητικής παράστασης είναι <strong>9</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 2,
+      group: groupA,
+      prompt: isEn
+        ? 'What is the smallest four-digit natural number that is simultaneously divisible by 3, 4, and 5?'
+        : 'Ποιος είναι ο μικρότερος τετραψήφιος φυσικός αριθμός ο οποίος διαιρείται ταυτόχρονα με το 3, το 4 και το 5;',
+      options: isEn
+        ? ['1,000', '1,020', '1,050', '1,080']
+        : ['1.000', '1.020', '1.050', '1.080'],
+      correct: isEn ? '1,020' : '1.020',
+      explain: isEn ? (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <p>
+            To be divisible by <strong>3</strong>, <strong>4</strong>, and <strong>5</strong> simultaneously, a number must be a multiple of <strong>LCM(3, 4, 5)</strong>.
+          </p>
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. LCM(3, 4, 5) ＝ 3 · 4 · 5 ＝ <strong>60</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. Smallest 4-digit number is 1,000:</span>
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <Frac num="1,000" den="60" /> ＝ 16 with remainder 40 (60 · 16 ＝ 960).
+              </span>
+            </div>
+            <div>3. Next multiple of 60: 60 · 17 ＝ <strong className="text-emerald-700 text-base">1,020</strong>.</div>
+          </div>
+          <p className="pt-1">Therefore, the smallest four-digit number is <strong>1,020</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <p>
+            Για να διαιρείται ένας αριθμός ταυτόχρονα με το <strong>3</strong>, το <strong>4</strong> και το <strong>5</strong>, πρέπει να είναι κοινό πολλαπλάσιο των τριών αυτών αριθμών, δηλαδή πολλαπλάσιο του <strong>Ε.Κ.Π.(3, 4, 5)</strong>.
+          </p>
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. Ε.Κ.Π.(3, 4, 5) ＝ 3 · 4 · 5 ＝ <strong>60</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. Μικρότερος τετραψήφιος το 1.000:</span>
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <Frac num="1.000" den="60" /> ＝ 16 και υπόλοιπο 40 (60 · 16 ＝ 960).
+              </span>
+            </div>
+            <div>3. Επόμενο πολλαπλάσιο του 60: 60 · 17 ＝ <strong className="text-emerald-700 text-base">1.020</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, ο μικρότερος τετραψήφιος αριθμός είναι το <strong>1.020</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 3,
+      group: groupA,
+      prompt: isEn ? (
+        <span>
+          A container is <Frac num="7" den="10" /> full of oil. We pour out 3 identical cups of oil from the container, and now it is <Frac num="1" den="10" /> full. How many such cups of oil fill the entire container if it is completely empty?
+        </span>
+      ) : (
+        <span>
+          Ένα δοχείο είναι γεμάτο με λάδι κατά τα <Frac num="7" den="10" /> του συνολικού του όγκου. Αδειάζουμε 3 ίδια φλιτζάνια λάδι από το δοχείο και πλέον είναι γεμάτο κατά το <Frac num="1" den="10" />. Με πόσα τέτοια φλιτζάνια λάδι γεμίζει ολόκληρο το δοχείο αν είναι τελείως άδειο;
+        </span>
+      ),
+      options: ['5', '6', '8', '10'],
+      correct: '5',
+      explain: isEn ? (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. 3 cups ＝ <Frac num="7" den="10" /> － <Frac num="1" den="10" /> ＝ <Frac num="6" den="10" /> of the container.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. 1 cup ＝</span>
+              <ComplexFrac num={<Frac num="6" den="10" small />} den="3" />
+              <span>＝ <Frac num="2" den="10" /> ＝ <Frac num="1" den="5" /> of the container.</span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>3. Full container ＝</span>
+              <ComplexFrac num={<Frac num="5" den="5" small />} den={<Frac num="1" den="5" small />} />
+              <span>＝ <strong className="text-emerald-700 text-base">5 cups</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Thus, <strong>5 cups</strong> fill the entire container.</p>
+        </div>
+      ) : (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. 3 φλιτζάνια ＝ <Frac num="7" den="10" /> － <Frac num="1" den="10" /> ＝ <Frac num="6" den="10" /> του δοχείου.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. 1 φλιτζάνι ＝</span>
+              <ComplexFrac num={<Frac num="6" den="10" small />} den="3" />
+              <span>＝ <Frac num="2" den="10" /> ＝ <Frac num="1" den="5" /> του δοχείου.</span>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>3. Ολόκληρο δοχείο ＝</span>
+              <ComplexFrac num={<Frac num="5" den="5" small />} den={<Frac num="1" den="5" small />} />
+              <span>＝ <strong className="text-emerald-700 text-base">5 φλιτζάνια</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, για να γεμίσει ολόκληρο το δοχείο χρειάζονται <strong>5 φλιτζάνια</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 4,
+      group: groupA,
+      prompt: isEn
+        ? 'A pair of shoes originally cost 80 €. During the sales, it was bought for 56 €. What was the discount percentage (%) on the original price?'
+        : 'Ένα ζευγάρι παπούτσια κόστιζε αρχικά 80€. Στις εκπτώσεις αγοράστηκε στην τιμή των 56€. Ποιο ήταν το ποσοστό (%) της έκπτωσης που έγινε στην αρχική τιμή;',
+      options: ['24%', '30%', '40%', '70%'],
+      correct: '30%',
+      explain: isEn ? (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. Discount amount ＝ 80 € － 56 € ＝ <strong>24 €</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. Discount fraction ＝</span>
+              <Frac num="24" den="80" />
+              <span>＝ <Frac num="3" den="10" /> ＝ <Frac num="30" den="100" /> ＝ <strong className="text-emerald-700 text-base">30%</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, the discount percentage on the original price was <strong>30%</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-4 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-2">
+            <div>1. Ποσό έκπτωσης ＝ 80 € － 56 € ＝ <strong>24 €</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>2. Κλάσμα έκπτωσης ＝</span>
+              <Frac num="24" den="80" />
+              <span>＝ <Frac num="3" den="10" /> ＝ <Frac num="30" den="100" /> ＝ <strong className="text-emerald-700 text-base">30%</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, το ποσοστό της έκπτωσης στην αρχική τιμή ήταν <strong>30%</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 5,
+      group: groupA,
+      prompt: isEn ? (
+        <span>
+          Triple an unknown number x, increased by <Frac num="1" den="3" /> of the same number, equals 20. Which of the following equations correctly describes the problem?
+        </span>
+      ) : (
+        <span>
+          Το τριπλάσιο ενός άγνωστου αριθμού x, αυξημένο κατά το <Frac num="1" den="3" /> του ίδιου αριθμού, ισούται με 20. Ποια από τις παρακάτω εξισώσεις περιγράφει σωστά το πρόβλημα;
+        </span>
+      ),
+      options: [
+        '3 · x － x : 3 ＝ 20',
+        '3 · x ＋ x : 3 ＝ 20',
+        '3 · (x ＋ x : 3) ＝ 20',
+        'x : 3 ＋ 3 ＝ 20'
+      ],
+      correct: '3 · x ＋ x : 3 ＝ 20',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <p>• &quot;Triple x&quot; ➔ <strong>3 · x</strong></p>
+          <p>• &quot;increased by <Frac num="1" den="3" /> of the number&quot; ➔ <strong>＋ <Frac num="x" den="3" /></strong> (or <strong>＋ x : 3</strong>)</p>
+          <p>• &quot;equals 20&quot; ➔ <strong>＝ 20</strong></p>
+          <p className="pt-1 font-bold text-emerald-800">Equation: 3 · x ＋ x : 3 ＝ 20.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <p>• «Το τριπλάσιο του x» ➔ <strong>3 · x</strong></p>
+          <p>• «αυξημένο κατά το <Frac num="1" den="3" /> του ίδιου αριθμού» ➔ <strong>＋ <Frac num="x" den="3" /></strong> (ή <strong>＋ x : 3</strong>)</p>
+          <p>• «ισούται με 20» ➔ <strong>＝ 20</strong></p>
+          <p className="pt-1 font-bold text-emerald-800">Εξίσωση: 3 · x ＋ x : 3 ＝ 20.</p>
+        </div>
+      )
+    },
+    {
+      id: 6,
+      group: groupA,
+      prompt: isEn
+        ? 'Which of the following fractions is closest to the decimal number 0.8 on the number line?'
+        : 'Ποιο από τα παρακάτω κλάσματα βρίσκεται πιο κοντά στον δεκαδικό αριθμό 0,8 στην αριθμογραμμή;',
+      options: [
+        <Frac num="3" den="4" />,
+        <Frac num="7" den="10" />,
+        <Frac num="43" den="50" />,
+        <Frac num="21" den="25" />
+      ],
+      correct: '21/25',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• <Frac num="7" den="10" /> ＝ 0.70 ➔ distance from 0.80: <strong>0.10</strong></div>
+            <div>• <Frac num="3" den="4" /> ＝ 0.75 ➔ distance from 0.80: <strong>0.05</strong></div>
+            <div>• <Frac num="21" den="25" /> ＝ 0.84 ➔ distance from 0.80: <strong className="text-emerald-700">0.04 (closest)</strong></div>
+            <div>• <Frac num="43" den="50" /> ＝ 0.86 ➔ distance from 0.80: <strong>0.06</strong></div>
+          </div>
+          <p className="pt-1">Thus, the closest fraction to 0.8 is <strong><Frac num="21" den="25" /></strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• <Frac num="7" den="10" /> ＝ 0,70 ➔ απόσταση από 0,80: <strong>0,10</strong></div>
+            <div>• <Frac num="3" den="4" /> ＝ 0,75 ➔ απόσταση από 0,80: <strong>0,05</strong></div>
+            <div>• <Frac num="21" den="25" /> ＝ 0,84 ➔ απόσταση από 0,80: <strong className="text-emerald-700">0,04 (πιο κοντά)</strong></div>
+            <div>• <Frac num="43" den="50" /> ＝ 0,86 ➔ απόσταση από 0,80: <strong>0,06</strong></div>
+          </div>
+          <p className="pt-1">Επομένως, το πλησιέστερο κλάσμα στο 0,8 είναι το <strong><Frac num="21" den="25" /></strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 7,
+      group: groupA,
+      prompt: isEn
+        ? 'The average of 6 consecutive even natural numbers is 15. What is the greatest of these six numbers?'
+        : 'Ο μέσος όρος 6 συνεχόμενων άρτιων (ζυγών) φυσικών αριθμών είναι 15. Ποιος είναι ο μεγαλύτερος από αυτούς τους έξι αριθμούς;',
+      options: ['16', '18', '20', '22'],
+      correct: '20',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Sum of the 6 consecutive even numbers: 6 · 15 ＝ <strong>90</strong>.</div>
+            <div>• Let the smallest be a: a ＋ (a ＋ 2) ＋ (a ＋ 4) ＋ (a ＋ 6) ＋ (a ＋ 8) ＋ (a ＋ 10) ＝ 90 ➔ 6a ＋ 30 ＝ 90 ➔ <strong>a ＝ 10</strong>.</div>
+            <div>• The six numbers are: 10, 12, 14, 16, 18, <strong className="text-emerald-700 text-base">20</strong>.</div>
+          </div>
+          <p className="pt-1">Therefore, the greatest of the six numbers is <strong>20</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Άθροισμα των 6 συνεχόμενων άρτιων: 6 · 15 ＝ <strong>90</strong>.</div>
+            <div>• Έστω α ο μικρότερος: α ＋ (α ＋ 2) ＋ (α ＋ 4) ＋ (α ＋ 6) ＋ (α ＋ 8) ＋ (α ＋ 10) ＝ 90 ➔ 6α ＋ 30 ＝ 90 ➔ <strong>α ＝ 10</strong>.</div>
+            <div>• Οι έξι αριθμοί είναι: 10, 12, 14, 16, 18, <strong className="text-emerald-700 text-base">20</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, ο μεγαλύτερος από τους έξι αριθμούς είναι το <strong>20</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 8,
+      group: groupA,
+      prompt: isEn
+        ? 'A square has an area of 64 sq. cm. If we double the length of its side, what will the perimeter of the new square be?'
+        : 'Ένα τετράγωνο έχει εμβαδόν 64 τ.εκ. Αν διπλασιάσουμε το μήκος της πλευράς του, πόσο θα γίνει η περίμετρος του νέου τετραγώνου;',
+      options: isEn
+        ? ['32 cm', '48 cm', '64 cm', '128 cm']
+        : ['32 εκ.', '48 εκ.', '64 εκ.', '128 εκ.'],
+      correct: isEn ? '64 cm' : '64 εκ.',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Original side: s ＝ <strong>8 cm</strong> (since 8 · 8 ＝ 64).</div>
+            <div>• Doubled side: 2 · 8 ＝ <strong>16 cm</strong>.</div>
+            <div>• New perimeter: P ＝ 4 · 16 ＝ <strong className="text-emerald-700 text-base">64 cm</strong>.</div>
+          </div>
+          <p className="pt-1">Therefore, the perimeter of the new square will be <strong>64 cm</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Αρχική πλευρά: α ＝ <strong>8 εκ.</strong> (αφού 8 · 8 ＝ 64).</div>
+            <div>• Διπλασιασμένη πλευρά: 2 · 8 ＝ <strong>16 εκ.</strong></div>
+            <div>• Νέα περίμετρος: Π ＝ 4 · 16 ＝ <strong className="text-emerald-700 text-base">64 εκ.</strong></div>
+          </div>
+          <p className="pt-1">Επομένως, η περίμετρος του νέου τετραγώνου θα γίνει <strong>64 εκ.</strong></p>
+        </div>
+      )
+    },
+    {
+      id: 9,
+      group: groupA,
+      prompt: isEn
+        ? 'Eleni and Dimitra together have 45 books. If Eleni gives 5 books to Dimitra, then Dimitra will have twice as many books as Eleni. How many books did Eleni have originally?'
+        : 'Η Ελένη και η Δήμητρα έχουν μαζί 45 βιβλία. Αν η Ελένη δώσει 5 βιβλία στη Δήμητρα, τότε η Δήμητρα θα έχει ακριβώς τα διπλάσια βιβλία από την Ελένη. Πόσα βιβλία είχε αρχικά η Ελένη;',
+      options: ['15', '20', '25', '30'],
+      correct: '20',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Total books remain 45. At the end, Eleni has 1 part and Dimitra has 2 parts (3 parts total): 1 part ＝</span>
+              <Frac num="45" den="3" />
+              <span>＝ <strong>15 books</strong>.</span>
+            </div>
+            <div>• Returning the 5 books Eleni gave: 15 ＋ 5 ＝ <strong className="text-emerald-700 text-base">20 books</strong>.</div>
+          </div>
+          <p className="pt-1">Thus, Eleni originally had <strong>20 books</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Το σύνολο μένει 45. Στο τέλος η Ελένη έχει 1 μέρος και η Δήμητρα 2 μέρη (3 μέρη): 1 μέρος ＝</span>
+              <Frac num="45" den="3" />
+              <span>＝ <strong>15 βιβλία</strong>.</span>
+            </div>
+            <div>• Επιστρέφοντας τα 5 βιβλία στην Ελένη: 15 ＋ 5 ＝ <strong className="text-emerald-700 text-base">20 βιβλία</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, η Ελένη είχε αρχικά <strong>20 βιβλία</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 10,
+      group: groupA,
+      prompt: isEn
+        ? 'Which number corresponds to the missing term in the numerical pattern?\n2, 6, 12, 20, 30, __, 56, 72'
+        : 'Σε ποιον αριθμό αντιστοιχεί ο όρος που λείπει από το παρακάτω αριθμητικό μοτίβο;\n2, 6, 12, 20, 30, __, 56, 72',
+      options: ['36', '40', '42', '45'],
+      correct: '42',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Differences: ＋4, ＋6, ＋8, ＋10, <strong className="text-emerald-700">＋12</strong>, ＋14, ＋16.</div>
+            <div>• Missing term: 30 ＋ 12 ＝ <strong className="text-emerald-700 text-base">42</strong> (or 6 · 7 ＝ 42).</div>
+          </div>
+          <p className="pt-1">Therefore, the missing term is <strong>42</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Διαφορές: ＋4, ＋6, ＋8, ＋10, <strong className="text-emerald-700">＋12</strong>, ＋14, ＋16.</div>
+            <div>• Όρος που λείπει: 30 ＋ 12 ＝ <strong className="text-emerald-700 text-base">42</strong> (ή 6 · 7 ＝ 42).</div>
+          </div>
+          <p className="pt-1">Επομένως, ο όρος που λείπει είναι ο αριθμός <strong>42</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 11,
+      group: groupB,
+      prompt: isEn
+        ? 'For 6 identical notebooks and 4 identical pens we paid 24 € in total. If we bought 6 identical notebooks and 7 identical pens we would pay 33 € in total. How many euros does one notebook cost?'
+        : 'Για την αγορά 6 ίδιων τετραδίων και 4 ίδιων στυλό πληρώσαμε συνολικά 24€. Αν αγοράζαμε 6 ίδια τετράδια και 7 ίδια στυλό θα πληρώναμε συνολικά 33€. Πόσα ευρώ κοστίζει το ένα τετράδιο;',
+      options: isEn
+        ? ['1.5 €', '2 €', '2.5 €', '3 €', '4 €']
+        : ['1,5 €', '2 €', '2,5 €', '3 €', '4 €'],
+      correct: '2 €',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 3 extra pens cost 33 € － 24 € ＝ 9 € ➔ 1 pen ＝</span>
+              <Frac num="9" den="3" />
+              <span>＝ <strong>3 €</strong>.</span>
+            </div>
+            <div>• 4 pens cost 4 · 3 € ＝ 12 € ➔ 6 notebooks cost 24 € － 12 € ＝ 12 €.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 1 notebook ＝</span>
+              <Frac num="12" den="6" />
+              <span>＝ <strong className="text-emerald-700 text-base">2 €</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, one notebook costs <strong>2 €</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 3 επιπλέον στυλό κοστίζουν 33 € － 24 € ＝ 9 € ➔ 1 στυλό ＝</span>
+              <Frac num="9" den="3" />
+              <span>＝ <strong>3 €</strong>.</span>
+            </div>
+            <div>• 4 στυλό κοστίζουν 4 · 3 € ＝ 12 € ➔ 6 τετράδια κοστίζουν 24 € － 12 € ＝ 12 €.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 1 τετράδιο ＝</span>
+              <Frac num="12" den="6" />
+              <span>＝ <strong className="text-emerald-700 text-base">2 €</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, το ένα τετράδιο κοστίζει <strong>2 €</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 12,
+      group: groupB,
+      prompt: isEn
+        ? 'The bee population in a model hive increases by 20% every month. If today the hive has 5,000 bees, how many bees will it have after exactly two months?'
+        : 'Ο πληθυσμός των μελισσών σε μια πρότυπη κυψέλη αυξάνεται κατά 20% κάθε μήνα. Αν σήμερα η κυψέλη έχει 5.000 μέλισσες, πόσες μέλισσες θα έχει μετά από ακριβώς δύο μήνες;',
+      options: isEn
+        ? ['6,000', '7,000', '7,200', '7,500', '8,000']
+        : ['6.000', '7.000', '7.200', '7.500', '8.000'],
+      correct: isEn ? '7,200' : '7.200',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• After Month 1 (＋20%): 5,000 ＋ 1,000 ＝ <strong>6,000 bees</strong>.</div>
+            <div>• After Month 2 (＋20% of 6,000): 6,000 ＋ 1,200 ＝ <strong className="text-emerald-700 text-base">7,200 bees</strong>.</div>
+          </div>
+          <p className="pt-1">Thus, after two months the hive will have <strong>7,200 bees</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Μετά τον 1ο μήνα (＋20%): 5.000 ＋ 1.000 ＝ <strong>6.000 μέλισσες</strong>.</div>
+            <div>• Μετά τον 2ο μήνα (＋20% των 6.000): 6.000 ＋ 1.200 ＝ <strong className="text-emerald-700 text-base">7.200 μέλισσες</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, μετά από δύο μήνες η κυψέλη θα έχει <strong>7.200 μέλισσες</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 13,
+      group: groupB,
+      prompt: isEn ? (
+        <span>
+          We have three identical glasses. The 1st glass is <Frac num="3" den="4" /> full of water and the 2nd is <Frac num="1" den="2" /> full of water. We pour all the water initially in the 3rd glass into the 1st and 2nd glasses, so that both become completely full. What fraction of the 3rd glass was initially full of water?
+        </span>
+      ) : (
+        <span>
+          Έχουμε τρία ίδια ποτήρια. Το 1ο ποτήρι είναι κατά <Frac num="3" den="4" /> γεμάτο με νερό και το 2ο είναι κατά <Frac num="1" den="2" /> γεμάτο με νερό. Αδειάζουμε όλο το νερό που περιείχε αρχικά το 3ο ποτήρι μέσα στο 1ο και στο 2ο ποτήρι, με αποτέλεσμα αυτά τα δύο να γεμίσουν τελείως. Τι μέρος του 3ου ποτηριού ήταν γεμάτο με νερό αρχικά;
+        </span>
+      ),
+      options: [
+        <Frac num="1" den="4" />,
+        <Frac num="3" den="8" />,
+        <Frac num="1" den="2" />,
+        <Frac num="3" den="4" />,
+        <Frac num="7" den="8" />
+      ],
+      correct: '3/4',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Missing in 1st glass: 1 － <Frac num="3" den="4" /> ＝ <Frac num="1" den="4" />.</div>
+            <div>• Missing in 2nd glass: 1 － <Frac num="1" den="2" /> ＝ <Frac num="2" den="4" />.</div>
+            <div>• Initial water in 3rd glass: <Frac num="1" den="4" /> ＋ <Frac num="2" den="4" /> ＝ <strong className="text-emerald-700 text-base"><Frac num="3" den="4" /></strong>.</div>
+          </div>
+          <p className="pt-1">Therefore, the 3rd glass was initially <strong><Frac num="3" den="4" /></strong> full.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Έλειπε στο 1ο ποτήρι: 1 － <Frac num="3" den="4" /> ＝ <Frac num="1" den="4" />.</div>
+            <div>• Έλειπε στο 2ο ποτήρι: 1 － <Frac num="1" den="2" /> ＝ <Frac num="2" den="4" />.</div>
+            <div>• Αρχικό νερό 3ου ποτηριού: <Frac num="1" den="4" /> ＋ <Frac num="2" den="4" /> ＝ <strong className="text-emerald-700 text-base"><Frac num="3" den="4" /></strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, το 3ο ποτήρι ήταν αρχικά γεμάτο κατά τα <strong><Frac num="3" den="4" /></strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 14,
+      group: groupB,
+      prompt: isEn
+        ? 'The students of class 6A at a school were divided into groups of 6 for a game and 4 students were left over. On the same day, when all students of classes 6A and 6B together were divided into groups of 6, no students were left over. If we divide only the students of class 6B into groups of 6, how many students will be left over?'
+        : 'Τα παιδιά του τμήματος ΣΤ1 ενός σχολείου χωρίστηκαν σε εξάδες για ένα παιχνίδι και περίσσεψαν 4 παιδιά. Την ίδια ημέρα, όταν όλα τα παιδιά των τμημάτων ΣΤ1 και ΣΤ2 μαζί χωρίστηκαν σε εξάδες, δεν περίσσεψε κανένα παιδί. Αν χωρίσουμε μόνο τα παιδιά του τμήματος ΣΤ2 σε εξάδες, πόσα παιδιά θα περισσέψουν;',
+      options: isEn
+        ? ['1 student', '2 students', '3 students', '4 students', 'No students']
+        : ['1 παιδί', '2 παιδιά', '3 παιδιά', '4 παιδιά', 'Κανένα παιδί'],
+      correct: isEn ? '2 students' : '2 παιδιά',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Class 6A leaves remainder <strong>4</strong> when divided by 6.</div>
+            <div>• To complete a full group of 6 with 6B&apos;s remainder, 6 － 4 ＝ <strong className="text-emerald-700 text-base">2 students</strong> are needed from 6B.</div>
+          </div>
+          <p className="pt-1">Thus, dividing only class 6B into groups of 6 leaves <strong>2 students</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Το ΣΤ1 αφήνει υπόλοιπο <strong>4</strong> στη διαίρεση με το 6.</div>
+            <div>• Για να συμπληρωθεί πλήρης εξάδα μαζί με το ΣΤ2, απαιτούνται από το ΣΤ2: 6 － 4 ＝ <strong className="text-emerald-700 text-base">2 παιδιά</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, αν χωρίσουμε μόνο το ΣΤ2 σε εξάδες, θα περισσέψουν <strong>2 παιδιά</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 15,
+      group: groupB,
+      prompt: isEn
+        ? 'Giorgos can paint a large wall in 6 hours, while Dimitris can paint the exact same wall in 3 hours. If they work together at the same rates, in how many hours will they finish painting the wall?'
+        : 'Ο Γιώργος μπορεί να βάψει έναν μεγάλο τοίχο σε 6 ώρες, ενώ ο Δημήτρης μπορεί να βάψει τον ίδιο ακριβώς τοίχο σε 3 ώρες. Αν εργαστούν μαζί και με τον ίδιο ρυθμό, σε πόσες ώρες θα ολοκληρώσουν το βάψιμο του τοίχου;',
+      options: isEn
+        ? ['1.5 hours', '2 hours', '3 hours', '4 hours', '4.5 hours']
+        : ['1,5 ώρα', '2 ώρες', '3 ώρες', '4 ώρες', '4,5 ώρες'],
+      correct: isEn ? '2 hours' : '2 ώρες',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• In 1 hour together: <Frac num="1" den="6" /> ＋ <Frac num="1" den="3" /> ＝ <Frac num="1" den="6" /> ＋ <Frac num="2" den="6" /> ＝ <Frac num="3" den="6" /> ＝ <Frac num="1" den="2" /> of the wall.</div>
+            <div>• Total time: 1 : <Frac num="1" den="2" /> ＝ <strong className="text-emerald-700 text-base">2 hours</strong>.</div>
+          </div>
+          <p className="pt-1">Therefore, working together they will finish in <strong>2 hours</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Μαζί σε 1 ώρα: <Frac num="1" den="6" /> ＋ <Frac num="1" den="3" /> ＝ <Frac num="1" den="6" /> ＋ <Frac num="2" den="6" /> ＝ <Frac num="3" den="6" /> ＝ <Frac num="1" den="2" /> του τοίχου.</div>
+            <div>• Συνολικός χρόνος: 1 : <Frac num="1" den="2" /> ＝ <strong className="text-emerald-700 text-base">2 ώρες</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, εργαζόμενοι μαζί θα ολοκληρώσουν σε <strong>2 ώρες</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 16,
+      group: groupB,
+      prompt: isEn
+        ? 'A school garden has a rectangular shape with dimensions 15 meters and 10 meters. Inside the garden and along all its sides, we build a paved walkway of uniform width 1 meter. What is the total area of this walkway?'
+        : 'Ένας σχολικός κήπος έχει σχήμα ορθογωνίου με διαστάσεις 15 μέτρα και 10 μέτρα. Στο εσωτερικό του κήπου και κατά μήκος όλων των πλευρών του κατασκευάζουμε έναν πλακόστρωτο διάδρομο σταθερού πλάτους 1 μέτρου. Ποιο είναι το συνολικό εμβαδόν του διαδρόμου αυτού;',
+      options: isEn
+        ? ['25 sq. m.', '44 sq. m.', '46 sq. m.', '50 sq. m.', '104 sq. m.']
+        : ['25 τ.μ.', '44 τ.μ.', '46 τ.μ.', '50 τ.μ.', '104 τ.μ.'],
+      correct: isEn ? '46 sq. m.' : '46 τ.μ.',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Total area: 15 · 10 ＝ <strong>150 sq. m.</strong></div>
+            <div>• Inner garden dimensions: (15 － 2) m by (10 － 2) m ＝ 13 m · 8 m ＝ <strong>104 sq. m.</strong></div>
+            <div>• Walkway area: 150 － 104 ＝ <strong className="text-emerald-700 text-base">46 sq. m.</strong></div>
+          </div>
+          <p className="pt-1">Therefore, the total area of the walkway is <strong>46 sq. m.</strong></p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Συνολικό εμβαδόν: 15 · 10 ＝ <strong>150 τ.μ.</strong></div>
+            <div>• Εσωτερικός κήπος: (15 － 2) μ. × (10 － 2) μ. ＝ 13 μ. · 8 μ. ＝ <strong>104 τ.μ.</strong></div>
+            <div>• Εμβαδόν διαδρόμου: 150 － 104 ＝ <strong className="text-emerald-700 text-base">46 τ.μ.</strong></div>
+          </div>
+          <p className="pt-1">Επομένως, το συνολικό εμβαδόν του διαδρόμου είναι <strong>46 τ.μ.</strong></p>
+        </div>
+      )
+    },
+    {
+      id: 17,
+      group: groupB,
+      prompt: isEn
+        ? 'In a survey on students’ vacation preferences, 70% of respondents said they prefer the mountains. Of those who do not prefer the mountains, half said they prefer the sea. If those who prefer the sea are 45 students, how many students in total participated in the survey?'
+        : 'Σε μια έρευνα για τις προτιμήσεις διακοπών των μαθητών, το 70% των ερωτηθέντων απάντησε ότι προτιμά το βουνό. Από αυτούς που δεν προτιμούν το βουνό, οι μισοί απάντησαν ότι προτιμούν τη θάλασσα. Αν όσοι προτιμούν τη θάλασσα είναι 45 μαθητές, πόσοι ήταν συνολικά οι μαθητές που συμμετείχαν στην έρευνα;',
+      options: ['150', '200', '250', '300', '450'],
+      correct: '300',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Do not prefer mountains: 100% － 70% ＝ <strong>30%</strong>.</div>
+            <div>• Prefer sea: half of 30% ＝ <Frac num="30%" den="2" /> ＝ <strong>15%</strong> ＝ 45 students.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 1% ＝</span>
+              <Frac num="45" den="15" />
+              <span>＝ 3 students ➔ 100% ＝ 3 · 100 ＝ <strong className="text-emerald-700 text-base">300 students</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, <strong>300 students</strong> participated in total.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Δεν προτιμούν το βουνό: 100% － 70% ＝ <strong>30%</strong>.</div>
+            <div>• Προτιμούν τη θάλασσα: οι μισοί από το 30% ＝ <Frac num="30%" den="2" /> ＝ <strong>15%</strong> ＝ 45 μαθητές.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Το 1% ＝</span>
+              <Frac num="45" den="15" />
+              <span>＝ 3 μαθητές ➔ 100% ＝ 3 · 100 ＝ <strong className="text-emerald-700 text-base">300 μαθητές</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, συμμετείχαν συνολικά <strong>300 μαθητές</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 18,
+      group: groupB,
+      prompt: isEn ? (
+        <span>
+          A car used <Frac num="1" den="8" /> of the fuel of its total tank capacity for a trip. Before starting the trip, the tank contained 30 liters of fuel. After the trip ended, the tank was exactly half full. How many liters of fuel does the car&apos;s tank hold in total?
+        </span>
+      ) : (
+        <span>
+          Ένα αυτοκίνητο κατανάλωσε το <Frac num="1" den="8" /> της βενζίνης της συνολικής χωρητικότητας του ρεζερβουάρ του για ένα ταξίδι. Πριν ξεκινήσει το ταξίδι, το ρεζερβουάρ περιείχε 30 λίτρα βενζίνης. Μετά το τέλος του ταξιδιού, το ρεζερβουάρ ήταν ακριβώς μισογεμάτο. Πόσα λίτρα βενζίνης χωράει συνολικά το ρεζερβουάρ του αυτοκινήτου;
+        </span>
+      ),
+      options: isEn
+        ? ['40 liters', '45 liters', '48 liters', '50 liters', '60 liters']
+        : ['40 λίτρα', '45 λίτρα', '48 λίτρα', '50 λίτρα', '60 λίτρα'],
+      correct: isEn ? '48 liters' : '48 λίτρα',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Half full at the end: <Frac num="1" den="2" /> ＝ <Frac num="4" den="8" />.</div>
+            <div>• Initial fuel: <Frac num="4" den="8" /> ＋ <Frac num="1" den="8" /> ＝ <Frac num="5" den="8" /> ＝ 30 liters.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• <Frac num="1" den="8" /> ＝</span>
+              <Frac num="30" den="5" />
+              <span>＝ 6 liters ➔ Full tank (<Frac num="8" den="8" />) ＝ 8 · 6 ＝ <strong className="text-emerald-700 text-base">48 liters</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Thus, the car&apos;s tank holds <strong>48 liters</strong> in total.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Μισογεμάτο στο τέλος: <Frac num="1" den="2" /> ＝ <Frac num="4" den="8" />.</div>
+            <div>• Αρχική βενζίνη: <Frac num="4" den="8" /> ＋ <Frac num="1" den="8" /> ＝ <Frac num="5" den="8" /> ＝ 30 λίτρα.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Το <Frac num="1" den="8" /> ＝</span>
+              <Frac num="30" den="5" />
+              <span>＝ 6 λίτρα ➔ Ολόκληρο (<Frac num="8" den="8" />) ＝ 8 · 6 ＝ <strong className="text-emerald-700 text-base">48 λίτρα</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, το ρεζερβουάρ χωράει συνολικά <strong>48 λίτρα</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 19,
+      group: groupB,
+      prompt: isEn
+        ? 'The average of a student’s scores on 4 Mathematics tests is 15. If on the 5th test they score 20, what will be their new average score across all 5 tests?'
+        : 'Ο μέσος όρος των βαθμών ενός μαθητή σε 4 διαγωνίσματα Μαθηματικών είναι 15. Αν στο 5ο διαγώνισμα γράψει βαθμό 20, ποιος θα είναι ο νέος μέσος όρος των βαθμών του στα 5 διαγωνίσματα;',
+      options: [
+        '15',
+        isEn ? '15.5' : '15,5',
+        '16',
+        isEn ? '16.5' : '16,5',
+        '17'
+      ],
+      correct: '16',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Sum of first 4 tests: 4 · 15 ＝ <strong>60</strong>.</div>
+            <div>• New sum with 5th test: 60 ＋ 20 ＝ <strong>80</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• New average:</span>
+              <Frac num="80" den="5" />
+              <span>＝ <strong className="text-emerald-700 text-base">16</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, the new average across all 5 tests will be <strong>16</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Άθροισμα 4 πρώτων διαγωνισμάτων: 4 · 15 ＝ <strong>60</strong>.</div>
+            <div>• Νέο άθροισμα με το 5ο διαγώνισμα: 60 ＋ 20 ＝ <strong>80</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Νέος μέσος όρος:</span>
+              <Frac num="80" den="5" />
+              <span>＝ <strong className="text-emerald-700 text-base">16</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, ο νέος μέσος όρος στα 5 διαγωνίσματα θα είναι <strong>16</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 20,
+      group: groupB,
+      prompt: isEn
+        ? 'In an incomplete division of natural numbers, the quotient is 8 and the remainder is 5. If we know that the dividend is a two-digit number, how many different possible values can the divisor of this division take?'
+        : 'Σε μια ατελή διαίρεση φυσικών αριθμών, το πηλίκο είναι 8 και το υπόλοιπο είναι 5. Αν γνωρίζουμε ότι ο διαιρετέος είναι διψήφιος αριθμός, πόσες διαφορετικές δυνατές τιμές μπορεί να πάρει ο διαιρέτης της διαίρεσης αυτής;',
+      options: ['4', '5', '6', '7', '8'],
+      correct: '6',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Remainder must be strictly less than divisor (5 &lt; d) ➔ <strong>d ≥ 6</strong>.</div>
+            <div>• Dividend is two-digit: 8 · d ＋ 5 ≤ 99 ➔ 8 · d ≤ 94 ➔ d ≤ 11.75 ➔ <strong>d ≤ 11</strong>.</div>
+            <div>• Possible divisors: &#123;6, 7, 8, 9, 10, 11&#125; ➔ <strong className="text-emerald-700 text-base">6 values</strong>.</div>
+          </div>
+          <p className="pt-1">Thus, the divisor can take <strong>6 different possible values</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Το υπόλοιπο είναι μικρότερο από τον διαιρέτη (5 &lt; δ) ➔ <strong>δ ≥ 6</strong>.</div>
+            <div>• Ο διαιρετέος είναι διψήφιος: 8 · δ ＋ 5 ≤ 99 ➔ 8 · δ ≤ 94 ➔ δ ≤ 11,75 ➔ <strong>δ ≤ 11</strong>.</div>
+            <div>• Δυνατές τιμές διαιρέτη: &#123;6, 7, 8, 9, 10, 11&#125; ➔ <strong className="text-emerald-700 text-base">6 τιμές</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, ο διαιρέτης μπορεί να πάρει <strong>6 διαφορετικές δυνατές τιμές</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 21,
+      group: groupB,
+      prompt: isEn
+        ? 'A rectangle and an equilateral triangle have the same perimeter. The rectangle has length 11 cm and width 7 cm. What is the length of each side of the equilateral triangle?'
+        : 'Ένα ορθογώνιο και ένα ισόπλευρο τρίγωνο έχουν την ίδια περίμετρο. Το ορθογώνιο έχει μήκος 11 εκ. και πλάτος 7 εκ. Πόσο είναι το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου;',
+      options: isEn
+        ? ['9 cm', '10 cm', '12 cm', '14 cm', '18 cm']
+        : ['9 εκ.', '10 εκ.', '12 εκ.', '14 εκ.', '18 εκ.'],
+      correct: isEn ? '12 cm' : '12 εκ.',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Rectangle perimeter: 2 · (11 ＋ 7) ＝ <strong>36 cm</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Equilateral triangle side (3 equal sides):</span>
+              <Frac num="36" den="3" />
+              <span>＝ <strong className="text-emerald-700 text-base">12 cm</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, each side of the equilateral triangle is <strong>12 cm</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Περίμετρος ορθογωνίου: 2 · (11 ＋ 7) ＝ <strong>36 εκ.</strong></div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Πλευρά ισόπλευρου τριγώνου (3 ίσες πλευρές):</span>
+              <Frac num="36" den="3" />
+              <span>＝ <strong className="text-emerald-700 text-base">12 εκ.</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, το μήκος της κάθε πλευράς του ισόπλευρου τριγώνου είναι <strong>12 εκ.</strong></p>
+        </div>
+      )
+    },
+    {
+      id: 22,
+      group: groupB,
+      prompt: isEn
+        ? 'A cyclist covers a distance of 18 kilometers in 45 minutes at a constant speed. How many kilometers will they cover in 1 hour and 15 minutes if they maintain the same speed?'
+        : 'Ένας ποδηλάτης διανύει απόσταση 18 χιλιομέτρων σε 45 λεπτά με σταθερή ταχύτητα. Πόσα χιλιόμετρα θα διανύσει σε 1 ώρα και 15 λεπτά αν διατηρήσει την ίδια ταχύτητα;',
+      options: isEn
+        ? ['24 km', '27 km', '30 km', '32 km', '36 km']
+        : ['24 χλμ.', '27 χλμ.', '30 χλμ.', '32 χλμ.', '36 χλμ.'],
+      correct: isEn ? '30 km' : '30 χλμ.',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 45 minutes ＝ 3 intervals of 15 minutes ➔ in 15 minutes:</span>
+              <Frac num="18" den="3" />
+              <span>＝ <strong>6 km</strong>.</span>
+            </div>
+            <div>• 1 hour and 15 minutes ＝ 75 minutes ＝ 5 intervals of 15 minutes: 5 · 6 ＝ <strong className="text-emerald-700 text-base">30 km</strong>.</div>
+          </div>
+          <p className="pt-1">Thus, the cyclist will cover <strong>30 kilometers</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 45 λεπτά ＝ 3 δεκαπεντάλεπτα ➔ σε 15 λεπτά:</span>
+              <Frac num="18" den="3" />
+              <span>＝ <strong>6 χλμ.</strong>.</span>
+            </div>
+            <div>• 1 ώρα και 15 λεπτά ＝ 75 λεπτά ＝ 5 δεκαπεντάλεπτα: 5 · 6 ＝ <strong className="text-emerald-700 text-base">30 χλμ.</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, ο ποδηλάτης θα διανύσει <strong>30 χιλιόμετρα</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 23,
+      group: groupB,
+      prompt: isEn ? (
+        <span>
+          A student spent <Frac num="1" den="4" /> of their allowance on a book and then 40% of the remaining money on a game. If they had 18 € left, what was their original allowance?
+        </span>
+      ) : (
+        <span>
+          Ένας μαθητής ξόδεψε το <Frac num="1" den="4" /> του χαρτζιλικιού του για ένα βιβλίο και στη συνέχεια το 40% των χρημάτων που του είχαν απομείνει για ένα παιχνίδι. Αν του έμειναν 18€, πόσο ήταν το αρχικό του χαρτζιλίκι;
+        </span>
+      ),
+      options: ['36 €', '40 €', '45 €', '48 €', '60 €'],
+      correct: '40 €',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• After book (<Frac num="1" den="4" /> ＝ 25%): <strong>75%</strong> remains.</div>
+            <div>• Game (40% of 75%): <strong>30%</strong> of original ➔ remaining: 75% － 30% ＝ <strong>45%</strong> ＝ 18 €.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• 1% ＝</span>
+              <Frac num="18" den="45" />
+              <span>＝ 0.4 € ➔ 100% ＝ 100 · 0.4 € ＝ <strong className="text-emerald-700 text-base">40 €</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, the student&apos;s original allowance was <strong>40 €</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Μετά το βιβλίο (<Frac num="1" den="4" /> ＝ 25%): μένει το <strong>75%</strong>.</div>
+            <div>• Παιχνίδι (40% του 75%): <strong>30%</strong> του αρχικού ➔ υπόλοιπο: 75% － 30% ＝ <strong>45%</strong> ＝ 18 €.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Το 1% ＝</span>
+              <Frac num="18" den="45" />
+              <span>＝ 0,4 € ➔ 100% ＝ 100 · 0,4 € ＝ <strong className="text-emerald-700 text-base">40 €</strong>.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, το αρχικό χαρτζιλίκι του μαθητή ήταν <strong>40 €</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 24,
+      group: groupB,
+      prompt: isEn
+        ? 'Six players participate in a chess tournament. Each player plays exactly one game with every other player. How many chess games will be played in total across the entire tournament?'
+        : 'Σε ένα τουρνουά σκακιού συμμετέχουν 6 παίκτες. Κάθε παίκτης παίζει ακριβώς μία παρτίδα με καθέναν από τους υπόλοιπους παίκτες. Πόσες παρτίδες σκακιού θα διεξαχθούν συνολικά σε ολόκληρο το τουρνουά;',
+      options: ['12', '15', '18', '30', '36'],
+      correct: '15',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Each of the 6 players plays 5 games, divided by 2 to avoid double counting:</span>
+              <Frac num="6 · 5" den="2" />
+              <span>＝ <strong className="text-emerald-700 text-base">15 games</strong>.</span>
+            </div>
+            <div>• Or step by step: 5 ＋ 4 ＋ 3 ＋ 2 ＋ 1 ＝ <strong className="text-emerald-700">15 games</strong>.</div>
+          </div>
+          <p className="pt-1">Thus, <strong>15 chess games</strong> will be played in total.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Κάθε ένας από τους 6 παίκτες παίζει 5 παρτίδες, δια του 2 για αποφυγή διπλομέτρησης:</span>
+              <Frac num="6 · 5" den="2" />
+              <span>＝ <strong className="text-emerald-700 text-base">15 παρτίδες</strong>.</span>
+            </div>
+            <div>• Ή αθροιστικά: 5 ＋ 4 ＋ 3 ＋ 2 ＋ 1 ＝ <strong className="text-emerald-700">15 παρτίδες</strong>.</div>
+          </div>
+          <p className="pt-1">Επομένως, θα διεξαχθούν συνολικά <strong>15 παρτίδες σκακιού</strong>.</p>
+        </div>
+      )
+    },
+    {
+      id: 25,
+      group: groupB,
+      prompt: isEn
+        ? 'A florist has 48 red roses and 72 white roses. They want to make identical bouquets using all the flowers, so that each bouquet has the same number of red roses and the same number of white roses. What is the maximum number of such bouquets they can make?'
+        : 'Ένας ανθοπώλης έχει 48 κόκκινα τριαντάφυλλα και 72 λευκά τριαντάφυλλα. Θέλει να φτιάξει όμοιες ανθοδέσμες, χρησιμοποιώντας όλα τα λουλούδια, έτσι ώστε κάθε ανθοδέσμη να έχει τον ίδιο αριθμό κόκκινων και τον ίδιο αριθμό λευκών τριαντάφυλλων. Ποιος είναι ο μέγιστος αριθμός από τέτοιες ανθοδέσμες που μπορεί να φτιάξει;',
+      options: ['12', '16', '24', '36', '48'],
+      correct: '24',
+      explain: isEn ? (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Prime factorization: 48 ＝ <Pow base="2" exp="4" /> · 3 &nbsp;and&nbsp; 72 ＝ <Pow base="2" exp="3" /> · <Pow base="3" exp="2" />.</div>
+            <div>• GCD(48, 72) ＝ <Pow base="2" exp="3" /> · 3 ＝ 8 · 3 ＝ <strong className="text-emerald-700 text-base">24 bouquets</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Each bouquet has:</span>
+              <Frac num="48" den="24" />
+              <span>＝ 2 red roses and</span>
+              <Frac num="72" den="24" />
+              <span>＝ 3 white roses.</span>
+            </div>
+          </div>
+          <p className="pt-1">Therefore, the maximum number of bouquets is <strong>24</strong>.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 text-xs sm:text-sm">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 font-mono text-slate-900 space-y-1.5">
+            <div>• Ανάλυση σε πρώτους: 48 ＝ <Pow base="2" exp="4" /> · 3 &nbsp;και&nbsp; 72 ＝ <Pow base="2" exp="3" /> · <Pow base="3" exp="2" />.</div>
+            <div>• Μ.Κ.Δ.(48, 72) ＝ <Pow base="2" exp="3" /> · 3 ＝ 8 · 3 ＝ <strong className="text-emerald-700 text-base">24 ανθοδέσμες</strong>.</div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span>• Κάθε ανθοδέσμη έχει:</span>
+              <Frac num="48" den="24" />
+              <span>＝ 2 κόκκινα και</span>
+              <Frac num="72" den="24" />
+              <span>＝ 3 λευκά τριαντάφυλλα.</span>
+            </div>
+          </div>
+          <p className="pt-1">Επομένως, ο μέγιστος αριθμός ανθοδεσμών είναι <strong>24</strong>.</p>
+        </div>
+      )
+    }
+  ];
+}
+
+const TOTAL_TIME_SECONDS = 60 * 60; // 60 λεπτά
+
 export default function ProtoTestProsomoiosisPage() {
   const router = useRouter();
+  const locale = router?.locale === 'en' ? 'en' : 'el';
+  const isEn = locale === 'en';
+  const t = I18N[locale];
+  const questions = getQuestions(locale);
+
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
@@ -3758,6 +1170,12 @@ export default function ProtoTestProsomoiosisPage() {
       }
     }
   }, [router.isReady, router.query]);
+
+  useEffect(() => {
+    setAnswers({});
+    setSubmitted(false);
+    setScore(0);
+  }, [locale]);
 
   useEffect(() => {
     if (!timerEnabled || submitted) return;
@@ -3783,7 +1201,7 @@ export default function ProtoTestProsomoiosisPage() {
 
   const calculateScore = (currentAnswers) => {
     let s = 0;
-    QUESTIONS.forEach(q => {
+    questions.forEach(q => {
       if (currentAnswers[q.id] === q.correct) {
         s += 2; // 2 μόρια ανά σωστή απάντηση (σύνολο 50)
       }
@@ -3819,60 +1237,79 @@ export default function ProtoTestProsomoiosisPage() {
   };
 
   const answeredCount = Object.keys(answers).length;
+  const baseUrl = isEn ? 'https://learnmaths.gr/en' : 'https://learnmaths.gr';
 
   const schemaProtoTest = [
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Αρχική", "item": "https://learnmaths.gr/" },
-        { "@type": "ListItem", "position": 2, "name": "Ενδεικτικά Θέματα Προτύπων 2026", "item": "https://learnmaths.gr/protipa/protipa" },
-        { "@type": "ListItem", "position": 3, "name": "Τεστ Προσομοίωσης Προτύπων 2026", "item": "https://learnmaths.gr/protipa/test-prosomoiosis" },
-        { "@type": "ListItem", "position": 4, "name": "1ο Τεστ Προσομοίωσης – Ενδεικτικά Θέματα 2026", "item": "https://learnmaths.gr/protipa/01-proto-test" }
+        { "@type": "ListItem", "position": 1, "name": t.schemaHome, "item": `${baseUrl}/` },
+        { "@type": "ListItem", "position": 2, "name": t.schemaHub, "item": `${baseUrl}/protipa/protipa` },
+        { "@type": "ListItem", "position": 3, "name": t.schemaSimHub, "item": `${baseUrl}/protipa/test-prosomoiosis` },
+        { "@type": "ListItem", "position": 4, "name": t.schemaCurrent, "item": `${baseUrl}/protipa/01-proto-test` }
       ]
     },
     {
       "@type": "Quiz",
-      "name": "Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης Μαθηματικών",
-      "description": "1ο Διαγνωστικό Τεστ Προσομοίωσης με ενδεικτικά θέματα Μαθηματικών για τα Πρότυπα Γυμνάσια 2026: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, βαθμολογία 0-50 και αναλυτικές λύσεις με SVG σχήματα.",
-      "educationalLevel": "ΣΤ' Δημοτικού",
-      "inLanguage": "el",
+      "name": t.schemaQuizName,
+      "description": t.schemaQuizDesc,
+      "educationalLevel": t.schemaEduLevel,
+      "typicalAgeRange": "11-12",
+      "inLanguage": locale,
       "isAccessibleForFree": true,
       "provider": {
         "@id": "https://learnmaths.gr/#organization"
       },
-      "hasPart": QUESTIONS.map((q) => ({
-        "@type": "Question",
-        "eduQuestionType": "Multiple choice",
-        "name": `Ενδεικτικό Θέμα ${q.id} - Πρότυπα 2026`,
-        "text": q.prompt,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": q.correct
-        }
-      }))
+      "hasPart": questions.map((q) => {
+        const cleanPrompt = extractPlainText(q.prompt, isEn).replace(/\s+/g, ' ').trim();
+        const cleanExplain = extractPlainText(q.explain, isEn).replace(/\s+/g, ' ').trim();
+        const optStrings = q.options.map((o) => extractPlainText(o, isEn));
+        const wrongOpts = optStrings.filter((o) => o !== q.correct);
+
+        return {
+          "@type": "Question",
+          "eduQuestionType": "Multiple choice",
+          "name": t.schemaQuestionName(q.id),
+          "text": cleanPrompt,
+          "typicalAgeRange": "11-12",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": q.correct,
+            "answerExplanation": {
+              "@type": "Comment",
+              "text": cleanExplain
+            }
+          },
+          "suggestedAnswer": wrongOpts.map((w, idx) => ({
+            "@type": "Answer",
+            "position": idx + 1,
+            "text": w
+          }))
+        };
+      })
     }
   ];
 
   return (
     <Layout
-      title="Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης | LearnMaths.gr"
-      description="1ο Τεστ Προσομοίωσης με ενδεικτικά θέματα Προτύπων 2026 στα Μαθηματικά: 25 ερωτήσεις πολλαπλής επιλογής, χρονόμετρο 60 λεπτών, αυτόματη βαθμολόγηση 0-50 και αναλυτικές λύσεις με σχήματα."
+      title={t.metaTitle}
+      description={t.metaDesc}
       schemaData={schemaProtoTest}
       backUrl="/protipa/test-prosomoiosis"
-      backText="Τεστ Προσομοίωσης 2026"
+      backText={t.backText}
       hideFooter={true}
     >
-      <div className="py-6 sm:py-8 space-y-6 pb-28 sm:pb-32">
+      <div className="w-full min-w-0 max-w-[1920px] 2xl:max-w-[2560px] 4k:max-w-[3840px] mx-auto px-3 sm:px-6 lg:px-12 2xl:px-16 4k:px-24 py-4 sm:py-6 pb-28 sm:pb-36 overflow-x-hidden text-slate-800 box-border space-y-6">
 
         {/* HERO BANNER & TIMER HEADER */}
         <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-800 rounded-3xl p-5 sm:p-7 text-white shadow-lg space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1.5">
               <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[11px] font-black tracking-wider text-purple-100">
-                Ενδεικτικά Θέματα Προτύπων 2026 • 1ο Τεστ (25 Θέματα)
+                {toCleanUppercase(t.heroBadge)}
               </span>
               <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight">
-                Ενδεικτικά Θέματα Προτύπων 2026 – 1ο Τεστ Προσομοίωσης
+                {t.heroTitle}
               </h1>
             </div>
 
@@ -3887,13 +1324,13 @@ export default function ProtoTestProsomoiosisPage() {
           </div>
 
           <p className="text-xs sm:text-sm text-purple-100/95 leading-relaxed max-w-3xl">
-            Εξασκήσου σε 25 επιλεγμένα ενδεικτικά θέματα Μαθηματικών για τις εξετάσεις των Προτύπων Γυμνασίων 2026 (αριθμητική, κλάσματα, ποσοστά, εξισώσεις, γεωμετρία και συνδυαστική λογική) με αναλυτικές λύσεις βήμα-βήμα.
+            {t.heroSubtitle}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-purple-100 border-t border-white/20 pt-3">
-            <span>📝 Απαντημένες: <strong>{answeredCount} / 25</strong></span>
-            <span>🎯 Βαθμολογία: <strong>2 μόρια / σωστό (Άριστα: 50)</strong></span>
-            <span>{timerEnabled ? '⏳ Χρονόμετρο: Ενεργό (60\')' : '⏳ Χρονόμετρο: Ανενεργό'}</span>
+            <span>📝 {t.answeredLabel} <strong>{answeredCount} {t.of25}</strong></span>
+            <span>🎯 {t.scoringLabel} <strong>{t.scoringValue}</strong></span>
+            <span>{timerEnabled ? t.timerOn : t.timerOff}</span>
           </div>
         </div>
 
@@ -3902,26 +1339,26 @@ export default function ProtoTestProsomoiosisPage() {
           <div className="bg-white border-2 border-indigo-300 rounded-3xl p-6 shadow-md text-center space-y-3">
             <span className="text-4xl block">🏆</span>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">
-              Ολοκλήρωση 1ου Τεστ Προσομοίωσης!
+              {t.resultTitle}
             </h2>
             <div className="inline-block bg-indigo-50 border border-indigo-200 px-6 py-2 rounded-2xl">
-              <span className="text-xs font-bold text-indigo-800 uppercase block">Τελικό Σκορ</span>
+              <span className="text-xs font-bold text-indigo-800 uppercase block">{t.finalScoreLabel}</span>
               <span className="text-3xl sm:text-4xl font-mono font-black text-indigo-600">
                 {score} / 50
               </span>
               <span className="text-xs font-bold text-slate-500 block mt-1">
-                ({score / 2} σωστές στις 25 ερωτήσεις)
+                {t.correctOutOf(score / 2)}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto">
-              Δες παρακάτω αναλυτικά ποιες ερωτήσεις απάντησες σωστά (✅) ή λάθος (❌) μαζί με την αναλυτική μαθηματική λύση για κάθε θέμα.
+              {t.resultSubtitle}
             </p>
           </div>
         )}
 
         {/* LIST OF 25 QUESTIONS */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {QUESTIONS.map((q) => {
+          {questions.map((q) => {
             const userChoice = answers[q.id];
             const isCorrect = userChoice === q.correct;
 
@@ -3933,35 +1370,35 @@ export default function ProtoTestProsomoiosisPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white rounded-3xl p-5 sm:p-6 border-2 shadow-sm transition-all space-y-4 ${cardBorder}`}
+                className={`bg-white rounded-3xl p-5 sm:p-6 border-2 shadow-sm transition-all space-y-4 min-w-0 ${cardBorder}`}
               >
                 {/* ΚΕΦΑΛΙΔΑ ΕΡΩΤΗΣΗΣ */}
                 <div className="flex justify-between items-center gap-2 border-b border-slate-100 pb-3">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="bg-slate-100 text-slate-800 font-mono font-black text-xs px-3 py-1 rounded-xl">
-                      Θέμα {q.id}
+                      {t.questionPrefix} {q.id}
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                      {q.group}
+                    <span className="text-[10px] font-black tracking-wider text-slate-400">
+                      {toCleanUppercase(q.group)}
                     </span>
                   </div>
 
                   {submitted && (
-                    <span className="text-lg font-black">
-                      {isCorrect ? '✅ +2 μόρια' : '❌ 0 μόρια'}
+                    <span className="text-sm sm:text-base font-black">
+                      {isCorrect ? t.pointsEarned : t.pointsZero}
                     </span>
                   )}
                 </div>
 
                 {/* ΕΚΦΩΝΗΣΗ */}
-                <p className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed whitespace-pre-line">
+                <div className="text-sm sm:text-base text-slate-900 font-bold leading-relaxed break-words [overflow-wrap:anywhere]">
                   {q.prompt}
-                </p>
+                </div>
 
                 {/* ΕΠΙΛΟΓΕΣ */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                   {q.options.map((opt, optIdx) => {
-                    const optVal = extractOptionText(opt);
+                    const optVal = extractPlainText(opt, isEn);
                     const isSelected = userChoice === optVal;
                     let btnStyle = 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50';
 
@@ -3983,7 +1420,7 @@ export default function ProtoTestProsomoiosisPage() {
                         type="button"
                         disabled={submitted}
                         onClick={() => handleSelect(q.id, optVal)}
-                        className={`p-3 rounded-2xl border text-left text-xs sm:text-sm transition flex items-center gap-3 ${btnStyle}`}
+                        className={`p-3 rounded-2xl border text-left text-xs sm:text-sm transition flex items-center gap-3 min-w-0 ${btnStyle}`}
                       >
                         <span className={`w-6 h-6 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 border ${
                           isSelected || (submitted && optVal === q.correct)
@@ -3992,7 +1429,9 @@ export default function ProtoTestProsomoiosisPage() {
                         }`}>
                           {String.fromCharCode(65 + optIdx)}
                         </span>
-                        <span className="font-mono font-bold leading-tight flex items-center">{opt}</span>
+                        <div className="font-mono font-bold leading-normal flex items-center flex-wrap break-words [overflow-wrap:anywhere] max-w-full">
+                          {opt}
+                        </div>
                       </button>
                     );
                   })}
@@ -4012,13 +1451,13 @@ export default function ProtoTestProsomoiosisPage() {
                   <summary className="p-3.5 sm:p-4 font-black cursor-pointer list-none flex items-center justify-between gap-2 select-none">
                     <span className="flex items-center gap-1.5">
                       <span>💡</span>
-                      <span>{submitted ? 'Μαθηματική Επεξήγηση:' : 'Προβολή Αναλυτικής Λύσης & Σχήματος'}</span>
+                      <span>{submitted ? t.explainTitleSubmitted : t.explainTitlePreview}</span>
                     </span>
                     {!submitted && (
                       <span className="text-xs font-bold text-indigo-600 group-open:rotate-180 transition-transform">▼</span>
                     )}
                   </summary>
-                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium">
+                  <div className="px-3.5 pb-4 sm:px-4 pt-2 border-t border-slate-200/60 font-medium break-words [overflow-wrap:anywhere]">
                     {q.explain}
                   </div>
                 </details>
@@ -4031,10 +1470,10 @@ export default function ProtoTestProsomoiosisPage() {
             <div className="flex justify-center pt-4">
               <button
                 type="submit"
-                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5"
+                className="w-full sm:w-auto bg-[#10b981] hover:bg-[#059669] text-white text-base sm:text-lg font-black px-10 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer"
               >
                 <span>🎯</span>
-                <span>Οριστική Υποβολή Τεστ ({answeredCount}/25)</span>
+                <span>{t.submitMainBtn(answeredCount)}</span>
               </button>
             </div>
           )}
@@ -4048,15 +1487,15 @@ export default function ProtoTestProsomoiosisPage() {
 
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="bg-amber-400 text-slate-950 font-black px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-mono shadow-xs">
-              {submitted ? `Σκορ: ${score} / 50` : `Απαντήσεις: ${answeredCount} / 25`}
+              {submitted ? t.barScore(score) : t.barAnswered(answeredCount)}
             </div>
             {submitted ? (
               <span className="text-xs font-bold text-slate-300">
-                Ποσοστό: <strong className="text-emerald-400">{Math.round((score / 50) * 100)}%</strong>
+                {t.barPercent} <strong className="text-emerald-400">{Math.round((score / 50) * 100)}%</strong>
               </span>
             ) : (
               <span className="text-xs text-slate-300">
-                Υπολείπονται: <strong>{25 - answeredCount}</strong>
+                {t.barRemaining} <strong>{25 - answeredCount}</strong>
               </span>
             )}
           </div>
@@ -4080,17 +1519,17 @@ export default function ProtoTestProsomoiosisPage() {
                   setTimeLeft(TOTAL_TIME_SECONDS);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
               >
-                🔄 Επανάληψη Τεστ
+                {t.retryBtn}
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow-xs"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow-xs cursor-pointer"
               >
-                Έλεγχος & Βαθμολόγηση ➔
+                {t.checkBtn}
               </button>
             )}
           </div>
