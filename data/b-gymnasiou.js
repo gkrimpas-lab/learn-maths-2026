@@ -213,6 +213,54 @@ export const B_GYMNASIOU_CHAPTERS = [
       'double distributive property foil'
     ]
   },
+  {
+    id: '11-eksisosi',
+    section: 'algebra',
+    slug: '11-eksisosi',
+    icon: '⚖️',
+    title: 'Εξίσωση Πρώτου Βαθμού',
+    titleEn: 'Linear (First-Degree) Equations',
+    desc: 'Έννοια της εξίσωσης πρώτου βαθμού, 1ο και 2ο μέλος, άγνωστος, λύση ή ρίζα εξίσωσης, επίλυση με αντίστροφες πράξεις και αναλυτικά προβλήματα.',
+    descEn: 'Concept of first-degree equations, left-hand and right-hand sides, unknown, solution or root of an equation, solving with inverse operations, and solved word problems.',
+    badge: 'ΚΕΦΑΛΑΙΟ 10',
+    badgeEn: 'CHAPTER 10',
+    active: true,
+    keywords: [
+      'εξίσωση πρώτου βαθμού β γυμνασίου',
+      '1ο και 2ο μέλος εξίσωσης',
+      'λύση ή ρίζα εξίσωσης',
+      'αντίστροφες πράξεις εξίσωση',
+      'άλγεβρα β γυμνασίου κεφάλαιο 10',
+      'first degree equation grade 8',
+      'linear equations inverse operations'
+    ]
+  },
+  {
+  id: '12-eksisosi-idiotites',
+  section: 'algebra',
+  slug: '12-eksisosi-idiotites',
+  icon: '⚖️',
+  title: 'Ιδιότητες Διατήρησης Ισότητας & Ισοδύναμες Εξισώσεις',
+  titleEn: 'Properties of Equality & Equivalent Equations',
+  desc: 'Ιδιότητες διατήρησης ισότητας, ισοδύναμες εξισώσεις, μία λύση, άπειρες λύσεις (ταυτότητα) και καμία λύση (Κεφάλαιο 11).',
+  descEn: 'Properties of equality, equivalent equations, unique, infinitely many, and no solution cases (Chapter 11).',
+  badge: "ΚΕΦ. 11 • Β' ΓΥΜΝΑΣΙΟΥ",
+  badgeEn: 'CH. 11 • 8TH GRADE',
+  active: true,
+  keywords: [
+    'ιδιότητες ισότητας',
+    'ισοδύναμες εξισώσεις',
+    'ταυτότητα',
+    'αδύνατη εξίσωση',
+    'άπειρες λύσεις',
+    'β γυμνασίου',
+    'properties of equality',
+    'equivalent equations',
+    'identity',
+    'no solution',
+    'grade 8',
+  ],
+},
 
   // --- ΜΕΡΟΣ Β: ΓΕΩΜΕΤΡΙΑ & ΤΡΙΓΩΝΟΜΕΤΡΙΑ ---
   {
