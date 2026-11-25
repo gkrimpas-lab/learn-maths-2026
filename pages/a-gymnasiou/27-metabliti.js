@@ -731,10 +731,10 @@ export default function MetablitiTheoria() {
                     <text x="160" y="148" fill="#38bdf8" fontSize="12" fontWeight="bold" textAnchor="middle">
                       2x ＋ 3 ({rectLength.toLocaleString(numLocale)} cm)
                     </text>
-                    <text x="18" y="85" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="end">
+                    <text x="80" y="85" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="end">
                       x ＋ 1
                     </text>
-                    <text x="302" y="85" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="start">
+                    <text x="240" y="85" fill="#f59e0b" fontSize="12" fontWeight="bold" textAnchor="start">
                       x ＋ 1
                     </text>
                   </svg>
@@ -747,11 +747,15 @@ export default function MetablitiTheoria() {
                   <div className="font-mono text-indigo-200 text-xs sm:text-sm inline-flex flex-wrap items-center gap-1">
                     <span>Π ＝ (2x ＋ 3) ＋ (2x ＋ 3) ＋ (x ＋ 1) ＋ (x ＋ 1)</span>
                   </div>
+                  <br />
                   <div className="font-mono text-emerald-400 font-bold text-sm sm:text-base inline-flex flex-wrap items-center gap-1">
                     <span>Π ＝ (2 ＋ 2 ＋ 1 ＋ 1)·x ＋ (3 ＋ 3 ＋ 1 ＋ 1) ＝ 6x ＋ 8</span>
                   </div>
+                  <br />
                   <div className="pt-1 text-amber-300 font-mono text-sm sm:text-base font-bold inline-flex flex-wrap items-center gap-1">
-                    <span>{t.perimeterForXLabel} {geoX}: Π ＝ 6 · {geoX} ＋ 8 ＝</span>
+                    <span>{t.perimeterForXLabel} {geoX}:</span>
+                    <br />
+                    <span>Π ＝ 6 · {geoX} ＋ 8 ＝</span>
                     <strong>{rectPerimeter.toLocaleString(numLocale)} cm</strong>
                   </div>
                 </div>

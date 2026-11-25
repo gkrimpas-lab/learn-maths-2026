@@ -244,8 +244,8 @@ export const B_GYMNASIOU_CHAPTERS = [
   titleEn: 'Properties of Equality & Equivalent Equations',
   desc: 'Ιδιότητες διατήρησης ισότητας, ισοδύναμες εξισώσεις, μία λύση, άπειρες λύσεις (ταυτότητα) και καμία λύση (Κεφάλαιο 11).',
   descEn: 'Properties of equality, equivalent equations, unique, infinitely many, and no solution cases (Chapter 11).',
-  badge: "ΚΕΦ. 11 • Β' ΓΥΜΝΑΣΙΟΥ",
-  badgeEn: 'CH. 11 • 8TH GRADE',
+  badge: "ΚΕΦΑΛΑΙΟ 11",
+  badgeEn: 'CHAPTER 11',
   active: true,
   keywords: [
     'ιδιότητες ισότητας',
