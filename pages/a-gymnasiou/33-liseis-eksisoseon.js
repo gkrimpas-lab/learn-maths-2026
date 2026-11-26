@@ -1195,14 +1195,14 @@ export default function LiseisEksisoseonTheoria() {
                 <div className="text-sm sm:text-base md:text-xl font-black text-amber-300 inline-flex flex-wrap items-center gap-1">
                   <span>{t.simEqTitle} {simA}x {simB >= 0 ? `＋ ${simB}` : `－ ${Math.abs(simB)}`} ＝ {simC}</span>
                 </div>
-
+                <br/>
                 <div className="text-xs sm:text-sm text-indigo-200 inline-flex flex-wrap items-center gap-1 leading-relaxed">
                   <span>{t.simStep1Text} {simA}x ＝ {simC} {simB >= 0 ? `－ ${simB}` : `＋ ${Math.abs(simB)}`} ➔</span>
                   <strong>
                     {simA}x ＝ {simRightAfterMove}
                   </strong>
                 </div>
-
+                <br/>
                 {simA === 0 ? (
                   <div className="text-xs sm:text-sm font-bold text-rose-400 pt-1 break-words [overflow-wrap:anywhere]">
                     {simRightAfterMove === 0

@@ -521,6 +521,7 @@ export default function ProblimataEksisoseonTheoria() {
                     <span>➔</span>
                     <span>{taxiPerKm} · x ＝ {taxiDistNumerator}</span>
                   </div>
+                  <br/>
                   <div className="font-mono text-emerald-400 text-sm sm:text-base font-bold inline-flex items-center flex-wrap gap-1 pt-1">
                     <span>x ＝ </span>
                     <Frac num={taxiDistNumerator} den={taxiPerKm} />
@@ -650,10 +651,10 @@ export default function ProblimataEksisoseonTheoria() {
                   <text x="170" y="145" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
                     {t.rectLengthLabel(rectDiff, null)}
                   </text>
-                  <text x="25" y="82" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="end">
-                    {t.rectWidthLabel(isRectValid ? formatNumber(rectWidthX) : null)}
+                  <text x="30" y="82" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="end">
+                    x
                   </text>
-                  <text x="315" y="82" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="start">
+                  <text x="310" y="82" fill="#f59e0b" fontSize="11" fontWeight="bold" textAnchor="start">
                     x
                   </text>
                 </svg>
@@ -664,6 +665,7 @@ export default function ProblimataEksisoseonTheoria() {
                 <div className="font-mono text-amber-300 font-bold text-sm sm:text-base inline-flex flex-wrap items-center gap-1">
                   <span>{locale === 'el' ? 'Εξίσωση:' : 'Equation:'} 4 · x ＋ {rectConstB} ＝ {rectPerimeter}</span>
                 </div>
+                <br/>
                 <div className="font-mono text-indigo-200 inline-flex flex-wrap items-center gap-1">
                   <span>4 · x ＝ {rectPerimeter} － {rectConstB}</span>
                   <span>➔</span>

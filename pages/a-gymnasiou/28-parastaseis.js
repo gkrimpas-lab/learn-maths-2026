@@ -582,7 +582,7 @@ export default function ParastaseisTheoria() {
                     <text x="110" y="20" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="middle">
                       x ＋ 4 ({rectLength.toLocaleString(numLocale)} m)
                     </text>
-                    <text x="10" y="90" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="end">6 m</text>
+                    <text x="29" y="90" fill="#38bdf8" fontSize="11" fontWeight="bold" textAnchor="end">6 m</text>
 
                     {/* Τετράγωνο Ε2 */}
                     <rect x="200" y="60" width="80" height="80" fill="#1e293b" stroke="#f59e0b" strokeWidth="2" />

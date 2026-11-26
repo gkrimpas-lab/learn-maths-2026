@@ -673,7 +673,8 @@ export default function AlgebrikiParastasiTheoryPage() {
                     {isEn ? (
                       <>
                         Replacing each variable with a given rational number yields a rational number
-                        called the <strong>numerical value</strong>. For{' '}
+                        called the <strong>numerical value</strong>. 
+                        <br/>For{' '}
                         <span className="font-mono font-bold">Π = 2x − 5</span> and{' '}
                         <span className="font-mono font-bold">x = 4</span>, we get{' '}
                         <span className="font-mono font-bold">Π = 2 · 4 − 5 = 3</span>.
@@ -681,7 +682,8 @@ export default function AlgebrikiParastasiTheoryPage() {
                     ) : (
                       <>
                         Αν αντικαταστήσουμε κάθε μεταβλητή με έναν συγκεκριμένο ρητό αριθμό, προκύπτει ένας
-                        ρητός αριθμός που λέγεται <strong>αριθμητική τιμή</strong>. Για{' '}
+                        ρητός αριθμός που λέγεται <strong>αριθμητική τιμή</strong>. 
+                        <br/>Για{' '}
                         <span className="font-mono font-bold">Π ＝ 2x － 5</span> και{' '}
                         <span className="font-mono font-bold">x ＝ 4</span>, έχουμε{' '}
                         <span className="font-mono font-bold">Π ＝ 2 · 4 － 5 ＝ 3</span>.

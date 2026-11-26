@@ -458,7 +458,7 @@ export default function AplopoiisiTheoria() {
                     </text>
 
                     {/* Ετικέτα Ύψους α */}
-                    <text x="26" y="75" fill="#a5b4fc" fontSize="12" fontWeight="bold" textAnchor="end">
+                    <text x="45" y="75" fill="#a5b4fc" fontSize="12" fontWeight="bold" textAnchor="end">
                       {locale === 'el' ? 'α' : 'a'} ＝ {formatNumber(geoA)}
                     </text>
                   </svg>
@@ -474,6 +474,7 @@ export default function AplopoiisiTheoria() {
                     <span>＝ {geoA} · {totalBase}</span>
                     <span>＝ <strong>{formatNumber(totalGeoArea)}</strong></span>
                   </div>
+                  <br/>
                   <div className="inline-flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-words [overflow-wrap:anywhere]">
                     <span className="font-sans text-slate-300">{t.asSumRect}</span>
                     <span>({geoA} · {geoB}) ＋ ({geoA} · {geoC})</span>
